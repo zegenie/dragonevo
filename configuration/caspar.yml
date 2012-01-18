@@ -1,0 +1,24 @@
+# Caspar configuration
+
+core:
+  url: "http://dragonevo.l/"
+  modules: ['main', 'b2db']
+  language: 'en_US'
+  site_name: 'Dragon Evo CCG'
+  stylesheets: ['css/styles']
+  javascripts: ['prototype', 'scriptaculous']
+  user_classname: \caspar\core\User
+  response_classname: \caspar\core\Response
+
+services:
+  b2db:
+    auto_initialize: true
+    callback: [\b2db\Core, 'initialize']
+    arguments:
+      driver: mysql         # pdo driver to use
+      hostname: localhost   # the database hostname
+      username: root        # username used for db connection
+      password: pooWZLX1    # password used for db connection
+      database: dragonevo # the name of the database to connect to
+#     dsn: ''                 # alternatively use a DSN instead of parameters above
+#     tableprefix: ''         # the table prefix (if used) for all tables (for shared databases)
