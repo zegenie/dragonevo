@@ -125,7 +125,7 @@ body { background: url('/images/mainbg.png'); }
 .popup_message.failure { z-index: 200001; background-color: #E84545; color: #000; }
 .popup_message.failure .dismiss_me { color: #822323; }
 .popup_message.success { z-index: 200000; color: rgba(255, 255, 255, 0.9); background-color: #555; }
-.popup_message.success .dismiss_me { color: #238223; }
+.popup_message.success .dismiss_me { color: #FFF; }
 
 #fullpage_backdrop ul.duplicate_issues { list-style-type: none; padding: 0; margin: 0; clear: both; }
 #fullpage_backdrop ul.duplicate_issues li { font-weight: normal; margin: 0 0 3px 0; text-align: left; }

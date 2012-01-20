@@ -74,7 +74,7 @@
 						<?php endif; ?>
                         <li class="<?php if ($csp_response->getPage() == 'lobby') echo 'selected'; ?>"><?php echo link_tag(make_url('lobby'), 'Lobby'); ?></li>
                         <li class="<?php if ($csp_response->getPage() == 'market') echo 'selected'; ?>"><?php echo link_tag(make_url('market'), 'Market'); ?></li>
-                        <li class="<?php if ($csp_response->getPage() == 'help') echo 'selected'; ?>"><a href="javascript:void(0);" onclick="Devo.Main.Helpers.Message.success('Sample', 'test');">Help</a></li>
+                        <li class="<?php if ($csp_response->getPage() == 'help') echo 'selected'; ?>"><a href="javascript:void(0);" onclick="Devo.Main.Helpers.Message.success('Help is being created', 'Please be patient as we finish it');">Help</a></li>
 						<?php if ($csp_user->isAuthenticated()): ?>
 							<li class="logout"><?php echo link_tag(make_url('logout'), 'Logout', array('class' => 'button button-silver')); ?></li>
 						<?php endif; ?>
