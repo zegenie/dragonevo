@@ -1,9 +1,9 @@
 <?php 
 
-	namespace application\modules\main;
+	namespace application\modules\market;
 
 	/**
-	 * Main action components
+	 * market action components
 	 */
 	class Components extends \caspar\core\Components
 	{

@@ -4,3 +4,38 @@ home:
   url: /
   module: main
   action: index
+
+login:
+  url: /login
+  module: main
+  action: dologin
+
+logout:
+  url: /logout
+  module: main
+  action: logout
+
+register:
+  url: /register
+  module: main
+  action: doregister
+
+get_backdrop_partial:
+  url: /get/backdroppartial/:key
+  module: main
+  action: getbackdroppartial
+
+profile:
+  url: /profile
+  module: main
+  action: profile
+
+lobby:
+  url: /lobby
+  module: main
+  action: lobby
+
+market:
+  url: /market
+  module: market
+  action: index

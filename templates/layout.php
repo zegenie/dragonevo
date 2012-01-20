@@ -6,6 +6,7 @@
 		<meta name="description" content="The bug genie, friendly issue tracking">
 		<meta name="keywords" content="thebuggenie friendly issue tracking">
 		<meta name="author" content="thebuggenie.com">
+                <link rel="shortcut icon" href="/images/favicon.ico">
 		<title><?php echo strip_tags($csp_response->getTitle()); ?></title>
 		<link rel="shortcut icon" href="<?php print $csp_response->getFaviconURL(); ?>">
 		<?php foreach ($csp_response->getFeeds() as $feed_url => $feed_title): ?>
@@ -24,16 +25,70 @@
 		<?php \caspar\core\Event::createNew('core', 'header_ends')->trigger(); ?>
 	</head>
 	<body>
-		<div id="header-strip">
-			<div class="header-content">
-				Dragon Evo - TCG
-				<ul>
-					<li>Item 1</li>
-					<li>Item 2</li>
-					<li>Item 3</li>
-				</ul>
+		<div class="almost_not_transparent shadowed popup_message failure" onclick="Devo.Main.Helpers.Message.clear();" style="display: none;" id="dragonevo_failuremessage">
+			<div style="padding: 10px 0 10px 5px;">
+				<div class="dismiss_me"><?php echo __('Click this message to dismiss it'); ?></div>
+				<span style="font-weight: bold;" id="dragonevo_failuremessage_title"></span><br>
+				<span id="dragonevo_failuremessage_content"></span>
 			</div>
 		</div>
-		<?php echo $content; ?>
+		<div class="almost_not_transparent shadowed popup_message success" onclick="Devo.Main.Helpers.Message.clear();" style="display: none;" id="dragonevo_successmessage">
+			<div style="padding: 10px 0 10px 5px;">
+				<div class="dismiss_me"><?php echo __('Click this message to dismiss it'); ?></div>
+				<span style="font-weight: bold;" id="dragonevo_successmessage_title"></span><br>
+				<span id="dragonevo_successmessage_content"></span>
+			</div>
+		</div>
+		<div id="fullpage_backdrop" class="fullpage_backdrop" style="display: none;">
+			<div style="position: absolute; top: 45%; left: 40%; z-index: 100001; color: #FFF; font-size: 15px; font-weight: bold;" id="fullpage_backdrop_indicator">
+				<?php echo image_tag('/images/spinning_32.gif'); ?><br>
+				<?php echo __('Please wait ...'); ?>
+			</div>
+			<div id="fullpage_backdrop_content" class="fullpage_backdrop_content"> </div>
+		</div>
+		<div id="dialog_backdrop" style="display: none; background-color: transparent; width: 100%; height: 100%; position: fixed; top: 0; left: 0; margin: 0; padding: 0; text-align: center; z-index: 100000;">
+			<div id="dialog_backdrop_content" class="fullpage_backdrop_content">
+				<div class="rounded_box shadowed_box white cut_top cut_bottom bigger">
+					<div style="width: 900px; text-align: left; margin: 0 auto; font-size: 13px;">
+						<?php echo image_tag('/images/dialog_question.png', array('style' => 'float: left;')); ?>
+						<h3 id="dialog_title"></h3>
+						<p id="dialog_content"></p>
+					</div>
+					<div style="text-align: center; padding: 10px;">
+						<?php echo image_tag('/images/spinning_20.gif', array('style' => 'float: right; display: none;', 'id' => 'dialog_indicator')); ?>
+						<a href="javascript:void(0)" id="dialog_yes" class="button button-green"><?php echo __('Yes'); ?></a>
+						<a href="javascript:void(0)" id="dialog_no" class="button button-red"><?php echo __('No'); ?></a>
+					</div>
+				</div>
+			</div>
+			<div style="background-color: #000; width: 100%; height: 100%; position: absolute; top: 0; left: 0; margin: 0; padding: 0; z-index: 999;" class="semi_transparent"> </div>
+		</div>
+		<div class="main-content">
+            <div id="header-strip">
+                <div class="header-content">
+                    <ul>
+						<?php if ($csp_user->isAuthenticated()): ?>
+							<li class="<?php if ($csp_response->getPage() == 'profile') echo 'selected'; ?>"><?php echo link_tag(make_url('profile'), 'Profile'); ?></li>
+						<?php else: ?>
+							<li><a href="javascript:void(0);" onclick="Devo.Main.Helpers.Backdrop.show('<?php echo make_url('get_backdrop_partial', array('key' => 'login')); ?>')">Login</a></li>
+						<?php endif; ?>
+                        <li class="<?php if ($csp_response->getPage() == 'lobby') echo 'selected'; ?>"><?php echo link_tag(make_url('lobby'), 'Lobby'); ?></li>
+                        <li class="<?php if ($csp_response->getPage() == 'market') echo 'selected'; ?>"><?php echo link_tag(make_url('market'), 'Market'); ?></li>
+                        <li class="<?php if ($csp_response->getPage() == 'help') echo 'selected'; ?>"><a href="javascript:void(0);" onclick="Devo.Main.Helpers.Message.success('Sample', 'test');">Help</a></li>
+						<?php if ($csp_user->isAuthenticated()): ?>
+							<li class="logout"><?php echo link_tag(make_url('logout'), 'Logout', array('class' => 'button button-silver')); ?></li>
+						<?php endif; ?>
+                    </ul>
+                    <a class="header-logo" href="<?php echo make_url('home'); ?>">
+						Dragon Evo<br>
+						The Card Game
+					</a>
+                </div>
+            </div>
+			<?php if ($csp_response->getPage() != 'home'): ?>
+				<div id="header-strip-padder"></div>
+			<?php endif; ?>
+			<?php echo $content; ?>
+		</div>
 	</body>
 </html>
