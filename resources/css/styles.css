@@ -266,7 +266,7 @@ body { background: url('/images/mainbg.png'); }
 .main-content div.game-intro b { font-family: 'Chelsea Market'; }
 
 .element-badge {
-	width: 170px;
+	width: 300px;
 	height: 50px;
 	text-align: center;
 	font-size: 1.8em;
@@ -283,9 +283,14 @@ body { background: url('/images/mainbg.png'); }
 	border: 1px solid rgba(0, 0, 0, 0.2);
 	border-radius: 4px;
 	float: left;
+	margin-right: 0;
+	margin-left: 11px;
 }
 .element-badge img { float: left; margin-right: 10px; margin-left: 5px; }
 .element-badge div { margin-top: 12px; }
+.element-badge.magic { font-size: 1.3em; }
+.element-badge.elements { line-height: 1; padding-top: 5px; padding-bottom: 15px; }
+.element-badge.magic div { margin-top: 17px; }
 .element-description { float: left; width: 750px; padding: 10px; font-size: 1em; font-weight: normal; }
 .element-description .header { color: #000; font-size: 1.4em; font-family: 'Fredericka the Great'; }
 

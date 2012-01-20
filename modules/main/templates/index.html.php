@@ -11,27 +11,21 @@
 	<b>Dragon Evo: The Card Game</b> is unique, online trading card game - a one-of-a kind experience. Not a game of luck or dices, but one of tactics, timing and skill.<br>
 </div>
 <div class="content">
+	<div class="element-badge gold">
+		<?php echo image_tag('/images/icon-gold.png', array('style' => 'height: 50px; margin-right: 0;')); ?>
+		<div>Lots of GOLD!</div>
+	</div>
 	<div class="element-badge magic">
 		<?php echo image_tag('/images/magic_small.png', array('style' => 'margin-right: 0;')); ?>
-		<div>Magic</div>
+		<div>Master the art of magic!</div>
 	</div>
-	<div class="element-description">
-		<div class="header">Master the art of magic</div>
-		Combine ancient, powerful items with spells and unique abilities to master the vast variety of magic. Enchant items, cast spells and curses. Explore a world of magic you didn't know existed in a card game.
-	</div>
-	<br style="clear: both;">
-	<br style="clear: both;">
 	<div class="element-badge elements">
-		<?php echo image_tag('/images/attack_air.png', array('style' => 'margin-left: 10px;')); ?>
-		<?php echo image_tag('/images/attack_dark.png'); ?>
-		<?php echo image_tag('/images/attack_earth.png'); ?>
-		<?php echo image_tag('/images/attack_fire.png'); ?>
-		<?php echo image_tag('/images/attack_freeze.png'); ?>
-		<?php echo image_tag('/images/attack_poison.png'); ?>
-		<div style="margin-top: 20px;">Elemental</div>
-	</div>
-	<div class="element-description">
-		<div class="header">Conquer the elements</div>
-		Conquer all the different elements, and use them to your advantage. Explore a vast variety of attacks, defences, and unearthly tricks. Each game is different - be the difference.
+		<?php echo image_tag('/images/attack_air.png', array('style' => 'float: none;')); ?>
+		<?php echo image_tag('/images/attack_dark.png', array('style' => 'float: none;')); ?>
+		<?php echo image_tag('/images/attack_earth.png', array('style' => 'float: none;')); ?>
+		<?php echo image_tag('/images/attack_fire.png', array('style' => 'float: none;')); ?>
+		<?php echo image_tag('/images/attack_freeze.png', array('style' => 'float: none;')); ?>
+		<?php echo image_tag('/images/attack_poison.png', array('style' => 'float: none;')); ?>
+		<div style="margin-top: 0px;">Conquer the elements</div>
 	</div>
 </div>
