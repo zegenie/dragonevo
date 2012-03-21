@@ -20,6 +20,16 @@ register:
   module: main
   action: doregister
 
+admin:
+  url: /admin
+  module: admin
+  action: index
+
+edit_cards:
+  url: /admin/:card_type/cards
+  module: admin
+  action: cards
+
 get_backdrop_partial:
   url: /get/backdroppartial/:key
   module: main

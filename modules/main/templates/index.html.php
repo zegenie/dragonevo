@@ -1,6 +1,6 @@
 <?php $csp_response->setTitle(__('Frontpage')); ?>
 <div id="frontpage-banner">
-	<?php echo image_tag('/images/banner3.png'); ?>
+	<?php echo image_tag('/images/banner.jpg'); ?>
 	<?php //<div style="text-align: center; position: absolute; top: 90px; font-size: 1.3em; left: 400px; color: #AAA;">Banner goes here</div> ?>
 </div>
 <div class="content game-intro" style="padding-top: 20px; padding-bottom: 20px;">

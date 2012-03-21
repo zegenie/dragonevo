@@ -72,6 +72,9 @@
 						<?php else: ?>
 							<li><a href="javascript:void(0);" onclick="Devo.Main.Helpers.Backdrop.show('<?php echo make_url('get_backdrop_partial', array('key' => 'login')); ?>')">Login</a></li>
 						<?php endif; ?>
+						<?php if ($csp_user->isAdmin()): ?>
+							<li class="<?php if (in_array($csp_response->getPage(), array('admin'))) echo 'selected'; ?>"><?php echo link_tag(make_url('admin'), 'Admin'); ?></li>
+						<?php endif; ?>
                         <li class="<?php if ($csp_response->getPage() == 'lobby') echo 'selected'; ?>"><?php echo link_tag(make_url('lobby'), 'Lobby'); ?></li>
                         <li class="<?php if ($csp_response->getPage() == 'market') echo 'selected'; ?>"><?php echo link_tag(make_url('market'), 'Market'); ?></li>
                         <li class="<?php if ($csp_response->getPage() == 'help') echo 'selected'; ?>"><a href="javascript:void(0);" onclick="Devo.Main.Helpers.Message.success('Help is being created', 'Please be patient as we finish it');">Help</a></li>

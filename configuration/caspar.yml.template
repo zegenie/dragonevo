@@ -6,8 +6,8 @@ core:
   debug: true
   language: 'en_US'
   site_name: 'Dragon Evo CCG'
-  stylesheets: ['css/styles']
-  javascripts: ['js/prototype.js', 'js/scriptaculous.js', 'js/main.js']
+  stylesheets: ['/css/styles.css']
+  javascripts: ['/js/prototype.js', '/js/scriptaculous.js', '/js/main.js']
   user_classname: \application\entities\User
   salt: "$sra1F6s"
   response_classname: \caspar\core\Response
