@@ -12,7 +12,7 @@
 	 *
 	 * @Table(name="\application\entities\tables\CreatureCards")
 	 */
-	class CreatureCard extends PlaceableCard
+	class CreatureCard extends Card
 	{
 
 		const CLASS_CIVILIAN = 1;

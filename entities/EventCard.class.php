@@ -12,7 +12,7 @@
 	 *
 	 * @Table(name="\application\entities\tables\EventCards")
 	 */
-	class EventCard extends PlaceableCard
+	class EventCard extends ModifierCard
 	{
 
 		const TYPE_DAMAGE = 1;
@@ -41,6 +41,14 @@
 		 */
 		protected $_turn_duration = 1;
 
+		public static function getEventTypes()
+		{
+			return array(
+				self::TYPE_DAMAGE => 'Damage',
+				self::TYPE_ALTERATION => 'Alteration'
+			);
+		}
+
 		public function getEventType()
 		{
 			return $this->_event_type;
@@ -59,6 +67,11 @@
 		public function setTurnDuration($turn_duration)
 		{
 			$this->_turn_duration = $turn_duration;
+		}
+
+		public function mergeFormData($form_data = array())
+		{
+			parent::mergeFormData($form_data);
 		}
 
 	}

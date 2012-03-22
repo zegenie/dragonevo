@@ -1,60 +1,26 @@
 <?php $csp_response->setTitle($card->getB2DBID() ? __('Edit event card') : __('Create new event card')); ?>
-<form method="post" accept-charset="utf-8">
+<h2 style="margin: 10px 0 0 10px;"><?php echo $card->getB2DBID() ? __('Edit event card') : __('Create new event card'); ?></h2>
+<?php if (isset($error) && $error): ?>
+	<h6><?php echo $error; ?></h6>
+<?php endif; ?>
+<form method="post" accept-charset="utf-8" enctype="multipart/form-data">
+	<?php include_template('admin/commoncardform', compact('card')); ?>
 	<fieldset>
-		<legend>Basic details</legend>
+		<legend>Event details</legend>
 		<div>
-			<label for="card_name">Card name</label>
-			<input type="text" name="name" id="card_name" value="<?php echo $card->getName(); ?>">
-		</div>
-		<div>
-			<label for="base_health">Base HP</label>
-			<input type="text" name="base_health" id="base_health" class="points" value="<?php echo $card->getBaseHP(); ?>">
-		</div>
-		<div>
-			<label for="base_health">Base DMP (defence multiplier - chance of averting a basic attack)</label>
-			<input type="text" name="base_health" id="base_health" class="points" value="<?php echo $card->getBaseHP(); ?>">
-		</div>
-		<div>
-			<label for="is_special_card">Special card</label>
-			<select name="special_card" id="is_special_card">
-				<option value="1"<?php if ($card->isSpecialCard()) echo ' selected'; ?>>Yes</option>
-				<option value="0"<?php if (!$card->isSpecialCard()) echo ' selected'; ?>>No</option>
+			<label for="card_event_type">Event type</label>
+			<select name="event_type" id="card_event_type">
+				<?php foreach (\application\entities\EventCard::getEventTypes() as $type => $description): ?>
+					<option value="<?php echo $type; ?>"<?php if ($card->getEventType() == $type) echo ' selected'; ?>><?php echo $description; ?></option>
+				<?php endforeach; ?>
 			</select>
+		</div>
+		<div>
+			<label for="card_turn_duration">Duration</label>
+			<input type="text" name="turn_duration" class="points" id="card_turn_duration" value="<?php echo $card->getTurnDuration(); ?>"> turns <span class="faded_out">(0 for persistent)</span>
 		</div>
 	</fieldset>
-	<fieldset>
-		<legend>Modifiers</legend>
-		<div>
-			<label for="gpt_player">GPT (gold per turn) modifier player</label>
-			<select name="gpt_player">
-				<option value="increase"<?php if (!$card->getGPTDecreasePlayer()) echo ' selected'; ?>>Increase by</option>
-				<option value="decrease"<?php if ($card->getGPTDecreasePlayer()) echo ' selected'; ?>>Decrease by</option>
-			</select>
-			<input type="text" name="gpt_player_modifier" value="<?php echo $card->getGPTPlayerModifier(); ?>" class="points"> GPT
-		</div>
-		<div>
-			<label for="gpt_opponent">GPT (gold per turn) modifier opponent</label>
-			<select name="gpt_opponent">
-				<option value="increase"<?php if (!$card->getGPTDecreaseOpponent()) echo ' selected'; ?>>Increase by</option>
-				<option value="decrease"<?php if ($card->getGPTDecreaseOpponent()) echo ' selected'; ?>>Decrease by</option>
-			</select>
-			<input type="text" name="gpt_opponent_modifier" value="<?php echo $card->getGPTOpponentModifier(); ?>" class="points"> GPT
-		</div>
-		<div>
-			<label for="gpt_player">MPT (magic per turn) modifier player</label>
-			<select name="gpt_player">
-				<option value="increase"<?php if (!$card->getMPTDecreasePlayer()) echo ' selected'; ?>>Increase by</option>
-				<option value="decrease"<?php if ($card->getMPTDecreasePlayer()) echo ' selected'; ?>>Decrease by</option>
-			</select>
-			<input type="text" name="gpt_player_modifier" value="<?php echo $card->getMPTPlayerModifier(); ?>" class="points"> MPT
-		</div>
-		<div>
-			<label for="gpt_opponent">MPT (magic per turn) modifier opponent</label>
-			<select name="gpt_opponent">
-				<option value="increase"<?php if (!$card->getMPTDecreaseOpponent()) echo ' selected'; ?>>Increase by</option>
-				<option value="decrease"<?php if ($card->getMPTDecreaseOpponent()) echo ' selected'; ?>>Decrease by</option>
-			</select>
-			<input type="text" name="gpt_opponent_modifier" value="<?php echo $card->getMPTOpponentModifier(); ?>" class="points"> MPT
-		</div>
-	</fieldset>
+	<div style="clear: both; text-align: right; padding: 10px; margin-top: 10px; background-color: #F1F1F1; border: 1px dotted #CCC; border-left: none; border-right: none;">
+		<input type="submit" value="Save card" style="font-size: 1em; padding: 3px 10px !important;">
+	</div>
 </form>

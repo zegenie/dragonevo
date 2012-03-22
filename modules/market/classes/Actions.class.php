@@ -17,6 +17,7 @@
 		 */
 		public function runIndex(Request $request)
 		{
+			\application\entities\tables\EventCards::getTable()->create();
 		}
 
 	}

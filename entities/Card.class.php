@@ -37,6 +37,46 @@
 		protected $_name = '';
 
 		/**
+		 * Brief card description
+		 *
+		 * @Column(type="string", length=300)
+		 * @var string
+		 */
+		protected $_brief_description = '';
+
+		/**
+		 * Card description
+		 *
+		 * @Column(type="text")
+		 * @var string
+		 */
+		protected $_description = '';
+
+		/**
+		 * What the card costs to buy
+		 *
+		 * @Column(type="integer", default=50)
+		 * @var integer
+		 */
+		protected $_cost = 50;
+
+		/**
+		 * Number of cards in the entire deck
+		 *
+		 * @Column(type="integer", default=50)
+		 * @var integer
+		 */
+		protected $_likelihood = 50;
+
+		/**
+		 * Whether the card is a special card or not
+		 *
+		 * @Column(type="boolean", default=false)
+		 * @var boolean
+		 */
+		protected $_is_special_card = false;
+
+		/**
 		 * Card type
 		 *
 		 * @Column(type="string", length=20)
@@ -99,34 +139,6 @@
 		 */
 		protected $_mpt_decrease_opponent = 0;
 
-		/**
-		 * DMP (defence multiplier) increase (player)
-		 *
-		 * @Column(type="integer", length=10, default=0)
-		 */
-		protected $_dmp_increase_player = 0;
-
-		/**
-		 * DMP (defence multiplier) decrease (player)
-		 *
-		 * @Column(type="integer", length=10, default=0)
-		 */
-		protected $_dmp_decrease_player = 0;
-
-		/**
-		 * DMP (defence multiplier) increase (opponent)
-		 *
-		 * @Column(type="integer", length=10, default=0)
-		 */
-		protected $_dmp_increase_opponent = 0;
-
-		/**
-		 * DMP (defence multiplier) decrease (opponent)
-		 *
-		 * @Column(type="integer", length=10, default=0)
-		 */
-		protected $_dmp_decrease_opponent = 0;
-
 		public function getId()
 		{
 			return $this->_id;
@@ -147,6 +159,46 @@
 			$this->_name = $name;
 		}
 
+		public function getCost()
+		{
+			return $this->_cost;
+		}
+
+		public function setCost($cost)
+		{
+			$this->_cost = $cost;
+		}
+
+		public function getLikelihood()
+		{
+			return $this->_likelihood;
+		}
+
+		public function setLikelihood($likelihood)
+		{
+			$this->_likelihood = $likelihood;
+		}
+
+		public function getBriefDescription()
+		{
+			return $this->_brief_description;
+		}
+
+		public function setBriefDescription($brief_description)
+		{
+			$this->_brief_description = $brief_description;
+		}
+
+		public function getLongDescription()
+		{
+			return $this->_description;
+		}
+
+		public function setLongDescription($description)
+		{
+			$this->_description = $description;
+		}
+
 		public function getCardType()
 		{
 			return $this->_card_type;
@@ -155,6 +207,21 @@
 		public function setCardType($card_type)
 		{
 			$this->_card_type = $card_type;
+		}
+
+		public function getIsSpecialCard()
+		{
+			return (bool) $this->_is_special_card;
+		}
+
+		public function isSpecialCard()
+		{
+			return $this->getIsSpecialCard();
+		}
+
+		public function setIsSpecialCard($is_special_card = true)
+		{
+			$this->_is_special_card = (bool) $is_special_card;
 		}
 
 		public function getGPTIncreasePlayer()
@@ -257,54 +324,23 @@
 			return $this->getMPTDecreaseOpponent() + $this->getMPTIncreaseOpponent();
 		}
 
-		public function getDMPIncreasePlayer()
+		public function mergeFormData($form_data = array())
 		{
-			return $this->_dmp_increase_player;
-		}
-
-		public function setDMPIncreasePlayer($dmp_increase_player)
-		{
-			$this->_dmp_increase_player = $dmp_increase_player;
-		}
-
-		public function getDMPDecreasePlayer()
-		{
-			return $this->_dmp_decrease_player;
-		}
-
-		public function setDMPDecreasePlayer($dmp_decrease_player)
-		{
-			$this->_dmp_decrease_player = $dmp_decrease_player;
-		}
-
-		public function getDMPIncreaseOpponent()
-		{
-			return $this->_dmp_increase_opponent;
-		}
-
-		public function setDMPIncreaseOpponent($dmp_increase_opponent)
-		{
-			$this->_dmp_increase_opponent = $dmp_increase_opponent;
-		}
-
-		public function getDMPDecreaseOpponent()
-		{
-			return $this->_dmp_decrease_opponent;
-		}
-
-		public function setDMPDecreaseOpponent($dmp_decrease_opponent)
-		{
-			$this->_dmp_decrease_opponent = $dmp_decrease_opponent;
-		}
-
-		public function getDMPPlayerModifier()
-		{
-			return $this->getDMPDecreasePlayer() + $this->getDMPIncreasePlayer();
-		}
-
-		public function getDMPOpponentModifier()
-		{
-			return $this->getDMPDecreaseOpponent() + $this->getDMPIncreaseOpponent();
+			foreach (array('name', 'brief_description', 'long_description') as $field) {
+				$property_name = "_{$field}";
+				$this->$property_name = (string) $form_data[$field];
+			}
+			$this->_is_special_card = (bool) $form_data['is_special_card'];
+			foreach (array('cost', 'likelihood') as $field) {
+				$property_name = "_{$field}";
+				$this->$property_name = (integer) $form_data[$field];
+			}
+			foreach (array('gpt', 'mpt') as $resource) {
+				foreach (array('player', 'opponent') as $pl) {
+					$property_name = "_{$resource}_".$form_data["{$resource}_{$pl}"]."_{$pl}";
+					$this->$property_name = (int) $form_data["{$resource}_{$pl}_modifier"];
+				}
+			}
 		}
 
 	}

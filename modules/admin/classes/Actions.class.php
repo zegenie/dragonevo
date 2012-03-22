@@ -67,14 +67,22 @@
 				} else {
 					$this->card = new \application\entities\EventCard();
 				}
+			} catch (\Exception $e) {
+				return $this->return404('This is not a valid event card');
+			}
 
+			try {
 				if (!$this->card instanceof \application\entities\EventCard) {
-					$this->return404('This is not a valid event card');
+					return $this->return404('This is not a valid event card');
 				} else {
-
+					if ($request->isPost()) {
+						$this->card->mergeFormData($request);
+						$this->card->save();
+						$this->forward($this->getRouting()->generate('edit_card', array('card_id' => $this->card->getB2DBID(), 'card_type' => 'event')));
+					}
 				}
 			} catch (\Exception $e) {
-				
+				$this->error = $e->getMessage();
 			}
 		}
 

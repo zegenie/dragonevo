@@ -12,7 +12,7 @@
 	 *
 	 * @Table(name="\application\entities\tables\ItemCards")
 	 */
-	class ItemCard extends Card
+	class ItemCard extends ModifierCard
 	{
 
 		const TYPE_POTION = 1;
@@ -21,15 +21,17 @@
 		const TYPE_ATTACK_EARTH = 12;
 		const TYPE_ATTACK_FIRE = 13;
 		const TYPE_ATTACK_FREEZE = 14;
-		const TYPE_ATTACK_POISON = 15;
-		const TYPE_ATTACK_RANGED = 16;
+		const TYPE_ATTACK_MELEE = 15;
+		const TYPE_ATTACK_POISON = 16;
+		const TYPE_ATTACK_RANGED = 17;
 		const TYPE_DEFENCE_AIR = 20;
 		const TYPE_DEFENCE_DARK = 21;
 		const TYPE_DEFENCE_EARTH = 22;
 		const TYPE_DEFENCE_FIRE = 23;
 		const TYPE_DEFENCE_FREEZE = 24;
-		const TYPE_DEFENCE_POISON = 25;
-		const TYPE_DEFENCE_RANGED = 26;
+		const TYPE_DEFENCE_MELEE = 25;
+		const TYPE_DEFENCE_POISON = 26;
+		const TYPE_DEFENCE_RANGED = 27;
 
 		const CLASS_SWORD = 1;
 		const CLASS_BOW = 1;
