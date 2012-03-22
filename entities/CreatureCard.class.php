@@ -22,12 +22,60 @@
 		const CLASS_MILITARY = 5;
 
 		/**
+		 * Card type
+		 *
+		 * @Column(type="string", length=20)
+		 */
+		protected $_card_type = \application\entities\Card::TYPE_CREATURE;
+
+		/**
+		 * Base health
+		 *
+		 * @Column(type="integer", length=10, default=1)
+		 * @var integer
+		 */
+		protected $_base_health = 1;
+
+		/**
+		 * Base defence multiplier
+		 *
+		 * @Column(type="integer", length=10, default=1)
+		 * @var integer
+		 */
+		protected $_base_dmp = 0;
+
+		/**
 		 * Creature class
 		 *
 		 * @Column(type="integer", length=10, default=1)
 		 * @var integer
 		 */
 		protected $_creature_class = 1;
+
+		public function getBaseHealth()
+		{
+			return (int) $this->_base_health;
+		}
+
+		public function getBaseHP()
+		{
+			return $this->getBaseHealth();
+		}
+
+		public function setBaseHealth($base_health)
+		{
+			$this->_base_health = (int) $base_health;
+		}
+
+		public function getBaseDMP()
+		{
+			return $this->_base_dmp;
+		}
+
+		public function setBaseDMP($base_dmp)
+		{
+			$this->_base_dmp = $base_dmp;
+		}
 
 		public function getCreatureClass()
 		{

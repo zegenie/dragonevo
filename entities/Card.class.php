@@ -157,4 +157,154 @@
 			$this->_card_type = $card_type;
 		}
 
+		public function getGPTIncreasePlayer()
+		{
+			return $this->_gpt_increase_player;
+		}
+
+		public function setGPTIncreasePlayer($gpt_increase_player)
+		{
+			$this->_gpt_increase_player = $gpt_increase_player;
+		}
+
+		public function getGPTDecreasePlayer()
+		{
+			return $this->_gpt_decrease_player;
+		}
+
+		public function setGPTDecreasePlayer($gpt_decrease_player)
+		{
+			$this->_gpt_decrease_player = $gpt_decrease_player;
+		}
+
+		public function getGPTIncreaseOpponent()
+		{
+			return $this->_gpt_increase_opponent;
+		}
+
+		public function setGPTIncreaseOpponent($gpt_increase_opponent)
+		{
+			$this->_gpt_increase_opponent = $gpt_increase_opponent;
+		}
+
+		public function getGPTDecreaseOpponent()
+		{
+			return $this->_gpt_decrease_opponent;
+		}
+
+		public function setGPTDecreaseOpponent($gpt_decrease_opponent)
+		{
+			$this->_gpt_decrease_opponent = $gpt_decrease_opponent;
+		}
+
+		public function getGPTPlayerModifier()
+		{
+			return $this->getGPTDecreasePlayer() + $this->getGPTIncreasePlayer();
+		}
+
+		public function getGPTOpponentModifier()
+		{
+			return $this->getGPTDecreaseOpponent() + $this->getGPTIncreaseOpponent();
+		}
+
+		public function getMPTIncreasePlayer()
+		{
+			return $this->_mpt_increase_player;
+		}
+
+		public function setMPTIncreasePlayer($mpt_increase_player)
+		{
+			$this->_mpt_increase_player = $mpt_increase_player;
+		}
+
+		public function getMPTDecreasePlayer()
+		{
+			return $this->_mpt_decrease_player;
+		}
+
+		public function setMPTDecreasePlayer($mpt_decrease_player)
+		{
+			$this->_mpt_decrease_player = $mpt_decrease_player;
+		}
+
+		public function getMPTIncreaseOpponent()
+		{
+			return $this->_mpt_increase_opponent;
+		}
+
+		public function setMPTIncreaseOpponent($mpt_increase_opponent)
+		{
+			$this->_mpt_increase_opponent = $mpt_increase_opponent;
+		}
+
+		public function getMPTDecreaseOpponent()
+		{
+			return $this->_mpt_decrease_opponent;
+		}
+
+		public function setMPTDecreaseOpponent($mpt_decrease_opponent)
+		{
+			$this->_mpt_decrease_opponent = $mpt_decrease_opponent;
+		}
+
+		public function getMPTPlayerModifier()
+		{
+			return $this->getMPTDecreasePlayer() + $this->getMPTIncreasePlayer();
+		}
+
+		public function getMPTOpponentModifier()
+		{
+			return $this->getMPTDecreaseOpponent() + $this->getMPTIncreaseOpponent();
+		}
+
+		public function getDMPIncreasePlayer()
+		{
+			return $this->_dmp_increase_player;
+		}
+
+		public function setDMPIncreasePlayer($dmp_increase_player)
+		{
+			$this->_dmp_increase_player = $dmp_increase_player;
+		}
+
+		public function getDMPDecreasePlayer()
+		{
+			return $this->_dmp_decrease_player;
+		}
+
+		public function setDMPDecreasePlayer($dmp_decrease_player)
+		{
+			$this->_dmp_decrease_player = $dmp_decrease_player;
+		}
+
+		public function getDMPIncreaseOpponent()
+		{
+			return $this->_dmp_increase_opponent;
+		}
+
+		public function setDMPIncreaseOpponent($dmp_increase_opponent)
+		{
+			$this->_dmp_increase_opponent = $dmp_increase_opponent;
+		}
+
+		public function getDMPDecreaseOpponent()
+		{
+			return $this->_dmp_decrease_opponent;
+		}
+
+		public function setDMPDecreaseOpponent($dmp_decrease_opponent)
+		{
+			$this->_dmp_decrease_opponent = $dmp_decrease_opponent;
+		}
+
+		public function getDMPPlayerModifier()
+		{
+			return $this->getDMPDecreasePlayer() + $this->getDMPIncreasePlayer();
+		}
+
+		public function getDMPOpponentModifier()
+		{
+			return $this->getDMPDecreaseOpponent() + $this->getDMPIncreaseOpponent();
+		}
+
 	}

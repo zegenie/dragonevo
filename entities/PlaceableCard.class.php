@@ -16,14 +16,6 @@
 	{
 
 		/**
-		 * Base health
-		 *
-		 * @Column(type="integer", length=10, default=1)
-		 * @var integer
-		 */
-		protected $_base_health = 1;
-
-		/**
 		 * Whether the card is a special card or not
 		 *
 		 * @Column(type="boolean", default=false)
@@ -31,19 +23,14 @@
 		 */
 		protected $_is_special_card = false;
 
-		public function getBaseHealth()
-		{
-			return (int) $this->_base_health;
-		}
-
-		public function setBaseHealth($base_health)
-		{
-			$this->_base_health = (int) $base_health;
-		}
-
 		public function getIsSpecialCard()
 		{
 			return (bool) $this->_is_special_card;
+		}
+
+		public function isSpecialCard()
+		{
+			return $this->getIsSpecialCard();
 		}
 
 		public function setIsSpecialCard($is_special_card = true)

@@ -30,6 +30,16 @@ edit_cards:
   module: admin
   action: cards
 
+new_card:
+  url: /admin/:card_type/card
+  module: admin
+  action: card
+
+edit_card:
+  url: /admin/:card_type/card/:card_id
+  module: admin
+  action: card
+
 get_backdrop_partial:
   url: /get/backdroppartial/:key
   module: main
