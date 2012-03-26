@@ -23,7 +23,7 @@
 		</div>
 		<div>
 			<label for="card_turn_duration">Duration</label>
-			<input type="text" name="turn_duration" class="points" id="card_turn_duration" value="<?php echo $card->getTurnDuration(); ?>"> turns <span class="faded_out">(0 for persistent)</span>
+			<input type="text" name="turn_duration" class="points" id="card_turn_duration" value="<?php echo $card->getTurnDuration(); ?>"> turns <span class="faded_out">(0 for persistent, or until removed)</span>
 		</div>
 		<div>
 			<label for="card_level_affection">Affects levels</label>
@@ -46,6 +46,16 @@
 	<div id="event_sub_details">
 		<fieldset id="properties_<?php echo EventCard::TYPE_DAMAGE; ?>"<?php if ($card->getEventType() != EventCard::TYPE_DAMAGE): ?> style="display: none;"<?php endif; ?>>
 			<legend>Damage details</legend>
+			<div>
+				<label for="card_hp_damage_chance_percent">HP damage</label>
+				<input type="text" name="hp_damage_chance_percent" class="points" id="card_hp_damage_chance_percent" value="<?php echo $card->getHpDamageChancePercent(); ?>">% chance of causing
+				<input type="text" name="hp_damage_percent_min" class="points" id="card_hp_damage_percent_min" value="<?php echo $card->getHpDamagePercentMin(); ?>">% to
+				<input type="text" name="hp_damage_percent_max" class="points" id="card_hp_damage_percent_max" value="<?php echo $card->getHpDamagePercentMax(); ?>">% damage per turn
+			</div>
+			<div>
+				<label for="card_hp_damage_chance_percent">Stun card</label>
+				<input type="text" name="stun_chance_percent" class="points" id="card_stun_chance_percent" value="<?php echo $card->getStunChancePercent(); ?>">% chance of stunning a card per turn
+			</div>
 		</fieldset>
 		<fieldset id="properties_<?php echo EventCard::TYPE_ALTERATION; ?>"<?php if ($card->getEventType() != EventCard::TYPE_ALTERATION): ?> style="display: none;"<?php endif; ?>>
 			<legend>Alteration details</legend>

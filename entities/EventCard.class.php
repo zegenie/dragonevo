@@ -78,6 +78,12 @@
 		protected $_increases_ranged_attack_percentage = 0;
 		protected $_decreases_ranged_attack_percentage = 0;
 
+		protected $_hp_damage_chance_percent = 0;
+		protected $_hp_damage_percent_min = 0;
+		protected $_hp_damage_percent_max = 0;
+
+		protected $_stun_chance_percent = 0;
+
 		public static function getEventTypes()
 		{
 			return array(
@@ -454,6 +460,46 @@
 		public function setAffectsPowerLvlCards($affects_power_lvl_cards)
 		{
 			$this->_affects_power_lvl_cards = $affects_power_lvl_cards;
+		}
+
+		public function getHpDamageChancePercent()
+		{
+			return $this->_hp_damage_chance_percent;
+		}
+
+		public function setHpDamageChancePercent($hp_damage_chance_percent)
+		{
+			$this->_hp_damage_chance_percent = $hp_damage_chance_percent;
+		}
+
+		public function getHpDamagePercentMin()
+		{
+			return $this->_hp_damage_percent_min;
+		}
+
+		public function setHpDamagePercentMin($hp_damage_percent_min)
+		{
+			$this->_hp_damage_percent_min = $hp_damage_percent_min;
+		}
+
+		public function getHpDamagePercentMax()
+		{
+			return $this->_hp_damage_percent_max;
+		}
+
+		public function setHpDamagePercentMax($hp_damage_percent_max)
+		{
+			$this->_hp_damage_percent_max = $hp_damage_percent_max;
+		}
+
+		public function getStunChancePercent()
+		{
+			return $this->_stun_chance_percent;
+		}
+
+		public function setStunChancePercent($stun_chance_percent)
+		{
+			$this->_stun_chance_percent = $stun_chance_percent;
 		}
 
 	}
