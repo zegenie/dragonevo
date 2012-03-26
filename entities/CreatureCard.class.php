@@ -16,10 +16,10 @@
 	{
 
 		const CLASS_CIVILIAN = 1;
-		const CLASS_RANGED = 2;
-		const CLASS_PHYSICAL = 3;
-		const CLASS_MAGIC = 4;
-		const CLASS_MILITARY = 5;
+		const CLASS_MAGIC = 2;
+		const CLASS_MILITARY = 3;
+		const CLASS_PHYSICAL = 4;
+		const CLASS_RANGED = 5;
 
 		/**
 		 * Card type

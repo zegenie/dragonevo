@@ -254,7 +254,6 @@ body { background: url('/images/mainbg.png'); }
 
 .main-content {
 	clear: both;
-	height: 100%;
 	font-family: 'Open sans';
 	padding: 0;
 	margin: 0 auto;
