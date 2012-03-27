@@ -12,7 +12,7 @@
 	 *
 	 * @Table(name="\application\entities\tables\EventCards")
 	 */
-	class EventCard extends ModifierCard
+	class EventCard extends Card
 	{
 
 		const TYPE_DAMAGE = 1;
@@ -51,32 +51,68 @@
 		protected $_affects_regular_lvl_cards = false;
 		protected $_affects_power_lvl_cards = false;
 
-		protected $_increases_basic_attack_percentage = 0;
-		protected $_decreases_basic_attack_percentage = 0;
+		protected $_increases_basic_attack_damage_percentage = 0;
+		protected $_decreases_basic_attack_damage_percentage = 0;
+		protected $_increases_basic_attack_hit_percentage = 0;
+		protected $_decreases_basic_attack_hit_percentage = 0;
+		protected $_increases_basic_attack_dmp_percentage = 0;
+		protected $_decreases_basic_attack_dmp_percentage = 0;
 
-		protected $_increases_air_attack_percentage = 0;
-		protected $_decreases_air_attack_percentage = 0;
+		protected $_increases_air_attack_damage_percentage = 0;
+		protected $_decreases_air_attack_damage_percentage = 0;
+		protected $_increases_air_attack_hit_percentage = 0;
+		protected $_decreases_air_attack_hit_percentage = 0;
+		protected $_increases_air_attack_dmp_percentage = 0;
+		protected $_decreases_air_attack_dmp_percentage = 0;
 
-		protected $_increases_dark_attack_percentage = 0;
-		protected $_decreases_dark_attack_percentage = 0;
+		protected $_increases_dark_attack_damage_percentage = 0;
+		protected $_decreases_dark_attack_damage_percentage = 0;
+		protected $_increases_dark_attack_hit_percentage = 0;
+		protected $_decreases_dark_attack_hit_percentage = 0;
+		protected $_increases_dark_attack_dmp_percentage = 0;
+		protected $_decreases_dark_attack_dmp_percentage = 0;
 
-		protected $_increases_earth_attack_percentage = 0;
-		protected $_decreases_earth_attack_percentage = 0;
+		protected $_increases_earth_attack_damage_percentage = 0;
+		protected $_decreases_earth_attack_damage_percentage = 0;
+		protected $_increases_earth_attack_hit_percentage = 0;
+		protected $_decreases_earth_attack_hit_percentage = 0;
+		protected $_increases_earth_attack_dmp_percentage = 0;
+		protected $_decreases_earth_attack_dmp_percentage = 0;
 
-		protected $_increases_fire_attack_percentage = 0;
-		protected $_decreases_fire_attack_percentage = 0;
+		protected $_increases_fire_attack_damage_percentage = 0;
+		protected $_decreases_fire_attack_damage_percentage = 0;
+		protected $_increases_fire_attack_hit_percentage = 0;
+		protected $_decreases_fire_attack_hit_percentage = 0;
+		protected $_increases_fire_attack_dmp_percentage = 0;
+		protected $_decreases_fire_attack_dmp_percentage = 0;
 
-		protected $_increases_freeze_attack_percentage = 0;
-		protected $_decreases_freeze_attack_percentage = 0;
+		protected $_increases_freeze_attack_damage_percentage = 0;
+		protected $_decreases_freeze_attack_damage_percentage = 0;
+		protected $_increases_freeze_attack_hit_percentage = 0;
+		protected $_decreases_freeze_attack_hit_percentage = 0;
+		protected $_increases_freeze_attack_dmp_percentage = 0;
+		protected $_decreases_freeze_attack_dmp_percentage = 0;
 
-		protected $_increases_melee_attack_percentage = 0;
-		protected $_decreases_melee_attack_percentage = 0;
+		protected $_increases_melee_attack_damage_percentage = 0;
+		protected $_decreases_melee_attack_damage_percentage = 0;
+		protected $_increases_melee_attack_hit_percentage = 0;
+		protected $_decreases_melee_attack_hit_percentage = 0;
+		protected $_increases_melee_attack_dmp_percentage = 0;
+		protected $_decreases_melee_attack_dmp_percentage = 0;
 
-		protected $_increases_poison_attack_percentage = 0;
-		protected $_decreases_poison_attack_percentage = 0;
+		protected $_increases_poison_attack_damage_percentage = 0;
+		protected $_decreases_poison_attack_damage_percentage = 0;
+		protected $_increases_poison_attack_hit_percentage = 0;
+		protected $_decreases_poison_attack_hit_percentage = 0;
+		protected $_increases_poison_attack_dmp_percentage = 0;
+		protected $_decreases_poison_attack_dmp_percentage = 0;
 
-		protected $_increases_ranged_attack_percentage = 0;
-		protected $_decreases_ranged_attack_percentage = 0;
+		protected $_increases_ranged_attack_damage_percentage = 0;
+		protected $_decreases_ranged_attack_damage_percentage = 0;
+		protected $_increases_ranged_attack_hit_percentage = 0;
+		protected $_decreases_ranged_attack_hit_percentage = 0;
+		protected $_increases_ranged_attack_dmp_percentage = 0;
+		protected $_decreases_ranged_attack_dmp_percentage = 0;
 
 		protected $_hp_damage_chance_percent = 0;
 		protected $_hp_damage_percent_min = 0;
@@ -97,9 +133,9 @@
 			return $this->_event_type;
 		}
 
-		public function setEventType($item_type)
+		public function setEventType($event_type)
 		{
-			$this->_event_type = $item_type;
+			$this->_event_type = $event_type;
 		}
 
 		public function getTurnDuration()
@@ -117,229 +153,454 @@
 			parent::mergeFormData($form_data);
 		}
 
-		public function getIncreasesBasicAttackPercentage()
+		public function getIncreasesBasicAttackHitPercentage()
 		{
-			return $this->_increases_basic_attack_percentage;
+			return $this->_increases_basic_attack_hit_percentage;
 		}
 
-		public function setIncreasesBasicAttackPercentage($increases_basic_attack_percentage)
+		public function setIncreasesBasicAttackHitPercentage($increases_basic_attack_hit_percentage)
 		{
-			$this->_increases_basic_attack_percentage = $increases_basic_attack_percentage;
+			$this->_increases_basic_attack_hit_percentage = $increases_basic_attack_hit_percentage;
 		}
 
-		public function getDecreasesBasicAttackPercentage()
+		public function getDecreasesBasicAttackHitPercentage()
 		{
-			return $this->_decreases_basic_attack_percentage;
+			return $this->_decreases_basic_attack_hit_percentage;
 		}
 
-		public function setDecreasesBasicAttackPercentage($decreases_basic_attack_percentage)
+		public function setDecreasesBasicAttackHitPercentage($decreases_basic_attack_hit_percentage)
 		{
-			$this->_decreases_basic_attack_percentage = $decreases_basic_attack_percentage;
+			$this->_decreases_basic_attack_hit_percentage = $decreases_basic_attack_hit_percentage;
 		}
 
-		public function getBasicAttackModifier()
+		public function getBasicAttackHitPercentageModifier()
 		{
-			return $this->getIncreasesBasicAttackPercentage() + $this->getDecreasesBasicAttackPercentage();
+			return $this->getIncreasesBasicAttackHitPercentage() + $this->getDecreasesBasicAttackHitPercentage();
 		}
 
-		public function getIncreasesAirAttackPercentage()
+		public function getIncreasesAirAttackHitPercentage()
 		{
-			return $this->_increases_air_attack_percentage;
+			return $this->_increases_air_attack_hit_percentage;
 		}
 
-		public function setIncreasesAirAttackPercentage($increases_air_attack_percentage)
+		public function setIncreasesAirAttackHitPercentage($increases_air_attack_hit_percentage)
 		{
-			$this->_increases_air_attack_percentage = $increases_air_attack_percentage;
+			$this->_increases_air_attack_hit_percentage = $increases_air_attack_hit_percentage;
 		}
 
-		public function getDecreasesAirAttackPercentage()
+		public function getDecreasesAirAttackHitPercentage()
 		{
-			return $this->_decreases_air_attack_percentage;
+			return $this->_decreases_air_attack_hit_percentage;
 		}
 
-		public function setDecreasesAirAttackPercentage($decreases_air_attack_percentage)
+		public function setDecreasesAirAttackHitPercentage($decreases_air_attack_hit_percentage)
 		{
-			$this->_decreases_air_attack_percentage = $decreases_air_attack_percentage;
+			$this->_decreases_air_attack_hit_percentage = $decreases_air_attack_hit_percentage;
 		}
 
-		public function getAirAttackModifier()
+		public function getAirAttackHitPercentageModifier()
 		{
-			return $this->getIncreasesAirAttackPercentage() + $this->getDecreasesAirAttackPercentage();
+			return $this->getIncreasesAirAttackHitPercentage() + $this->getDecreasesAirAttackHitPercentage();
 		}
 
-		public function getIncreasesDarkAttackPercentage()
+		public function getIncreasesDarkAttackHitPercentage()
 		{
-			return $this->_increases_dark_attack_percentage;
+			return $this->_increases_dark_attack_hit_percentage;
 		}
 
-		public function setIncreasesDarkAttackPercentage($increases_dark_attack_percentage)
+		public function setIncreasesDarkAttackHitPercentage($increases_dark_attack_hit_percentage)
 		{
-			$this->_increases_dark_attack_percentage = $increases_dark_attack_percentage;
+			$this->_increases_dark_attack_hit_percentage = $increases_dark_attack_hit_percentage;
 		}
 
-		public function getDecreasesDarkAttackPercentage()
+		public function getDecreasesDarkAttackHitPercentage()
 		{
-			return $this->_decreases_dark_attack_percentage;
+			return $this->_decreases_dark_attack_hit_percentage;
 		}
 
-		public function setDecreasesDarkAttackPercentage($decreases_dark_attack_percentage)
+		public function setDecreasesDarkAttackHitPercentage($decreases_dark_attack_hit_percentage)
 		{
-			$this->_decreases_dark_attack_percentage = $decreases_dark_attack_percentage;
+			$this->_decreases_dark_attack_hit_percentage = $decreases_dark_attack_hit_percentage;
 		}
 
-		public function getDarkAttackModifier()
+		public function getDarkAttackHitPercentageModifier()
 		{
-			return $this->getIncreasesDarkAttackPercentage() + $this->getDecreasesDarkAttackPercentage();
+			return $this->getIncreasesDarkAttackHitPercentage() + $this->getDecreasesDarkAttackHitPercentage();
 		}
 
-		public function getIncreasesEarthAttackPercentage()
+		public function getIncreasesEarthAttackHitPercentage()
 		{
-			return $this->_increases_earth_attack_percentage;
+			return $this->_increases_earth_attack_hit_percentage;
 		}
 
-		public function setIncreasesEarthAttackPercentage($increases_earth_attack_percentage)
+		public function setIncreasesEarthAttackHitPercentage($increases_earth_attack_hit_percentage)
 		{
-			$this->_increases_earth_attack_percentage = $increases_earth_attack_percentage;
+			$this->_increases_earth_attack_hit_percentage = $increases_earth_attack_hit_percentage;
 		}
 
-		public function getDecreasesEarthAttackPercentage()
+		public function getDecreasesEarthAttackHitPercentage()
 		{
-			return $this->_decreases_earth_attack_percentage;
+			return $this->_decreases_earth_attack_hit_percentage;
 		}
 
-		public function setDecreasesEarthAttackPercentage($decreases_earth_attack_percentage)
+		public function setDecreasesEarthAttackHitPercentage($decreases_earth_attack_hit_percentage)
 		{
-			$this->_decreases_earth_attack_percentage = $decreases_earth_attack_percentage;
+			$this->_decreases_earth_attack_hit_percentage = $decreases_earth_attack_hit_percentage;
 		}
 
-		public function getEarthAttackModifier()
+		public function getEarthAttackHitPercentageModifier()
 		{
-			return $this->getIncreasesEarthAttackPercentage() + $this->getDecreasesEarthAttackPercentage();
+			return $this->getIncreasesEarthAttackHitPercentage() + $this->getDecreasesEarthAttackHitPercentage();
 		}
 
-		public function getIncreasesFireAttackPercentage()
+		public function getIncreasesFireAttackHitPercentage()
 		{
-			return $this->_increases_fire_attack_percentage;
+			return $this->_increases_fire_attack_hit_percentage;
 		}
 
-		public function setIncreasesFireAttackPercentage($increases_fire_attack_percentage)
+		public function setIncreasesFireAttackHitPercentage($increases_fire_attack_hit_percentage)
 		{
-			$this->_increases_fire_attack_percentage = $increases_fire_attack_percentage;
+			$this->_increases_fire_attack_hit_percentage = $increases_fire_attack_hit_percentage;
 		}
 
-		public function getDecreasesFireAttackPercentage()
+		public function getDecreasesFireAttackHitPercentage()
 		{
-			return $this->_decreases_fire_attack_percentage;
+			return $this->_decreases_fire_attack_hit_percentage;
 		}
 
-		public function setDecreasesFireAttackPercentage($decreases_fire_attack_percentage)
+		public function setDecreasesFireAttackHitPercentage($decreases_fire_attack_hit_percentage)
 		{
-			$this->_decreases_fire_attack_percentage = $decreases_fire_attack_percentage;
+			$this->_decreases_fire_attack_hit_percentage = $decreases_fire_attack_hit_percentage;
 		}
 
-		public function getFireAttackModifier()
+		public function getFireAttackHitPercentageModifier()
 		{
-			return $this->getIncreasesFireAttackPercentage() + $this->getDecreasesFireAttackPercentage();
+			return $this->getIncreasesFireAttackHitPercentage() + $this->getDecreasesFireAttackHitPercentage();
 		}
 
-		public function getIncreasesFreezeAttackPercentage()
+		public function getIncreasesFreezeAttackHitPercentage()
 		{
-			return $this->_increases_freeze_attack_percentage;
+			return $this->_increases_freeze_attack_hit_percentage;
 		}
 
-		public function setIncreasesFreezeAttackPercentage($increases_freeze_attack_percentage)
+		public function setIncreasesFreezeAttackHitPercentage($increases_freeze_attack_hit_percentage)
 		{
-			$this->_increases_freeze_attack_percentage = $increases_freeze_attack_percentage;
+			$this->_increases_freeze_attack_hit_percentage = $increases_freeze_attack_hit_percentage;
 		}
 
-		public function getDecreasesFreezeAttackPercentage()
+		public function getDecreasesFreezeAttackHitPercentage()
 		{
-			return $this->_decreases_freeze_attack_percentage;
+			return $this->_decreases_freeze_attack_hit_percentage;
 		}
 
-		public function setDecreasesFreezeAttackPercentage($decreases_freeze_attack_percentage)
+		public function setDecreasesFreezeAttackHitPercentage($decreases_freeze_attack_hit_percentage)
 		{
-			$this->_decreases_freeze_attack_percentage = $decreases_freeze_attack_percentage;
+			$this->_decreases_freeze_attack_hit_percentage = $decreases_freeze_attack_hit_percentage;
 		}
 
-		public function getFreezeAttackModifier()
+		public function getFreezeAttackHitPercentageModifier()
 		{
-			return $this->getIncreasesFreezeAttackPercentage() + $this->getDecreasesFreezeAttackPercentage();
+			return $this->getIncreasesFreezeAttackHitPercentage() + $this->getDecreasesFreezeAttackHitPercentage();
 		}
 
-		public function getIncreasesMeleeAttackPercentage()
+		public function getIncreasesMeleeAttackHitPercentage()
 		{
-			return $this->_increases_melee_attack_percentage;
+			return $this->_increases_melee_attack_hit_percentage;
 		}
 
-		public function setIncreasesMeleeAttackPercentage($increases_melee_attack_percentage)
+		public function setIncreasesMeleeAttackHitPercentage($increases_melee_attack_hit_percentage)
 		{
-			$this->_increases_melee_attack_percentage = $increases_melee_attack_percentage;
+			$this->_increases_melee_attack_hit_percentage = $increases_melee_attack_hit_percentage;
 		}
 
-		public function getDecreasesMeleeAttackPercentage()
+		public function getDecreasesMeleeAttackHitPercentage()
 		{
-			return $this->_decreases_melee_attack_percentage;
+			return $this->_decreases_melee_attack_hit_percentage;
 		}
 
-		public function setDecreasesMeleeAttackPercentage($decreases_melee_attack_percentage)
+		public function setDecreasesMeleeAttackHitPercentage($decreases_melee_attack_hit_percentage)
 		{
-			$this->_decreases_melee_attack_percentage = $decreases_melee_attack_percentage;
+			$this->_decreases_melee_attack_hit_percentage = $decreases_melee_attack_hit_percentage;
 		}
 
-		public function getMeleeAttackModifier()
+		public function getMeleeAttackHitPercentageModifier()
 		{
-			return $this->getIncreasesMeleeAttackPercentage() + $this->getDecreasesMeleeAttackPercentage();
+			return $this->getIncreasesMeleeAttackHitPercentage() + $this->getDecreasesMeleeAttackHitPercentage();
 		}
 
-		public function getIncreasesPoisonAttackPercentage()
+		public function getIncreasesPoisonAttackHitPercentage()
 		{
-			return $this->_increases_poison_attack_percentage;
+			return $this->_increases_poison_attack_hit_percentage;
 		}
 
-		public function setIncreasesPoisonAttackPercentage($increases_poison_attack_percentage)
+		public function setIncreasesPoisonAttackHitPercentage($increases_poison_attack_hit_percentage)
 		{
-			$this->_increases_poison_attack_percentage = $increases_poison_attack_percentage;
+			$this->_increases_poison_attack_hit_percentage = $increases_poison_attack_hit_percentage;
 		}
 
-		public function getDecreasesPoisonAttackPercentage()
+		public function getDecreasesPoisonAttackHitPercentage()
 		{
-			return $this->_decreases_poison_attack_percentage;
+			return $this->_decreases_poison_attack_hit_percentage;
 		}
 
-		public function setDecreasesPoisonAttackPercentage($decreases_poison_attack_percentage)
+		public function setDecreasesPoisonAttackHitPercentage($decreases_poison_attack_hit_percentage)
 		{
-			$this->_decreases_poison_attack_percentage = $decreases_poison_attack_percentage;
+			$this->_decreases_poison_attack_hit_percentage = $decreases_poison_attack_hit_percentage;
 		}
 
-		public function getPoisonAttackModifier()
+		public function getPoisonAttackHitPercentageModifier()
 		{
-			return $this->getIncreasesPoisonAttackPercentage() + $this->getDecreasesPoisonAttackPercentage();
+			return $this->getIncreasesPoisonAttackHitPercentage() + $this->getDecreasesPoisonAttackHitPercentage();
 		}
 
-		public function getIncreasesRangedAttackPercentage()
+		public function getIncreasesRangedAttackHitPercentage()
 		{
-			return $this->_increases_ranged_attack_percentage;
+			return $this->_increases_ranged_attack_hit_percentage;
 		}
 
-		public function setIncreasesRangedAttackPercentage($increases_ranged_attack_percentage)
+		public function setIncreasesRangedAttackHitPercentage($increases_ranged_attack_hit_percentage)
 		{
-			$this->_increases_ranged_attack_percentage = $increases_ranged_attack_percentage;
+			$this->_increases_ranged_attack_hit_percentage = $increases_ranged_attack_hit_percentage;
 		}
 
-		public function getDecreasesRangedAttackPercentage()
+		public function getDecreasesRangedAttackHitPercentage()
 		{
-			return $this->_decreases_ranged_attack_percentage;
+			return $this->_decreases_ranged_attack_hit_percentage;
 		}
 
-		public function setDecreasesRangedAttackPercentage($decreases_ranged_attack_percentage)
+		public function setDecreasesRangedAttackHitPercentage($decreases_ranged_attack_hit_percentage)
 		{
-			$this->_decreases_ranged_attack_percentage = $decreases_ranged_attack_percentage;
+			$this->_decreases_ranged_attack_hit_percentage = $decreases_ranged_attack_hit_percentage;
 		}
 
-		public function getRangedAttackModifier()
+		public function getRangedAttackHitPercentageModifier()
 		{
-			return $this->getIncreasesRangedAttackPercentage() + $this->getDecreasesRangedAttackPercentage();
+			return $this->getIncreasesRangedAttackHitPercentage() + $this->getDecreasesRangedAttackHitPercentage();
+		}
+
+		public function getIncreasesBasicAttackDamagePercentage()
+		{
+			return $this->_increases_basic_attack_damage_percentage;
+		}
+
+		public function setIncreasesBasicAttackDamagePercentage($increases_basic_attack_damage_percentage)
+		{
+			$this->_increases_basic_attack_damage_percentage = $increases_basic_attack_damage_percentage;
+		}
+
+		public function getDecreasesBasicAttackDamagePercentage()
+		{
+			return $this->_decreases_basic_attack_damage_percentage;
+		}
+
+		public function setDecreasesBasicAttackDamagePercentage($decreases_basic_attack_damage_percentage)
+		{
+			$this->_decreases_basic_attack_damage_percentage = $decreases_basic_attack_damage_percentage;
+		}
+
+		public function getBasicAttackDamagePercentageModifier()
+		{
+			return $this->getIncreasesBasicAttackDamagePercentage() + $this->getDecreasesBasicAttackDamagePercentage();
+		}
+
+		public function getIncreasesAirAttackDamagePercentage()
+		{
+			return $this->_increases_air_attack_damage_percentage;
+		}
+
+		public function setIncreasesAirAttackDamagePercentage($increases_air_attack_damage_percentage)
+		{
+			$this->_increases_air_attack_damage_percentage = $increases_air_attack_damage_percentage;
+		}
+
+		public function getDecreasesAirAttackDamagePercentage()
+		{
+			return $this->_decreases_air_attack_damage_percentage;
+		}
+
+		public function setDecreasesAirAttackDamagePercentage($decreases_air_attack_damage_percentage)
+		{
+			$this->_decreases_air_attack_damage_percentage = $decreases_air_attack_damage_percentage;
+		}
+
+		public function getAirAttackDamagePercentageModifier()
+		{
+			return $this->getIncreasesAirAttackDamagePercentage() + $this->getDecreasesAirAttackDamagePercentage();
+		}
+
+		public function getIncreasesDarkAttackDamagePercentage()
+		{
+			return $this->_increases_dark_attack_damage_percentage;
+		}
+
+		public function setIncreasesDarkAttackDamagePercentage($increases_dark_attack_damage_percentage)
+		{
+			$this->_increases_dark_attack_damage_percentage = $increases_dark_attack_damage_percentage;
+		}
+
+		public function getDecreasesDarkAttackDamagePercentage()
+		{
+			return $this->_decreases_dark_attack_damage_percentage;
+		}
+
+		public function setDecreasesDarkAttackDamagePercentage($decreases_dark_attack_damage_percentage)
+		{
+			$this->_decreases_dark_attack_damage_percentage = $decreases_dark_attack_damage_percentage;
+		}
+
+		public function getDarkAttackDamagePercentageModifier()
+		{
+			return $this->getIncreasesDarkAttackDamagePercentage() + $this->getDecreasesDarkAttackDamagePercentage();
+		}
+
+		public function getIncreasesEarthAttackDamagePercentage()
+		{
+			return $this->_increases_earth_attack_damage_percentage;
+		}
+
+		public function setIncreasesEarthAttackDamagePercentage($increases_earth_attack_damage_percentage)
+		{
+			$this->_increases_earth_attack_damage_percentage = $increases_earth_attack_damage_percentage;
+		}
+
+		public function getDecreasesEarthAttackDamagePercentage()
+		{
+			return $this->_decreases_earth_attack_damage_percentage;
+		}
+
+		public function setDecreasesEarthAttackDamagePercentage($decreases_earth_attack_damage_percentage)
+		{
+			$this->_decreases_earth_attack_damage_percentage = $decreases_earth_attack_damage_percentage;
+		}
+
+		public function getEarthAttackDamagePercentageModifier()
+		{
+			return $this->getIncreasesEarthAttackDamagePercentage() + $this->getDecreasesEarthAttackDamagePercentage();
+		}
+
+		public function getIncreasesFireAttackDamagePercentage()
+		{
+			return $this->_increases_fire_attack_damage_percentage;
+		}
+
+		public function setIncreasesFireAttackDamagePercentage($increases_fire_attack_damage_percentage)
+		{
+			$this->_increases_fire_attack_damage_percentage = $increases_fire_attack_damage_percentage;
+		}
+
+		public function getDecreasesFireAttackDamagePercentage()
+		{
+			return $this->_decreases_fire_attack_damage_percentage;
+		}
+
+		public function setDecreasesFireAttackDamagePercentage($decreases_fire_attack_damage_percentage)
+		{
+			$this->_decreases_fire_attack_damage_percentage = $decreases_fire_attack_damage_percentage;
+		}
+
+		public function getFireAttackDamagePercentageModifier()
+		{
+			return $this->getIncreasesFireAttackDamagePercentage() + $this->getDecreasesFireAttackDamagePercentage();
+		}
+
+		public function getIncreasesFreezeAttackDamagePercentage()
+		{
+			return $this->_increases_freeze_attack_damage_percentage;
+		}
+
+		public function setIncreasesFreezeAttackDamagePercentage($increases_freeze_attack_damage_percentage)
+		{
+			$this->_increases_freeze_attack_damage_percentage = $increases_freeze_attack_damage_percentage;
+		}
+
+		public function getDecreasesFreezeAttackDamagePercentage()
+		{
+			return $this->_decreases_freeze_attack_damage_percentage;
+		}
+
+		public function setDecreasesFreezeAttackDamagePercentage($decreases_freeze_attack_damage_percentage)
+		{
+			$this->_decreases_freeze_attack_damage_percentage = $decreases_freeze_attack_damage_percentage;
+		}
+
+		public function getFreezeAttackDamagePercentageModifier()
+		{
+			return $this->getIncreasesFreezeAttackDamagePercentage() + $this->getDecreasesFreezeAttackDamagePercentage();
+		}
+
+		public function getIncreasesMeleeAttackDamagePercentage()
+		{
+			return $this->_increases_melee_attack_damage_percentage;
+		}
+
+		public function setIncreasesMeleeAttackDamagePercentage($increases_melee_attack_damage_percentage)
+		{
+			$this->_increases_melee_attack_damage_percentage = $increases_melee_attack_damage_percentage;
+		}
+
+		public function getDecreasesMeleeAttackDamagePercentage()
+		{
+			return $this->_decreases_melee_attack_damage_percentage;
+		}
+
+		public function setDecreasesMeleeAttackDamagePercentage($decreases_melee_attack_damage_percentage)
+		{
+			$this->_decreases_melee_attack_damage_percentage = $decreases_melee_attack_damage_percentage;
+		}
+
+		public function getMeleeAttackDamagePercentageModifier()
+		{
+			return $this->getIncreasesMeleeAttackDamagePercentage() + $this->getDecreasesMeleeAttackDamagePercentage();
+		}
+
+		public function getIncreasesPoisonAttackDamagePercentage()
+		{
+			return $this->_increases_poison_attack_damage_percentage;
+		}
+
+		public function setIncreasesPoisonAttackDamagePercentage($increases_poison_attack_damage_percentage)
+		{
+			$this->_increases_poison_attack_damage_percentage = $increases_poison_attack_damage_percentage;
+		}
+
+		public function getDecreasesPoisonAttackDamagePercentage()
+		{
+			return $this->_decreases_poison_attack_damage_percentage;
+		}
+
+		public function setDecreasesPoisonAttackDamagePercentage($decreases_poison_attack_damage_percentage)
+		{
+			$this->_decreases_poison_attack_damage_percentage = $decreases_poison_attack_damage_percentage;
+		}
+
+		public function getPoisonAttackDamagePercentageModifier()
+		{
+			return $this->getIncreasesPoisonAttackDamagePercentage() + $this->getDecreasesPoisonAttackDamagePercentage();
+		}
+
+		public function getIncreasesRangedAttackDamagePercentage()
+		{
+			return $this->_increases_ranged_attack_damage_percentage;
+		}
+
+		public function setIncreasesRangedAttackDamagePercentage($increases_ranged_attack_damage_percentage)
+		{
+			$this->_increases_ranged_attack_damage_percentage = $increases_ranged_attack_damage_percentage;
+		}
+
+		public function getDecreasesRangedAttackDamagePercentage()
+		{
+			return $this->_decreases_ranged_attack_damage_percentage;
+		}
+
+		public function setDecreasesRangedAttackDamagePercentage($decreases_ranged_attack_damage_percentage)
+		{
+			$this->_decreases_ranged_attack_damage_percentage = $decreases_ranged_attack_damage_percentage;
+		}
+
+		public function getRangedAttackDamagePercentageModifier()
+		{
+			return $this->getIncreasesRangedAttackDamagePercentage() + $this->getDecreasesRangedAttackDamagePercentage();
 		}
 
 		public function getAffectsCivilianCards()

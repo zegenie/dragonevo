@@ -49,7 +49,7 @@
 			<div>
 				<label for="card_hp_damage_chance_percent">HP damage</label>
 				<input type="text" name="hp_damage_chance_percent" class="points" id="card_hp_damage_chance_percent" value="<?php echo $card->getHpDamageChancePercent(); ?>">% chance of causing
-				<input type="text" name="hp_damage_percent_min" class="points" id="card_hp_damage_percent_min" value="<?php echo $card->getHpDamagePercentMin(); ?>">% to
+				<input type="text" name="hp_damage_percent_min" class="points" id="card_hp_damage_percent_min" value="<?php echo $card->getHpDamagePercentMin(); ?>">&nbsp;&ndash;
 				<input type="text" name="hp_damage_percent_max" class="points" id="card_hp_damage_percent_max" value="<?php echo $card->getHpDamagePercentMax(); ?>">% damage per turn
 			</div>
 			<div>
@@ -62,15 +62,22 @@
 			<?php foreach (array(array('basic', 'air', 'fire', 'freeze'), array('melee', 'poison', 'ranged')) as $elements): ?>
 				<div style="width: 480px; float: left; clear: none;">
 					<?php foreach ($elements as $element): ?>
-						<?php $getDecreasesElement = 'getDecreases'.ucfirst($element).'AttackPercentage'; ?>
-						<?php $getElementModifier = 'get'.ucfirst($element).'AttackModifier'; ?>
-						<div>
-							<label for="modifies_<?php echo $element; ?>_attacks"><?php echo ucfirst($element); ?> attacks</label>
-							<select name="modifies_<?php echo $element; ?>_attacks">
-								<option value="increase"<?php if (!$card->$getDecreasesElement()) echo ' selected'; ?>>Increased by</option>
-								<option value="decrease"<?php if ($card->$getDecreasesElement()) echo ' selected'; ?>>Decreased by</option>
+						<?php $getDecreasesElementHitPercentage = 'getDecreases'.ucfirst($element).'AttackHitPercentage'; ?>
+						<?php $getDecreasesElementDamagePercentage = 'getDecreases'.ucfirst($element).'AttackDamagePercentage'; ?>
+						<?php $getElementHitPercentageModifier = 'get'.ucfirst($element).'AttackHitPercentageModifier'; ?>
+						<?php $getElementDamagePercentageModifier = 'get'.ucfirst($element).'AttackDamagePercentageModifier'; ?>
+						<div style="padding-bottom: 5px; border-bottom: 1px dotted #CCC; margin-bottom: 5px;">
+							<label for="modifies_<?php echo $element; ?>_attacks_hit_percentage" style="padding-top: 17px;"><?php echo ucfirst($element); ?> attacks</label>
+							<select name="modifies_<?php echo $element; ?>_attacks_hit_percentage" style="width: 220px;">
+								<option value="increase"<?php if (!$card->$getDecreasesElementHitPercentage()) echo ' selected'; ?>>Increases chance of hitting by</option>
+								<option value="decrease"<?php if ($card->$getDecreasesElementHitPercentage()) echo ' selected'; ?>>Decreases chance of hitting by</option>
 							</select>
-							<input type="text" name="<?php echo $element; ?>_modifier" value="<?php echo $card->$getElementModifier(); ?>" class="points"> pct.
+							<input type="text" name="hit_percentage_<?php echo $element; ?>_modifier" value="<?php echo $card->$getElementHitPercentageModifier(); ?>" class="points">%<br>
+							<select name="modifies_<?php echo $element; ?>_attacks_damage_percentage" style="width: 220px;">
+								<option value="increase"<?php if (!$card->$getDecreasesElementDamagePercentage()) echo ' selected'; ?>>Increases damage dealt by</option>
+								<option value="decrease"<?php if ($card->$getDecreasesElementDamagePercentage()) echo ' selected'; ?>>Decreases damage dealt by</option>
+							</select>
+							<input type="text" name="damage_percentage_<?php echo $element; ?>_modifier" value="<?php echo $card->$getElementDamagePercentageModifier(); ?>" class="points">%
 						</div>
 					<?php endforeach; ?>
 				</div>
