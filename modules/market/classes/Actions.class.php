@@ -19,6 +19,7 @@
 		{
 			\application\entities\tables\EventCards::getTable()->create();
 			\application\entities\tables\EquippableItemCards::getTable()->create();
+			\application\entities\tables\PotionItemCards::getTable()->create();
 		}
 
 	}

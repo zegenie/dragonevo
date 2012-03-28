@@ -15,12 +15,13 @@
 	class ItemCard extends ModifierCard
 	{
 
-		const CLASS_POTION = 1;
-		const CLASS_SWORD = 2;
-		const CLASS_BOW = 3;
-		const CLASS_SHIELD = 4;
-		const CLASS_SPEAR = 5;
-		const CLASS_ARMOR = 6;
+		const CLASS_SWORD = 1;
+		const CLASS_BOW = 2;
+		const CLASS_SHIELD = 3;
+		const CLASS_SPEAR = 4;
+		const CLASS_ARMOR = 5;
+		const CLASS_POTION_HEALTH = 10;
+		const CLASS_POTION_ALTERATION = 11;
 
 		/**
 		 * Card type
@@ -32,10 +33,10 @@
 		/**
 		 * Item class
 		 *
-		 * @Column(type="integer", length=10, default=1)
+		 * @Column(type="integer", length=10, not_null=true)
 		 * @var integer
 		 */
-		protected $_item_class = 1;
+		protected $_item_class;
 
 		public function getItemClass()
 		{

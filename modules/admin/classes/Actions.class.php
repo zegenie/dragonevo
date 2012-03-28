@@ -38,6 +38,10 @@
 					$this->getResponse()->setTemplate('admin/itemcards');
 					$this->redirect('editItemCards');
 					break;
+				case 'potion':
+					$this->getResponse()->setTemplate('admin/potioncards');
+					$this->redirect('editPotionCards');
+					break;
 			}
 		}
 
@@ -57,6 +61,10 @@
 					$this->getResponse()->setTemplate('admin/itemcard');
 					$this->redirect('editItemCard');
 					break;
+				case 'potion':
+					$this->getResponse()->setTemplate('admin/potioncard');
+					$this->redirect('editPotionCard');
+					break;
 			}
 		}
 
@@ -68,6 +76,11 @@
 		public function runEditItemCards(Request $request)
 		{
 			$this->cards = \application\entities\tables\EquippableItemCards::getTable()->getAll();
+		}
+
+		public function runEditPotionCards(Request $request)
+		{
+			$this->cards = \application\entities\tables\PotionItemCards::getTable()->getAll();
 		}
 
 		public function runEditEventCard(Request $request)
@@ -121,6 +134,35 @@
 						$this->card->mergeFormData($request);
 						$this->card->save();
 						$this->forward($this->getRouting()->generate('edit_card', array('card_id' => $this->card->getB2DBID(), 'card_type' => 'item')));
+					}
+				}
+			} catch (\Exception $e) {
+				$this->error = $e->getMessage();
+			}
+		}
+
+		public function runEditPotionCard(Request $request)
+		{
+			$card_id = $request['card_id'];
+
+			try {
+				if ($card_id) {
+					$this->card = new \application\entities\PotionItemCard($card_id);
+				} else {
+					$this->card = new \application\entities\PotionItemCard();
+				}
+			} catch (\Exception $e) {
+				return $this->return404('This is not a valid potion card');
+			}
+
+			try {
+				if (!$this->card instanceof \application\entities\PotionItemCard) {
+					return $this->return404('This is not a valid potion card');
+				} else {
+					if ($request->isPost()) {
+						$this->card->mergeFormData($request);
+						$this->card->save();
+						$this->forward($this->getRouting()->generate('edit_card', array('card_id' => $this->card->getB2DBID(), 'card_type' => 'potion')));
 					}
 				}
 			} catch (\Exception $e) {

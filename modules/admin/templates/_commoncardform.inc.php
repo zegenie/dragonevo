@@ -46,7 +46,7 @@
 		</div>
 	</div>
 </fieldset>
-<fieldset>
+<fieldset id="resource_fieldset">
 	<legend>Impact on resources</legend>
 	<div style="width: 480px; float: left; clear: none;">
 		<div>
