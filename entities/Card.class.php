@@ -19,6 +19,13 @@
 		const TYPE_CREATURE = 'creature';
 		const TYPE_ITEM = 'item';
 
+		const FACTION_NEUTRALS = 'neutrals';
+		const FACTION_RUTAI = 'rutai';
+		const FACTION_EMPIRE = 'empire';
+
+		const STATE_TEMPLATE = 'template';
+		const STATE_OWNED = 'owned';
+
 		/**
 		 * Unique identifier
 		 *
@@ -27,6 +34,14 @@
 		 * @var integer
 		 */
 		protected $_id;
+
+		/**
+		 * Card state
+		 *
+		 * @Column(type="string", length=300)
+		 * @var string
+		 */
+		protected $_card_state = Card::STATE_TEMPLATE;
 
 		/**
 		 * Card name

@@ -52,6 +52,8 @@
 		 */
 		protected $_creature_class = 1;
 
+		protected $_faction = Card::FACTION_NEUTRALS;
+
 		public function getBaseHealth()
 		{
 			return (int) $this->_base_health;
@@ -85,6 +87,16 @@
 		public function setCreatureClass($creature_class)
 		{
 			$this->_creature_class = $creature_class;
+		}
+
+		public function getFaction()
+		{
+			return $this->_faction;
+		}
+
+		public function setFaction($faction)
+		{
+			$this->_faction = $faction;
 		}
 
 	}
