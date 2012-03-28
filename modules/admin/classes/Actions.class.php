@@ -34,6 +34,10 @@
 					$this->getResponse()->setTemplate('admin/eventcards');
 					$this->redirect('editEventCards');
 					break;
+				case 'item':
+					$this->getResponse()->setTemplate('admin/itemcards');
+					$this->redirect('editItemCards');
+					break;
 			}
 		}
 
@@ -49,12 +53,21 @@
 					$this->getResponse()->setTemplate('admin/eventcard');
 					$this->redirect('editEventCard');
 					break;
+				case 'item':
+					$this->getResponse()->setTemplate('admin/itemcard');
+					$this->redirect('editItemCard');
+					break;
 			}
 		}
 
 		public function runEditEventCards(Request $request)
 		{
 			$this->cards = \application\entities\tables\EventCards::getTable()->getAll();
+		}
+
+		public function runEditItemCards(Request $request)
+		{
+			$this->cards = \application\entities\tables\EquippableItemCards::getTable()->getAll();
 		}
 
 		public function runEditEventCard(Request $request)
@@ -79,6 +92,35 @@
 						$this->card->mergeFormData($request);
 						$this->card->save();
 						$this->forward($this->getRouting()->generate('edit_card', array('card_id' => $this->card->getB2DBID(), 'card_type' => 'event')));
+					}
+				}
+			} catch (\Exception $e) {
+				$this->error = $e->getMessage();
+			}
+		}
+
+		public function runEditItemCard(Request $request)
+		{
+			$card_id = $request['card_id'];
+
+			try {
+				if ($card_id) {
+					$this->card = new \application\entities\EquippableItemCard($card_id);
+				} else {
+					$this->card = new \application\entities\EquippableItemCard();
+				}
+			} catch (\Exception $e) {
+				return $this->return404('This is not a valid item card');
+			}
+
+			try {
+				if (!$this->card instanceof \application\entities\EquippableItemCard) {
+					return $this->return404('This is not a valid item card');
+				} else {
+					if ($request->isPost()) {
+						$this->card->mergeFormData($request);
+						$this->card->save();
+						$this->forward($this->getRouting()->generate('edit_card', array('card_id' => $this->card->getB2DBID(), 'card_type' => 'item')));
 					}
 				}
 			} catch (\Exception $e) {

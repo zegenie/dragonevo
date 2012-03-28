@@ -12,7 +12,7 @@
 	 *
 	 * @Table(name="\application\entities\tables\ItemCards")
 	 */
-	class ItemCard extends Card
+	class ItemCard extends ModifierCard
 	{
 
 		const CLASS_POTION = 1;

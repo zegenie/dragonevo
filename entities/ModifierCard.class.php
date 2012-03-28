@@ -16,710 +16,1016 @@
 	{
 
 		/**
-		 * DMP (defence multiplier) increase (player)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_increase_basic_player = 0;
+		protected $_increases_basic_attack_damage_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) decrease (player)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_decrease_basic_player = 0;
+		protected $_decreases_basic_attack_damage_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) increase (opponent)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_increase_basic_opponent = 0;
+		protected $_increases_basic_attack_hit_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) decrease (opponent)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_decrease_basic_opponent = 0;
+		protected $_decreases_basic_attack_hit_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) increase (player)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_increase_air_player = 0;
+		protected $_increases_basic_attack_dmp_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) decrease (player)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_decrease_air_player = 0;
+		protected $_decreases_basic_attack_dmp_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) increase (opponent)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_increase_air_opponent = 0;
+		protected $_increases_air_attack_damage_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) decrease (opponent)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_decrease_air_opponent = 0;
+		protected $_decreases_air_attack_damage_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) increase (player)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_increase_dark_player = 0;
+		protected $_increases_air_attack_hit_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) decrease (player)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_decrease_dark_player = 0;
+		protected $_decreases_air_attack_hit_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) increase (opponent)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_increase_dark_opponent = 0;
+		protected $_increases_air_attack_dmp_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) decrease (opponent)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_decrease_dark_opponent = 0;
+		protected $_decreases_air_attack_dmp_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) increase (player)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_increase_earth_player = 0;
+		protected $_increases_dark_attack_damage_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) decrease (player)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_decrease_earth_player = 0;
+		protected $_decreases_dark_attack_damage_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) increase (opponent)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_increase_earth_opponent = 0;
+		protected $_increases_dark_attack_hit_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) decrease (opponent)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_decrease_earth_opponent = 0;
+		protected $_decreases_dark_attack_hit_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) increase (player)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_increase_fire_player = 0;
+		protected $_increases_dark_attack_dmp_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) decrease (player)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_decrease_fire_player = 0;
+		protected $_decreases_dark_attack_dmp_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) increase (opponent)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_increase_fire_opponent = 0;
+		protected $_increases_earth_attack_damage_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) decrease (opponent)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_decrease_fire_opponent = 0;
+		protected $_decreases_earth_attack_damage_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) increase (player)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_increase_freeze_player = 0;
+		protected $_increases_earth_attack_hit_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) decrease (player)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_decrease_freeze_player = 0;
+		protected $_decreases_earth_attack_hit_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) increase (opponent)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_increase_freeze_opponent = 0;
+		protected $_increases_earth_attack_dmp_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) decrease (opponent)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_decrease_freeze_opponent = 0;
+		protected $_decreases_earth_attack_dmp_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) increase (player)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_increase_melee_player = 0;
+		protected $_increases_fire_attack_damage_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) decrease (player)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_decrease_melee_player = 0;
+		protected $_decreases_fire_attack_damage_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) increase (opponent)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_increase_melee_opponent = 0;
+		protected $_increases_fire_attack_hit_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) decrease (opponent)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_decrease_melee_opponent = 0;
+		protected $_decreases_fire_attack_hit_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) increase (player)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_increase_poison_player = 0;
+		protected $_increases_fire_attack_dmp_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) decrease (player)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_decrease_poison_player = 0;
+		protected $_decreases_fire_attack_dmp_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) increase (opponent)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_increase_poison_opponent = 0;
+		protected $_increases_freeze_attack_damage_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) decrease (opponent)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_decrease_poison_opponent = 0;
+		protected $_decreases_freeze_attack_damage_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) increase (player)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_increase_ranged_player = 0;
+		protected $_increases_freeze_attack_hit_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) decrease (player)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_decrease_ranged_player = 0;
+		protected $_decreases_freeze_attack_hit_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) increase (opponent)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_increase_ranged_opponent = 0;
+		protected $_increases_freeze_attack_dmp_percentage = 0;
 
 		/**
-		 * DMP (defence multiplier) decrease (opponent)
-		 *
 		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
 		 */
-		protected $_dmp_decrease_ranged_opponent = 0;
+		protected $_decreases_freeze_attack_dmp_percentage = 0;
+
+		/**
+		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
+		 */
+		protected $_increases_melee_attack_damage_percentage = 0;
+
+		/**
+		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
+		 */
+		protected $_decreases_melee_attack_damage_percentage = 0;
+
+		/**
+		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
+		 */
+		protected $_increases_melee_attack_hit_percentage = 0;
+
+		/**
+		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
+		 */
+		protected $_decreases_melee_attack_hit_percentage = 0;
+
+		/**
+		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
+		 */
+		protected $_increases_melee_attack_dmp_percentage = 0;
+
+		/**
+		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
+		 */
+		protected $_decreases_melee_attack_dmp_percentage = 0;
 
-		public function getDMPIncreaseBasicPlayer()
+		/**
+		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
+		 */
+		protected $_increases_poison_attack_damage_percentage = 0;
+
+		/**
+		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
+		 */
+		protected $_decreases_poison_attack_damage_percentage = 0;
+
+		/**
+		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
+		 */
+		protected $_increases_poison_attack_hit_percentage = 0;
+
+		/**
+		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
+		 */
+		protected $_decreases_poison_attack_hit_percentage = 0;
+
+		/**
+		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
+		 */
+		protected $_increases_poison_attack_dmp_percentage = 0;
+
+		/**
+		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
+		 */
+		protected $_decreases_poison_attack_dmp_percentage = 0;
+
+		/**
+		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
+		 */
+		protected $_increases_ranged_attack_damage_percentage = 0;
+
+		/**
+		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
+		 */
+		protected $_decreases_ranged_attack_damage_percentage = 0;
+
+		/**
+		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
+		 */
+		protected $_increases_ranged_attack_hit_percentage = 0;
+
+		/**
+		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
+		 */
+		protected $_decreases_ranged_attack_hit_percentage = 0;
+
+		/**
+		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
+		 */
+		protected $_increases_ranged_attack_dmp_percentage = 0;
+
+		/**
+		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
+		 */
+		protected $_decreases_ranged_attack_dmp_percentage = 0;
+
+		public function getIncreasesBasicAttackHitPercentage()
+		{
+			return $this->_increases_basic_attack_hit_percentage;
+		}
+
+		public function setIncreasesBasicAttackHitPercentage($increases_basic_attack_hit_percentage)
+		{
+			$this->_increases_basic_attack_hit_percentage = $increases_basic_attack_hit_percentage;
+		}
+
+		public function getDecreasesBasicAttackHitPercentage()
+		{
+			return $this->_decreases_basic_attack_hit_percentage;
+		}
+
+		public function setDecreasesBasicAttackHitPercentage($decreases_basic_attack_hit_percentage)
+		{
+			$this->_decreases_basic_attack_hit_percentage = $decreases_basic_attack_hit_percentage;
+		}
+
+		public function getBasicAttackHitPercentageModifier()
+		{
+			return $this->getIncreasesBasicAttackHitPercentage() + $this->getDecreasesBasicAttackHitPercentage();
+		}
+
+		public function getIncreasesAirAttackHitPercentage()
+		{
+			return $this->_increases_air_attack_hit_percentage;
+		}
+
+		public function setIncreasesAirAttackHitPercentage($increases_air_attack_hit_percentage)
+		{
+			$this->_increases_air_attack_hit_percentage = $increases_air_attack_hit_percentage;
+		}
+
+		public function getDecreasesAirAttackHitPercentage()
+		{
+			return $this->_decreases_air_attack_hit_percentage;
+		}
+
+		public function setDecreasesAirAttackHitPercentage($decreases_air_attack_hit_percentage)
+		{
+			$this->_decreases_air_attack_hit_percentage = $decreases_air_attack_hit_percentage;
+		}
+
+		public function getAirAttackHitPercentageModifier()
+		{
+			return $this->getIncreasesAirAttackHitPercentage() + $this->getDecreasesAirAttackHitPercentage();
+		}
+
+		public function getIncreasesDarkAttackHitPercentage()
+		{
+			return $this->_increases_dark_attack_hit_percentage;
+		}
+
+		public function setIncreasesDarkAttackHitPercentage($increases_dark_attack_hit_percentage)
+		{
+			$this->_increases_dark_attack_hit_percentage = $increases_dark_attack_hit_percentage;
+		}
+
+		public function getDecreasesDarkAttackHitPercentage()
+		{
+			return $this->_decreases_dark_attack_hit_percentage;
+		}
+
+		public function setDecreasesDarkAttackHitPercentage($decreases_dark_attack_hit_percentage)
+		{
+			$this->_decreases_dark_attack_hit_percentage = $decreases_dark_attack_hit_percentage;
+		}
+
+		public function getDarkAttackHitPercentageModifier()
+		{
+			return $this->getIncreasesDarkAttackHitPercentage() + $this->getDecreasesDarkAttackHitPercentage();
+		}
+
+		public function getIncreasesEarthAttackHitPercentage()
+		{
+			return $this->_increases_earth_attack_hit_percentage;
+		}
+
+		public function setIncreasesEarthAttackHitPercentage($increases_earth_attack_hit_percentage)
+		{
+			$this->_increases_earth_attack_hit_percentage = $increases_earth_attack_hit_percentage;
+		}
+
+		public function getDecreasesEarthAttackHitPercentage()
+		{
+			return $this->_decreases_earth_attack_hit_percentage;
+		}
+
+		public function setDecreasesEarthAttackHitPercentage($decreases_earth_attack_hit_percentage)
+		{
+			$this->_decreases_earth_attack_hit_percentage = $decreases_earth_attack_hit_percentage;
+		}
+
+		public function getEarthAttackHitPercentageModifier()
+		{
+			return $this->getIncreasesEarthAttackHitPercentage() + $this->getDecreasesEarthAttackHitPercentage();
+		}
+
+		public function getIncreasesFireAttackHitPercentage()
+		{
+			return $this->_increases_fire_attack_hit_percentage;
+		}
+
+		public function setIncreasesFireAttackHitPercentage($increases_fire_attack_hit_percentage)
+		{
+			$this->_increases_fire_attack_hit_percentage = $increases_fire_attack_hit_percentage;
+		}
+
+		public function getDecreasesFireAttackHitPercentage()
+		{
+			return $this->_decreases_fire_attack_hit_percentage;
+		}
+
+		public function setDecreasesFireAttackHitPercentage($decreases_fire_attack_hit_percentage)
+		{
+			$this->_decreases_fire_attack_hit_percentage = $decreases_fire_attack_hit_percentage;
+		}
+
+		public function getFireAttackHitPercentageModifier()
+		{
+			return $this->getIncreasesFireAttackHitPercentage() + $this->getDecreasesFireAttackHitPercentage();
+		}
+
+		public function getIncreasesFreezeAttackHitPercentage()
+		{
+			return $this->_increases_freeze_attack_hit_percentage;
+		}
+
+		public function setIncreasesFreezeAttackHitPercentage($increases_freeze_attack_hit_percentage)
+		{
+			$this->_increases_freeze_attack_hit_percentage = $increases_freeze_attack_hit_percentage;
+		}
+
+		public function getDecreasesFreezeAttackHitPercentage()
+		{
+			return $this->_decreases_freeze_attack_hit_percentage;
+		}
+
+		public function setDecreasesFreezeAttackHitPercentage($decreases_freeze_attack_hit_percentage)
+		{
+			$this->_decreases_freeze_attack_hit_percentage = $decreases_freeze_attack_hit_percentage;
+		}
+
+		public function getFreezeAttackHitPercentageModifier()
+		{
+			return $this->getIncreasesFreezeAttackHitPercentage() + $this->getDecreasesFreezeAttackHitPercentage();
+		}
+
+		public function getIncreasesMeleeAttackHitPercentage()
+		{
+			return $this->_increases_melee_attack_hit_percentage;
+		}
+
+		public function setIncreasesMeleeAttackHitPercentage($increases_melee_attack_hit_percentage)
+		{
+			$this->_increases_melee_attack_hit_percentage = $increases_melee_attack_hit_percentage;
+		}
+
+		public function getDecreasesMeleeAttackHitPercentage()
+		{
+			return $this->_decreases_melee_attack_hit_percentage;
+		}
+
+		public function setDecreasesMeleeAttackHitPercentage($decreases_melee_attack_hit_percentage)
+		{
+			$this->_decreases_melee_attack_hit_percentage = $decreases_melee_attack_hit_percentage;
+		}
+
+		public function getMeleeAttackHitPercentageModifier()
+		{
+			return $this->getIncreasesMeleeAttackHitPercentage() + $this->getDecreasesMeleeAttackHitPercentage();
+		}
+
+		public function getIncreasesPoisonAttackHitPercentage()
+		{
+			return $this->_increases_poison_attack_hit_percentage;
+		}
+
+		public function setIncreasesPoisonAttackHitPercentage($increases_poison_attack_hit_percentage)
+		{
+			$this->_increases_poison_attack_hit_percentage = $increases_poison_attack_hit_percentage;
+		}
+
+		public function getDecreasesPoisonAttackHitPercentage()
+		{
+			return $this->_decreases_poison_attack_hit_percentage;
+		}
+
+		public function setDecreasesPoisonAttackHitPercentage($decreases_poison_attack_hit_percentage)
+		{
+			$this->_decreases_poison_attack_hit_percentage = $decreases_poison_attack_hit_percentage;
+		}
+
+		public function getPoisonAttackHitPercentageModifier()
+		{
+			return $this->getIncreasesPoisonAttackHitPercentage() + $this->getDecreasesPoisonAttackHitPercentage();
+		}
+
+		public function getIncreasesRangedAttackHitPercentage()
+		{
+			return $this->_increases_ranged_attack_hit_percentage;
+		}
+
+		public function setIncreasesRangedAttackHitPercentage($increases_ranged_attack_hit_percentage)
+		{
+			$this->_increases_ranged_attack_hit_percentage = $increases_ranged_attack_hit_percentage;
+		}
+
+		public function getDecreasesRangedAttackHitPercentage()
+		{
+			return $this->_decreases_ranged_attack_hit_percentage;
+		}
+
+		public function setDecreasesRangedAttackHitPercentage($decreases_ranged_attack_hit_percentage)
+		{
+			$this->_decreases_ranged_attack_hit_percentage = $decreases_ranged_attack_hit_percentage;
+		}
+
+		public function getRangedAttackHitPercentageModifier()
+		{
+			return $this->getIncreasesRangedAttackHitPercentage() + $this->getDecreasesRangedAttackHitPercentage();
+		}
+
+		public function getIncreasesBasicAttackDamagePercentage()
 		{
-			return $this->_dmp_increase_basic_player;
+			return $this->_increases_basic_attack_damage_percentage;
 		}
 
-		public function setDMPIncreaseBasicPlayer($dmp_increase_basic_player)
+		public function setIncreasesBasicAttackDamagePercentage($increases_basic_attack_damage_percentage)
 		{
-			$this->_dmp_increase_basic_player = $dmp_increase_basic_player;
+			$this->_increases_basic_attack_damage_percentage = $increases_basic_attack_damage_percentage;
 		}
 
-		public function getDMPDecreaseBasicPlayer()
+		public function getDecreasesBasicAttackDamagePercentage()
 		{
-			return $this->_dmp_decrease_basic_player;
+			return $this->_decreases_basic_attack_damage_percentage;
 		}
 
-		public function setDMPDecreaseBasicPlayer($dmp_decrease_basic_player)
+		public function setDecreasesBasicAttackDamagePercentage($decreases_basic_attack_damage_percentage)
 		{
-			$this->_dmp_decrease_basic_player = $dmp_decrease_basic_player;
+			$this->_decreases_basic_attack_damage_percentage = $decreases_basic_attack_damage_percentage;
 		}
 
-		public function getDMPIncreaseBasicOpponent()
+		public function getBasicAttackDamagePercentageModifier()
 		{
-			return $this->_dmp_increase_basic_opponent;
+			return $this->getIncreasesBasicAttackDamagePercentage() + $this->getDecreasesBasicAttackDamagePercentage();
 		}
 
-		public function setDMPIncreaseBasicOpponent($dmp_increase_basic_opponent)
+		public function getIncreasesAirAttackDamagePercentage()
 		{
-			$this->_dmp_increase_basic_opponent = $dmp_increase_basic_opponent;
+			return $this->_increases_air_attack_damage_percentage;
 		}
 
-		public function getDMPDecreaseBasicOpponent()
+		public function setIncreasesAirAttackDamagePercentage($increases_air_attack_damage_percentage)
 		{
-			return $this->_dmp_decrease_basic_opponent;
+			$this->_increases_air_attack_damage_percentage = $increases_air_attack_damage_percentage;
 		}
 
-		public function setDMPDecreaseBasicOpponent($dmp_decrease_basic_opponent)
+		public function getDecreasesAirAttackDamagePercentage()
 		{
-			$this->_dmp_decrease_basic_opponent = $dmp_decrease_basic_opponent;
+			return $this->_decreases_air_attack_damage_percentage;
 		}
 
-		public function getDMPPlayerBasicModifier()
+		public function setDecreasesAirAttackDamagePercentage($decreases_air_attack_damage_percentage)
 		{
-			return $this->getDMPDecreaseBasicPlayer() + $this->getDMPIncreaseBasicPlayer();
+			$this->_decreases_air_attack_damage_percentage = $decreases_air_attack_damage_percentage;
 		}
 
-		public function getDMPOpponentBasicModifier()
+		public function getAirAttackDamagePercentageModifier()
 		{
-			return $this->getDMPDecreaseBasicOpponent() + $this->getDMPIncreaseBasicOpponent();
+			return $this->getIncreasesAirAttackDamagePercentage() + $this->getDecreasesAirAttackDamagePercentage();
 		}
 
-		public function getDMPIncreaseAirPlayer()
+		public function getIncreasesDarkAttackDamagePercentage()
 		{
-			return $this->_dmp_increase_air_player;
+			return $this->_increases_dark_attack_damage_percentage;
 		}
 
-		public function setDMPIncreaseAirPlayer($dmp_increase_air_player)
+		public function setIncreasesDarkAttackDamagePercentage($increases_dark_attack_damage_percentage)
 		{
-			$this->_dmp_increase_air_player = $dmp_increase_air_player;
+			$this->_increases_dark_attack_damage_percentage = $increases_dark_attack_damage_percentage;
 		}
 
-		public function getDMPDecreaseAirPlayer()
+		public function getDecreasesDarkAttackDamagePercentage()
 		{
-			return $this->_dmp_decrease_air_player;
+			return $this->_decreases_dark_attack_damage_percentage;
 		}
 
-		public function setDMPDecreaseAirPlayer($dmp_decrease_air_player)
+		public function setDecreasesDarkAttackDamagePercentage($decreases_dark_attack_damage_percentage)
 		{
-			$this->_dmp_decrease_air_player = $dmp_decrease_air_player;
+			$this->_decreases_dark_attack_damage_percentage = $decreases_dark_attack_damage_percentage;
 		}
 
-		public function getDMPIncreaseAirOpponent()
+		public function getDarkAttackDamagePercentageModifier()
 		{
-			return $this->_dmp_increase_air_opponent;
+			return $this->getIncreasesDarkAttackDamagePercentage() + $this->getDecreasesDarkAttackDamagePercentage();
 		}
 
-		public function setDMPIncreaseAirOpponent($dmp_increase_air_opponent)
+		public function getIncreasesEarthAttackDamagePercentage()
 		{
-			$this->_dmp_increase_air_opponent = $dmp_increase_air_opponent;
+			return $this->_increases_earth_attack_damage_percentage;
 		}
 
-		public function getDMPDecreaseAirOpponent()
+		public function setIncreasesEarthAttackDamagePercentage($increases_earth_attack_damage_percentage)
 		{
-			return $this->_dmp_decrease_air_opponent;
+			$this->_increases_earth_attack_damage_percentage = $increases_earth_attack_damage_percentage;
 		}
 
-		public function setDMPDecreaseAirOpponent($dmp_decrease_air_opponent)
+		public function getDecreasesEarthAttackDamagePercentage()
 		{
-			$this->_dmp_decrease_air_opponent = $dmp_decrease_air_opponent;
+			return $this->_decreases_earth_attack_damage_percentage;
 		}
 
-		public function getDMPPlayerAirModifier()
+		public function setDecreasesEarthAttackDamagePercentage($decreases_earth_attack_damage_percentage)
 		{
-			return $this->getDMPDecreaseAirPlayer() + $this->getDMPIncreaseAirPlayer();
+			$this->_decreases_earth_attack_damage_percentage = $decreases_earth_attack_damage_percentage;
 		}
 
-		public function getDMPOpponentAirModifier()
+		public function getEarthAttackDamagePercentageModifier()
 		{
-			return $this->getDMPDecreaseAirOpponent() + $this->getDMPIncreaseAirOpponent();
+			return $this->getIncreasesEarthAttackDamagePercentage() + $this->getDecreasesEarthAttackDamagePercentage();
 		}
 
-		public function getDMPIncreaseDarkPlayer()
+		public function getIncreasesFireAttackDamagePercentage()
 		{
-			return $this->_dmp_increase_dark_player;
+			return $this->_increases_fire_attack_damage_percentage;
 		}
 
-		public function setDMPIncreaseDarkPlayer($dmp_increase_dark_player)
+		public function setIncreasesFireAttackDamagePercentage($increases_fire_attack_damage_percentage)
 		{
-			$this->_dmp_increase_dark_player = $dmp_increase_dark_player;
+			$this->_increases_fire_attack_damage_percentage = $increases_fire_attack_damage_percentage;
 		}
 
-		public function getDMPDecreaseDarkPlayer()
+		public function getDecreasesFireAttackDamagePercentage()
 		{
-			return $this->_dmp_decrease_dark_player;
+			return $this->_decreases_fire_attack_damage_percentage;
 		}
 
-		public function setDMPDecreaseDarkPlayer($dmp_decrease_dark_player)
+		public function setDecreasesFireAttackDamagePercentage($decreases_fire_attack_damage_percentage)
 		{
-			$this->_dmp_decrease_dark_player = $dmp_decrease_dark_player;
+			$this->_decreases_fire_attack_damage_percentage = $decreases_fire_attack_damage_percentage;
 		}
 
-		public function getDMPIncreaseDarkOpponent()
+		public function getFireAttackDamagePercentageModifier()
 		{
-			return $this->_dmp_increase_dark_opponent;
+			return $this->getIncreasesFireAttackDamagePercentage() + $this->getDecreasesFireAttackDamagePercentage();
 		}
 
-		public function setDMPIncreaseDarkOpponent($dmp_increase_dark_opponent)
+		public function getIncreasesFreezeAttackDamagePercentage()
 		{
-			$this->_dmp_increase_dark_opponent = $dmp_increase_dark_opponent;
+			return $this->_increases_freeze_attack_damage_percentage;
 		}
 
-		public function getDMPDecreaseDarkOpponent()
+		public function setIncreasesFreezeAttackDamagePercentage($increases_freeze_attack_damage_percentage)
 		{
-			return $this->_dmp_decrease_dark_opponent;
+			$this->_increases_freeze_attack_damage_percentage = $increases_freeze_attack_damage_percentage;
 		}
 
-		public function setDMPDecreaseDarkOpponent($dmp_decrease_dark_opponent)
+		public function getDecreasesFreezeAttackDamagePercentage()
 		{
-			$this->_dmp_decrease_dark_opponent = $dmp_decrease_dark_opponent;
+			return $this->_decreases_freeze_attack_damage_percentage;
 		}
 
-		public function getDMPPlayerDarkModifier()
+		public function setDecreasesFreezeAttackDamagePercentage($decreases_freeze_attack_damage_percentage)
 		{
-			return $this->getDMPDecreaseDarkPlayer() + $this->getDMPIncreaseDarkPlayer();
+			$this->_decreases_freeze_attack_damage_percentage = $decreases_freeze_attack_damage_percentage;
 		}
 
-		public function getDMPOpponentDarkModifier()
+		public function getFreezeAttackDamagePercentageModifier()
 		{
-			return $this->getDMPDecreaseDarkOpponent() + $this->getDMPIncreaseDarkOpponent();
+			return $this->getIncreasesFreezeAttackDamagePercentage() + $this->getDecreasesFreezeAttackDamagePercentage();
 		}
 
-		public function getDMPIncreaseEarthPlayer()
+		public function getIncreasesMeleeAttackDamagePercentage()
 		{
-			return $this->_dmp_increase_earth_player;
+			return $this->_increases_melee_attack_damage_percentage;
 		}
 
-		public function setDMPIncreaseEarthPlayer($dmp_increase_earth_player)
+		public function setIncreasesMeleeAttackDamagePercentage($increases_melee_attack_damage_percentage)
 		{
-			$this->_dmp_increase_earth_player = $dmp_increase_earth_player;
+			$this->_increases_melee_attack_damage_percentage = $increases_melee_attack_damage_percentage;
 		}
 
-		public function getDMPDecreaseEarthPlayer()
+		public function getDecreasesMeleeAttackDamagePercentage()
 		{
-			return $this->_dmp_decrease_earth_player;
+			return $this->_decreases_melee_attack_damage_percentage;
 		}
 
-		public function setDMPDecreaseEarthPlayer($dmp_decrease_earth_player)
+		public function setDecreasesMeleeAttackDamagePercentage($decreases_melee_attack_damage_percentage)
 		{
-			$this->_dmp_decrease_earth_player = $dmp_decrease_earth_player;
+			$this->_decreases_melee_attack_damage_percentage = $decreases_melee_attack_damage_percentage;
 		}
 
-		public function getDMPIncreaseEarthOpponent()
+		public function getMeleeAttackDamagePercentageModifier()
 		{
-			return $this->_dmp_increase_earth_opponent;
+			return $this->getIncreasesMeleeAttackDamagePercentage() + $this->getDecreasesMeleeAttackDamagePercentage();
 		}
 
-		public function setDMPIncreaseEarthOpponent($dmp_increase_earth_opponent)
+		public function getIncreasesPoisonAttackDamagePercentage()
 		{
-			$this->_dmp_increase_earth_opponent = $dmp_increase_earth_opponent;
+			return $this->_increases_poison_attack_damage_percentage;
 		}
 
-		public function getDMPDecreaseEarthOpponent()
+		public function setIncreasesPoisonAttackDamagePercentage($increases_poison_attack_damage_percentage)
 		{
-			return $this->_dmp_decrease_earth_opponent;
+			$this->_increases_poison_attack_damage_percentage = $increases_poison_attack_damage_percentage;
 		}
 
-		public function setDMPDecreaseEarthOpponent($dmp_decrease_earth_opponent)
+		public function getDecreasesPoisonAttackDamagePercentage()
 		{
-			$this->_dmp_decrease_earth_opponent = $dmp_decrease_earth_opponent;
+			return $this->_decreases_poison_attack_damage_percentage;
 		}
 
-		public function getDMPPlayerEarthModifier()
+		public function setDecreasesPoisonAttackDamagePercentage($decreases_poison_attack_damage_percentage)
 		{
-			return $this->getDMPDecreaseEarthPlayer() + $this->getDMPIncreaseEarthPlayer();
+			$this->_decreases_poison_attack_damage_percentage = $decreases_poison_attack_damage_percentage;
 		}
 
-		public function getDMPOpponentEarthModifier()
+		public function getPoisonAttackDamagePercentageModifier()
 		{
-			return $this->getDMPDecreaseEarthOpponent() + $this->getDMPIncreaseEarthOpponent();
+			return $this->getIncreasesPoisonAttackDamagePercentage() + $this->getDecreasesPoisonAttackDamagePercentage();
 		}
 
-		public function getDMPIncreaseFirePlayer()
+		public function getIncreasesRangedAttackDamagePercentage()
 		{
-			return $this->_dmp_increase_fire_player;
+			return $this->_increases_ranged_attack_damage_percentage;
 		}
 
-		public function setDMPIncreaseFirePlayer($dmp_increase_fire_player)
+		public function setIncreasesRangedAttackDamagePercentage($increases_ranged_attack_damage_percentage)
 		{
-			$this->_dmp_increase_fire_player = $dmp_increase_fire_player;
+			$this->_increases_ranged_attack_damage_percentage = $increases_ranged_attack_damage_percentage;
 		}
 
-		public function getDMPDecreaseFirePlayer()
+		public function getDecreasesRangedAttackDamagePercentage()
 		{
-			return $this->_dmp_decrease_fire_player;
+			return $this->_decreases_ranged_attack_damage_percentage;
 		}
 
-		public function setDMPDecreaseFirePlayer($dmp_decrease_fire_player)
+		public function setDecreasesRangedAttackDamagePercentage($decreases_ranged_attack_damage_percentage)
 		{
-			$this->_dmp_decrease_fire_player = $dmp_decrease_fire_player;
+			$this->_decreases_ranged_attack_damage_percentage = $decreases_ranged_attack_damage_percentage;
 		}
 
-		public function getDMPIncreaseFireOpponent()
+		public function getRangedAttackDamagePercentageModifier()
 		{
-			return $this->_dmp_increase_fire_opponent;
+			return $this->getIncreasesRangedAttackDamagePercentage() + $this->getDecreasesRangedAttackDamagePercentage();
 		}
 
-		public function setDMPIncreaseFireOpponent($dmp_increase_fire_opponent)
+		public function getIncreasesBasicAttackDmpPercentage()
 		{
-			$this->_dmp_increase_fire_opponent = $dmp_increase_fire_opponent;
+			return $this->_increases_basic_attack_dmp_percentage;
 		}
 
-		public function getDMPDecreaseFireOpponent()
+		public function setIncreasesBasicAttackDmpPercentage($increases_basic_attack_dmp_percentage)
 		{
-			return $this->_dmp_decrease_fire_opponent;
+			$this->_increases_basic_attack_dmp_percentage = $increases_basic_attack_dmp_percentage;
 		}
 
-		public function setDMPDecreaseFireOpponent($dmp_decrease_fire_opponent)
+		public function getDecreasesBasicAttackDmpPercentage()
 		{
-			$this->_dmp_decrease_fire_opponent = $dmp_decrease_fire_opponent;
+			return $this->_decreases_basic_attack_dmp_percentage;
 		}
 
-		public function getDMPPlayerFireModifier()
+		public function setDecreasesBasicAttackDmpPercentage($decreases_basic_attack_dmp_percentage)
 		{
-			return $this->getDMPDecreaseFirePlayer() + $this->getDMPIncreaseFirePlayer();
+			$this->_decreases_basic_attack_dmp_percentage = $decreases_basic_attack_dmp_percentage;
 		}
 
-		public function getDMPOpponentFireModifier()
+		public function getBasicAttackDmpPercentageModifier()
 		{
-			return $this->getDMPDecreaseFireOpponent() + $this->getDMPIncreaseFireOpponent();
+			return $this->getIncreasesBasicAttackDmpPercentage() + $this->getDecreasesBasicAttackDmpPercentage();
 		}
 
-		public function getDMPIncreaseFreezePlayer()
+		public function getIncreasesAirAttackDmpPercentage()
 		{
-			return $this->_dmp_increase_freeze_player;
+			return $this->_increases_air_attack_dmp_percentage;
 		}
 
-		public function setDMPIncreaseFreezePlayer($dmp_increase_freeze_player)
+		public function setIncreasesAirAttackDmpPercentage($increases_air_attack_dmp_percentage)
 		{
-			$this->_dmp_increase_freeze_player = $dmp_increase_freeze_player;
+			$this->_increases_air_attack_dmp_percentage = $increases_air_attack_dmp_percentage;
 		}
 
-		public function getDMPDecreaseFreezePlayer()
+		public function getDecreasesAirAttackDmpPercentage()
 		{
-			return $this->_dmp_decrease_freeze_player;
+			return $this->_decreases_air_attack_dmp_percentage;
 		}
 
-		public function setDMPDecreaseFreezePlayer($dmp_decrease_freeze_player)
+		public function setDecreasesAirAttackDmpPercentage($decreases_air_attack_dmp_percentage)
 		{
-			$this->_dmp_decrease_freeze_player = $dmp_decrease_freeze_player;
+			$this->_decreases_air_attack_dmp_percentage = $decreases_air_attack_dmp_percentage;
 		}
 
-		public function getDMPIncreaseFreezeOpponent()
+		public function getAirAttackDmpPercentageModifier()
 		{
-			return $this->_dmp_increase_freeze_opponent;
+			return $this->getIncreasesAirAttackDmpPercentage() + $this->getDecreasesAirAttackDmpPercentage();
 		}
 
-		public function setDMPIncreaseFreezeOpponent($dmp_increase_freeze_opponent)
+		public function getIncreasesDarkAttackDmpPercentage()
 		{
-			$this->_dmp_increase_freeze_opponent = $dmp_increase_freeze_opponent;
+			return $this->_increases_dark_attack_dmp_percentage;
 		}
 
-		public function getDMPDecreaseFreezeOpponent()
+		public function setIncreasesDarkAttackDmpPercentage($increases_dark_attack_dmp_percentage)
 		{
-			return $this->_dmp_decrease_freeze_opponent;
+			$this->_increases_dark_attack_dmp_percentage = $increases_dark_attack_dmp_percentage;
 		}
 
-		public function setDMPDecreaseFreezeOpponent($dmp_decrease_freeze_opponent)
+		public function getDecreasesDarkAttackDmpPercentage()
 		{
-			$this->_dmp_decrease_freeze_opponent = $dmp_decrease_freeze_opponent;
+			return $this->_decreases_dark_attack_dmp_percentage;
 		}
 
-		public function getDMPPlayerFreezeModifier()
+		public function setDecreasesDarkAttackDmpPercentage($decreases_dark_attack_dmp_percentage)
 		{
-			return $this->getDMPDecreaseFreezePlayer() + $this->getDMPIncreaseFreezePlayer();
+			$this->_decreases_dark_attack_dmp_percentage = $decreases_dark_attack_dmp_percentage;
 		}
 
-		public function getDMPOpponentFreezeModifier()
+		public function getDarkAttackDmpPercentageModifier()
 		{
-			return $this->getDMPDecreaseFreezeOpponent() + $this->getDMPIncreaseFreezeOpponent();
+			return $this->getIncreasesDarkAttackDmpPercentage() + $this->getDecreasesDarkAttackDmpPercentage();
 		}
 
-		public function getDMPIncreaseMeleePlayer()
+		public function getIncreasesEarthAttackDmpPercentage()
 		{
-			return $this->_dmp_increase_melee_player;
+			return $this->_increases_earth_attack_dmp_percentage;
 		}
 
-		public function setDMPIncreaseMeleePlayer($dmp_increase_melee_player)
+		public function setIncreasesEarthAttackDmpPercentage($increases_earth_attack_dmp_percentage)
 		{
-			$this->_dmp_increase_melee_player = $dmp_increase_melee_player;
+			$this->_increases_earth_attack_dmp_percentage = $increases_earth_attack_dmp_percentage;
 		}
 
-		public function getDMPDecreaseMeleePlayer()
+		public function getDecreasesEarthAttackDmpPercentage()
 		{
-			return $this->_dmp_decrease_melee_player;
+			return $this->_decreases_earth_attack_dmp_percentage;
 		}
 
-		public function setDMPDecreaseMeleePlayer($dmp_decrease_melee_player)
+		public function setDecreasesEarthAttackDmpPercentage($decreases_earth_attack_dmp_percentage)
 		{
-			$this->_dmp_decrease_melee_player = $dmp_decrease_melee_player;
+			$this->_decreases_earth_attack_dmp_percentage = $decreases_earth_attack_dmp_percentage;
 		}
 
-		public function getDMPIncreaseMeleeOpponent()
+		public function getEarthAttackDmpPercentageModifier()
 		{
-			return $this->_dmp_increase_melee_opponent;
+			return $this->getIncreasesEarthAttackDmpPercentage() + $this->getDecreasesEarthAttackDmpPercentage();
 		}
 
-		public function setDMPIncreaseMeleeOpponent($dmp_increase_melee_opponent)
+		public function getIncreasesFireAttackDmpPercentage()
 		{
-			$this->_dmp_increase_melee_opponent = $dmp_increase_melee_opponent;
+			return $this->_increases_fire_attack_dmp_percentage;
 		}
 
-		public function getDMPDecreaseMeleeOpponent()
+		public function setIncreasesFireAttackDmpPercentage($increases_fire_attack_dmp_percentage)
 		{
-			return $this->_dmp_decrease_melee_opponent;
+			$this->_increases_fire_attack_dmp_percentage = $increases_fire_attack_dmp_percentage;
 		}
 
-		public function setDMPDecreaseMeleeOpponent($dmp_decrease_melee_opponent)
+		public function getDecreasesFireAttackDmpPercentage()
 		{
-			$this->_dmp_decrease_melee_opponent = $dmp_decrease_melee_opponent;
+			return $this->_decreases_fire_attack_dmp_percentage;
 		}
 
-		public function getDMPPlayerMeleeModifier()
+		public function setDecreasesFireAttackDmpPercentage($decreases_fire_attack_dmp_percentage)
 		{
-			return $this->getDMPDecreaseMeleePlayer() + $this->getDMPIncreaseMeleePlayer();
+			$this->_decreases_fire_attack_dmp_percentage = $decreases_fire_attack_dmp_percentage;
 		}
 
-		public function getDMPOpponentMeleeModifier()
+		public function getFireAttackDmpPercentageModifier()
 		{
-			return $this->getDMPDecreaseMeleeOpponent() + $this->getDMPIncreaseMeleeOpponent();
+			return $this->getIncreasesFireAttackDmpPercentage() + $this->getDecreasesFireAttackDmpPercentage();
 		}
 
-		public function getDMPIncreasePoisonPlayer()
+		public function getIncreasesFreezeAttackDmpPercentage()
 		{
-			return $this->_dmp_increase_poison_player;
+			return $this->_increases_freeze_attack_dmp_percentage;
 		}
 
-		public function setDMPIncreasePoisonPlayer($dmp_increase_poison_player)
+		public function setIncreasesFreezeAttackDmpPercentage($increases_freeze_attack_dmp_percentage)
 		{
-			$this->_dmp_increase_poison_player = $dmp_increase_poison_player;
+			$this->_increases_freeze_attack_dmp_percentage = $increases_freeze_attack_dmp_percentage;
 		}
 
-		public function getDMPDecreasePoisonPlayer()
+		public function getDecreasesFreezeAttackDmpPercentage()
 		{
-			return $this->_dmp_decrease_poison_player;
+			return $this->_decreases_freeze_attack_dmp_percentage;
 		}
 
-		public function setDMPDecreasePoisonPlayer($dmp_decrease_poison_player)
+		public function setDecreasesFreezeAttackDmpPercentage($decreases_freeze_attack_dmp_percentage)
 		{
-			$this->_dmp_decrease_poison_player = $dmp_decrease_poison_player;
+			$this->_decreases_freeze_attack_dmp_percentage = $decreases_freeze_attack_dmp_percentage;
 		}
 
-		public function getDMPIncreasePoisonOpponent()
+		public function getFreezeAttackDmpPercentageModifier()
 		{
-			return $this->_dmp_increase_poison_opponent;
+			return $this->getIncreasesFreezeAttackDmpPercentage() + $this->getDecreasesFreezeAttackDmpPercentage();
 		}
 
-		public function setDMPIncreasePoisonOpponent($dmp_increase_poison_opponent)
+		public function getIncreasesMeleeAttackDmpPercentage()
 		{
-			$this->_dmp_increase_poison_opponent = $dmp_increase_poison_opponent;
+			return $this->_increases_melee_attack_dmp_percentage;
 		}
 
-		public function getDMPDecreasePoisonOpponent()
+		public function setIncreasesMeleeAttackDmpPercentage($increases_melee_attack_dmp_percentage)
 		{
-			return $this->_dmp_decrease_poison_opponent;
+			$this->_increases_melee_attack_dmp_percentage = $increases_melee_attack_dmp_percentage;
 		}
 
-		public function setDMPDecreasePoisonOpponent($dmp_decrease_poison_opponent)
+		public function getDecreasesMeleeAttackDmpPercentage()
 		{
-			$this->_dmp_decrease_poison_opponent = $dmp_decrease_poison_opponent;
+			return $this->_decreases_melee_attack_dmp_percentage;
 		}
 
-		public function getDMPPlayerPoisonModifier()
+		public function setDecreasesMeleeAttackDmpPercentage($decreases_melee_attack_dmp_percentage)
 		{
-			return $this->getDMPDecreasePoisonPlayer() + $this->getDMPIncreasePoisonPlayer();
+			$this->_decreases_melee_attack_dmp_percentage = $decreases_melee_attack_dmp_percentage;
 		}
 
-		public function getDMPOpponentPoisonModifier()
+		public function getMeleeAttackDmpPercentageModifier()
 		{
-			return $this->getDMPDecreasePoisonOpponent() + $this->getDMPIncreasePoisonOpponent();
+			return $this->getIncreasesMeleeAttackDmpPercentage() + $this->getDecreasesMeleeAttackDmpPercentage();
 		}
 
-		public function getDMPIncreaseRangedPlayer()
+		public function getIncreasesPoisonAttackDmpPercentage()
 		{
-			return $this->_dmp_increase_ranged_player;
+			return $this->_increases_poison_attack_dmp_percentage;
 		}
 
-		public function setDMPIncreaseRangedPlayer($dmp_increase_ranged_player)
+		public function setIncreasesPoisonAttackDmpPercentage($increases_poison_attack_dmp_percentage)
 		{
-			$this->_dmp_increase_ranged_player = $dmp_increase_ranged_player;
+			$this->_increases_poison_attack_dmp_percentage = $increases_poison_attack_dmp_percentage;
 		}
 
-		public function getDMPDecreaseRangedPlayer()
+		public function getDecreasesPoisonAttackDmpPercentage()
 		{
-			return $this->_dmp_decrease_ranged_player;
+			return $this->_decreases_poison_attack_dmp_percentage;
 		}
 
-		public function setDMPDecreaseRangedPlayer($dmp_decrease_ranged_player)
+		public function setDecreasesPoisonAttackDmpPercentage($decreases_poison_attack_dmp_percentage)
 		{
-			$this->_dmp_decrease_ranged_player = $dmp_decrease_ranged_player;
+			$this->_decreases_poison_attack_dmp_percentage = $decreases_poison_attack_dmp_percentage;
 		}
 
-		public function getDMPIncreaseRangedOpponent()
+		public function getPoisonAttackDmpPercentageModifier()
 		{
-			return $this->_dmp_increase_ranged_opponent;
+			return $this->getIncreasesPoisonAttackDmpPercentage() + $this->getDecreasesPoisonAttackDmpPercentage();
 		}
 
-		public function setDMPIncreaseRangedOpponent($dmp_increase_ranged_opponent)
+		public function getIncreasesRangedAttackDmpPercentage()
 		{
-			$this->_dmp_increase_ranged_opponent = $dmp_increase_ranged_opponent;
+			return $this->_increases_ranged_attack_dmp_percentage;
 		}
 
-		public function getDMPDecreaseRangedOpponent()
+		public function setIncreasesRangedAttackDmpPercentage($increases_ranged_attack_dmp_percentage)
 		{
-			return $this->_dmp_decrease_ranged_opponent;
+			$this->_increases_ranged_attack_dmp_percentage = $increases_ranged_attack_dmp_percentage;
 		}
 
-		public function setDMPDecreaseRangedOpponent($dmp_decrease_ranged_opponent)
+		public function getDecreasesRangedAttackDmpPercentage()
 		{
-			$this->_dmp_decrease_ranged_opponent = $dmp_decrease_ranged_opponent;
+			return $this->_decreases_ranged_attack_dmp_percentage;
 		}
 
-		public function getDMPPlayerRangedModifier()
+		public function setDecreasesRangedAttackDmpPercentage($decreases_ranged_attack_dmp_percentage)
 		{
-			return $this->getDMPDecreaseRangedPlayer() + $this->getDMPIncreaseRangedPlayer();
+			$this->_decreases_ranged_attack_dmp_percentage = $decreases_ranged_attack_dmp_percentage;
 		}
 
-		public function getDMPOpponentRangedModifier()
+		public function getRangedAttackDmpPercentageModifier()
 		{
-			return $this->getDMPDecreaseRangedOpponent() + $this->getDMPIncreaseRangedOpponent();
+			return $this->getIncreasesRangedAttackDmpPercentage() + $this->getDecreasesRangedAttackDmpPercentage();
 		}
 
-		public function mergeFormData($form_data = array())
+		public function mergeFormData(\caspar\core\Request $form_data)
 		{
 			parent::mergeFormData($form_data);
+			foreach (array('basic', 'air', 'dark', 'earth', 'fire', 'freeze', 'melee', 'poison', 'ranged') as $element) {
+				$hit_percentage_property = '_'.$form_data['modifies_'.$element.'_attacks_hit_percentage']."s_{$element}_attack_hit_percentage";
+				$damage_percentage_property = '_'.$form_data['modifies_'.$element.'_attacks_damage_percentage']."s_{$element}_attack_damage_percentage";
+				$dmp_percentage_property = '_'.$form_data['modifies_'.$element.'_attacks_dmp_percentage']."s_{$element}_attack_dmp_percentage";
+
+				$this->$hit_percentage_property = $form_data['hit_percentage_'.$element.'_modifier'];
+				$this->$damage_percentage_property = $form_data['damage_percentage_'.$element.'_modifier'];
+				$this->$dmp_percentage_property = $form_data['dmp_percentage_'.$element.'_modifier'];
+			}
 		}
 
 	}

@@ -674,3 +674,4 @@ input.long, textarea.long { width: 500px; }
 
 ::-webkit-input-placeholder  { color:#AAA; }
 input:-moz-placeholder { color:#AAA; }
+.error { color: darkred; }

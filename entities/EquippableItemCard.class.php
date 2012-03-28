@@ -15,15 +15,64 @@
 	class EquippableItemCard extends ItemCard
 	{
 
+		/**
+		 * @Column(type="boolean", default=false)
+		 * @var boolean
+		 */
 		protected $_equippable_by_civilian_cards = false;
+
+		/**
+		 * @Column(type="boolean", default=false)
+		 * @var boolean
+		 */
 		protected $_equippable_by_magic_cards = false;
+
+		/**
+		 * @Column(type="boolean", default=false)
+		 * @var boolean
+		 */
 		protected $_equippable_by_military_cards = false;
+
+		/**
+		 * @Column(type="boolean", default=false)
+		 * @var boolean
+		 */
 		protected $_equippable_by_physical_cards = false;
+
+		/**
+		 * @Column(type="boolean", default=false)
+		 * @var boolean
+		 */
 		protected $_equippable_by_ranged_cards = false;
 
+		/**
+		 * @Column(type="boolean", default=false)
+		 * @var boolean
+		 */
 		protected $_equippable_by_low_lvl_cards = false;
+
+		/**
+		 * @Column(type="boolean", default=false)
+		 * @var boolean
+		 */
 		protected $_equippable_by_regular_lvl_cards = false;
+
+		/**
+		 * @Column(type="boolean", default=false)
+		 * @var boolean
+		 */
 		protected $_equippable_by_power_lvl_cards = false;
+
+		public static function getEquippableItemClasses()
+		{
+			return array(
+				self::CLASS_ARMOR => 'Armor',
+				self::CLASS_BOW => 'Bow',
+				self::CLASS_SHIELD => 'Shield',
+				self::CLASS_SPEAR => 'Spear',
+				self::CLASS_SWORD => 'Sword'
+			);
+		}
 
 		public function getEquippableByCivilianCards()
 		{
@@ -143,6 +192,28 @@
 		public function setEquippableByPowerLvlCards($equippable_by_power_lvl_cards)
 		{
 			$this->_equippable_by_power_lvl_cards = $equippable_by_power_lvl_cards;
+		}
+
+		public function mergeFormData(\caspar\core\Request $form_data)
+		{
+			parent::mergeFormData($form_data);
+			$this->setItemClass($form_data['item_class']);
+			foreach (array('low', 'regular', 'power') as $level) {
+				$lvl_property = "_equippable_by_{$level}_lvl_cards";
+				if ($form_data->hasParameter('level_equippable')) {
+					$this->$lvl_property = array_key_exists($level, $form_data['level_equippable']);
+				} else {
+					$this->$lvl_property = false;
+				}
+			}
+			foreach (array('civilian', 'magic', 'military', 'physical', 'ranged') as $class) {
+				$class_property = "_equippable_by_{$class}_cards";
+				if ($form_data->hasParameter('card_type_equippable')) {
+					$this->$class_property = array_key_exists($class, $form_data['card_type_equippable']);
+				} else {
+					$this->$class_property = false;
+				}
+			}
 		}
 
 	}

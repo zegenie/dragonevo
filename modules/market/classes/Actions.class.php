@@ -18,6 +18,7 @@
 		public function runIndex(Request $request)
 		{
 			\application\entities\tables\EventCards::getTable()->create();
+			\application\entities\tables\EquippableItemCards::getTable()->create();
 		}
 
 	}

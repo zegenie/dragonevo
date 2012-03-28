@@ -12,7 +12,7 @@
 	 *
 	 * @Table(name="\application\entities\tables\ActionCards")
 	 */
-	class ActionCard extends ModifierCard
+	class ScrollCard extends Card
 	{
 
 		const TYPE_POTION = 1;
