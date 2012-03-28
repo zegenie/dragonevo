@@ -50,7 +50,7 @@
 		 * @Column(type="text")
 		 * @var string
 		 */
-		protected $_description = '';
+		protected $_long_description = '';
 
 		/**
 		 * What the card costs to buy
@@ -191,12 +191,12 @@
 
 		public function getLongDescription()
 		{
-			return $this->_description;
+			return $this->_long_description;
 		}
 
-		public function setLongDescription($description)
+		public function setLongDescription($long_description)
 		{
-			$this->_description = $description;
+			$this->_long_description = $long_description;
 		}
 
 		public function getCardType()
@@ -324,7 +324,7 @@
 			return $this->getMPTDecreaseOpponent() + $this->getMPTIncreaseOpponent();
 		}
 
-		public function mergeFormData($form_data = array())
+		public function mergeFormData(\caspar\core\Request $form_data)
 		{
 			foreach (array('name', 'brief_description', 'long_description') as $field) {
 				$property_name = "_{$field}";
