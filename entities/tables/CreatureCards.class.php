@@ -11,4 +11,9 @@
 	class CreatureCards extends \b2db\Table
 	{
 		
+		public function getAll()
+		{
+			return $this->selectAll();
+		}
+
 	}

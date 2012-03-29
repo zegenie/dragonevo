@@ -34,6 +34,10 @@
 					$this->getResponse()->setTemplate('admin/eventcards');
 					$this->redirect('editEventCards');
 					break;
+				case 'creature':
+					$this->getResponse()->setTemplate('admin/creaturecards');
+					$this->redirect('editCreatureCards');
+					break;
 				case 'item':
 					$this->getResponse()->setTemplate('admin/itemcards');
 					$this->redirect('editItemCards');
@@ -57,6 +61,10 @@
 					$this->getResponse()->setTemplate('admin/eventcard');
 					$this->redirect('editEventCard');
 					break;
+				case 'creature':
+					$this->getResponse()->setTemplate('admin/creaturecard');
+					$this->redirect('editCreatureCard');
+					break;
 				case 'item':
 					$this->getResponse()->setTemplate('admin/itemcard');
 					$this->redirect('editItemCard');
@@ -71,6 +79,11 @@
 		public function runEditEventCards(Request $request)
 		{
 			$this->cards = \application\entities\tables\EventCards::getTable()->getAll();
+		}
+
+		public function runEditCreatureCards(Request $request)
+		{
+			$this->cards = \application\entities\tables\CreatureCards::getTable()->getAll();
 		}
 
 		public function runEditItemCards(Request $request)
@@ -105,6 +118,35 @@
 						$this->card->mergeFormData($request);
 						$this->card->save();
 						$this->forward($this->getRouting()->generate('edit_card', array('card_id' => $this->card->getB2DBID(), 'card_type' => 'event')));
+					}
+				}
+			} catch (\Exception $e) {
+				$this->error = $e->getMessage();
+			}
+		}
+
+		public function runEditCreatureCard(Request $request)
+		{
+			$card_id = $request['card_id'];
+
+			try {
+				if ($card_id) {
+					$this->card = new \application\entities\CreatureCard($card_id);
+				} else {
+					$this->card = new \application\entities\CreatureCard();
+				}
+			} catch (\Exception $e) {
+				return $this->return404('This is not a valid creature card');
+			}
+
+			try {
+				if (!$this->card instanceof \application\entities\CreatureCard) {
+					return $this->return404('This is not a valid creature card');
+				} else {
+					if ($request->isPost()) {
+						$this->card->mergeFormData($request);
+						$this->card->save();
+						$this->forward($this->getRouting()->generate('edit_card', array('card_id' => $this->card->getB2DBID(), 'card_type' => 'creature')));
 					}
 				}
 			} catch (\Exception $e) {

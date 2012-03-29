@@ -20,6 +20,8 @@
 		const CLASS_MILITARY = 3;
 		const CLASS_PHYSICAL = 4;
 		const CLASS_RANGED = 5;
+		const CLASS_ANIMAL = 6;
+		const CLASS_MYTHICAL_ANIMAL = 7;
 
 		/**
 		 * Card type
@@ -52,7 +54,44 @@
 		 */
 		protected $_creature_class = 1;
 
+		/**
+		 * @Column(type="string", length=20, default='regular')
+		 * @var string
+		 */
+		protected $_card_level = 'regular';
+
+		/**
+		 * Creature faction
+		 *
+		 * @Column(type="string", length=20, default='neutrals')
+		 * @var string
+		 */
 		protected $_faction = Card::FACTION_NEUTRALS;
+
+		/**
+		 * @Column(type="boolean", default=false)
+		 * @var boolean
+		 */
+		protected $_slot_1_available = false;
+		
+		/**
+		 * @Column(type="boolean", default=false)
+		 * @var boolean
+		 */
+		protected $_slot_2_available = false;
+
+		public static function getCreatureClasses()
+		{
+			return array(
+				self::CLASS_ANIMAL => 'Animal',
+				self::CLASS_CIVILIAN => 'Civilian',
+				self::CLASS_MAGIC => 'Magic',
+				self::CLASS_MILITARY => 'Military',
+				self::CLASS_MYTHICAL_ANIMAL => 'Mythical animal',
+				self::CLASS_PHYSICAL => 'Physical',
+				self::CLASS_RANGED => 'Ranged'
+			);
+		}
 
 		public function getBaseHealth()
 		{
@@ -97,6 +136,58 @@
 		public function setFaction($faction)
 		{
 			$this->_faction = $faction;
+		}
+
+		public function getCardLevel()
+		{
+			return $this->_card_level;
+		}
+
+		public function setCardLevel($card_level)
+		{
+			$this->_card_level = $card_level;
+		}
+
+		public function getSlot1Available()
+		{
+			return $this->_slot_1_available;
+		}
+
+		public function isSlot1Available()
+		{
+			return $this->getSlot1Available();
+		}
+
+		public function setSlot1Available($slot_1_available)
+		{
+			$this->_slot_1_available = $slot_1_available;
+		}
+
+		public function getSlot2Available()
+		{
+			return $this->_slot_2_available;
+		}
+
+		public function isSlot2Available()
+		{
+			return $this->getSlot2Available();
+		}
+
+		public function setSlot2Available($slot_2_available)
+		{
+			$this->_slot_2_available = $slot_2_available;
+		}
+
+		public function mergeFormData(\caspar\core\Request $form_data)
+		{
+			parent::mergeFormData($form_data);
+			$this->_faction = $form_data['faction'];
+			$this->_creature_class = $form_data['creature_class'];
+			$this->_base_dmp = (int) $form_data['base_dmp'];
+			$this->_base_health = (int) $form_data['base_health'];
+			$this->_card_level = $form_data['level'];
+			$this->_slot_1_available = (bool) $form_data['slot_1_available'];
+			$this->_slot_2_available = (bool) $form_data['slot_2_available'];
 		}
 
 	}

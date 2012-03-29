@@ -154,6 +154,15 @@
 		 */
 		protected $_mpt_decrease_opponent = 0;
 
+		public static function getFactions()
+		{
+			return array(
+				self::FACTION_NEUTRALS => 'Neutrals',
+				self::FACTION_EMPIRE => 'Empire',
+				self::FACTION_RUTAI => 'Rutai'
+			);
+		}
+
 		public function getId()
 		{
 			return $this->_id;
