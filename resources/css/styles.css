@@ -202,7 +202,7 @@ body { background: url('/images/mainbg.png'); }
 	width: 100%;
 	padding: 5px 0;
 	font-size: 1.3em;
-	margin-top: 20px;
+	margin-top: 0;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -250,7 +250,7 @@ body { background: url('/images/mainbg.png'); }
 #header-strip li a, #header-strip li a:hover, #header-strip li a:active { display: block; padding: 6px; color: #333; text-decoration: none; }
 #header-strip li.logout, #header-strip li.logout:hover { margin-left: 10px; margin-right: 0; border: 0; }
 #header-strip li.logout a { float: right; margin-top: 3px; font-family: 'Open sans'; }
-#header-strip-padder { height: 75px; }
+#header-strip-padder { height: 55px; }
 
 .main-content {
 	clear: both;

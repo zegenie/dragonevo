@@ -13,6 +13,11 @@
 	class Actions extends \caspar\core\Actions
 	{
 
+		public function preExecute(Request $request, $action)
+		{
+			$this->forward403Unless($this->getUser()->isAdmin());
+		}
+
 		/**
 		 * Index page
 		 *  
