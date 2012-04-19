@@ -131,14 +131,14 @@
 		 * @Column(type="integer", default=0, length=10)
 		 */
 		protected $_xp = 0;
-
+		
 		/**
 		 * This users level
 		 *
 		 * @var integer
 		 * @Column(type="integer", default=0, length=10)
 		 */
-		protected $_level = 0;
+		protected $_level = 1;
 
 		/**
 		 * This users character name
@@ -147,6 +147,21 @@
 		 * @Column(type="string", default=null, length=250)
 		 */
 		protected $_charactername;
+		
+		/**
+		 * This user's cards
+		 * 
+		 * @var array
+		 */
+		protected $_cards;
+		
+		/**
+		 * This user's number of invites
+		 * 
+		 * @Column(type="integer", default=0, length=10)
+		 * @var integer
+		 */
+		protected $_invites = 0;
 
 		/**
 		 * Take a raw password and convert it to the hashed format
@@ -562,9 +577,72 @@
 			return (bool) $this->_isadmin;
 		}
 
+		protected function _populateCards()
+		{
+			if ($this->_cards === null) {
+				$this->_cards = array();
+				$cards = array();
+				foreach (array('Creature', 'PotionItem', 'EquippableItem', 'Event') as $card_type) {
+					$class_name = "\application\entities\\tables\\" . $card_type . "Cards";
+					$cards += $class_name::getTable()->getByUserId($this->getID());
+				}
+				$this->_cards = $cards;
+			}
+		}
+		
 		public function hasCards()
 		{
-			return false;
+			$this->_populateCards();
+			return (bool) count($this->_cards);
+		}
+		
+		public function generateStarterPack($faction)
+		{
+			$cards = \application\entities\tables\CreatureCards::getTable()->getByFaction($faction);
+			$pickablecards = array();
+			foreach ($cards as $card) {
+				if ($card->getLikelihood() == 0) continue;
+				for($cc = 1;$cc <= $card->getLikelihood();$cc++) {
+					$pickablecards[] = $card->getId();
+				}
+			}
+
+			$return_cards = array();
+			$cc = 1;
+			while ($cc <= 5) {
+				if (empty($pickablecards)) break;
+				
+				$id = $pickablecards[array_rand($pickablecards)];
+				if (array_key_exists($id, $cards)) {
+					$card = $cards[$id];
+					$picked_card = clone $card;
+					$picked_card->giveTo($this);
+					$picked_card = $picked_card->morph();
+					$picked_card->generateUniqueDetails();
+					$picked_card->save();
+					$return_cards[$card->getId()] = $picked_card;
+					unset($cards[$id]);
+				}
+				$cc++;
+			}
+			
+			$this->_populateCards();
+			return $this->_cards;
+		}
+
+		public function getNextLevelXp() 
+		{
+			return ($this->getLevel() + 1) * 100;
+		}
+		
+		public function getInvites()
+		{
+			return $this->_invites;
+		}
+
+		public function setInvites($invites)
+		{
+			$this->_invites = $invites;
 		}
 
 	}

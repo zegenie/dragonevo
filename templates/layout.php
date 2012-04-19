@@ -63,35 +63,39 @@
 			</div>
 			<div style="background-color: #000; width: 100%; height: 100%; position: absolute; top: 0; left: 0; margin: 0; padding: 0; z-index: 999;" class="semi_transparent"> </div>
 		</div>
-		<?php if ($csp_response->getPage() != 'home'): ?>
-			<div id="header-strip">
-				<div class="header-content">
-					<ul>
-						<?php if ($csp_user->isAuthenticated()): ?>
-							<li class="<?php if ($csp_response->getPage() == 'profile') echo 'selected'; ?>"><?php echo link_tag(make_url('profile'), 'Profile'); ?></li>
-							<?php if ($csp_user->isAdmin()): ?>
-								<li class="<?php if (in_array($csp_response->getPage(), array('admin'))) echo 'selected'; ?>"><?php echo link_tag(make_url('admin'), 'Admin'); ?></li>
-							<?php endif; ?>
-							<li class="<?php if ($csp_response->getPage() == 'lobby') echo 'selected'; ?>"><?php echo link_tag(make_url('lobby'), 'Lobby'); ?></li>
-							<li class="<?php if ($csp_response->getPage() == 'market') echo 'selected'; ?>"><?php echo link_tag(make_url('market'), 'Market'); ?></li>
-							<li class="<?php if ($csp_response->getPage() == 'help') echo 'selected'; ?>"><a href="javascript:void(0);" onclick="Devo.Main.Helpers.Message.success('Help is being created', 'Please be patient as we finish it');">Help</a></li>
-							<li class="logout"><?php echo link_tag(make_url('logout'), 'Logout', array('class' => 'button button-silver')); ?></li>
-						<?php else: ?>
-							<li><a href="javascript:void(0);" onclick="Devo.Main.Helpers.Backdrop.show('<?php echo make_url('get_backdrop_partial', array('key' => 'login')); ?>')">Login</a></li>
-						<?php endif; ?>
-					</ul>
-					<a class="header-logo" href="<?php echo make_url('home'); ?>">
-						Dragon Evo<br>
-						The Card Game
-					</a>
-				</div>
-			</div>
-		<?php endif; ?>
-		<div class="main-content"<?php if ($csp_response->getPage() == 'home') echo ' style="width: 800px; background-color: transparent;"'; ?>>
+		<?php if ($csp_routing->getCurrentRouteModule() != 'game'): ?>
 			<?php if ($csp_response->getPage() != 'home'): ?>
-				<div id="header-strip-padder"></div>
+				<div id="header-strip">
+					<div class="header-content">
+						<ul>
+							<?php if ($csp_user->isAuthenticated()): ?>
+								<li class="<?php if ($csp_response->getPage() == 'profile') echo 'selected'; ?>"><?php echo link_tag(make_url('profile'), 'Profile'); ?></li>
+								<?php if ($csp_user->isAdmin()): ?>
+									<li class="<?php if (in_array($csp_response->getPage(), array('admin'))) echo 'selected'; ?>"><?php echo link_tag(make_url('admin'), 'Admin'); ?></li>
+								<?php endif; ?>
+								<li class="<?php if ($csp_response->getPage() == 'lobby') echo 'selected'; ?>"><?php echo link_tag(make_url('lobby'), 'Lobby'); ?></li>
+								<li class="<?php if ($csp_response->getPage() == 'market') echo 'selected'; ?>"><?php echo link_tag(make_url('market'), 'Market'); ?></li>
+								<li class="<?php if ($csp_response->getPage() == 'help') echo 'selected'; ?>"><a href="javascript:void(0);" onclick="Devo.Main.Helpers.Message.success('Help is being created', 'Please be patient as we finish it');">Help</a></li>
+								<li class="logout"><?php echo link_tag(make_url('logout'), 'Logout', array('class' => 'button button-silver')); ?></li>
+							<?php else: ?>
+								<li><a href="javascript:void(0);" onclick="Devo.Main.Helpers.Backdrop.show('<?php echo make_url('get_backdrop_partial', array('key' => 'login')); ?>')">Login</a></li>
+							<?php endif; ?>
+						</ul>
+						<a class="header-logo" href="<?php echo make_url('home'); ?>">
+							Dragon Evo<br>
+							The Card Game
+						</a>
+					</div>
+				</div>
 			<?php endif; ?>
+			<div class="main-content"<?php if ($csp_response->getPage() == 'home') echo ' style="width: 800px; background-color: transparent;"'; ?>>
+				<?php if ($csp_response->getPage() != 'home'): ?>
+					<div id="header-strip-padder"></div>
+				<?php endif; ?>
+				<?php echo $content; ?>
+			</div>
+		<?php else: ?>
 			<?php echo $content; ?>
-		</div>
+		<?php endif; ?>
 	</body>
 </html>

@@ -42,6 +42,16 @@
 		 * @var string
 		 */
 		protected $_card_state = Card::STATE_TEMPLATE;
+		
+		/** 
+		 * If owned, the user_id who owns this card
+		 * 
+		 * @Column(type="integer", length=10)
+		 * @Relates(class="\application\entities\User")
+		 * 
+		 * @var \application\entities\User
+		 */
+		protected $_user_id;
 
 		/**
 		 * Card name
@@ -365,6 +375,42 @@
 					$this->$property_name = (int) $form_data["{$resource}_{$pl}_modifier"];
 				}
 			}
+		}
+		
+		public function setCardState($state)
+		{
+			$this->_card_state = $state;
+		}
+		
+		public function getCardState()
+		{
+			return $this->_card_state;
+		}
+		
+		public function isOwned()
+		{
+			return ($this->_card_state == self::STATE_OWNED);
+		}
+		
+		public function setUserId($user_id)
+		{
+			$this->_user_id = $user_id;
+		}
+		
+		public function setUser($user)
+		{
+			$this->_user_id = $user;
+		}
+		
+		public function getUser()
+		{
+			return $this->_b2dbLazyload('_user_id');
+		}
+		
+		public function giveTo($user)
+		{
+			$this->_card_state = self::STATE_OWNED;
+			$this->_user_id = $user;
 		}
 
 	}

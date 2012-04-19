@@ -3,10 +3,13 @@
 	use application\entities\CreatureCard,
 		application\entities\Card;
 
-	$csp_response->setTitle($card->getB2DBID() ? __('Edit creature card') : __('Create new creature card'));
+	$csp_response->setTitle($card->getB2DBID() ? __('Edit %card_name%', array('%card_name%' => $card->getName())) : __('Create new creature card'));
 
 ?>
-<h2 style="margin: 10px 0 0 10px;"><?php echo $card->getB2DBID() ? __('Edit creature card') : __('Create new creature card'); ?></h2>
+<h2 style="margin: 10px 0 0 10px;">
+	<?php echo link_tag(make_url('edit_cards', array('card_type' => 'creature')), "Edit creature cards"); ?>&nbsp;&rArr;
+	<?php echo $card->getB2DBID() ? $card->getName() : __('New creature card'); ?>
+</h2>
 <?php if (isset($error) && $error): ?>
 	<h6 class="error"><?php echo $error; ?></h6>
 <?php endif; ?>
@@ -44,7 +47,7 @@
 		</div>
 		<div>
 			<label for="card_base_dmp">Base DMP</label>
-			<input type="text" name="base_dmp" class="points" id="card_base_dmp" value="<?php echo $card->getBaseDMP(); ?>">x
+			<input type="text" name="base_dmp" class="points" id="card_base_dmp" value="<?php echo $card->getBaseDMP(); ?>">x&nbsp;&nbsp;<span class="faded_out">(this is the max DMP this card can have)</span>
 		</div>
 	</fieldset>
 	<fieldset>

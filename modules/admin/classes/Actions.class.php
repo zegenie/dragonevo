@@ -88,7 +88,11 @@
 
 		public function runEditCreatureCards(Request $request)
 		{
-			$this->cards = \application\entities\tables\CreatureCards::getTable()->getAll();
+			$cards = array();
+			foreach (\application\entities\Card::getFactions() as $faction => $description) {
+				$cards[$faction] = \application\entities\tables\CreatureCards::getTable()->getByFaction($faction);
+			}
+			$this->cards = $cards;
 		}
 
 		public function runEditItemCards(Request $request)

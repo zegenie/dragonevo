@@ -1,6 +1,21 @@
 <?php $csp_response->setTitle('Profile summary'); ?>
 <div class="content">
-<div class="gamerules rounded_box shadowed_box profile" style="position: relative; border: none; text-shadow: 1px 1px 0px #FFDDC0;">
+	<?php if ($banner_message): ?>
+		<div class="message_banner">
+			<?php 
+			
+				switch ($banner_message) {
+					case 'starter_pack_generated':
+						echo "Your starter pack has been generated!";
+						break;
+					default:
+						echo $banner_message;
+						break;
+				}
+			
+			?>
+		</div>
+	<?php endif; ?>
 	<?php if (!$csp_user->hasCharacter()): ?>
 	<h3>Set up your character</h3>
 	<div class="character_setup">
@@ -24,7 +39,7 @@
 			<br>
 			<?php foreach (array('resistance', 'neutrals', 'rutai') as $faction): ?>
 				<div style="float: left; width: 310px;">
-					<form action="account.php" method="post">
+					<form action="" method="post">
 						<input type="hidden" name="character_setup" value="1">
 						<input type="hidden" name="step" value="2">
 						<input type="hidden" name="faction" value="<?php echo $faction; ?>">
@@ -47,7 +62,7 @@
 			<br style="clear: both;">
 		</div>
 	<?php else: ?>
-		<div class="profile-intro"><?php echo $intro; ?>, <b><?php echo $csp_user->getName(); ?></b>!</div>
+		<div class="profile-intro"><?php echo $intro; ?>, <?php echo $csp_user->getName(); ?>!</div>
 		<div id="change_password_container" class="rounded_box shadowed_box lightyellow borderless">
 			<form method="post" accept-charset="utf-8">
 				<input type="hidden" name="change_password" value="1">
@@ -80,7 +95,7 @@
 			<?php endif; ?>
 		</ul>
 		<div id="user_battlepoints">
-			You currently have <span class="bp"><?php echo $csp_user->getBattlepoints(); ?></span> battlepoints!<br>
+			You currently have <span class="bp">0</span> battlepoints!<br>
 			You earn battlepoints when you play games - winning them earns you even more! Battlepoints can be spent buying card packs, levelling up your existing cards and/or levelling up your card attacks!
 			Levelling up cards and attacks makes them more powerful - attacks deal more damage and cards have more health and magic!
 		</div>

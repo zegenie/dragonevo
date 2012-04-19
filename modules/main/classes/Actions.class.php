@@ -2,7 +2,8 @@
 
 namespace application\modules\main;
 
-use \caspar\core\Request;
+use \caspar\core\Request,
+	\caspar\core\Caspar;
 
 /**
  * Actions for the main module
@@ -27,7 +28,7 @@ class Actions extends \caspar\core\Actions
 
 	public function runNotFound(Request $request)
 	{
-		$this->getResponse()->setHttpStatus(404);
+            $this->getResponse()->setHttpStatus(404);
 	}
 
 	/**
@@ -44,6 +45,8 @@ class Actions extends \caspar\core\Actions
 		$this->intro = $greetings[array_rand($greetings)];
 		$this->message = \caspar\core\Caspar::getMessageAndClear('profile_message');
 		$this->error = \caspar\core\Caspar::getMessageAndClear('profile_error');
+		$this->games_played = 0;
+		$this->banner_message = Caspar::getMessageAndClear('profile_banner_message');
 		if ($request->isPost()) {
 			if ($request->getParameter('character_setup')) {
 				switch ($request->getParameter('step')) {
@@ -56,21 +59,11 @@ class Actions extends \caspar\core\Actions
 						}
 						break;
 					case 2:
-						$cards = Card::getStarterPack($request->getParameter('faction'));
-						if (count($cards)) {
-							foreach ($cards as $card) {
-								$usercard = new UserCard();
-								$usercard->setCard($card);
-								$usercard->setUser(DEVO::getUser());
-								$usercard->setLevel(1);
-								$usercard->generateRandomDefenceMultiplier();
-								$usercard->save();
-							}
+						if (!$user->hasCards()) {
+							$this->getUser()->generateStarterPack($request->getParameter('faction'));
 						}
-						if ($user->hasCards()) {
-							header('Location: deck.php');
-							exit();
-						}
+						Caspar::setMessage('profile_banner_message', 'starter_pack_generated');
+						$this->forward($this->getRouting()->generate('profile'));
 						break;
 				}
 			} elseif ($request->getParameter('change_password')) {

@@ -377,8 +377,7 @@ Devo.Main.Login.register = function(url)
 	});
 }
 
-Devo.Main.Login.login = function(url)
-{
+Devo.Main.Login.login = function(url) {
 	Devo.Main.Helpers.ajax(url, {
 		form: 'login_form',
 		loading: {
@@ -389,4 +388,29 @@ Devo.Main.Login.login = function(url)
 			show: 'login_button',
 		}
 	});
+}
+
+Devo.Core._resizeWatcher = function() {
+	var docheight = document.viewport.getHeight();
+	var docwidth = document.viewport.getWidth();
+	$('game-table').setStyle({height: docheight - 40 + 'px', marginTop: '20px', width: docwidth - 40 + 'px', marginLeft: '20px'});
+	var gtl = $('game-table').getLayout();
+	var boardwidth = gtl.get('width') - gtl.get('padding-left') - gtl.get('padding-right');
+	var boardheight = gtl.get('height') - gtl.get('padding-top') - gtl.get('padding-bottom');
+	var card_slot_height = parseInt((boardheight / 10) * 3) - 9;
+	var card_slot_width = parseInt(card_slot_height / 1.6);
+	$$('.card-slots-container').each(function(element) {
+		$(element).setStyle({width: (card_slot_width * 5) + 70 + 'px', height: card_slot_height + 4 + 'px'});
+		$(element).select('.card-slot').each(function(card_element) {
+			$(card_element).setStyle({height: card_slot_height + 'px', width: card_slot_width + 'px'});
+		});
+	});
+	var play_area_height = boardheight - ((card_slot_height + 20) * 2) - 10;
+	$('play-area').setStyle({height: play_area_height + 'px'});
+	$('event-slot').setStyle({height: play_area_height - 9 + 'px', width: parseInt((play_area_height - 15) / 1.6) + 'px'});
+}
+
+Devo.Core.initialize = function() {
+	Event.observe(window, 'resize', Devo.Core._resizeWatcher);
+	Devo.Core._resizeWatcher();
 }
