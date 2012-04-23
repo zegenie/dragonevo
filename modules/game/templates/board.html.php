@@ -22,6 +22,16 @@
 		</ul>
 	</div>
 </div>
+<div class="tab_menu" id="play-tabs">
+	<ul id="play-tabs-menu">
+		<?php if ($include_hand): ?>
+			<li id="tab-cards"><a href="#">My hand</a></li>
+		<?php endif; ?>
+	</ul>
+</div>
+<?php if ($include_hand): ?>
+	<?php include_component('game/playerhand', compact('game')); ?>
+<?php endif; ?>
 <script type="text/javascript">
 	document.observe('dom:loaded', function() {
 		Devo.Core.initialize();

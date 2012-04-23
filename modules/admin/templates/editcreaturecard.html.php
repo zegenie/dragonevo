@@ -46,8 +46,16 @@
 			<input type="text" name="base_health" class="points" id="card_base_health" value="<?php echo $card->getBaseHealth(); ?>"> HP <span class="faded_out">(will be multiplied based on card's level)</span>
 		</div>
 		<div>
+			<label for="card_base_health_randomness">HP randomness</label>
+			<input type="text" name="base_health_randomness" class="points" id="card_base_health_randomness" value="<?php echo $card->getBaseHealthRandomness(); ?>">%&nbsp;&nbsp;<span class="faded_out">(determines the variation for cards that are picked / bought / generated)</span>
+		</div>
+		<div>
 			<label for="card_base_dmp">Base DMP</label>
 			<input type="text" name="base_dmp" class="points" id="card_base_dmp" value="<?php echo $card->getBaseDMP(); ?>">x&nbsp;&nbsp;<span class="faded_out">(this is the max DMP this card can have)</span>
+		</div>
+		<div>
+			<label for="card_base_dmp_randomness">DMP randomness</label>
+			<input type="text" name="base_dmp_randomness" class="points" id="card_base_dmp_randomness" value="<?php echo $card->getBaseDMPRandomness(); ?>">%&nbsp;&nbsp;<span class="faded_out">(determines the variation for cards that are picked / bought / generated)</span>
 		</div>
 	</fieldset>
 	<fieldset>

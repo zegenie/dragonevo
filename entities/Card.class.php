@@ -137,6 +137,14 @@
 		protected $_gpt_decrease_opponent = 0;
 
 		/**
+		 * GPT randomness factor
+		 *
+		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
+		 */
+		protected $_gpt_randomness = 0;
+
+		/**
 		 * Magic per turn increase (player)
 		 *
 		 * @Column(type="integer", length=10, default=0)
@@ -163,6 +171,14 @@
 		 * @Column(type="integer", length=10, default=0)
 		 */
 		protected $_mpt_decrease_opponent = 0;
+
+		/**
+		 * MPT randomness factor
+		 *
+		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
+		 */
+		protected $_mpt_randomness = 0;
 
 		public static function getFactions()
 		{
@@ -307,6 +323,16 @@
 		{
 			return $this->getGPTDecreaseOpponent() + $this->getGPTIncreaseOpponent();
 		}
+		
+		public function getGPTRandomness()
+		{
+			return $this->_gpt_randomness;
+		}
+
+		public function setGPTRandomness($gpt_randomness)
+		{
+			$this->_gpt_randomness = $gpt_randomness;
+		}
 
 		public function getMPTIncreasePlayer()
 		{
@@ -358,6 +384,16 @@
 			return $this->getMPTDecreaseOpponent() + $this->getMPTIncreaseOpponent();
 		}
 
+		public function getMPTRandomness()
+		{
+			return $this->_mpt_randomness;
+		}
+
+		public function setMPTRandomness($mpt_randomness)
+		{
+			$this->_mpt_randomness = $mpt_randomness;
+		}
+
 		public function mergeFormData(\caspar\core\Request $form_data)
 		{
 			foreach (array('name', 'brief_description', 'long_description') as $field) {
@@ -374,6 +410,8 @@
 					$property_name = "_{$resource}_".$form_data["{$resource}_{$pl}"]."_{$pl}";
 					$this->$property_name = (int) $form_data["{$resource}_{$pl}_modifier"];
 				}
+				$randomness_property_name = "_{$resource}_randomness";
+				$this->$randomness_property_name = $form_data[$randomness_property_name];
 			}
 		}
 		

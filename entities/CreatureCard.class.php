@@ -39,12 +39,28 @@
 		protected $_base_health = 1;
 
 		/**
+		 * Base health randomness factor
+		 *
+		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
+		 */
+		protected $_base_health_randomness = 0;
+
+		/**
 		 * Base defence multiplier
 		 *
 		 * @Column(type="integer", length=10, default=1)
 		 * @var integer
 		 */
 		protected $_base_dmp = 0;
+
+		/**
+		 * Base defence multiplier randomness factor
+		 *
+		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
+		 */
+		protected $_base_dmp_randomness = 0;
 
 		/**
 		 * Creature class
@@ -107,6 +123,16 @@
 		{
 			$this->_base_health = (int) $base_health;
 		}
+		
+		public function getBaseHealthRandomness()
+		{
+			return $this->_base_health_randomness;
+		}
+
+		public function setBaseHealthRandomness($base_health_randomness)
+		{
+			$this->_base_health_randomness = $base_health_randomness;
+		}
 
 		public function getBaseDMP()
 		{
@@ -118,6 +144,16 @@
 			$this->_base_dmp = $base_dmp;
 		}
 
+		public function getBaseDMPRandomness()
+		{
+			return $this->_base_dmp_randomness;
+		}
+
+		public function setBaseDMPRandomness($base_dmp_randomness)
+		{
+			$this->_base_dmp_randomness = $base_dmp_randomness;
+		}
+				
 		public function getCreatureClass()
 		{
 			return $this->_creature_class;
@@ -184,7 +220,9 @@
 			$this->_faction = $form_data['faction'];
 			$this->_creature_class = $form_data['creature_class'];
 			$this->_base_dmp = (int) $form_data['base_dmp'];
+			$this->_base_dmp_randomness = (int) $form_data['base_dmp_randomness'];
 			$this->_base_health = (int) $form_data['base_health'];
+			$this->_base_health_randomness = $form_data['base_health_randomness'];
 			$this->_card_level = $form_data['level'];
 			$this->_slot_1_available = (bool) $form_data['slot_1_available'];
 			$this->_slot_2_available = (bool) $form_data['slot_2_available'];

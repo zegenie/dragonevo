@@ -392,13 +392,14 @@ Devo.Main.Login.login = function(url) {
 
 Devo.Core._resizeWatcher = function() {
 	var docheight = document.viewport.getHeight();
-	var docwidth = document.viewport.getWidth();
-	$('game-table').setStyle({height: docheight - 40 + 'px', marginTop: '20px', width: docwidth - 40 + 'px', marginLeft: '20px'});
+	//var docwidth = document.viewport.getWidth();
+	$('game-table').setStyle({height: docheight - 100 + 'px'});
 	var gtl = $('game-table').getLayout();
-	var boardwidth = gtl.get('width') - gtl.get('padding-left') - gtl.get('padding-right');
 	var boardheight = gtl.get('height') - gtl.get('padding-top') - gtl.get('padding-bottom');
 	var card_slot_height = parseInt((boardheight / 10) * 3) - 9;
 	var card_slot_width = parseInt(card_slot_height / 1.6);
+	var boardwidth = (card_slot_width * 5) + 100;
+	$('game-table').setStyle({width: boardwidth + 'px', marginLeft: 'auto', marginRight: 'auto'});
 	$$('.card-slots-container').each(function(element) {
 		$(element).setStyle({width: (card_slot_width * 5) + 70 + 'px', height: card_slot_height + 4 + 'px'});
 		$(element).select('.card-slot').each(function(card_element) {

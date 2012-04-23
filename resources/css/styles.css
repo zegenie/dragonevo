@@ -1,8 +1,8 @@
 
-/*@import url('http://fonts.googleapis.com/css?family=Chelsea+Market');
+@import url('http://fonts.googleapis.com/css?family=Chelsea+Market');
 @import url('http://fonts.googleapis.com/css?family=Fredericka+the+Great');
 @import url('http://fonts.googleapis.com/css?family=Open+Sans:400,700,400italic,700italic');
-@import url('http://fonts.googleapis.com/css?family=IM+Fell+English+SC');*/
+@import url('http://fonts.googleapis.com/css?family=IM+Fell+English+SC');
 
 /*
 html5doctor.com Reset Stylesheet
@@ -727,7 +727,7 @@ input:-moz-placeholder { color:#AAA; }
 	text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.8);
 }
 
-#game-table { background: url('/images/table_bg.jpg') no-repeat -350px -200px; padding: 0; position: relative; clear: both; border-color: transparent;  border-radius: 10px; -moz-border-radius: 10px; -webkit-border-radius: 10px; box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8); -webkit-box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8); -moz-box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8); }
+#game-table { background: url('/images/table_bg_med.jpg') no-repeat 50% 50%; padding: 0; margin-top: 80px; position: relative; clear: both; border-color: transparent;  border-radius: 10px; -moz-border-radius: 10px; -webkit-border-radius: 10px; box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8); -webkit-box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8); -moz-box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8); }
 .card-slots-container {
 	height: 200px;
 	clear: both;
@@ -757,10 +757,41 @@ li.card-slot {
 #event-slot {
 	background-color: rgba(0, 0, 255, 0.1);
 	position: absolute;
-	left: 10px;
-	top: 4px;
+	left: 15px;
+	top: 2px;
 }
 #play-area {
 	clear: both;
 	position: relative;
+}
+#play-tabs {
+	position: absolute;
+	bottom: 0;
+	height: 30px;
+	right: 50%;
+}
+#play-tabs-menu li {
+	opacity: 0.5;
+	background: -moz-linear-gradient(-90deg, #656565, #141414);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#656565), color-stop(100%,#141414)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #656565 0%,#141414 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #656565 0%,#141414 100%); /* Opera11.10+ */
+	background: -ms-linear-gradient(top, #656565 0%,#141414 100%); /* IE10+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#656565', endColorstr='#141414',GradientType=0 ); /* IE6-9 */
+	background: linear-gradient(top, #656565 0%,#141414 100%); /* W3C */
+	color: silver;
+	border-bottom: 0;
+	white-space: nowrap;
+	border-color: rgba(255, 255, 255, 0.2);
+	font-family: 'Open Sans';
+	font-weight: normal;
+	font-size: 0.9em;
+	padding: 0;
+}
+#play-tabs-menu li a {
+	padding: 8px 15px;
+}
+
+#play-tabs-menu:hover li {
+	opacity: 1;
 }

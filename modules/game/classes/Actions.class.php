@@ -32,6 +32,7 @@
 			$game_id = $request['game_id'];
 			try {
 				$this->game = new Game();
+				$this->include_hand = (bool) $request['show_hand'];
 			} catch (Exception $e) {
 				
 			}

@@ -8,4 +8,8 @@
 	class Components extends \caspar\core\Components
 	{
 		
+		public function componentPlayerHand()
+		{
+		}
+		
 	}
