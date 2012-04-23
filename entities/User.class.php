@@ -176,9 +176,14 @@
 			return crypt($password, '$2a$07$' . $salt . '$');
 		}
 
-		public static function loginCheck($username, $password)
+		public static function loginCheck($username, $password, $rehash = true)
 		{
-			$password = self::hashPassword($password);
+//			var_dump($username);
+//			var_dump($password);
+//			die();
+			if ($rehash) {
+				$password = self::hashPassword($password);
+			}
 			$user = self::getB2DBTable()->loginCheck($username, $password);
 			return ($user instanceof User) ? $user : new User();
 		}

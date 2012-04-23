@@ -11,6 +11,12 @@
 
 		public function loginCheck($username, $password)
 		{
+			if (!$username || !$password) {
+				return null;
+			}
+			var_dump($username);
+			var_dump($password);
+			die();
 			$crit = $this->getCriteria();
 			$crit->addWhere('users.username', $username);
 			$crit->addWhere('users.password', $password);

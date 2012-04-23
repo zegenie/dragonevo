@@ -16,7 +16,8 @@ var Devo = {
 	effect_queues: {
 		successmessage: 'Devo_successmessage',
 		failedmessage: 'Devo_failedmessage'
-	}
+	},
+	debug: true
 }
 
 Devo.Core._processCommonAjaxPostEvents = function(options) {
@@ -222,9 +223,6 @@ Devo.Main.Helpers.ajax = function(url, options) {
 		evalScripts: true,
 		onLoading: function () {
 			if (options.loading) {
-				if (Devo.debug) {
-					$('tbg___DEBUGINFO___indicator').show();
-				}
 				if ($(options.loading.indicator)) {
 					$(options.loading.indicator).show();
 				}
@@ -284,7 +282,8 @@ Devo.Main.Helpers.ajax = function(url, options) {
 			if (response.responseJSON) {
 				Devo.Main.Helpers.Message.error(json.error, json.message);
 			} else {
-				Devo.Main.Helpers.Message.error(response.responseText);
+				//Devo.Main.Helpers.Message.error(response.responseText);
+				$('csp-dbg-content').insert(response.responseText, 'before');
 			}
 			if (options.failure) {
 				Devo.Core._processCommonAjaxPostEvents(options.failure);
@@ -295,12 +294,7 @@ Devo.Main.Helpers.ajax = function(url, options) {
 		},
 		onComplete: function (response) {
 			if (Devo.debug) {
-				$('tbg___DEBUGINFO___indicator').hide();
-				var d = new Date(),
-					d_id = response.getHeader('x-tbg-debugid');
-
-				Devo.Core.AjaxCalls.push({location: url, time: d, debug_id: d_id});
-				Devo.updateDebugInfo();
+				$('csp-dbg-content').insert(response.responseJSON['csp-debugger'], 'before');
 			}
 			$(options.loading.indicator).hide();
 			if (options.complete) {

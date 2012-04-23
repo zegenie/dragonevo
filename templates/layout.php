@@ -93,6 +93,7 @@
 					<div id="header-strip-padder"></div>
 				<?php endif; ?>
 				<?php echo $content; ?>
+				<?php \caspar\core\Debugger::display(); ?>
 			</div>
 		<?php else: ?>
 			<?php echo $content; ?>
