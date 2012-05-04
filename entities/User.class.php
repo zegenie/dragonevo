@@ -178,10 +178,7 @@
 
 		public static function loginCheck($username, $password, $rehash = true)
 		{
-//			var_dump($username);
-//			var_dump($password);
-//			die();
-			if ($rehash) {
+			if ($rehash && $password) {
 				$password = self::hashPassword($password);
 			}
 			$user = self::getB2DBTable()->loginCheck($username, $password);
@@ -254,7 +251,7 @@
 		 */
 		public function isAuthenticated()
 		{
-			return (bool) ($this->getID());
+			return (bool) $this->getID();
 		}
 
 		/**

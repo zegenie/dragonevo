@@ -22,7 +22,7 @@ class Actions extends \caspar\core\Actions
 //		$user = new \application\entities\User();
 //		$user->setUsername('zegenie');
 //		$user->setIsAdmin();
-//		$user->setPassword('passord');
+//		$user->setPassword('password');
 //		$user->save();
 	}
 
@@ -172,7 +172,6 @@ class Actions extends \caspar\core\Actions
 		if ($request->isPost()) {
 			try {
 				if ($request->hasParameter('csp_username') && $request->hasParameter('csp_password') && $request['csp_username'] != '' && $request['csp_password'] != '') {
-					\caspar\core\Caspar::loadUser();
 					if (!\caspar\core\Caspar::getUser()->isAuthenticated()) {
 						throw new \Exception('Unknown username and / or password');
 					}

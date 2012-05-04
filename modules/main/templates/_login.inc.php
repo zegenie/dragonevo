@@ -8,7 +8,7 @@
 			<div id="tab_login_pane"<?php if ($selected_tab != 'login'): ?> style="display: none;"<?php endif; ?>>
 				<div class="logindiv regular">			
 					<form accept-charset="utf-8" action="<?php echo make_url('login'); ?>" method="post" id="login_form" onsubmit="Devo.Main.Login.login('<?php echo make_url('login'); ?>'); return false;">
-						<input type="hidden" id="return_to" name="return_to" value="<?php echo $referer; ?>" />
+						<input type="hidden" id="return_to" name="devo_referer" value="<?php echo $referer; ?>" />
 						<div class="login_boxheader"><?php echo __('Log in to an existing account'); ?></div>
 						<div>
 							<table border="0" class="login_fieldtable">
