@@ -9,7 +9,7 @@ core:
   stylesheets: ['/css/styles.css']
   javascripts: ['/js/prototype.js', '/js/scriptaculous.js', '/js/main.js']
   user_classname: \application\entities\User
-  salt: "$sra1F6s"
+  salt: DoNIAOwSrs1i2xvUnha1pC     # 22 char random salt
   response_classname: \caspar\core\Response
 
 services:
