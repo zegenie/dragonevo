@@ -114,6 +114,9 @@
 					</div>
 					<div class="footer-info">
 						All text and artwork &copy; 2011-<?php echo date('Y'); ?> The Dragon Evo team / <a href="mailto:support@dragonevo.com">support@dragonevo.com</a>
+						<?php if ($csp_user->isAdmin()): ?>
+							/ <strong><?php echo link_tag(make_url('admin'), 'Admin CP'); ?></strong>
+						<?php endif; ?>
 					</div>
 				</footer>
 			</div>

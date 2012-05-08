@@ -18,6 +18,13 @@
 			return $this->selectAll();
 		}
 		
+		public function getNumberOfCards()
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('equippable_item_cards.card_state', \application\entities\Card::STATE_TEMPLATE);
+			return $this->count($crit);
+		}
+
 		public function getByFaction($faction)
 		{
 			$crit = $this->getCriteria();

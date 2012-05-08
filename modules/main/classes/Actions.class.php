@@ -18,12 +18,12 @@ class Actions extends \caspar\core\Actions
 	 */
 	public function runIndex(Request $request)
 	{
-//		\application\entities\User::getB2DBTable()->create();
-//		$user = new \application\entities\User();
-//		$user->setUsername('zegenie');
-//		$user->setIsAdmin();
-//		$user->setPassword('password');
-//		$user->save();
+		\application\entities\User::getB2DBTable()->create();
+		$user = new \application\entities\User();
+		$user->setUsername('zegenie');
+		$user->setIsAdmin();
+		$user->setPassword('password');
+		$user->save();
 	}
 
 	public function runNotFound(Request $request)

@@ -25,6 +25,14 @@
 		protected $_id;
 
 		/**
+		 * Timestamp of when the user was created
+		 *
+		 * @Column(type="integer", length=10)
+		 * @var integer
+		 */
+		protected $_created_at;
+
+		/**
 		 * Unique username (login name)
 		 *
 		 * @Column(type="string", length=200)
@@ -244,6 +252,13 @@
 			return $this->getNameWithUsername();
 		}
 
+		protected function _preSave($is_new = false)
+		{
+			if ($is_new) {
+				$this->_created_at = time();
+			}
+		}
+
 		/**
 		 * Whether this user is authenticated or just an authenticated guest
 		 *
@@ -270,6 +285,16 @@
 		public function getLastSeen()
 		{
 			return $this->_lastseen;
+		}
+
+		public function getCreatedAt()
+		{
+			return $this->_created_at;
+		}
+
+		public function setCreatedAt($created_at)
+		{
+			$this->_created_at = $created_at;
 		}
 
 		/**

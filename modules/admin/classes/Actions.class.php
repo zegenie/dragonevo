@@ -25,6 +25,9 @@
 		 */
 		public function runIndex(Request $request)
 		{
+			$this->itemcards = \application\entities\tables\EquippableItemCards::getTable()->getNumberOfCards();
+			$this->eventcards = \application\entities\tables\EventCards::getTable()->getNumberOfCards();
+			$this->creaturecards = \application\entities\tables\CreatureCards::getTable()->getNumberOfCards();
 		}
 
 		/**
