@@ -122,6 +122,16 @@ class Actions extends \caspar\core\Actions
 
 	}
 
+	/**
+	 * "Unavailable" page
+	 *
+	 * @param Request $request
+	 */
+	public function runUnavailable(Request $request)
+	{
+
+	}
+
 	public function runGetBackdropPartial(Request $request)
 	{
 		if (!$request->isAjaxCall()) {

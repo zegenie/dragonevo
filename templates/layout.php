@@ -3,10 +3,10 @@
 	<head>
 		<meta charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>">
 		<?php \caspar\core\Event::createNew('core', 'header_begins')->trigger(); ?>
-		<meta name="description" content="The bug genie, friendly issue tracking">
-		<meta name="keywords" content="thebuggenie friendly issue tracking">
-		<meta name="author" content="thebuggenie.com">
-                <link rel="shortcut icon" href="/images/favicon.ico">
+		<meta name="description" content="Dragon Evo - online action card game">
+		<meta name="keywords" content="dragonevo dragonevotcg ccg cardgame card game action">
+		<meta name="author" content="dragonevo.com">
+		<link rel="shortcut icon" href="/images/favicon.ico">
 		<title><?php echo strip_tags($csp_response->getTitle()); ?></title>
 		<link rel="shortcut icon" href="<?php print $csp_response->getFaviconURL(); ?>">
 		<?php foreach ($csp_response->getFeeds() as $feed_url => $feed_title): ?>
@@ -64,7 +64,7 @@
 			<div style="background-color: #000; width: 100%; height: 100%; position: absolute; top: 0; left: 0; margin: 0; padding: 0; z-index: 999;" class="semi_transparent"> </div>
 		</div>
 		<?php if ($csp_routing->getCurrentRouteModule() != 'game'): ?>
-			<?php if ($csp_response->getPage() != 'home'): ?>
+			<?php /*if ($csp_response->getPage() != 'home'): ?>
 				<div id="header-strip">
 					<div class="header-content">
 						<ul>
@@ -87,13 +87,35 @@
 						</a>
 					</div>
 				</div>
-			<?php endif; ?>
-			<div class="main-content"<?php if ($csp_response->getPage() == 'home') echo ' style="width: 800px; background-color: transparent;"'; ?>>
-				<?php if ($csp_response->getPage() != 'home'): ?>
-					<div id="header-strip-padder"></div>
-				<?php endif; ?>
+			<?php endif; */?>
+			<div class="main-content">
+				<div class="banner-container">
+					<img src="/images/banner.jpg">
+					<a class="devo-box" href="<?php echo make_url('home'); ?>">
+						DRAGON EVO<br>
+						the online action card game
+					</a>
+					<?php /* <a class="play-now" href="#">Play now!</a> */ ?>
+				</div>
+				<ul class="main-menu">
+					<li><a href="<?php echo make_url('home'); ?>" class="<?php if ($csp_response->getPage() == 'home') echo ' selected'; ?>">Home</a></li>
+					<li><a href="<?php echo make_url('unavailable'); ?>">Media</a></li>
+					<li><a href="<?php echo make_url('unavailable'); ?>">The game</a></li>
+					<li><a href="<?php echo make_url('unavailable'); ?>">Marketplace</a></li>
+					<li><a href="<?php echo make_url('unavailable'); ?>">Lobby</a></li>
+					<li><a href="<?php echo make_url('unavailable'); ?>">FAQ</a></li>
+				</ul>
 				<?php echo $content; ?>
-				<?php \caspar\core\Debugger::display(); ?>
+				<?php // \caspar\core\Debugger::display(); ?>
+				<br style="clear: both;">
+				<footer>
+					<div class="border-container">
+						<div class="border-overlay"></div>
+					</div>
+					<div class="footer-info">
+						All text and artwork &copy; 2011-<?php echo date('Y'); ?> The Dragon Evo team / <a href="mailto:support@dragonevo.com">support@dragonevo.com</a>
+					</div>
+				</footer>
 			</div>
 		<?php else: ?>
 			<?php echo $content; ?>

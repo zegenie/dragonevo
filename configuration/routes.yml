@@ -20,6 +20,11 @@ register:
   module: main
   action: doregister
 
+unavailable:
+  url: /unavailable
+  module: main
+  action: unavailable
+
 admin:
   url: /admin
   module: admin
