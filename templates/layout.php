@@ -93,7 +93,7 @@
 					<img src="/images/banner.jpg">
 					<a class="devo-box" href="<?php echo make_url('home'); ?>">
 						DRAGON EVO<br>
-						the online action card game
+						<span class="slogan">the online action card game</span>
 					</a>
 					<?php /* <a class="play-now" href="#">Play now!</a> */ ?>
 				</div>

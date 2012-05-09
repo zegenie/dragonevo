@@ -176,10 +176,10 @@ class Actions extends \caspar\core\Actions
 	 *
 	 * @param TBGRequest $request
 	 */
-	public function runDoLogin(Request $request)
+	public function runLogin(Request $request)
 	{
-		$forward_url = $this->getRouting()->generate('home');
 		if ($request->isPost()) {
+			$forward_url = $this->getRouting()->generate('home');
 			try {
 				if ($request->hasParameter('csp_username') && $request->hasParameter('csp_password') && $request['csp_username'] != '' && $request['csp_password'] != '') {
 					if (!\caspar\core\Caspar::getUser()->isAuthenticated()) {
@@ -198,20 +198,20 @@ class Actions extends \caspar\core\Actions
 					$this->forward403($e->getMessage());
 				}
 			}
-		} else {
+//		} else {
+//			if ($request->isAjaxCall()) {
+//				$this->getResponse()->setHttpStatus(401);
+//				return $this->renderJSON(array("error" => 'Please enter a username and password'));
+//			} else {
+//				$this->forward403('Please enter a username and password');
+//			}
 			if ($request->isAjaxCall()) {
-				$this->getResponse()->setHttpStatus(401);
-				return $this->renderJSON(array("error" => 'Please enter a username and password'));
+				return $this->renderJSON(array('forward' => $forward_url));
 			} else {
-				$this->forward403('Please enter a username and password');
+				$this->forward($forward_url);
 			}
 		}
 
-		if ($request->isAjaxCall()) {
-			return $this->renderJSON(array('forward' => $forward_url));
-		} else {
-			$this->forward($forward_url);
-		}
 	}
 
 	public function runLogout(Request $request)

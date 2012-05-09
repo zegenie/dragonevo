@@ -8,7 +8,7 @@ home:
 login:
   url: /login
   module: main
-  action: dologin
+  action: login
 
 logout:
   url: /logout

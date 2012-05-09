@@ -1,7 +1,7 @@
 <?php $csp_response->setTitle(__('Dragon Evo - The Card Game')); ?>
 <?php include_component('main/latestnews'); ?>
 <div class="content right">
-	<h1>Welcome to Dragon Evo &Tilde; The Card Game</h1>
+	<h1>Welcome to the Dragon Evo Universe</h1>
 	<p>
 		<strong>Dragon Evo: The Card Game</strong> is a unique online card game experience inspired by, and set in the Dragon Evo fantasy universe.
 	</p>

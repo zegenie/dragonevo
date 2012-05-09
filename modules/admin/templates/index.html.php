@@ -5,6 +5,11 @@
 		<img src="/images/swirl_bottom_right.png" class="swirl bottom-right">
 		<img src="/images/swirl_bottom_left.png" class="swirl bottom-left">
 		<img src="/images/swirl_top_left.png" class="swirl top-left">
+		<h1>Manage site</h1>
+		<ul>
+			<li><a href="#">Pick card of the week</a></li>
+			<li><a href="#">Pick item of the week</a></li>
+		</ul>
 		<h1>Edit cards</h1>
 		<ul>
 			<?php foreach (array('event', 'creature', 'item', 'potion') as $type): ?>

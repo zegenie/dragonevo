@@ -1,6 +1,7 @@
 <?php $csp_response->setTitle('Lobby'); ?>
-<br style="clear: both;">
-<div style="padding: 50px;">
-    <h3>403 Forbidden</h3>
-    <?php echo $message; ?>
+<div style="padding: 30px;" class="content full">
+    <h1>403 Forbidden</h1>
+    <p>
+		<?php echo $message; ?>
+	</p>
 </div>

@@ -7,7 +7,7 @@
 			<?php $getElementHitPercentageModifier = 'get'.ucfirst($element).'AttackHitPercentageModifier'; ?>
 			<?php $getElementDamagePercentageModifier = 'get'.ucfirst($element).'AttackDamagePercentageModifier'; ?>
 			<?php $getElementDmpPercentageModifier = 'get'.ucfirst($element).'AttackDmpPercentageModifier'; ?>
-			<div style="padding-bottom: 5px; border-bottom: 1px dotted #CCC; margin-bottom: 5px;">
+			<div style="padding-bottom: 5px; border-bottom: 1px dotted rgba(72, 48, 28, 0.8); margin-bottom: 5px;">
 				<label for="modifies_<?php echo $element; ?>_attacks_hit_percentage" style="padding: 30px 0;"><?php echo ucfirst($element); ?> attacks</label>
 				<select name="modifies_<?php echo $element; ?>_attacks_hit_percentage" style="width: 220px;">
 					<option value="increase"<?php if (!$card->$getDecreasesElementHitPercentage()) echo ' selected'; ?>>Increases chance of hitting by</option>

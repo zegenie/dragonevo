@@ -1,11 +1,11 @@
 <fieldset>
 	<legend>Basic details</legend>
-	<div style="float: right; clear: none; width: 220px;">
+	<div style="float: right; clear: none; width: 270px;">
 		<ul class="cards">
-			<li class="card flipped"></li>
+			<?php include_template('game/card', compact('card')); ?>
 		</ul>
 	</div>
-	<div style="float: left; width: 750px; clear: none;">
+	<div style="float: left; width: 680px; clear: none;">
 		<div>
 			<label for="card_name">Card name</label>
 			<input type="text" name="name" id="card_name" value="<?php echo $card->getName(); ?>" placeholder="Enter the name of the card / character here">
