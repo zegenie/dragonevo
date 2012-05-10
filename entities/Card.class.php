@@ -183,8 +183,8 @@
 		public static function getFactions()
 		{
 			return array(
-				self::FACTION_NEUTRALS => 'Neutrals',
-				self::FACTION_EMPIRE => 'Empire',
+				self::FACTION_NEUTRALS => 'Highwinds',
+				self::FACTION_EMPIRE => 'Hologev',
 				self::FACTION_RUTAI => 'Rutai'
 			);
 		}
@@ -413,6 +413,14 @@
 				$randomness_property_name = "_{$resource}_randomness";
 				$this->$randomness_property_name = $form_data[$randomness_property_name];
 			}
+			if ($form_data->hasFileUploads()) {
+				$form_data->handleUpload('card_image', $this->getKey() . '.png', CASPAR_APPLICATION_PATH . 'resources' . DS . 'images' . DS . 'cards' . DS);
+			}
+		}
+
+		public function getKey()
+		{
+			return strtolower(str_replace(' ', '', $this->_name));
 		}
 		
 		public function setCardState($state)

@@ -132,6 +132,26 @@ class Actions extends \caspar\core\Actions
 
 	}
 
+	/**
+	 * FAQ page
+	 *
+	 * @param Request $request
+	 */
+	public function runFaq(Request $request)
+	{
+
+	}
+
+	/**
+	 * Media page / gallery
+	 *
+	 * @param Request $request
+	 */
+	public function runMedia(Request $request)
+	{
+
+	}
+
 	public function runGetBackdropPartial(Request $request)
 	{
 		if (!$request->isAjaxCall()) {

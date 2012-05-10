@@ -39,4 +39,9 @@
 			return $this->select($crit);
 		}
 
+		public function getById($id)
+		{
+			return $this->selectById($id);
+		}
+
 	}

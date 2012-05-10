@@ -19,7 +19,7 @@
 		</div>
 		<div>
 			<label for="card_image">Card image</label>
-			<input type="file" name="image" id="card_image">
+			<input type="file" name="card_image" id="card_image">
 		</div>
 		<div>
 			<label for="card_brief_description">Brief description</label>

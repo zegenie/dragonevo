@@ -7,12 +7,16 @@
 		<h1>Latest news</h1>
 		<ul>
 			<li>
+				<a href="<?php echo make_url('media'); ?>">New media posted</a><br>
+				<time>Today, 17:00</time>
+			</li>
+			<li>
 				<a href="http://www.dragonevo.com">New website launched</a><br>
-				<time>Today, 15:00</time>
+				<time>8th April, 15:00</time>
 			</li>
 			<li>
 				<a href="<?php echo make_url('unavailable'); ?>">Indiegogo campaign closed</a><br>
-				<time>Today, 08:00</time>
+				<time>8th April, 08:00</time>
 			</li>
 			<li>
 				<a href="https://twitter.com/#!/dragonevotcg">Follow us on Twitter!</a><br>

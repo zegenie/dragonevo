@@ -464,17 +464,33 @@ h6 {
 	position: absolute;
 	opacity: 0.3;
 }
+/*.small .swirl.top-right {
+	width: 30px;
+	top: -15px;
+	right: -15px;
+}
+.small .swirl.bottom-left {
+	width: 30px;
+	bottom: -15px;
+	left: -15px;
+}*/
 .swirl.top-right {
-	top: -25px;
-	right: -25px;
+/*	top: -25px;
+	right: -25px;*/
+	width: 35px;
+	top: -20px;
+	right: -20px;
 }
 .swirl.bottom-right {
 	bottom: -25px;
 	right: -25px;
 }
 .swirl.bottom-left {
-	bottom: -25px;
-	left: -25px;
+/*	bottom: -25px;
+	left: -25px;*/
+	width: 35px;
+	bottom: -20px;
+	left: -20px;
 }
 .swirl.top-left {
 	top: -25px;
@@ -564,6 +580,9 @@ h6 {
 	width: 400px;
 	margin: 40px auto 0 auto;
 }
+.content.faq a {
+	font-size: 0.75em;
+}
 
 .social-buttons {
 	padding: 5px;
@@ -600,6 +619,24 @@ h6 {
 	-o-transition: margin 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
 	-ms-transition: margin 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
 	transition: margin 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
+}
+
+.cotw-admin .preview img {
+	border: 1px solid rgba(175, 231, 255, 0.4);
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	box-shadow: 0 0 3px rgba(175, 231, 255, 1), 0 0 8px rgba(175, 231, 255, 0.8), 0 0 13px rgba(175, 231, 255, 0.6);
+	-moz-box-shadow: 0 0 3px rgba(175, 231, 255, 1), 0 0 8px rgba(175, 231, 255, 0.8), 0 0 13px rgba(175, 231, 255, 0.6);
+	-webkit-box-shadow: 0 0 3px rgba(175, 231, 255, 1), 0 0 8px rgba(175, 231, 255, 0.8), 0 0 13px rgba(175, 231, 255, 0.6);
+	width: 160px;
+	margin: 15px 15px 35px 10px;
+	display: block;
+}
+.cotw-admin .preview p {
+	float: left;
+	padding: 35px 10px;
+	font-size: 1.2em;
 }
 
 footer {
@@ -896,32 +933,157 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 li.cards { list-style: none; }
 .card {
     z-index: 5;
-    background: url('/images/card.png') no-repeat top left;
+	background-size: cover;
     color: black;
     width: 264px;
 	padding: 0;
     height: 355px;
+	overflow: hidden;
     position: relative;
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.2); -webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.2); -moz-box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
-	border-radius: 5px;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
+	box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+	-webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+	-moz-box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+}
+.card.creature {
+    background-image: url('/images/card_white.png');
+}
+.card.event {
+    background-image: url('/images/card_event.png');
+}
+.card.item {
+    background-image: url('/images/card_red.png');
 }
 li.card {
 	float: left;
     margin-right: 5px;
 }
+.card div {
+	min-height: 0;
+	line-height: 1;
+}
 
 .card .name {
 	position: absolute;
-	top: 14px;
-	left: 20px;
+	top: 11px;
+	left: 12px;
+	width: 228px;
+	padding: 4px 6px;
+	height: 16px;
+	min-height: 16px;
 	font-size: 1em;
 	font-weight: bold;
 	letter-spacing: -1px;
 	font-family: 'Metamorphous';
 	color: #FFF;
+	border-radius: 5px 5px 0 0;
+	-moz-border-radius: 5px 5px 0 0;
+	-webkit-border-radius: 5px 5px 0 0;
 	text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, 1px 1px 0 #000, 0 0 5px rgba(0, 0, 0, 0.3);
+	z-index: 10;
+	background-color: rgba(255, 255, 255, 0.7);
+}
+.card .name.neutral {
+	background-color: rgba(255, 255, 255, 0.7);
+}
+.card .name.empire {
+	background-color: rgba(255, 30, 30, 0.55);
+}
+.card .name.rutai {
+	background-color: rgba(30, 30, 255, 0.45);
+}
+.card.item .name {
+	background-color: rgba(255, 255, 255, 0.1);
+}
+.card .card_image {
+	z-index: 2;
+	background-repeat: no-repeat;
+	background-position: top left;
+	position: absolute;
+	top: 11px;
+	left: 12px;
+	width: 240px;
+	height: 178px;
+	border-radius: 5px 5px 0 5px;
+	-moz-border-radius: 5px 5px 0 5px;
+	-webkit-border-radius: 5px 5px 0 5px;
+	box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.4);
+	-webkit-box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.4);
+	-moz-box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.4);
+	line-height: 1;
+	height: 201px;
+	overflow: hidden;
+}
+.card .reflection {
+	z-index: 1;
+    position: absolute;
+    top: 179px;
+    left: 0;
+    -moz-transform: scaleY(-1);
+    -webkit-transform: scaleY(-1);
+    -ms-transform: scaleY(-1);
+    opacity: .25;
+}
+.card .card_image .cover {
+	z-index: 2;
+	position: absolute;
+	bottom: 0;
+	right: 2px;
+	width: 139px;
+	height: 6px;
+	min-height: 0;
+	border-top-left-radius: 5px;
+	border-left: 2px solid rgba(148, 135, 116, 0.9);
+	border-top: 2px solid rgba(148, 135, 116, 0.9);
+	border-right: 4px solid #D4CECB;
+	background-color: #D4CECB;
+	background: -moz-linear-gradient(bottom, #D4CECB 0%, #D6D0CF 100%);
+	background: -khtml-gradient(linear, left bottom, left top, color-stop(0%,#D4CECB), color-stop(100%,#D6D0CF));
+	background: -webkit-gradient(linear, left bottom, left top, color-stop(0%,#D4CECB), color-stop(100%,#D6D0CF));
+	background: -webkit-linear-gradient(bottom, #D4CECB 0%, #D6D0CF 100%);
+	background: -o-linear-gradient(bottom, #D4CECB 0%, #D6D0CF 100%);
+	background: -ms-linear-gradient(bottom, #D4CECB 0%, #D6D0CF 100%);
+	background: linear-gradient(to top, #D4CECB 0%, #D6D0CF 100%);
+}
+.card.item .card_image .cover {
+	border-left: 2px solid rgba(185, 75, 72, 0.9);
+	border-top: 2px solid rgba(185, 75, 72, 0.9);
+	border-right: 4px solid #C58B89;
+	background-color: #C58B89;
+	background: -moz-linear-gradient(bottom, #C58B89 0%, #C48987 100%);
+	background: -khtml-gradient(linear, left bottom, left top, color-stop(0%,#C58B89), color-stop(100%,#C48987));
+	background: -webkit-gradient(linear, left bottom, left top, color-stop(0%,#C58B89), color-stop(100%,#C48987));
+	background: -webkit-linear-gradient(bottom, #C58B89 0%, #C48987 100%);
+	background: -o-linear-gradient(bottom, #C58B89 0%, #C48987 100%);
+	background: -ms-linear-gradient(bottom, #C58B89 0%, #C48987 100%);
+	background: linear-gradient(to top, #C58B89 0%, #C48987 100%);
+}
+.card .hp, .card .magic {
+	position: absolute;
+	bottom: 13px;
+	width: 20px;
+	text-align: center;
+	padding: 0;
+	font-size: 1em;
+	font-weight: normal;
+	letter-spacing: -1px;
+	font-family: 'Metamorphous';
+	color: #FFF;
+	text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5), -1px 1px 1px rgba(255, 255, 255, 0.5), 1px -1px 1px rgba(255, 255, 255, 0.5), 1px 1px 1px rgba(255, 255, 255, 0.5);
+	z-index: 10;
+	background-color: transparent;
+}
+.card .hp {
+	left: 25px;
+	color: rgba(108, 213, 127, 1);
+	text-shadow: 1px 1px 3px rgba(108, 213, 127, 0.5), -1px 1px 3px rgba(108, 213, 127, 0.5), 1px -1px 3px rgba(108, 213, 127, 0.5), 1px 1px 3px rgba(108, 213, 127, 0.5);
+}
+.card .magic {
+	left: 66px;
+	color: rgba(125, 125, 225, 1);
+	text-shadow: 1px 1px 3px rgba(125, 125, 225, 0.5), -1px 1px 3px rgba(125, 125, 225, 0.5), 1px -1px 3px rgba(125, 125, 225, 0.5), 1px 1px 3px rgba(125, 125, 225, 0.5);
 }
 
 #opponents_hand { display: none; }

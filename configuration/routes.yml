@@ -25,6 +25,16 @@ unavailable:
   module: main
   action: unavailable
 
+faq:
+  url: /faq
+  module: main
+  action: faq
+
+media:
+  url: /media
+  module: main
+  action: media
+
 admin:
   url: /admin
   module: admin
@@ -34,6 +44,11 @@ edit_cards:
   url: /admin/:card_type/cards
   module: admin
   action: cards
+
+admin_card_of_the_week:
+  url: /admin/cotw
+  module: admin
+  action: cardoftheweek
 
 new_card:
   url: /admin/:card_type/card

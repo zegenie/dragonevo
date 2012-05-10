@@ -7,7 +7,7 @@
 		<img src="/images/swirl_top_left.png" class="swirl top-left">
 		<h1>Manage site</h1>
 		<ul>
-			<li><a href="#">Pick card of the week</a></li>
+			<li><a href="<?php echo make_url('admin_card_of_the_week'); ?>">Pick card of the week</a></li>
 			<li><a href="#">Pick item of the week</a></li>
 		</ul>
 		<h1>Edit cards</h1>

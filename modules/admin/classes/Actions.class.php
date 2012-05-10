@@ -84,6 +84,26 @@
 			}
 		}
 
+		public function runUploadCardImage(Request $request)
+		{
+			// read contents from the input stream
+			$inputHandler = fopen('php://input', "r");
+			// create a temp file where to save data from the input stream
+			$fileHandler = tmpfile();
+
+			// save data from the input stream
+			while(true) {
+				$buffer = fgets($inputHandler, 4096);
+				if (strlen($buffer) == 0) {
+					fclose($inputHandler);
+					fclose($fileHandler);
+					return true;
+				}
+
+				fwrite($fileHandler, $buffer);
+			}
+		}
+
 		public function runEditEventCards(Request $request)
 		{
 			$this->cards = \application\entities\tables\EventCards::getTable()->getAll();
@@ -222,6 +242,22 @@
 			} catch (\Exception $e) {
 				$this->error = $e->getMessage();
 			}
+		}
+
+		public function runCardOfTheWeek(Request $request)
+		{
+			if ($request->isPost()) {
+				$card = $request['selected_card'];
+				\application\entities\Settings::saveSetting(\application\entities\Settings::SETTING_CARD_OF_THE_WEEK, $card);
+			}
+			$this->current_card = \application\entities\Settings::getCardOfTheWeek();
+			$item = \application\entities\tables\EquippableItemCards::getTable()->getAll();
+			$event = \application\entities\tables\EventCards::getTable()->getAll();
+			$creature = array();
+			foreach (\application\entities\Card::getFactions() as $faction => $description) {
+				$creature[$faction] = \application\entities\tables\CreatureCards::getTable()->getByFaction($faction);
+			}
+			$this->cards = compact('item', 'event', 'creature');
 		}
 
 	}

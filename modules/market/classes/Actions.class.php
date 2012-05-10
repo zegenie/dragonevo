@@ -17,10 +17,11 @@
 		 */
 		public function runIndex(Request $request)
 		{
-			\application\entities\tables\EventCards::getTable()->create();
-			\application\entities\tables\EquippableItemCards::getTable()->create();
-			\application\entities\tables\PotionItemCards::getTable()->create();
-			\application\entities\tables\CreatureCards::getTable()->create();
+//			\application\entities\tables\EventCards::getTable()->create();
+//			\application\entities\tables\EquippableItemCards::getTable()->create();
+//			\application\entities\tables\PotionItemCards::getTable()->create();
+//			\application\entities\tables\CreatureCards::getTable()->create();
+//			\application\entities\tables\Settings::getTable()->create();
 		}
 
 	}

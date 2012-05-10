@@ -99,11 +99,8 @@
 				</div>
 				<ul class="main-menu">
 					<li><a href="<?php echo make_url('home'); ?>" class="<?php if ($csp_response->getPage() == 'home') echo ' selected'; ?>">Home</a></li>
-					<li><a href="<?php echo make_url('unavailable'); ?>">Media</a></li>
-					<li><a href="<?php echo make_url('unavailable'); ?>">The game</a></li>
-					<li><a href="<?php echo make_url('unavailable'); ?>">Marketplace</a></li>
-					<li><a href="<?php echo make_url('unavailable'); ?>">Lobby</a></li>
-					<li><a href="<?php echo make_url('unavailable'); ?>">FAQ</a></li>
+					<li><a href="<?php echo make_url('media'); ?>" class="<?php if ($csp_response->getPage() == 'media') echo ' selected'; ?>">Media</a></li>
+					<li><a href="<?php echo make_url('faq'); ?>" class="<?php if ($csp_response->getPage() == 'faq') echo ' selected'; ?>">FAQ</a></li>
 				</ul>
 				<?php echo $content; ?>
 				<?php // \caspar\core\Debugger::display(); ?>
@@ -116,6 +113,9 @@
 						All text and artwork &copy; 2011-<?php echo date('Y'); ?> The Dragon Evo team / <a href="mailto:support@dragonevo.com">support@dragonevo.com</a>
 						<?php if ($csp_user->isAdmin()): ?>
 							/ <strong><?php echo link_tag(make_url('admin'), 'Admin CP'); ?></strong>
+						<?php endif; ?>
+						<?php if ($csp_user->isAuthenticated()): ?>
+							/ <?php echo link_tag(make_url('logout'), 'Log out'); ?>
 						<?php endif; ?>
 					</div>
 				</footer>

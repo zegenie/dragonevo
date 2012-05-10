@@ -26,16 +26,6 @@
 		<a href="<?php echo make_url('unavailable'); ?>" class="read-more">Read more&nbsp;&gt;&gt;</a>
 	</div>
 	<div class="feature">
-		<h4>Card of the week: Dark mage</h4>
-		<img src="/images/feature_darkmage.png">
-		<p>
-			<strong>Faction:</strong> The Rutai<br>
-			<strong>Name:</strong> Dark Mage<br>
-			<strong>Card type:</strong> Creature Card<br>
-		</p>
-		<p>
-			The Dark Mages are the heartless spellcasters of the Rutai Empire - evil human beings who has infused their bodies with dark magic to be able to cast the most horrible spells on others. Because of these powerful spells, magic has taken a terrible toll on their bodies, making them already half dead.
-		</p>
-		<a href="<?php echo make_url('unavailable'); ?>" class="read-more">Read more&nbsp;&gt;&gt;</a>
+		<?php include_component('main/cardoftheweek'); ?>
 	</div>
 </div>

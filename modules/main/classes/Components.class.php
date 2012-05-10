@@ -32,4 +32,10 @@
 			
 		}
 
+		public function componentCardOfTheWeek()
+		{
+			$this->card = \application\entities\Settings::getCardOfTheWeek();
+			$this->preview = (isset($this->preview)) ? $this->preview : false;
+		}
+
 	}

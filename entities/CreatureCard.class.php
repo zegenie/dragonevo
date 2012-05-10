@@ -119,6 +119,11 @@
 			return $this->getBaseHealth();
 		}
 
+		public function getHP()
+		{
+			return $this->getBaseHP();
+		}
+
 		public function setBaseHealth($base_health)
 		{
 			$this->_base_health = (int) $base_health;

@@ -8,5 +8,5 @@
 	 */
 	class Cards extends \b2db\Table
 	{
-		
+
 	}
