@@ -19,6 +19,6 @@
 	</div>
 	<?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE): ?>
 		<div class="hp"><?php echo $card->getHP(); ?></div>
-		<div class="magic"><?php echo ($card->getMPTIncreasePlayer()) ? '+'.$card->getMPTIncreasePlayer() : '-'; ?></div>
+		<div class="magic"><?php echo ($card->getEP()) ? $card->getEP() : '-'; ?></div>
 	<?php endif; ?>
 </li>

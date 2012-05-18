@@ -29,7 +29,7 @@
 
 		public function componentLatestNews()
 		{
-			
+			$this->latest_news = \application\entities\tables\News::getTable()->getLatestNews();
 		}
 
 		public function componentCardOfTheWeek()

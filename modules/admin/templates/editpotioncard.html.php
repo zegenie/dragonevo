@@ -6,7 +6,10 @@
 	$csp_response->setTitle($card->getB2DBID() ? __('Edit potion card') : __('Create new potion card'));
 
 ?>
-<h2 style="margin: 10px 0 0 10px;"><?php echo $card->getB2DBID() ? __('Edit potion card') : __('Create new potion card'); ?></h2>
+<h2 style="margin: 10px 0 0 10px;">
+	<?php echo link_tag(make_url('edit_cards', array('card_type' => 'potion')), "Edit potion cards"); ?>&nbsp;&rArr;
+	<?php echo $card->getB2DBID() ? $card->getName() : __('New potion card'); ?>
+</h2>
 <?php if (isset($error) && $error): ?>
 	<h6 class="error"><?php echo $error; ?></h6>
 <?php endif; ?>
@@ -54,7 +57,7 @@
 		</fieldset>
 	</div>
 	<br style="clear: both;">
-	<div style="clear: both; text-align: right; padding: 10px; margin-top: 10px; background-color: #F1F1F1; border: 1px dotted #CCC; border-left: none; border-right: none;">
+	<div style="clear: both; text-align: right; padding: 10px; margin-top: 10px; background-color: rgba(80, 54, 32, 0.4); border: 1px dotted rgba(72, 48, 28, 0.8); border-left: none; border-right: none;">
 		<input type="submit" value="Save card" style="font-size: 1em; padding: 3px 10px !important;">
 	</div>
 </form>

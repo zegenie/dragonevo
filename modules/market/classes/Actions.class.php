@@ -22,6 +22,9 @@
 //			\application\entities\tables\PotionItemCards::getTable()->create();
 //			\application\entities\tables\CreatureCards::getTable()->create();
 //			\application\entities\tables\Settings::getTable()->create();
+//			\b2db\Core::simpleQuery('ALTER TABLE creature_cards ADD COLUMN base_ep INT(10) DEFAULT 0');
+//			\b2db\Core::simpleQuery('ALTER TABLE creature_cards ADD COLUMN base_ep_randomness INT(10) DEFAULT 0');
+			\application\entities\tables\News::getTable()->create();
 		}
 
 	}

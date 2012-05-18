@@ -58,38 +58,18 @@
 			<input type="text" name="gpt_player_modifier" value="<?php echo $card->getGPTPlayerModifier(); ?>" class="points"> gold / turn
 		</div>
 		<div>
-			<label for="gpt_opponent">GPT opponent</label>
-			<select name="gpt_opponent">
-				<option value="increase"<?php if (!$card->getGPTDecreaseOpponent()) echo ' selected'; ?>>Increase by</option>
-				<option value="decrease"<?php if ($card->getGPTDecreaseOpponent()) echo ' selected'; ?>>Decrease by</option>
-			</select>
-			<input type="text" name="gpt_opponent_modifier" value="<?php echo $card->getGPTOpponentModifier(); ?>" class="points"> gold / turn
-		</div>
-		<div>
 			<label for="gpt_randomness">GPT randomness</label>
 			<input type="text" name="gpt_randomness" id="gpt_randomness" value="<?php echo $card->getGPTRandomness(); ?>" class="points">%
 		</div>
 	</div>
 	<div style="width: 480px; float: left; clear: none;">
 		<div>
-			<label for="mpt_player">EPT player</label>
-			<select name="mpt_player">
-				<option value="increase"<?php if (!$card->getMPTDecreasePlayer()) echo ' selected'; ?>>Increase by</option>
-				<option value="decrease"<?php if ($card->getMPTDecreasePlayer()) echo ' selected'; ?>>Decrease by</option>
+			<label for="gpt_opponent">GPT opponent</label>
+			<select name="gpt_opponent">
+				<option value="increase"<?php if (!$card->getGPTDecreaseOpponent()) echo ' selected'; ?>>Increase by</option>
+				<option value="decrease"<?php if ($card->getGPTDecreaseOpponent()) echo ' selected'; ?>>Decrease by</option>
 			</select>
-			<input type="text" name="mpt_player_modifier" value="<?php echo $card->getMPTPlayerModifier(); ?>" class="points"> magic / turn
-		</div>
-		<div>
-			<label for="mpt_opponent">EPT opponent</label>
-			<select name="mpt_opponent">
-				<option value="increase"<?php if (!$card->getMPTDecreaseOpponent()) echo ' selected'; ?>>Increase by</option>
-				<option value="decrease"<?php if ($card->getMPTDecreaseOpponent()) echo ' selected'; ?>>Decrease by</option>
-			</select>
-			<input type="text" name="mpt_opponent_modifier" value="<?php echo $card->getMPTOpponentModifier(); ?>" class="points"> magic / turn
-		</div>
-		<div>
-			<label for="ept_randomness">EPT randomness</label>
-			<input type="text" name="ept_randomness" id="ept_randomness" value="<?php echo $card->getMPTRandomness(); ?>" class="points">%
+			<input type="text" name="gpt_opponent_modifier" value="<?php echo $card->getGPTOpponentModifier(); ?>" class="points"> gold / turn
 		</div>
 	</div>
 </fieldset>

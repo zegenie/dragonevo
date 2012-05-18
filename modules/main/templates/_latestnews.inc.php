@@ -6,7 +6,19 @@
 		<img src="/images/swirl_top_left.png" class="swirl top-left">
 		<h1>Latest news</h1>
 		<ul>
-			<li>
+			<?php if (!count($latest_news)): ?>
+				<p class="faded_out">
+					No news posted yet
+				</p>
+			<?php else: ?>
+				<?php foreach ($latest_news as $news): ?>
+					<li>
+						<a href="<?php echo ($news->hasUrl()) ? $news->getUrl() : make_url('news', array('year' => $news->getYear(), 'month' => $news->getMonth(), 'day' => $news->getDay(), 'id' => $news->getId(), 'title' => $news->getKey())); ?>"><?php echo $news->getTitle(); ?></a><br>
+						<time><?php echo ($news->getCreatedAt() >= mktime(0, 0, 1)) ? 'Today' : date('dS M', $news->getCreatedAt()); ?>, <?php echo date('H:i', $news->getCreatedAt()); ?></time>
+					</li>
+				<?php endforeach; ?>
+			<?php endif; ?>
+			<?php /*<li>
 				<a href="<?php echo make_url('media'); ?>">New media posted</a><br>
 				<time>Today, 17:00</time>
 			</li>
@@ -33,7 +45,7 @@
 			<li>
 				<a href="#">Dragon Evo TCG relaunch</a><br>
 				<time>25th February, 2012</time>
-			</li>
+			</li> */ ?>
 		</ul>
 	</div>
 	<h5>Follow us</h5>

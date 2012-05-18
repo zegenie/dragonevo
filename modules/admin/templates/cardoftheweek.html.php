@@ -1,5 +1,8 @@
 <?php $csp_response->setTitle('Edit creature cards'); ?>
-<div class="content full cotw-admin">
+<div class="content left">
+	<?php include_template('admin/adminmenu'); ?>
+</div>
+<div class="content right cotw-admin">
 	<h1>
 		Edit card of the week
 	</h1>

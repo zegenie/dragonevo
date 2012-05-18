@@ -47,6 +47,22 @@
 		protected $_base_health_randomness = 0;
 
 		/**
+		 * Base ep
+		 *
+		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
+		 */
+		protected $_base_ep = 1;
+
+		/**
+		 * Base ep randomness factor
+		 *
+		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
+		 */
+		protected $_base_ep_randomness = 0;
+
+		/**
 		 * Base defence multiplier
 		 *
 		 * @Column(type="integer", length=10, default=1)
@@ -128,7 +144,7 @@
 		{
 			$this->_base_health = (int) $base_health;
 		}
-		
+
 		public function getBaseHealthRandomness()
 		{
 			return $this->_base_health_randomness;
@@ -137,6 +153,31 @@
 		public function setBaseHealthRandomness($base_health_randomness)
 		{
 			$this->_base_health_randomness = $base_health_randomness;
+		}
+
+		public function getBaseEP()
+		{
+			return $this->_base_ep;
+		}
+
+		public function getEP()
+		{
+			return $this->getBaseEP();
+		}
+
+		public function setBaseEP($base_ep)
+		{
+			$this->_base_ep = (int) $base_ep;
+		}
+
+		public function getBaseEPRandomness()
+		{
+			return $this->_base_ep_randomness;
+		}
+
+		public function setBaseEPRandomness($base_ep_randomness)
+		{
+			$this->_base_ep_randomness = $base_ep_randomness;
 		}
 
 		public function getBaseDMP()
@@ -226,6 +267,8 @@
 			$this->_creature_class = $form_data['creature_class'];
 			$this->_base_dmp = (int) $form_data['base_dmp'];
 			$this->_base_dmp_randomness = (int) $form_data['base_dmp_randomness'];
+			$this->_base_ep = (int) $form_data['base_ep'];
+			$this->_base_ep_randomness = (int) $form_data['base_ep_randomness'];
 			$this->_base_health = (int) $form_data['base_health'];
 			$this->_base_health_randomness = $form_data['base_health_randomness'];
 			$this->_card_level = $form_data['level'];

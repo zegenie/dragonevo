@@ -18,12 +18,17 @@ class Actions extends \caspar\core\Actions
 	 */
 	public function runIndex(Request $request)
 	{
-		\application\entities\User::getB2DBTable()->create();
-		$user = new \application\entities\User();
-		$user->setUsername('zegenie');
-		$user->setIsAdmin();
-		$user->setPassword('password');
-		$user->save();
+//		\application\entities\User::getB2DBTable()->create();
+//		$user = new \application\entities\User();
+//		$user->setUsername('zegenie');
+//		$user->setIsAdmin();
+//		$user->setPassword('pooWZLX1');
+//		$user->save();
+//		$user = new \application\entities\User();
+//		$user->setUsername('thondal');
+//		$user->setIsAdmin();
+//		$user->setPassword('elskerhelena88');
+//		$user->save();
 	}
 
 	public function runNotFound(Request $request)
@@ -140,6 +145,19 @@ class Actions extends \caspar\core\Actions
 	public function runFaq(Request $request)
 	{
 
+	}
+
+	/**
+	 * News item page
+	 *
+	 * @param Request $request
+	 */
+	public function runNews(Request $request)
+	{
+		$this->news = null;
+		try {
+			$this->news = new \application\entities\News($request['id']);
+		} catch (Exception $e) {}
 	}
 
 	/**

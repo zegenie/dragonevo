@@ -41,21 +41,37 @@
 				<?php endforeach; ?>
 			</select>&nbsp;&nbsp;<span class="faded_out">(this is not the XP level)</span>
 		</div>
-		<div>
-			<label for="card_base_health">Base HP</label>
-			<input type="text" name="base_health" class="points" id="card_base_health" value="<?php echo $card->getBaseHealth(); ?>"> HP <span class="faded_out">(will be multiplied based on card's level)</span>
+		<div style="width: 480px; float: left; clear: none;">
+			<div>
+				<label for="card_base_health">Base HP</label>
+				<input type="text" name="base_health" class="points" id="card_base_health" value="<?php echo $card->getBaseHealth(); ?>"> HP
+			</div>
+			<div>
+				<label for="card_base_health_randomness">HP randomness</label>
+				<input type="text" name="base_health_randomness" class="points" id="card_base_health_randomness" value="<?php echo $card->getBaseHealthRandomness(); ?>">%
+			</div>
+			<div>
+				<label for="card_base_dmp">Max DMP</label>
+				<input type="text" name="base_dmp" class="points" id="card_base_dmp" value="<?php echo $card->getBaseDMP(); ?>">x&nbsp;&nbsp;
+			</div>
+			<div>
+				<label for="card_base_dmp_randomness">DMP randomness</label>
+				<input type="text" name="base_dmp_randomness" class="points" id="card_base_dmp_randomness" value="<?php echo $card->getBaseDMPRandomness(); ?>">%
+			</div>
 		</div>
-		<div>
-			<label for="card_base_health_randomness">HP randomness</label>
-			<input type="text" name="base_health_randomness" class="points" id="card_base_health_randomness" value="<?php echo $card->getBaseHealthRandomness(); ?>">%&nbsp;&nbsp;<span class="faded_out">(determines the variation for cards that are picked / bought / generated)</span>
-		</div>
-		<div>
-			<label for="card_base_dmp">Base DMP</label>
-			<input type="text" name="base_dmp" class="points" id="card_base_dmp" value="<?php echo $card->getBaseDMP(); ?>">x&nbsp;&nbsp;<span class="faded_out">(this is the max DMP this card can have)</span>
-		</div>
-		<div>
-			<label for="card_base_dmp_randomness">DMP randomness</label>
-			<input type="text" name="base_dmp_randomness" class="points" id="card_base_dmp_randomness" value="<?php echo $card->getBaseDMPRandomness(); ?>">%&nbsp;&nbsp;<span class="faded_out">(determines the variation for cards that are picked / bought / generated)</span>
+		<div style="width: 480px; float: left; clear: none;">
+			<div>
+				<label for="card_base_ep">Base EP</label>
+				<input type="text" name="base_ep" class="points" id="card_base_ep" value="<?php echo $card->getBaseEP(); ?>"> EP
+			</div>
+			<div>
+				<label for="card_base_ep_randomness">EP randomness</label>
+				<input type="text" name="base_ep_randomness" class="points" id="card_base_ep_randomness" value="<?php echo $card->getBaseEPRandomness(); ?>">%
+			</div>
+			<div style="margin-top: 10px;">
+				<span class="faded_out"><strong>Base values</strong> will be multiplied based on card's level</span><br>
+				<span class="faded_out"><strong>Randomness %</strong> determines the variation for cards that are picked / bought / generated</span>
+			</div>
 		</div>
 	</fieldset>
 	<fieldset>
@@ -80,7 +96,7 @@
 		<?php endif; ?>
 	</fieldset>
 	<br style="clear: both;">
-	<div style="clear: both; text-align: right; padding: 10px; margin-top: 10px; background-color: #F1F1F1; border: 1px dotted #CCC; border-left: none; border-right: none;">
+	<div style="clear: both; text-align: right; padding: 10px; margin-top: 10px; background-color: rgba(80, 54, 32, 0.4); border: 1px dotted rgba(72, 48, 28, 0.8); border-left: none; border-right: none;">
 		<input type="submit" value="Save card" style="font-size: 1em; padding: 3px 10px !important;">
 	</div>
 </form>

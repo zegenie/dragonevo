@@ -504,7 +504,7 @@ h6 {
 	padding: 2px;
 }
 .menu-left li time {
-	font-size: 0.6em;
+	font-size: 0.7em;
 	clear: both;
 	color: #EAEAEA;
 }
@@ -582,6 +582,10 @@ h6 {
 }
 .content.faq a {
 	font-size: 0.75em;
+}
+.content.news time {
+	font-size: 0.9em;
+	padding: 5px 10px;
 }
 
 .social-buttons {
@@ -1062,7 +1066,7 @@ li.card {
 }
 .card .hp, .card .magic {
 	position: absolute;
-	bottom: 13px;
+	bottom: 14px;
 	width: 20px;
 	text-align: center;
 	padding: 0;

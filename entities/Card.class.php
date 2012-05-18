@@ -405,7 +405,7 @@
 				$property_name = "_{$field}";
 				$this->$property_name = (integer) $form_data[$field];
 			}
-			foreach (array('gpt', 'mpt') as $resource) {
+			foreach (array('gpt') as $resource) {
 				foreach (array('player', 'opponent') as $pl) {
 					$property_name = "_{$resource}_".$form_data["{$resource}_{$pl}"]."_{$pl}";
 					$this->$property_name = (int) $form_data["{$resource}_{$pl}_modifier"];
@@ -414,7 +414,7 @@
 				$this->$randomness_property_name = $form_data[$randomness_property_name];
 			}
 			if ($form_data->hasFileUploads()) {
-				$form_data->handleUpload('card_image', $this->getKey() . '.png', CASPAR_APPLICATION_PATH . 'resources' . DS . 'images' . DS . 'cards' . DS);
+				$form_data->handleUpload('card_image', $this->getKey() . '.png', DEVO_CARD_UPLOAD_PATH);
 			}
 		}
 

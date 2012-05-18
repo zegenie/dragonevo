@@ -260,4 +260,23 @@
 			$this->cards = compact('item', 'event', 'creature');
 		}
 
+		public function runNews(Request $request)
+		{
+			$this->all_news = \application\entities\tables\News::getTable()->getAll();
+		}
+
+		public function runEditNews(Request $request)
+		{
+			$news = new \application\entities\News($request['id']);
+			if ($request->isPost()) {
+				$news->setTitle($request['title']);
+				$news->setContent($request['content']);
+				$news->setUrl($request['news_url']);
+				$news->setCreatedAt(mktime($request['hour'], $request['minute'], $request['second'], $request['month'], $request['day'], $request['year']));
+				$news->save();
+				$this->forward($this->getRouting()->generate('edit_news', array('id' => $news->getId())));
+			}
+			$this->news = $news;
+		}
+
 	}
