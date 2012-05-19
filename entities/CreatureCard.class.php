@@ -111,6 +111,14 @@
 		 * @var boolean
 		 */
 		protected $_slot_2_available = false;
+		
+		/**
+		 * List of this card's attacks
+		 * 
+		 * @var array|Attack
+		 * @Relates(class="\application\entities\Attack", collection=true, foreign_column="card_id")
+		 */
+		protected $_attacks;
 
 		public static function getCreatureClasses()
 		{
@@ -258,6 +266,12 @@
 		public function setSlot2Available($slot_2_available)
 		{
 			$this->_slot_2_available = $slot_2_available;
+		}
+		
+		public function getAttacks()
+		{
+			$this->_b2dbLazyload('_attacks');
+			return $this->_attacks;
 		}
 
 		public function mergeFormData(\caspar\core\Request $form_data)

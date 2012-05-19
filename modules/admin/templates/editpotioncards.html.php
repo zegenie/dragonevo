@@ -12,7 +12,7 @@
 			<h6 style="margin-top: 15px;">Existing cards</h6>
 			<ul style="margin-left: 15px;">
 				<?php foreach ($cards as $card): ?>
-					<li><a href="<?php echo make_url('edit_card', array('card_id' => $card->getB2DBID(), 'card_type' => 'event')); ?>"><?php echo $card->getName(); ?></a>
+					<li><a href="<?php echo make_url('edit_card', array('card_id' => $card->getB2DBID(), 'card_type' => 'potion')); ?>"><?php echo $card->getName(); ?></a>
 				<?php endforeach; ?>
 			</ul>
 		</div>

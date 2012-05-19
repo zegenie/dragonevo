@@ -82,7 +82,7 @@ edit_card:
   action: card
 
 get_backdrop_partial:
-  url: /get/backdroppartial/:key
+  url: /get/backdroppartial/:key/*
   module: main
   action: getbackdroppartial
 

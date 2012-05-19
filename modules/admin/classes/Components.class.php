@@ -8,4 +8,9 @@
 	class Components extends \caspar\core\Components
 	{
 		
+		public function componentAttack()
+		{
+			
+		}
+		
 	}

@@ -155,44 +155,33 @@ p {
 .backdrop_box.medium { width: 600px; margin: 0 -300px 0 -300px; }
 .backdrop_box.large { width: 800px; margin: 0 -400px 200px -400px; }
 .backdrop_box.huge { width: 1010px; margin: 0 -500px 200px -500px; }
-.backdrop_box { margin: 5px 0; clear: both; font-size: 1em; display: block; padding: 0px; padding-bottom: 2px; background-color: #FFF; border: 1px solid #CCC; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); border-radius: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px; }
-.backdrop_box .backdrop_detail_header { 	
-	border: none;
-	border-bottom: 1px solid #CCC;
-	background: -moz-linear-gradient(top, #FFFFFF 0%, #F1F1F1 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FFFFFF), color-stop(100%,#F1F1F1)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top, #FFFFFF 0%,#F1F1F1 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top, #FFFFFF 0%,#F1F1F1 100%); /* Opera11.10+ */
-	background: -ms-linear-gradient(top, #FFFFFF 0%,#F1F1F1 100%); /* IE10+ */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#FFFFFF', endColorstr='#F1F1F1',GradientType=0 ); /* IE6-9 */
-	background: linear-gradient(top, #FFFFFF 0%,#F1F1F1 100%); /* W3C */
-	font-weight: bold;
-	padding: 7px;
-	font-size: 0.9em;
-	text-align: left;
-	color: white;
-	text-shadow: 1px 1px 2px #000000;
-	filter: dropshadow(color=#000000, offx=1, offy=1);
+.backdrop_box { 
+	margin: 5px 0; 
+	clear: both; 
+	font-size: 0.9em; 
+	display: block; 
+	padding: 0px; 
+	padding-bottom: 2px; 
+	background: url('/images/bg.jpg') no-repeat top center; 
+	background-color: #000; 
+	border: 1px solid #503620;
+	box-shadow: 0 0 8px rgba(255, 128, 0, 0.5), 0 0 18px rgba(255, 255, 0, 0.4);
+	-webkit-box-shadow: 0 0px 8px rgba(255, 128, 0, 0.5), 0 0px 18px rgba(255, 255, 0, 0.4);
+	-moz-box-shadow: 0 0px 8px rgba(255, 128, 0, 0.5), 0 0px 18px rgba(255, 255, 0, 0.4);
+	border-radius: 5px; 
+	-moz-border-radius: 5px; 
+	-webkit-border-radius: 5px; 
 }
-.backdrop_detail_header {
-	background: #6193cf; /* Old browsers */
-	background: -moz-linear-gradient(top, #6193cf 0%, #396ba7 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#6193cf), color-stop(100%,#396ba7)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top, #6193cf 0%,#396ba7 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top, #6193cf 0%,#396ba7 100%); /* Opera11.10+ */
-	background: -ms-linear-gradient(top, #6193cf 0%,#396ba7 100%); /* IE10+ */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#6193cf', endColorstr='#396ba7',GradientType=0 ); /* IE6-9 */
-	background: linear-gradient(top, #6193cf 0%,#396ba7 100%); /* W3C */
-	box-shadow: 0 0 8px rgba(0, 0, 0, 0.4); -webkit-box-shadow: 0 0 8px rgba(0, 0, 0, 0.4); -moz-box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
-	color: white;
+.backdrop_detail_header, .backdrop_detail_footer, #backdrop_detail_content {
+	background-color: rgba(0, 0, 0, 0.6);
 }
-#backdrop_detail_content { font-weight: normal; font-size: 0.9em; padding: 5px; background: white; text-align: left; }
+#backdrop_detail_content { font-weight: normal; font-size: 0.9em; color: white; padding: 5px; text-align: left; }
 #reportissue_container #backdrop_detail_content { padding: 5px; font-size: 0.9em; }
 #reportissue_container .backdrop_detail_footer { padding: 5px; font-size: 1.1em; }
 #reportissue_container .backdrop_detail_footer a { font-weight: normal; }
 #backdrop_detail_content #report_issue_add_extra, #backdrop_detail_content #reproduction_steps_div { display: none; }
 #backdrop_detail_content .tab_menu { margin-top: 30px; margin-bottom: 10px; font-size: 1.1em; }
-.backdrop_detail_footer { clear: both; font-weight: bold; font-size: 0.9em; padding: 5px; text-align: right; background-color: #FFF; }
+.backdrop_detail_footer { clear: both; font-weight: bold; font-size: 0.9em; padding: 5px; text-align: right; }
 
 #dialog_title, #dialog_content {margin-left: 75px; }
 #dialog_yes, #dialog_no { border-bottom: none !important; }
@@ -955,7 +944,7 @@ li.cards { list-style: none; }
     background-image: url('/images/card_white.png');
 }
 .card.event {
-    background-image: url('/images/card_event.png');
+    background-image: url('/images/card_blue.png');
 }
 .card.item {
     background-image: url('/images/card_red.png');
@@ -971,26 +960,26 @@ li.card {
 
 .card .name {
 	position: absolute;
-	top: 11px;
-	left: 12px;
-	width: 228px;
+	top: 14px;
+	left: 18px;
+	width: 226px;
 	padding: 4px 6px;
-	height: 16px;
-	min-height: 16px;
-	font-size: 1em;
+	height: 12px;
+	min-height: 12px;
+	font-size: 0.95em;
 	font-weight: bold;
 	letter-spacing: -1px;
 	font-family: 'Metamorphous';
 	color: #FFF;
-	border-radius: 5px 5px 0 0;
-	-moz-border-radius: 5px 5px 0 0;
-	-webkit-border-radius: 5px 5px 0 0;
+	border-radius: 7px 7px 0 0;
+	-moz-border-radius: 7px 7px 0 0;
+	-webkit-border-radius: 7px 7px 0 0;
 	text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, 1px 1px 0 #000, 0 0 5px rgba(0, 0, 0, 0.3);
 	z-index: 10;
-	background-color: rgba(255, 255, 255, 0.7);
+	background-color: rgba(255, 255, 255, 0.1);
 }
 .card .name.neutral {
-	background-color: rgba(255, 255, 255, 0.7);
+	background-color: rgba(255, 255, 255, 0.5);
 }
 .card .name.empire {
 	background-color: rgba(255, 30, 30, 0.55);
@@ -1006,10 +995,10 @@ li.card {
 	background-repeat: no-repeat;
 	background-position: top left;
 	position: absolute;
-	top: 11px;
-	left: 12px;
-	width: 240px;
-	height: 178px;
+	top: 14px;
+	left: 18px;
+	width: 238px;
+	height: 198px;
 	border-radius: 5px 5px 0 5px;
 	-moz-border-radius: 5px 5px 0 5px;
 	-webkit-border-radius: 5px 5px 0 5px;
@@ -1017,7 +1006,6 @@ li.card {
 	-webkit-box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.4);
 	-moz-box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.4);
 	line-height: 1;
-	height: 201px;
 	overflow: hidden;
 }
 .card .reflection {
@@ -1034,11 +1022,11 @@ li.card {
 	z-index: 2;
 	position: absolute;
 	bottom: 0;
-	right: 2px;
+	right: 1px;
 	width: 139px;
 	height: 6px;
 	min-height: 0;
-	border-top-left-radius: 5px;
+	border-top-left-radius: 15px 8px;
 	border-left: 2px solid rgba(148, 135, 116, 0.9);
 	border-top: 2px solid rgba(148, 135, 116, 0.9);
 	border-right: 4px solid #D4CECB;
@@ -1066,7 +1054,7 @@ li.card {
 }
 .card .hp, .card .magic {
 	position: absolute;
-	bottom: 14px;
+	bottom: 16px;
 	width: 20px;
 	text-align: center;
 	padding: 0;
@@ -1080,12 +1068,12 @@ li.card {
 	background-color: transparent;
 }
 .card .hp {
-	left: 25px;
+	left: 31px;
 	color: rgba(108, 213, 127, 1);
 	text-shadow: 1px 1px 3px rgba(108, 213, 127, 0.5), -1px 1px 3px rgba(108, 213, 127, 0.5), 1px -1px 3px rgba(108, 213, 127, 0.5), 1px 1px 3px rgba(108, 213, 127, 0.5);
 }
 .card .magic {
-	left: 66px;
+	left: 72px;
 	color: rgba(125, 125, 225, 1);
 	text-shadow: 1px 1px 3px rgba(125, 125, 225, 0.5), -1px 1px 3px rgba(125, 125, 225, 0.5), 1px -1px 3px rgba(125, 125, 225, 0.5), 1px 1px 3px rgba(125, 125, 225, 0.5);
 }

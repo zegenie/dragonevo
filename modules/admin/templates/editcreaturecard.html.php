@@ -90,9 +90,16 @@
 	<br style="clear: both;">
 	<fieldset>
 		<legend>Attacks</legend>
+		<button class="button button-standard" onclick="Devo.Main.Helpers.Backdrop.show('<?php echo make_url('get_backdrop_partial', array('key' => 'attack', 'card_id' => $card->getId())); ?>');return false;">Add new attack</button>
 		<?php if (!$card->getB2DBID()): ?>
 			<div class="faded_out" style="padding: 10px;">You need to save this card before you can add attacks</div>
 		<?php else: ?>
+			<?php if (count($card->getAttacks())): ?>
+				<?php foreach ($card->getAttacks() as $attack): ?>
+				<?php endforeach; ?>
+			<?php else: ?>
+				<div class="faded_out" style="padding: 15px 0;" id="card_no_attacks">This card doesn't have any attacks yet</div>
+			<?php endif; ?>
 		<?php endif; ?>
 	</fieldset>
 	<br style="clear: both;">

@@ -42,10 +42,11 @@
 			<label for="news_url">URL</label>
 			<input type="text" name="news_url" id="news_url" value="<?php echo $news->getUrl(); ?>">
 			<p style="margin: 10px 0 20px 140px;" class="faded_out">Type an URL if you want this news item to link to an URL</p>
+			<p style="margin: 10px 0 20px 140px;"> - OR - </p>
 		</div>
 		<div>
 			<label for="news_content">Content</label>
-			<textarea name="content" id="news_content"><?php echo $news->getContent(); ?></textarea><br>
+			<textarea name="content" id="news_content" style="width: 750px; height: 400px;"><?php echo $news->getContent(); ?></textarea><br>
 			<p style="margin: 10px 0 0 140px;" class="faded_out">Type news content here if you want this news item to have its own news page</p>
 		</div>
 	</fieldset>

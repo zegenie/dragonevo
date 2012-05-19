@@ -195,6 +195,19 @@ class Actions extends \caspar\core\Actions
 				case 'openid':
 					$template_name = 'main/openid';
 					break;
+				case 'attack':
+					$template_name = 'admin/attack';
+					if ($request['card_id']) {
+						$card = new \application\entities\CreatureCard($request['card_id']);
+						$attack = new \application\entities\Attack();
+						$attack->setCard($card);
+					} else {
+						$attack = new \application\entities\Attack($request['attack_id']);
+						$card = $attack->getCard();
+					}
+					$options['attack'] = $attack;
+					$options['card'] = $card;
+					break;
 			}
 			if ($template_name !== null) {
 				return $this->renderJSON(array('content' => $this->getComponentHTML($template_name, $options)));
@@ -217,39 +230,21 @@ class Actions extends \caspar\core\Actions
 	public function runLogin(Request $request)
 	{
 		if ($request->isPost()) {
-			$forward_url = $this->getRouting()->generate('home');
+//			$forward_url = $this->getRouting()->generate('home');
 			try {
 				if ($request->hasParameter('csp_username') && $request->hasParameter('csp_password') && $request['csp_username'] != '' && $request['csp_password'] != '') {
 					if (!\caspar\core\Caspar::getUser()->isAuthenticated()) {
 						throw new \Exception('Unknown username and / or password');
 					}
-					$forward_url = $request->getParameter('devo_referer', $this->getRouting()->generate('home'));
+					$this->forward($this->getRouting()->generate('home'));
 				}
 				else {
 					throw new \Exception('Please enter a username and password');
 				}
 			} catch (\Exception $e) {
-				if ($request->isAjaxCall()) {
-					$this->getResponse()->setHttpStatus(401);
-					return $this->renderJSON(array("error" => $e->getMessage()));
-				} else {
-					$this->forward403($e->getMessage());
-				}
-			}
-//		} else {
-//			if ($request->isAjaxCall()) {
-//				$this->getResponse()->setHttpStatus(401);
-//				return $this->renderJSON(array("error" => 'Please enter a username and password'));
-//			} else {
-//				$this->forward403('Please enter a username and password');
-//			}
-			if ($request->isAjaxCall()) {
-				return $this->renderJSON(array('forward' => $forward_url));
-			} else {
-				$this->forward($forward_url);
+				$this->error = $e->getMessage();
 			}
 		}
-
 	}
 
 	public function runLogout(Request $request)

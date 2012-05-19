@@ -15,7 +15,12 @@
 			<p>
 				If you have an account, login here.
 			</p>
-			<form accept-charset="utf-8" action="<?php echo make_url('login'); ?>" method="post" id="login_form" onsubmit="Devo.Main.Login.login('<?php echo make_url('login'); ?>'); return false;">
+			<?php if (isset($error) && $error): ?>
+				<p class="error" style="margin-bottom: 10px;">
+					<?php echo $error; ?>
+				</p>
+			<?php endif; ?>
+			<form accept-charset="utf-8" action="<?php echo make_url('login'); ?>" method="post" id="login_form" <?php /*onsubmit="Devo.Main.Login.login('<?php echo make_url('login'); ?>'); return false;" */ ?>>
 				<dt>
 					<label class="login_fieldheader" for="devo_username"><?php echo __('Username'); ?></label>
 				</dt>

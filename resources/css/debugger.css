@@ -1,5 +1,5 @@
 div#debugger {
- position: absolute;
+ position: fixed;
  top: 0;
  left: 0;
  border-top: 15px solid ORANGE;
@@ -47,13 +47,11 @@ div.debug-dump > ul { border: 0 !important; }
 .debug-dump span.access,
 .debug-dump span.type
 {
- #visibility: hidden;
  display: none;
 }
 .debug-dump li:hover span.access,
 .debug-dump li:hover span.type
 {
- #visibility: visible;
  display: inline;
 }
 .debug-dump li:hover { background-color: #fff; }

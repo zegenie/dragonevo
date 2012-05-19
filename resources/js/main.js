@@ -410,8 +410,7 @@ Devo.Core.initialize = function() {
 	Devo.Core._resizeWatcher();
 }
 
-Devo.Core.upload(fileInputId, fileIndex)
-{
+Devo.Core.upload = function(fileInputId, fileIndex) {
 	// take the file from the input
 	var file = document.getElementById(fileInputId).files[fileIndex];
 	var reader = new FileReader();

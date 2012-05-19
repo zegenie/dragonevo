@@ -103,7 +103,7 @@
 					<li><a href="<?php echo make_url('faq'); ?>" class="<?php if ($csp_response->getPage() == 'faq') echo ' selected'; ?>">FAQ</a></li>
 				</ul>
 				<?php echo $content; ?>
-				<?php // \caspar\core\Debugger::display(); ?>
+				<?php \caspar\core\Debugger::display(); ?>
 				<br style="clear: both;">
 				<footer>
 					<div class="border-container">
