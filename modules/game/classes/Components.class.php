@@ -12,4 +12,9 @@
 		{
 		}
 		
+		public function componentCardAttack()
+		{
+			$this->attack_types = \application\entities\Attack::getTypes();
+		}
+		
 	}

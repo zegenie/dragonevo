@@ -130,6 +130,14 @@
 		protected $_unblockable;
 
 		/**
+		 * Mandatory or not
+		 *
+		 * @Column(type="boolean", default=false)
+		 * @var boolean
+		 */
+		protected $_mandatory;
+
+		/**
 		 * Stun percentage (min)
 		 *
 		 * @Column(type="integer", length=5)
@@ -242,7 +250,39 @@
 		 * @var integer
 		 */
 		protected $_steal_magic_amount;
+		
+		/**
+		 * Introduction (minimum) level
+		 *
+		 * @Column(type="integer", length=5)
+		 * @var integer
+		 */
+		protected $_requires_level;
+		
+		/**
+		 * Powerup item card requirement
+		 *
+		 * @Column(type="integer", length=5)
+		 * @var integer
+		 */
+		protected $_requires_item_card_type;
 
+		public static function getTypes()
+		{
+			$types = array(
+				self::TYPE_AIR => 'Air',
+				self::TYPE_DARK => 'Dark',
+				self::TYPE_EARTH => 'Earth',
+				self::TYPE_FIRE => 'Fire',
+				self::TYPE_FREEZE => 'Freeze',
+				self::TYPE_MELEE => 'Melee',
+				self::TYPE_POISON => 'Poison',
+				self::TYPE_RANGED => 'Ranged'
+				);
+			
+			return $types;
+		}
+		
 		public function getId()
 		{
 			return $this->_id;
@@ -323,6 +363,11 @@
 			return true;
 		}
 
+		public function isMandatory()
+		{
+			return $this->_mandatory;
+		}
+
 		public function isUnblockable()
 		{
 			return $this->_unblockable;
@@ -348,7 +393,12 @@
 			return (int) $this->_stun_percentage_max;
 		}
 
-		public function hasRepeatRange()
+		public function isRepeatable()
+		{
+			return ($this->_repeat_rounds_min > 0);
+		}
+		
+		public function hasRepeatRoundsRange()
 		{
 			return ($this->_repeat_rounds_min != $this->_repeat_rounds_max);
 		}
@@ -401,6 +451,11 @@
 		public function setRepeatAttackPointsMax($repeat_attack_points_max)
 		{
 			$this->_repeat_attack_points_max = $repeat_attack_points_max;
+		}
+
+		public function setMandatory($mandatory)
+		{
+			$this->_mandatory = $mandatory;
 		}
 
 		public function setUnblockable($unblockable)
@@ -582,6 +637,58 @@
 		public function setLevel($level)
 		{
 			$this->_level = $level;
+		}
+		
+		public function getRequiresLevel()
+		{
+			return $this->_requires_level;
+		}
+
+		public function setRequiresLevel($requires_level)
+		{
+			$this->_requires_level = $requires_level;
+		}
+
+		public function getRequiresItemCardType()
+		{
+			return $this->_requires_item_card_type;
+		}
+
+		public function setRequiresItemCardType($requires_item_card_type)
+		{
+			$this->_requires_item_card_type = $requires_item_card_type;
+		}
+
+		public function mergeFormData(\caspar\core\Request $request)
+		{
+			$this->_name = $request['name'];
+			$this->_description = $request['description'];
+			$this->_card_id = $request['card_id'];
+			$this->_attack_type = $request['attack_type'];
+			$this->_cost_gold = $request['cost_gold'];
+			$this->_cost_magic = $request['cost_magic'];
+			$this->_attack_points_min = $request['hp_min'];
+			$this->_attack_points_max = $request['hp_max'];
+			$this->_repeat_rounds_min = $request['rep_min'];
+			$this->_repeat_rounds_max = $request['rep_max'];
+			$this->_repeat_attack_points_min = $request['rep_hp_min'];
+			$this->_repeat_attack_points_max = $request['rep_hp_max'];
+			$this->_unblockable = $request['unblockable'];
+			$this->_mandatory = $request['mandatory'];
+			$this->_critical_hit_percentage = $request['critical_hit_percentage'];
+			$this->_stun_percentage_min = $request['stun_percentage_min'];
+			$this->_stun_percentage_max = $request['stun_percentage_max'];
+			$this->_stun_duration_min = $request['stun_duration_min'];
+			$this->_stun_duration_max = $request['stun_duration_max'];
+			$this->_penalty_rounds_min = $request['penalty_rounds_min'];
+			$this->_penalty_rounds_max = $request['penalty_rounds_max'];
+			$this->_penalty_dmg = $request['penalty_dmg'];
+			$this->_steal_gold_chance = $request['steal_gold_chance'];
+			$this->_steal_gold_amount = $request['steal_gold_amount'];
+			$this->_steal_magic_chance = $request['steal_magic_chance'];
+			$this->_steal_magic_amount = $request['steal_magic_amount'];
+			$this->_requires_level = $request['requires_level'];
+			$this->_requires_item_card_type = $request['requires_item_card_type'];
 		}
 
 	}

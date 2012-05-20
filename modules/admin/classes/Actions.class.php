@@ -278,5 +278,18 @@
 			}
 			$this->news = $news;
 		}
+		
+		public function runEditAttack(Request $request)
+		{
+			try {
+				$attack = new \application\entities\Attack($request['attack_id']);
+				$attack->mergeFormData($request);
+				$attack->save();
+			} catch (\Exception $e) {
+				$this->getResponse()->setHttpStatus(400);
+				return $this->renderJSON(array('error' => $e->getMessage()));
+			}
+			return $this->renderJSON(array('message' => $this->getI18n()->__('Attack saved'), 'content' => Actions::returnTemplateHTML('admin/cardattack', compact('attack'))));
+		}
 
 	}

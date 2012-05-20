@@ -13,6 +13,9 @@ var Devo = {
         },
 		Login: {}
     },
+	Admin: {
+		Cards: {}
+	},
 	effect_queues: {
 		successmessage: 'Devo_successmessage',
 		failedmessage: 'Devo_failedmessage'
@@ -371,19 +374,6 @@ Devo.Main.Login.register = function(url)
 	});
 }
 
-Devo.Main.Login.login = function(url) {
-	Devo.Main.Helpers.ajax(url, {
-		form: 'login_form',
-		loading: {
-			indicator: 'login_indicator',
-			hide: 'login_button'
-		},
-		failure: {
-			show: 'login_button',
-		}
-	});
-}
-
 Devo.Core._resizeWatcher = function() {
 	var docheight = document.viewport.getHeight();
 	//var docwidth = document.viewport.getWidth();
@@ -409,6 +399,20 @@ Devo.Core.initialize = function() {
 	Event.observe(window, 'resize', Devo.Core._resizeWatcher);
 	Devo.Core._resizeWatcher();
 }
+
+Devo.Admin.Cards.saveAttack = function(form) {
+	form = $(form);
+	var attack_id = form.down('input[name=attack_id]').getValue();
+	var url = form.action;
+	var cb = (attack_id) ? {replace: 'admin_card_attack_'+attack_id} : {update: {element: 'admin_card_attacks', insertion: true}};
+	cb.callback = Devo.Main.Helpers.Backdrop.reset;
+	cb.hide = 'card_no_attacks';
+	Devo.Main.Helpers.ajax(url, {
+		form: form.id,
+		loading: {indicator: 'save_attack_indicator'},
+		success: cb
+	});
+};
 
 Devo.Core.upload = function(fileInputId, fileIndex) {
 	// take the file from the input

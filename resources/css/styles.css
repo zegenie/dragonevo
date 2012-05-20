@@ -7,6 +7,7 @@
 @import url('http://fonts.googleapis.com/css?family=Metamorphous');
 @import url('http://fonts.googleapis.com/css?family=Gentium+Basic:400,700italic,700,400italic');
 @import url('http://fonts.googleapis.com/css?family=Fredericka+the+Great');
+@import url('http://fonts.googleapis.com/css?family=Amaranth:400,700,400italic,700italic');
 
 /*
 html5doctor.com Reset Stylesheet
@@ -939,6 +940,7 @@ li.cards { list-style: none; }
 	border-radius: 10px;
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
+	font-family: 'Amaranth';
 }
 .card.creature {
     background-image: url('/images/card_white.png');
@@ -978,13 +980,13 @@ li.card {
 	z-index: 10;
 	background-color: rgba(255, 255, 255, 0.1);
 }
-.card .name.neutral {
+.card.neutral .name {
 	background-color: rgba(255, 255, 255, 0.5);
 }
-.card .name.empire {
+.card.empire .name {
 	background-color: rgba(255, 30, 30, 0.55);
 }
-.card .name.rutai {
+.card.rutai .name {
 	background-color: rgba(30, 30, 255, 0.45);
 }
 .card.item .name {
@@ -1052,6 +1054,140 @@ li.card {
 	background: -ms-linear-gradient(bottom, #C58B89 0%, #C48987 100%);
 	background: linear-gradient(to top, #C58B89 0%, #C48987 100%);
 }
+.card .attacks {
+	position: absolute;
+	top: 215px;
+	left: 24px;
+	width: 227px;
+}
+.card .attacks .attack {
+	font-size: 0.7em;
+	position: relative;
+	padding: 0 5px 3px 20px;
+	height: 27px;
+	background-repeat: no-repeat;
+	background-position: 4px 6px;
+}
+.card .attacks .attack div, .card .attack .attack_details {
+	clear: none;
+}
+.card .attacks .attack.air, .card .attack .attack_details.air {
+	background-image: url('/images/attack_air.png');
+}
+.card .attacks .attack.dark, .card .attack .attack_details.dark {
+	background-image: url('/images/attack_dark.png');
+}
+.card .attacks .attack.earth, .card .attack .attack_details.earth {
+	background-image: url('/images/attack_earth.png');
+}
+.card .attacks .attack.fire, .card .attack .attack_details.fire {
+	background-image: url('/images/attack_fire.png');
+}
+.card .attacks .attack.freeze, .card .attack .attack_details.freeze {
+	background-image: url('/images/attack_freeze.png');
+}
+.card .attacks .attack.melee, .card .attack .attack_details.melee {
+	background-image: url('/images/attack_melee.png');
+}
+.card .attacks .attack.poison, .card .attack .attack_details.poison {
+	background-image: url('/images/attack_poison.png');
+}
+.card .attacks .attack.ranged, .card .attack .attack_details.ranged {
+	background-image: url('/images/attack_ranged.png');
+}
+.card .attacks .attack .attack_name {
+	float: left;
+	font-size: 1.5em;
+	z-index: 10;
+}
+.card .attacks .attack .attack_impact {
+	position: absolute;
+	bottom: 2px;
+	left: 20px;
+	color: darkred;
+}
+.card .attacks .attack .attack_cost {
+	position: absolute;
+	right: 4px;
+	top: 3px;
+	font-size: 1.3em;
+	font-weight: normal;
+	color: #000;
+	background-color: rgba(255, 255, 255, 0.5);
+	border-radius: 7px;
+	padding: 4px 7px;
+}
+.card .attacks .attack .attack_cost div {
+	float: left;
+}
+.card .attacks .attack .attack_cost .plus {
+	margin: 0 4px;
+}
+.card .attacks .attack .attack_cost .cost_gold {
+	color: darkorange;
+	text-shadow: 1px 1px 1px rgba(136, 100, 0, 0.5);
+}
+.card .attacks .attack .attack_cost .cost_magic {
+	color: rgba(125, 125, 225, 1);
+	text-shadow: none;
+}
+.card .attack .attack_details {
+	display: block;
+	position: absolute;
+	bottom: 50px;
+	left: 0;
+	font-size: 1em;
+	opacity: 0;
+	color: #FFF;
+	box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.4);
+	border-radius: 5px;
+	background-color: rgba(0, 0, 0, 0.9);
+	background-repeat: no-repeat;
+	background-position: 8px 12px;
+	-webkit-transition: opacity 0.3s ease, visibility 0.3s ease 1s, bottom 0.3s ease;
+	-moz-transition: opacity 0.3s ease, visibility 0.3s ease 1s, bottom 0.3s ease;
+	-o-transition: opacity 0.3s ease, visibility 0.3s ease 1s, bottom 0.3s ease;
+	transition: opacity 0.3s ease, visibility 0.3s ease 1s, bottom 0.3s ease;
+	z-index: 1;
+	overflow: hidden;
+	width: 0;
+	height: 0;
+	padding: 0;
+}
+.card .attack:hover .attack_details {
+	z-index: 100;
+	width: 210px;
+	height: auto;
+	bottom: 45px;
+	left: 0;
+	padding: 10px;
+	opacity: 1;
+	visibility: visible;
+	-webkit-transition: opacity 0.7s ease, visibility 0.7s ease 1s, bottom 0.7s ease;
+	-moz-transition: opacity 0.7s ease, visibility 0.7s ease 1s, bottom 0.7s ease;
+	-o-transition: opacity 0.7s ease, visibility 0.7s ease 1s, bottom 0.7s ease;
+	transition: opacity 0.7s ease, visibility 0.7s ease 1s, bottom 0.7s ease;
+}
+.card .attack .attack_details .attack_name {
+	padding-left: 14px;
+	font-weight: bold;
+}
+.card .attack .attack_details .attack_description {
+	font-size: 1.3em;
+	padding: 4px 0;
+	clear: both;
+	line-height: 1.2;
+}
+.card .attack .attack_details .attack_unblockable, .card .attack .attack_details .attack_steal_gold, .card .attack .attack_details .attack_steal_magic {
+	font-weight: bold;
+	font-size: 0.9em;
+	clear: both;
+	padding: 8px 0 0 0;
+	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 5px rgba(101, 193, 218, 1), 0 0 7px rgba(101, 193, 218, 0.8), 0 0 13px rgba(101, 193, 218, 0.6);
+}
+.card .attack .attack_details .attack_steal_gold {
+	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 5px rgba(193, 218, 101, 1), 0 0 7px rgba(218, 193, 101, 0.8), 0 0 13px rgba(193, 218, 101, 0.6);
+}
 .card .hp, .card .magic {
 	position: absolute;
 	bottom: 16px;
@@ -1081,8 +1217,8 @@ li.card {
 #opponents_hand { display: none; }
 
 .magic { color: blueviolet; }
-.defence { color: darkolivegreen; }
-.attack { color: #AC2808; }
+/*.defence { color: darkolivegreen; }
+.attack { color: #AC2808; }*/
 .gold { color: darkorange; }
 .character_setup .cards li.card { margin-right: -195px; }
 
@@ -1107,6 +1243,18 @@ textarea {
 }
 input.points { width: 50px; text-align: right; }
 input.long, textarea.long { width: 500px; }
+
+.card_attacks {
+	list-style: none;
+	font-size: 1.15em;
+	margin-bottom: 10px;
+}
+.card_attacks .attack_name {
+	font-weight: bold;
+}
+.card_attacks .attack_impact {
+	color: #EEE;
+}
 
 ::-webkit-input-placeholder  { color:#AAA; }
 input:-moz-placeholder { color:#AAA; }

@@ -90,17 +90,19 @@
 	<br style="clear: both;">
 	<fieldset>
 		<legend>Attacks</legend>
-		<button class="button button-standard" onclick="Devo.Main.Helpers.Backdrop.show('<?php echo make_url('get_backdrop_partial', array('key' => 'attack', 'card_id' => $card->getId())); ?>');return false;">Add new attack</button>
 		<?php if (!$card->getB2DBID()): ?>
 			<div class="faded_out" style="padding: 10px;">You need to save this card before you can add attacks</div>
 		<?php else: ?>
-			<?php if (count($card->getAttacks())): ?>
-				<?php foreach ($card->getAttacks() as $attack): ?>
-				<?php endforeach; ?>
-			<?php else: ?>
-				<div class="faded_out" style="padding: 15px 0;" id="card_no_attacks">This card doesn't have any attacks yet</div>
-			<?php endif; ?>
+			<ul class="card_attacks" id="admin_card_attacks">
+				<?php if (count($card->getAttacks())): ?>
+					<?php foreach ($card->getAttacks() as $attack): ?>
+						<?php include_component('admin/cardattack', compact('attack')); ?>
+					<?php endforeach; ?>
+				<?php endif; ?>
+			</ul>
+			<div class="faded_out" style="<?php if (count($card->getAttacks())): ?>display: none; <?php endif; ?> padding: 15px 0;" id="card_no_attacks">This card doesn't have any attacks yet</div>
 		<?php endif; ?>
+		<button class="button button-standard" onclick="Devo.Main.Helpers.Backdrop.show('<?php echo make_url('get_backdrop_partial', array('key' => 'attack', 'card_id' => $card->getId())); ?>');return false;">Add new attack</button>
 	</fieldset>
 	<br style="clear: both;">
 	<div style="clear: both; text-align: right; padding: 10px; margin-top: 10px; background-color: rgba(80, 54, 32, 0.4); border: 1px dotted rgba(72, 48, 28, 0.8); border-left: none; border-right: none;">

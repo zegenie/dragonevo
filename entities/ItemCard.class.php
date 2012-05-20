@@ -37,6 +37,19 @@
 		 * @var integer
 		 */
 		protected $_item_class;
+		
+		public static function getItemClasses()
+		{
+			$classes = array(
+				self::CLASS_ARMOR => 'Armor',
+				self::CLASS_BOW => 'Bow',
+				self::CLASS_SHIELD => 'Shield',
+				self::CLASS_SPEAR => 'Spear',
+				self::CLASS_SWORD => 'Sword',
+				);
+			
+			return $classes;
+		}
 
 		public function getItemClass()
 		{

@@ -61,6 +61,16 @@ create_news:
   action: editnews
   parameters: {mode: new}
 
+create_attack:
+  url: /admin/attack/edit
+  module: admin
+  action: editattack
+
+edit_attack:
+  url: /admin/attack/edit/:attack_id
+  module: admin
+  action: editattack
+
 edit_news:
   url: /admin/news/edit/:id
   module: admin

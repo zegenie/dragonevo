@@ -1,6 +1,6 @@
 <div class="backdrop_box large" id="login_popup">
 	<div id="backdrop_detail_content" class="rounded_top login_content">
-		<form method="post" accept-charset="utf-8">
+		<form method="post" accept-charset="utf-8" id="admin_attack_form" action="<?php echo ($attack->getId()) ? make_url('edit_attack', array('attack_id' => $attack->getId())) : make_url('create_attack'); ?>" onsubmit="Devo.Admin.Cards.saveAttack(this);return false;">
 			<?php if (!$attack->getId()): ?>
 				<h1>Create new attack</h1>
 			<?php endif; ?>
@@ -20,10 +20,15 @@
 					<div>
 						<label for="attack_<?php echo $attack->getId(); ?>_type">Attack type</label>
 						<select name="attack_type" id="attack_<?php echo $attack->getId(); ?>_type">
-							<?php foreach (array('regular' => 'Regular', 'dark' => 'Dark', 'air' => 'Air', 'ranged' => 'Ranged', 'earth' => 'Earth', 'fire' => 'Fire', 'freeze' => 'Freeze', 'poison' => 'Poison') as $a_type => $a_desc): ?>
-							<option value="<?php echo $a_type; ?>"<?php if ($attack->getAttackType() == $a_type): ?> selected<?php endif; ?>><?php echo $a_desc; ?></option>
+							<?php foreach (application\entities\Attack::getTypes() as $a_type => $a_desc): ?>
+								<option value="<?php echo $a_type; ?>"<?php if ($attack->getAttackType() == $a_type): ?> selected<?php endif; ?>><?php echo $a_desc; ?></option>
 							<?php endforeach; ?>
 						</select>
+					</div>
+					<div>
+						<label for="attack_<?php echo $attack->getId(); ?>_mandatory_no">Mandatory</label>
+						<input id="attack_<?php echo $attack->getId(); ?>_mandatory_no" type="radio" name="mandatory" value="0"<?php if (!$attack->isMandatory()): ?> checked<?php endif; ?>><label for="attack_<?php echo $attack->getId(); ?>_mandatory_no" style="font-weight: normal; display: inline; float: none;">No</label>
+						<input id="attack_<?php echo $attack->getId(); ?>_mandatory_yes" type="radio" name="mandatory" value="1"<?php if ($attack->isMandatory()): ?> checked<?php endif; ?>><label for="attack_<?php echo $attack->getId(); ?>_mandatory_yes" style="font-weight: normal; display: inline; float: none;">Yes</label><br>
 					</div>
 				</div>
 			</fieldset>
@@ -41,15 +46,35 @@
 				</div>
 			</fieldset>
 			<fieldset>
+				<legend>Requirements</legend>
+				<div style="width: 380px; float: left; clear: none;">
+					<div>
+						<label for="attack_<?php echo $attack->getId(); ?>_requires_level">Card level</label><input id="attack_<?php echo $attack->getId(); ?>_requires_level" type="text" name="requires_level" value="<?php echo $attack->getRequiresLevel(); ?>" style="width: 40px; text-align: right;"><br>
+						<div class="faded_out" style="padding: 10px 0 0 140px;">Level 0 means no requirements</div>
+					</div>
+				</div>
+				<div style="width: 380px; float: left; clear: none;">
+					<div>
+						<label for="attack_<?php echo $attack->getId(); ?>_requires_item_card_type">Powerup item</label>
+						<select id="attack_<?php echo $attack->getId(); ?>_requires_item_card_type" name="requires_item_card_type">
+							<option value="0"<?php if ($attack->getRequiresItemCardType() == 0) echo ' selected'; ?>>No requirements</option>
+							<?php foreach (\application\entities\ItemCard::getItemClasses() as $class_key => $description): ?>
+								<option value="<?php echo $class_key; ?>"<?php if ($attack->getRequiresItemCardType() == $class_key) echo ' selected'; ?>><?php echo $description; ?></option>
+							<?php endforeach; ?>
+						</select>
+					</div>
+				</div>
+			</fieldset>
+			<fieldset>
 				<legend>Properties</legend>
 				<div style="width: 380px; float: left; clear: none;">
 					<div>
 						<label for="attack_<?php echo $attack->getId(); ?>_unblockable_no">Blockable</label>
 						<input id="attack_<?php echo $attack->getId(); ?>_unblockable_no" type="radio" name="unblockable" value="0"<?php if ($attack->isBlockable()): ?> checked<?php endif; ?>><label for="attack_<?php echo $attack->getId(); ?>_unblockable_no" style="font-weight: normal; display: inline; float: none;">Yes</label>
-						<input id="attack_<?php echo $attack->getId(); ?>_unblockable_yes" type="radio" name="unblockable" value="1"<?php if ($attack->isUnblockable()): ?> checked<?php endif; ?>><label for="attack_<?php echo $attack->getId(); ?>_unblockable_yes" style="font-weight: normal; display: inline; float: none;">No</label><br>
+						<input id="attack_<?php echo $attack->getId(); ?>_unblockable_yes" type="radio" name="unblockable" value="1"<?php if ($attack->isMandatory()): ?> checked<?php endif; ?>><label for="attack_<?php echo $attack->getId(); ?>_unblockable_yes" style="font-weight: normal; display: inline; float: none;">No</label><br>
 					</div>
 					<div>
-						<label for="attack_<?php echo $attack->getId(); ?>_add_ap_min">Damage dealt</label><input id="attack_<?php echo $attack->getId(); ?>_add_ap_min" type="text" name="add_ap_min" value="<?php echo $attack->getAttackPointsMin(); ?>" style="width: 25px; text-align: center;"> - <input id="attack_<?php echo $attack->getId(); ?>_add_ap_max" type="text" name="add_ap_max" value="<?php echo $attack->getAttackPointsMax(); ?>" style="width: 25px; text-align: center;"> HP<br>
+						<label for="attack_<?php echo $attack->getId(); ?>_hp_min">Damage dealt</label><input id="attack_<?php echo $attack->getId(); ?>_hp_min" type="text" name="hp_min" value="<?php echo $attack->getAttackPointsMin(); ?>" style="width: 25px; text-align: center;"> - <input id="attack_<?php echo $attack->getId(); ?>_hp_max" type="text" name="hp_max" value="<?php echo $attack->getAttackPointsMax(); ?>" style="width: 25px; text-align: center;"> HP<br>
 					</div>
 				</div>
 				<div style="width: 380px; float: left; clear: none;">
@@ -57,7 +82,7 @@
 						<label for="attack_<?php echo $attack->getId(); ?>_rep_min">Repeat</label><input id="attack_<?php echo $attack->getId(); ?>_rep_min" type="text" name="rep_min" value="<?php echo $attack->getRepeatRoundsMin(); ?>" style="width: 25px; text-align: center;"> - <input id="attack_<?php echo $attack->getId(); ?>_rep_max" type="text" name="rep_max" value="<?php echo $attack->getRepeatRoundsMax(); ?>" style="width: 25px; text-align: center;"> times<br>
 					</div>
 					<div>
-						<label for="attack_<?php echo $attack->getId(); ?>_rep_add_ap_min">Repeat damage</label><input id="attack_<?php echo $attack->getId(); ?>_rep_add_ap_min" type="text" name="rep_add_ap_min" value="<?php echo $attack->getRepeatAttackPointsMin(); ?>" style="width: 25px; text-align: center;"> - <input id="attack_<?php echo $attack->getId(); ?>_rep_add_ap_max" type="text" name="rep_add_ap_max" value="<?php echo $attack->getRepeatAttackPointsMax(); ?>" style="width: 25px; text-align: center;"> AP<br>
+						<label for="attack_<?php echo $attack->getId(); ?>_rep_hp_min">Repeat damage</label><input id="attack_<?php echo $attack->getId(); ?>_rep_hp_min" type="text" name="rep_hp_min" value="<?php echo $attack->getRepeatAttackPointsMin(); ?>" style="width: 25px; text-align: center;"> - <input id="attack_<?php echo $attack->getId(); ?>_rep_hp_max" type="text" name="rep_hp_max" value="<?php echo $attack->getRepeatAttackPointsMax(); ?>" style="width: 25px; text-align: center;"> AP<br>
 					</div>
 				</div>
 			</fieldset>
@@ -94,23 +119,24 @@
 				<legend>Stealing</legend>
 				<div style="width: 380px; float: left; clear: none;">
 					<div>
-						<label for="attack_<?php echo $attack->getId(); ?>_steal_gold_chance">Steal gold chance</label><input id="attack_<?php echo $attack->getId(); ?>_steal_gold_chance" type="text" name="steal_gold_chance" value="<?php echo $attack->getStealGoldChance(); ?>" style="width: 25px; text-align: center;"> %<br>
+						<label for="attack_<?php echo $attack->getId(); ?>_steal_gold_chance">Gold chance</label><input id="attack_<?php echo $attack->getId(); ?>_steal_gold_chance" type="text" name="steal_gold_chance" value="<?php echo $attack->getStealGoldChance(); ?>" style="width: 25px; text-align: center;"> %<br>
 					</div>
 					<div>
-						<label for="attack_<?php echo $attack->getId(); ?>_steal_gold_amount">Steal gold amount</label><input id="attack_<?php echo $attack->getId(); ?>_steal_gold_amount" type="text" name="steal_gold_amount" value="<?php echo $attack->getStealGoldAmount(); ?>" style="width: 25px; text-align: center;"> %<br>
+						<label for="attack_<?php echo $attack->getId(); ?>_steal_gold_amount">Gold amount</label><input id="attack_<?php echo $attack->getId(); ?>_steal_gold_amount" type="text" name="steal_gold_amount" value="<?php echo $attack->getStealGoldAmount(); ?>" style="width: 25px; text-align: center;"> %<br>
 					</div>
 				</div>
 				<div style="width: 380px; float: left; clear: none;">
 					<div>
-						<label for="attack_<?php echo $attack->getId(); ?>_steal_magic_chance">Steal magic chance</label><input id="attack_<?php echo $attack->getId(); ?>_steal_magic_chance" type="text" name="steal_magic_chance" value="<?php echo $attack->getStealMagicChance(); ?>" style="width: 25px; text-align: center;"> %<br>
+						<label for="attack_<?php echo $attack->getId(); ?>_steal_magic_chance">Magic chance</label><input id="attack_<?php echo $attack->getId(); ?>_steal_magic_chance" type="text" name="steal_magic_chance" value="<?php echo $attack->getStealMagicChance(); ?>" style="width: 25px; text-align: center;"> %<br>
 					</div>
 					<div>
-						<label for="attack_<?php echo $attack->getId(); ?>_steal_magic_amount">Steal magic amount</label><input id="attack_<?php echo $attack->getId(); ?>_steal_magic_amount" type="text" name="steal_magic_amount" value="<?php echo $attack->getStealMagicAmount(); ?>" style="width: 25px; text-align: center;"> %<br>
+						<label for="attack_<?php echo $attack->getId(); ?>_steal_magic_amount">Magic amount</label><input id="attack_<?php echo $attack->getId(); ?>_steal_magic_amount" type="text" name="steal_magic_amount" value="<?php echo $attack->getStealMagicAmount(); ?>" style="width: 25px; text-align: center;"> %<br>
 					</div>
 				</div>
 			</fieldset>
 			<br style="clear: both;">
 			<div style="clear: both; text-align: right; padding: 10px; margin-top: 10px; background-color: rgba(80, 54, 32, 0.4); border: 1px dotted rgba(72, 48, 28, 0.8); border-left: none; border-right: none;">
+				<img src="/images/spinning_20.gif" id="save_attack_indicator" style="display: none; margin: 2px 5px -6px 0;">
 				<input type="submit" value="<?php echo ($attack->getId()) ? 'Update attack' : 'Create attack'; ?>" style="font-size: 1em; padding: 3px 10px !important;">
 			</div>
 		</form>

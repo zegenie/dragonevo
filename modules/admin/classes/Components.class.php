@@ -13,4 +13,9 @@
 			
 		}
 		
+		public function componentCardAttack()
+		{
+			
+		}
+		
 	}

@@ -10,13 +10,20 @@
 				echo 'item';
 				break;
 		}
-	?>" id="card_<?php echo $card->getId(); ?>">
-	<div class="name <?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE) echo $card->getFaction(); ?>" id="card_<?php echo $card->getId(); ?>_name"><?php echo strtoupper($card->getName()); ?></div>
+	?> <?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE) echo $card->getFaction(); ?>" id="card_<?php echo $card->getId(); ?>">
+	<div class="name" id="card_<?php echo $card->getId(); ?>_name"><?php echo strtoupper($card->getName()); ?></div>
 	<div class="card_image" id="card_<?php echo $card->getId(); ?>_image">
 		<img src="/images/cards/<?php echo $card->getKey(); ?>.png" class="main_image" id="card_<?php echo $card->getId(); ?>_image_image">
 		<img src="/images/cards/<?php echo $card->getKey(); ?>.png" class="main_image reflection" id="card_<?php echo $card->getId(); ?>_image_reflection">
 		<div class="cover"></div>
 	</div>
+	<?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE): ?>
+		<div class="attacks">
+			<?php foreach ($card->getAttacks() as $attack): ?>
+				<?php include_component('game/cardattack', compact('attack')); ?>
+			<?php endforeach; ?>
+		</div>
+	<?php endif; ?>
 	<?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE): ?>
 		<div class="hp"><?php echo $card->getHP(); ?></div>
 		<div class="magic"><?php echo ($card->getEP()) ? $card->getEP() : '-'; ?></div>
