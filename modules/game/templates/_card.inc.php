@@ -12,9 +12,11 @@
 		}
 	?> <?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE) echo $card->getFaction(); ?>" id="card_<?php echo $card->getId(); ?>">
 	<div class="name" id="card_<?php echo $card->getId(); ?>_name"><?php echo strtoupper($card->getName()); ?></div>
-	<div class="card_image" id="card_<?php echo $card->getId(); ?>_image">
-		<img src="/images/cards/<?php echo $card->getKey(); ?>.png" class="main_image" id="card_<?php echo $card->getId(); ?>_image_image">
-		<img src="/images/cards/<?php echo $card->getKey(); ?>.png" class="main_image reflection" id="card_<?php echo $card->getId(); ?>_image_reflection">
+	<div class="card_image" id="card_<?php echo $card->getId(); ?>_image" style="background-image: url('/images/cards/<?php echo $card->getKey(); ?>.png');">
+		<?php /*<img src="/images/cards/<?php echo $card->getKey(); ?>.png" class="main_image" id="card_<?php echo $card->getId(); ?>_image_image"> */ ?>
+	</div>
+	<div class="card_reflection">
+		<img src="/images/cards/<?php echo $card->getKey(); ?>.png" id="card_<?php echo $card->getId(); ?>_image_reflection">
 		<div class="cover"></div>
 	</div>
 	<?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE): ?>

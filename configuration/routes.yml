@@ -103,8 +103,18 @@ profile:
 
 lobby:
   url: /lobby
-  module: main
-  action: lobby
+  module: lobby
+  action: index
+
+ask:
+  url: /ask
+  module: ask
+  action: index
+
+say:
+  url: /say/:room_id
+  module: lobby
+  action: say
 
 market:
   url: /market

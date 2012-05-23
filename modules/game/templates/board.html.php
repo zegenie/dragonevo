@@ -32,8 +32,3 @@
 <?php if ($include_hand): ?>
 	<?php include_component('game/playerhand', compact('game')); ?>
 <?php endif; ?>
-<script type="text/javascript">
-	document.observe('dom:loaded', function() {
-		Devo.Core.initialize();
-	});
-</script>

@@ -100,6 +100,9 @@
 				<ul class="main-menu">
 					<li><a href="<?php echo make_url('home'); ?>" class="<?php if ($csp_response->getPage() == 'home') echo ' selected'; ?>">Home</a></li>
 					<li><a href="<?php echo make_url('media'); ?>" class="<?php if ($csp_response->getPage() == 'media') echo ' selected'; ?>">Media</a></li>
+					<?php if ($csp_user->isAuthenticated()): ?>
+						<li><a href="<?php echo make_url('lobby'); ?>" class="<?php if ($csp_response->getPage() == 'lobby') echo ' selected'; ?>">Lobby</a></li>
+					<?php endif; ?>
 					<li><a href="<?php echo make_url('faq'); ?>" class="<?php if ($csp_response->getPage() == 'faq') echo ' selected'; ?>">FAQ</a></li>
 				</ul>
 				<?php echo $content; ?>
@@ -119,6 +122,11 @@
 						<?php endif; ?>
 					</div>
 				</footer>
+				<script type="text/javascript">
+					document.observe('dom:loaded', function() {
+						Devo.Core.initialize({ask_url: '<?php echo make_url('ask'); ?>'});
+					});
+				</script>
 			</div>
 		<?php else: ?>
 			<?php echo $content; ?>

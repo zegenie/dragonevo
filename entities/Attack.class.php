@@ -74,6 +74,14 @@
 		protected $_cost_magic;
 
 		/**
+		 * Attack HP restored
+		 *
+		 * @Column(type="integer", length=5)
+		 * @var integer
+		 */
+		protected $_attack_points_restored;
+
+		/**
 		 * Attack HP damage (min)
 		 *
 		 * @Column(type="integer", length=5)
@@ -252,6 +260,38 @@
 		protected $_steal_magic_amount;
 		
 		/**
+		 * Generate gold amount
+		 *
+		 * @Column(type="integer", length=5)
+		 * @var integer
+		 */
+		protected $_generate_gold_amount;
+
+		/**
+		 * Generate magic amount
+		 *
+		 * @Column(type="integer", length=5)
+		 * @var integer
+		 */
+		protected $_generate_magic_amount;
+
+		/**
+		 * Generate hp amount
+		 *
+		 * @Column(type="integer", length=5)
+		 * @var integer
+		 */
+		protected $_generate_hp_amount;
+
+		/**
+		 * Whether the attack targets single card or all cards
+		 *
+		 * @Column(type="boolean", default=false)
+		 * @var boolean
+		 */
+		protected $_attack_all = false;
+
+		/**
 		 * Introduction (minimum) level
 		 *
 		 * @Column(type="integer", length=5)
@@ -260,12 +300,28 @@
 		protected $_requires_level;
 		
 		/**
-		 * Powerup item card requirement
+		 * Powerup item card requirement 1
 		 *
 		 * @Column(type="integer", length=5)
 		 * @var integer
 		 */
-		protected $_requires_item_card_type;
+		protected $_requires_item_card_type_1;
+
+		/**
+		 * Powerup item card requirement 2
+		 *
+		 * @Column(type="integer", length=5)
+		 * @var integer
+		 */
+		protected $_requires_item_card_type_2;
+
+		/**
+		 * Whether the attack targets single card or all cards
+		 *
+		 * @Column(type="boolean", default=false)
+		 * @var boolean
+		 */
+		protected $_requires_item_both;
 
 		public static function getTypes()
 		{
@@ -331,6 +387,11 @@
 		public function hasAttackPointsRange()
 		{
 			return ($this->_attack_points_min != $this->_attack_points_max);
+		}
+
+		public function getAttackPointsRestored()
+		{
+			return (int) $this->_attack_points_restored;
 		}
 
 		public function getAttackPointsMin()
@@ -431,6 +492,11 @@
 		public function setCostMagic($cost_magic)
 		{
 			$this->_cost_magic = $cost_magic;
+		}
+
+		public function setAttackPointsRestored($attack_points_restored)
+		{
+			$this->_attack_points_restored = $attack_points_restored;
 		}
 
 		public function setAttackPointsMin($attack_points_min)
@@ -641,7 +707,7 @@
 		
 		public function getRequiresLevel()
 		{
-			return $this->_requires_level;
+			return (int) $this->_requires_level;
 		}
 
 		public function setRequiresLevel($requires_level)
@@ -649,14 +715,84 @@
 			$this->_requires_level = $requires_level;
 		}
 
-		public function getRequiresItemCardType()
+		public function doesRequireBothItems()
 		{
-			return $this->_requires_item_card_type;
+			return (bool) $this->getRequiresItemBoth();
 		}
 
-		public function setRequiresItemCardType($requires_item_card_type)
+		public function getRequiresItemBoth()
 		{
-			$this->_requires_item_card_type = $requires_item_card_type;
+			return (bool) $this->_requires_item_both;
+		}
+
+		public function setRequiresItemBoth($requires_item_both)
+		{
+			$this->_requires_item_both = $requires_item_both;
+		}
+
+		public function getRequiresItemCardType1()
+		{
+			return $this->_requires_item_card_type_1;
+		}
+
+		public function setRequiresItemCardType1($requires_item_card_type)
+		{
+			$this->_requires_item_card_type_1 = $requires_item_card_type;
+		}
+
+		public function getRequiresItemCardType2()
+		{
+			return $this->_requires_item_card_type_2;
+		}
+
+		public function setRequiresItemCardType2($requires_item_card_type)
+		{
+			$this->_requires_item_card_type_2 = $requires_item_card_type;
+		}
+
+		public function getGenerateGoldAmount()
+		{
+			return (int) $this->_generate_gold_amount;
+		}
+
+		public function setGenerateGoldAmount($generate_gold_amount)
+		{
+			$this->_generate_gold_amount = $generate_gold_amount;
+		}
+
+		public function getGenerateMagicAmount()
+		{
+			return (int) $this->_generate_magic_amount;
+		}
+
+		public function setGenerateMagicAmount($generate_magic_amount)
+		{
+			$this->_generate_magic_amount = $generate_magic_amount;
+		}
+
+		public function getGenerateHpAmount()
+		{
+			return (int) $this->_generate_hp_amount;
+		}
+
+		public function setGenerateHpAmount($generate_hp_amount)
+		{
+			$this->_generate_hp_amount = $generate_hp_amount;
+		}
+
+		public function doesAttackAll()
+		{
+			return $this->getAttackAll();
+		}
+
+		public function getAttackAll()
+		{
+			return (bool) $this->_attack_all;
+		}
+
+		public function setAttackAll($attack_all)
+		{
+			$this->_attack_all = $attack_all;
 		}
 
 		public function mergeFormData(\caspar\core\Request $request)

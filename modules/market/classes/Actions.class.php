@@ -30,7 +30,23 @@
 //			\b2db\Core::simpleQuery('ALTER TABLE creature_cards ADD COLUMN base_ep INT(10) DEFAULT 0');
 //			\b2db\Core::simpleQuery('ALTER TABLE creature_cards ADD COLUMN base_ep_randomness INT(10) DEFAULT 0');
 //			\application\entities\tables\News::getTable()->create();
-			\application\entities\tables\Attacks::getTable()->create();
+//			\application\entities\tables\Attacks::getTable()->create();
+//			\b2db\Core::simpleQuery('ALTER TABLE attacks ADD COLUMN attack_points_restored INT(5) DEFAULT 0');
+//			\b2db\Core::simpleQuery('ALTER TABLE attacks ADD COLUMN generate_magic_amount INT(5) DEFAULT 0');
+//			\b2db\Core::simpleQuery('ALTER TABLE attacks ADD COLUMN generate_gold_amount INT(5) DEFAULT 0');
+//			\b2db\Core::simpleQuery('ALTER TABLE attacks ADD COLUMN generate_hp_amount INT(5) DEFAULT 0');
+//			\b2db\Core::simpleQuery('ALTER TABLE attacks ADD COLUMN attack_all BOOLEAN DEFAULT false');
+//			\b2db\Core::simpleQuery('ALTER TABLE attacks ADD COLUMN requires_item_both BOOLEAN DEFAULT false');
+//			\b2db\Core::simpleQuery('ALTER TABLE attacks DROP COLUMN requires_item_card_type');
+//			\b2db\Core::simpleQuery('ALTER TABLE attacks ADD COLUMN requires_item_card_type_1 INT(5) DEFAULT 0');
+//			\b2db\Core::simpleQuery('ALTER TABLE attacks ADD COLUMN requires_item_card_type_2 INT(5) DEFAULT 0');
+			\application\entities\tables\Games::getTable()->create();
+			\application\entities\tables\GameInvites::getTable()->create();
+			\application\entities\tables\ChatRooms::getTable()->create();
+			\application\entities\tables\ChatLines::getTable()->create();
+			$lobby = new \application\entities\ChatRoom();
+			$lobby->setTopic('Welcome to the Dragon Evo lobby chat. This chat room is open for all users.');
+			$lobby->save();
 		}
 
 	}

@@ -22,6 +22,7 @@
 		const FACTION_NEUTRALS = 'neutrals';
 		const FACTION_RUTAI = 'rutai';
 		const FACTION_EMPIRE = 'empire';
+		const FACTION_WORLD = 'world';
 
 		const STATE_TEMPLATE = 'template';
 		const STATE_OWNED = 'owned';
@@ -185,7 +186,8 @@
 			return array(
 				self::FACTION_NEUTRALS => 'Highwinds',
 				self::FACTION_EMPIRE => 'Hologev',
-				self::FACTION_RUTAI => 'Rutai'
+				self::FACTION_RUTAI => 'Rutai',
+				self::FACTION_WORLD => 'World'
 			);
 		}
 

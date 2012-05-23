@@ -38,7 +38,7 @@
 			}
 			
 		?></div>
-		<div class="attack_details <?php echo strtolower($attack_types[$attack->getAttackType()]); ?>">
+		<div class="tooltip attack_details <?php echo strtolower($attack_types[$attack->getAttackType()]); ?>">
 			<div class="attack_name"><?php echo $attack->getName(); ?></div>
 			<div class="attack_description">
 				<?php echo nl2br($attack->getDescription()); ?><br>

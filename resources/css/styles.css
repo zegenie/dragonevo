@@ -4,10 +4,10 @@
 @import url('http://fonts.googleapis.com/css?family=Open+Sans:400,700,400italic,700italic');
 @import url('http://fonts.googleapis.com/css?family=IM+Fell+English+SC');*/
 
-@import url('http://fonts.googleapis.com/css?family=Metamorphous');
+/*@import url('http://fonts.googleapis.com/css?family=Metamorphous');
 @import url('http://fonts.googleapis.com/css?family=Gentium+Basic:400,700italic,700,400italic');
 @import url('http://fonts.googleapis.com/css?family=Fredericka+the+Great');
-@import url('http://fonts.googleapis.com/css?family=Amaranth:400,700,400italic,700italic');
+@import url('http://fonts.googleapis.com/css?family=Amaranth:400,700,400italic,700italic');*/
 
 /*
 html5doctor.com Reset Stylesheet
@@ -206,7 +206,7 @@ p {
 	background: -o-linear-gradient(top, #FFFFFF 0%,#F1F1F1 100%); /* Opera11.10+ */
 	background: -ms-linear-gradient(top, #FFFFFF 0%,#F1F1F1 100%); /* IE10+ */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#FFFFFF', endColorstr='#F1F1F1',GradientType=0 ); /* IE6-9 */
-	background: linear-gradient(top, #FFFFFF 0%,#F1F1F1 100%); /* W3C */
+	background: linear-gradient(to bottom, #FFFFFF 0%,#F1F1F1 100%); /* W3C */
 	font-family: 'Chelsea Market';
 	box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
 	-webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
@@ -743,26 +743,26 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 .button-icon img, .button-icon:hover img { margin: 1px; float: none; }
 .button a, .button a:hover, .button a:visited, .button a:active { color: #FFF; }
 
-.button-standard, .button-standard:hover, button, button:hover, input[type=submit], input[type=submit]:hover {
-	background: -moz-linear-gradient(top, #7D5E3C 0%, #957249 50%, #86643E 50%, #BF9663 100%);
-	background: -khtml-gradient(linear, left top, left bottom, color-stop(0%,#7D5E3C), color-stop(50%,#957249), color-stop(50%,#86643E), color-stop(100%,#BF9663));
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#7D5E3C), color-stop(50%,#957249), color-stop(50%,#86643E), color-stop(100%,#BF9663));
-	background: -webkit-linear-gradient(top, #7D5E3C 0%, #957249 50%, #86643E 50%, #BF9663 100%);
-	background: -o-linear-gradient(top, #7D5E3C 0%, #957249 50%, #86643E 50%, #BF9663 100%);
-	background: -ms-linear-gradient(top, #7D5E3C 0%, #957249 50%, #86643E 50%, #BF9663 100%);
-	background: linear-gradient(to bottom, #7D5E3C 0%, #957249 50%, #86643E 50%, #BF9663 100%);
-	border: 1px solid #503620;
+.button-standard, .button-standard:hover, button, input[type=submit] {
+	background: -moz-linear-gradient(bottom, #7D5E3C 0%, #BF9663 100%);
+	background: -khtml-gradient(linear, left bottom, left top, color-stop(0%,#7D5E3C), color-stop(100%,#BF9663));
+	background: -webkit-gradient(linear, left bottom, left top, color-stop(0%,#7D5E3C), color-stop(100%,#BF9663));
+	background: -webkit-linear-gradient(bottom, #7D5E3C 0%, #BF9663 100%);
+	background: -o-linear-gradient(bottom, #7D5E3C 0%, #BF9663 100%);
+	background: -ms-linear-gradient(bottom, #7D5E3C 0%, #BF9663 100%);
+	background: linear-gradient(to top, #7D5E3C 0%, #BF9663 100%);
+	border: 1px solid #7D5E3C;
 	color: #FFF;
 	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 10px rgba(0, 0, 0, 0.5);
 }
 .button-standard:active, input[type=submit]:active, button:active, input[type=submit].button-pressed, button.button-pressed {
-	background: -moz-linear-gradient(bottom, #7D5E3C 0%, #957249 50%, #86643E 50%, #BF9663 100%);
-	background: -khtml-gradient(linear, left bottom, left top, color-stop(0%,#7D5E3C), color-stop(50%,#957249), color-stop(50%,#86643E), color-stop(100%,#BF9663));
-	background: -webkit-gradient(linear, left bottom, left top, color-stop(0%,#7D5E3C), color-stop(50%,#957249), color-stop(50%,#86643E), color-stop(100%,#BF9663));
-	background: -webkit-linear-gradient(bottom, #7D5E3C 0%, #957249 50%, #86643E 50%, #BF9663 100%);
-	background: -o-linear-gradient(bottom, #7D5E3C 0%, #957249 50%, #86643E 50%, #BF9663 100%);
-	background: -ms-linear-gradient(bottom, #7D5E3C 0%, #957249 50%, #86643E 50%, #BF9663 100%);
-	background: linear-gradient(to top, #7D5E3C 0%, #957249 50%, #86643E 50%, #BF9663 100%);
+	background: -moz-linear-gradient(top, #7D5E3C 0%, #BF9663 100%);
+	background: -khtml-gradient(linear, left top, left bottom, color-stop(0%,#7D5E3C), color-stop(100%,#BF9663));
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#7D5E3C), color-stop(100%,#BF9663));
+	background: -webkit-linear-gradient(top, #7D5E3C 0%, #BF9663 100%);
+	background: -o-linear-gradient(top, #7D5E3C 0%, #BF9663 100%);
+	background: -ms-linear-gradient(top, #7D5E3C 0%, #BF9663 100%);
+	background: linear-gradient(to bottom, #7D5E3C 0%, #BF9663 100%);
 }
 .button-silver, .button.disabled, .button.disabled:active, .button.disabled:hover {
 	background: #c5c5c5;
@@ -962,10 +962,10 @@ li.card {
 
 .card .name {
 	position: absolute;
-	top: 14px;
-	left: 18px;
-	width: 226px;
-	padding: 4px 6px;
+	top: 13px;
+	left: 20px;
+	width: 220px;
+	padding: 2px 6px 6px 6px;
 	height: 12px;
 	min-height: 12px;
 	font-size: 0.95em;
@@ -973,21 +973,30 @@ li.card {
 	letter-spacing: -1px;
 	font-family: 'Metamorphous';
 	color: #FFF;
-	border-radius: 7px 7px 0 0;
-	-moz-border-radius: 7px 7px 0 0;
-	-webkit-border-radius: 7px 7px 0 0;
+	border-radius: 8px 8px 0 0;
+	-moz-border-radius: 8px 8px 0 0;
+	-webkit-border-radius: 8px 8px 0 0;
 	text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, 1px 1px 0 #000, 0 0 5px rgba(0, 0, 0, 0.3);
 	z-index: 10;
 	background-color: rgba(255, 255, 255, 0.1);
+	border-width: 1px 1px 0 1px;
+	border-style: solid;
 }
 .card.neutral .name {
 	background-color: rgba(255, 255, 255, 0.5);
+	border-color: rgba(0, 0, 0, 0.3);
 }
 .card.empire .name {
 	background-color: rgba(255, 30, 30, 0.55);
+	border-color: rgba(255, 30, 30, 0.7);
 }
 .card.rutai .name {
 	background-color: rgba(30, 30, 255, 0.45);
+	border-color: rgba(30, 30, 255, 0.7);
+}
+.card.world .name {
+	background-color: rgba(30, 255, 30, 0.45);
+	border-color: rgba(30, 255, 30, 0.7);
 }
 .card.item .name {
 	background-color: rgba(255, 255, 255, 0.1);
@@ -997,62 +1006,62 @@ li.card {
 	background-repeat: no-repeat;
 	background-position: top left;
 	position: absolute;
-	top: 14px;
-	left: 18px;
-	width: 238px;
-	height: 198px;
-	border-radius: 5px 5px 0 5px;
-	-moz-border-radius: 5px 5px 0 5px;
-	-webkit-border-radius: 5px 5px 0 5px;
-	box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.4);
-	-webkit-box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.4);
-	-moz-box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.4);
+	top: 34px;
+	left: 24px;
+	width: 224px;
+	height: 155px;
+	box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.75);
+	-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.75);
+	-moz-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.75);
 	line-height: 1;
 	overflow: hidden;
 }
-.card .reflection {
+.card .main_image {
+	height: 155px;
+}
+.card .card_reflection {
 	z-index: 1;
     position: absolute;
-    top: 179px;
-    left: 0;
+    top: 189px;
+    left: 24px;
+	height: 23px;
+	width: 224px;
+	overflow: hidden;
+}
+.card .card_reflection img {
     -moz-transform: scaleY(-1);
     -webkit-transform: scaleY(-1);
     -ms-transform: scaleY(-1);
     opacity: .25;
 }
-.card .card_image .cover {
+.card .card_reflection .cover {
 	z-index: 2;
 	position: absolute;
 	bottom: 0;
-	right: 1px;
-	width: 139px;
-	height: 6px;
+	right: 0;
+	width: 137px;
+	height: 5px;
 	min-height: 0;
 	border-top-left-radius: 15px 8px;
-	border-left: 2px solid rgba(148, 135, 116, 0.9);
-	border-top: 2px solid rgba(148, 135, 116, 0.9);
-	border-right: 4px solid #D4CECB;
+	border-left: 2px solid rgba(148, 135, 116, 0.8);
+	border-top: 2px solid rgba(85, 71, 67, 0.9);
+	border-right: none;
 	background-color: #D4CECB;
-	background: -moz-linear-gradient(bottom, #D4CECB 0%, #D6D0CF 100%);
-	background: -khtml-gradient(linear, left bottom, left top, color-stop(0%,#D4CECB), color-stop(100%,#D6D0CF));
-	background: -webkit-gradient(linear, left bottom, left top, color-stop(0%,#D4CECB), color-stop(100%,#D6D0CF));
-	background: -webkit-linear-gradient(bottom, #D4CECB 0%, #D6D0CF 100%);
-	background: -o-linear-gradient(bottom, #D4CECB 0%, #D6D0CF 100%);
-	background: -ms-linear-gradient(bottom, #D4CECB 0%, #D6D0CF 100%);
-	background: linear-gradient(to top, #D4CECB 0%, #D6D0CF 100%);
+	box-shadow: inset 1px 3px 3px -2px rgba(85, 71, 67, 0.6);
 }
-.card.item .card_image .cover {
-	border-left: 2px solid rgba(185, 75, 72, 0.9);
-	border-top: 2px solid rgba(185, 75, 72, 0.9);
-	border-right: 4px solid #C58B89;
-	background-color: #C58B89;
-	background: -moz-linear-gradient(bottom, #C58B89 0%, #C48987 100%);
-	background: -khtml-gradient(linear, left bottom, left top, color-stop(0%,#C58B89), color-stop(100%,#C48987));
-	background: -webkit-gradient(linear, left bottom, left top, color-stop(0%,#C58B89), color-stop(100%,#C48987));
-	background: -webkit-linear-gradient(bottom, #C58B89 0%, #C48987 100%);
-	background: -o-linear-gradient(bottom, #C58B89 0%, #C48987 100%);
-	background: -ms-linear-gradient(bottom, #C58B89 0%, #C48987 100%);
-	background: linear-gradient(to top, #C58B89 0%, #C48987 100%);
+.card.item .card_reflection .cover {
+	border-left: 2px solid rgba(185, 75, 72, 0.8);
+	border-top: 2px solid rgba(141, 71, 62, 1);
+	border-right: none;
+	background-color: #DCB5AE;
+	box-shadow: inset 1px 3px 3px -2px rgba(141, 71, 62, 0.6);
+}
+.card.event .card_reflection .cover {
+	border-left: 2px solid rgba(111, 153, 197, 0.8);
+	border-top: 2px solid rgba(0, 58, 110, 0.9);
+	border-right: none;
+	background-color: #B1C5E6;
+	box-shadow: inset 1px 3px 3px -2px rgba(0, 58, 110, 0.6);
 }
 .card .attacks {
 	position: absolute;
@@ -1131,17 +1140,17 @@ li.card {
 	color: rgba(125, 125, 225, 1);
 	text-shadow: none;
 }
-.card .attack .attack_details {
+.tooltip {
 	display: block;
 	position: absolute;
-	bottom: 50px;
-	left: 0;
+	bottom: 45px;
+	left: -12px;
 	font-size: 1em;
 	opacity: 0;
 	color: #FFF;
 	box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.4);
 	border-radius: 5px;
-	background-color: rgba(0, 0, 0, 0.9);
+	background-color: rgba(0, 0, 0, 0.8);
 	background-repeat: no-repeat;
 	background-position: 8px 12px;
 	-webkit-transition: opacity 0.3s ease, visibility 0.3s ease 1s, bottom 0.3s ease;
@@ -1154,20 +1163,43 @@ li.card {
 	height: 0;
 	padding: 0;
 }
-.card .attack:hover .attack_details {
+.tooltip.big {
+	width: 340px;
+}
+*:hover > .tooltip {
 	z-index: 100;
-	width: 210px;
+	width: 228px;
 	height: auto;
-	bottom: 45px;
-	left: 0;
+	bottom: 40px;
+	left: -12px;
 	padding: 10px;
 	opacity: 1;
 	visibility: visible;
+	overflow: visible;
 	-webkit-transition: opacity 0.7s ease, visibility 0.7s ease 1s, bottom 0.7s ease;
 	-moz-transition: opacity 0.7s ease, visibility 0.7s ease 1s, bottom 0.7s ease;
 	-o-transition: opacity 0.7s ease, visibility 0.7s ease 1s, bottom 0.7s ease;
 	transition: opacity 0.7s ease, visibility 0.7s ease 1s, bottom 0.7s ease;
 }
+.tooltip:before,
+.tooltip:after {
+	content: '';
+	position: absolute;
+	bottom: -12px;
+	left: 50%;
+	margin-left: -9px;
+	width: 0;
+	height: 0;
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+	border-top: 10px solid rgba(0, 0, 0, 0.1);
+}
+.tooltip:after {
+	bottom: -10px;
+	margin-left: -10px;
+	border-top: 10px solid rgba(0, 0, 0, 0.75);
+}
+
 .card .attack .attack_details .attack_name {
 	padding-left: 14px;
 	font-weight: bold;
@@ -1367,4 +1399,184 @@ li.card-slot {
 
 #play-tabs-menu:hover li {
 	opacity: 1;
+}
+
+.game_invites {
+	position: fixed;
+	top: 10px;
+	left: 10px;
+}
+.game_invites .game_invite {
+	padding: 0;
+	border-radius: 3px;
+	box-shadow: 0 0 5px rgba(255, 128, 0, 0.5), 0 0 10px rgba(255, 255, 0, 0.4);
+	-webkit-box-shadow: 0 0 5px rgba(255, 128, 0, 0.5), 0 0 10px rgba(255, 255, 0, 0.4);
+	-moz-box-shadow: 0 0 5px rgba(255, 128, 0, 0.5), 0 0 10px rgba(255, 255, 0, 0.4);
+	font-family: 'Amaranth';
+	margin: 0 0 20px 0;
+	position: relative;
+	width: 300px;
+	left: -320px;
+}
+.game_invites .game_invite.visible {
+	left: -295px;
+	-webkit-transition: left 0.7s ease-out;
+	-moz-transition: left 0.7s ease-out;
+	-o-transition: left 0.7s ease-out;
+	transition: left 0.7s ease-out;
+}
+.game_invites .game_invite.visible:hover {
+	left: 0;
+	-webkit-transition: left 0.7s ease-in-out;
+	-moz-transition: left 0.7s ease-in-out;
+	-o-transition: left 0.7s ease-in-out;
+	transition: left 0.7s ease-in-out;
+}
+.game_invites .game_invite .bg {
+	background: url('/images/bg.jpg') no-repeat top center;
+	opacity: 0.9;
+	position: absolute;
+	top: 0;
+	left: 0;
+	border-radius: 3px;
+	height: 100%;
+	width: 100%;
+	z-index: 0;
+	-webkit-transition: opacity 0.7s ease;
+	-moz-transition: opacity 0.7s ease;
+	-o-transition: opacity 0.7s ease;
+	transition: opacity 0.7s ease;
+}
+.game_invites .game_invite:hover .bg {
+	-webkit-transition: opacity 0.7s ease;
+	-moz-transition: opacity 0.7s ease;
+	-o-transition: opacity 0.7s ease;
+	transition: opacity 0.7s ease;
+	opacity: 0.75;
+}
+.game_invites .game_invite .content {
+	position: relative;
+	padding: 10px;
+	z-index: 200;
+}
+.game_invites .game_invite .title {
+	font-size: 1.1em;
+	font-weight: bold;
+}
+.game_invites .game_invite p {
+	font-size: 1em;
+	font-weight: normal;
+	margin: 5px 0 0 0;
+	padding: 0;
+}
+.game_invites .game_invite .buttons {
+	margin: 20px 5px 5px 0;
+	text-align: right;
+}
+.game_invites .game_invite .buttons .button {
+	font-size: 1em !important;
+}
+
+.profile_header {
+	margin: 10px 10px 0;
+	background-color: rgba(255, 255, 255, 0.15);
+	padding: 10px 10px 10px 70px;
+	border-radius: 4px;
+	position: relative;
+}
+.profile_header h1 {
+	font-size: 1em;
+	font-weight: bold;
+	background: transparent;
+	border: none;
+	margin: 0;
+	padding: 5px 0;
+}
+.avatar {
+	border: 2px solid rgba(255, 255, 255, 0.9);
+	border-radius: 30px;
+	box-shadow: 0 0 5px rgba(101, 193, 218, 0.2), 0 0 7px rgba(101, 193, 218, 0.8), 0 0 13px rgba(101, 193, 218, 0.6);
+	position: absolute;
+	left: 5px;
+	top: 5px;
+	margin-right: 5px;
+}
+
+.lobby_game_actions {
+	float: left;
+	width: 250px;
+	margin-right: 5px;
+	padding: 10px;
+}
+.lobby_game_actions .quickmatch {
+	font-size: 1.35em;
+	font-weight: bold;
+	padding-top: 15px !important;
+	padding-bottom: 15px !important;
+	width: 250px;
+}
+.lobby_game_actions .button, .lobby_game_actions .button:hover {
+	-webkit-transition: box-shadow 0.5s ease, -webkit-box-shadow 0.5s ease;
+	-moz-transition: box-shadow 0.5s ease, -moz-box-shadow 0.5s ease;
+	-o-transition: box-shadow 0.5s ease;
+	transition: box-shadow 0.5s ease;
+}
+.lobby_game_actions .play_story, .lobby_game_actions .single_quest {
+	font-size: 1.1em;
+	font-weight: normal;
+	padding-top: 5px !important;
+	padding-bottom: 5px !important;
+	width: 120px;
+	margin: 5px 0;
+}
+.lobby_game_actions .play_story { 
+	float: left;
+}
+.lobby_game_actions .quickmatch:hover {
+	box-shadow: 0 0 8px rgba(255, 128, 0, 0.5), 0 0 18px rgba(255, 255, 0, 0.4) !important;
+	-webkit-box-shadow: 0 0px 8px rgba(255, 128, 0, 0.5), 0 0px 18px rgba(255, 255, 0, 0.4) !important;
+	-moz-box-shadow: 0 0px 8px rgba(255, 128, 0, 0.5), 0 0px 18px rgba(255, 255, 0, 0.4) !important;
+}
+.lobby_game_actions .play_story:hover, .lobby_game_actions .single_quest:hover {
+	box-shadow: 0 0 5px rgba(101, 193, 218, 0.2), 0 0 7px rgba(101, 193, 218, 0.8), 0 0 13px rgba(101, 193, 218, 0.6) !important;
+	-webkit-box-shadow: 0 0 5px rgba(101, 193, 218, 0.2), 0 0 7px rgba(101, 193, 218, 0.8), 0 0 13px rgba(101, 193, 218, 0.6) !important;
+	-moz-box-shadow: 0 0 5px rgba(101, 193, 218, 0.2), 0 0 7px rgba(101, 193, 218, 0.8), 0 0 13px rgba(101, 193, 218, 0.6) !important;
+}
+.lobby_game_actions .single_quest { float: right; }
+
+.lobby_chat {
+	float: right;
+	width: 715px;
+	margin: 10px 10px 0 0;
+	height: 500px;
+	margin-bottom: 50px;
+}
+.chat_room {
+	display: block;
+	width: 100%;
+	height: 100%;
+	height: 500px;
+	padding: 0;
+	position: relative;
+}
+.chat_room header {
+	position: absolute;
+	top: 0;
+	left: 0;
+	padding: 25px 20px 10px 20px;
+	width: 675px;
+	background: -moz-linear-gradient(top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0, 0, 0, 1)), color-stop(100%,rgba(0, 0, 0, 0))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, rgba(0, 0, 0, 1) 0%,rgba(0, 0, 0, 0) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, rgba(0, 0, 0, 1) 0%,rgba(0, 0, 0, 0) 100%); /* Opera11.10+ */
+	background: -ms-linear-gradient(top, rgba(0, 0, 0, 1) 0%,rgba(0, 0, 0, 0) 100%); /* IE10+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='rgba(0, 0, 0, 1)', endColorstr='rgba(0, 0, 0, 0)',GradientType=0 ); /* IE6-9 */
+	background: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%,rgba(0, 0, 0, 0) 100%); /* W3C */
+	box-shadow: 0 3px 3px rgba(0, 0, 0, 0.4);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+	z-index: 10;
+}
+.chat_room_lines {
+	height: 500px;
+	overflow: auto;
 }

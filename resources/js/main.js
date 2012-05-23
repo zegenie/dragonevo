@@ -4,7 +4,12 @@ function is_string(element) {
 }
 
 var Devo = {
-    Core: {},
+    Core: {
+		Pollers: {
+			Locks: {},
+			Callbacks: {}
+		}
+	},
     Main: {
         Helpers: {
             Backdrop: {},
@@ -13,6 +18,7 @@ var Devo = {
         },
 		Login: {}
     },
+	Chat: {},
 	Admin: {
 		Cards: {}
 	},
@@ -299,7 +305,7 @@ Devo.Main.Helpers.ajax = function(url, options) {
 			if (Devo.debug) {
 				$('csp-dbg-content').insert(response.responseJSON['csp-debugger'], 'before');
 			}
-			$(options.loading.indicator).hide();
+			if (options.loading && options.loading.indicator && $(options.loading.indicator)) $(options.loading.indicator).hide();
 			if (options.complete) {
 				Devo.Core._processCommonAjaxPostEvents(options.complete);
 				if (options.complete.callback) {
@@ -375,27 +381,78 @@ Devo.Main.Login.register = function(url)
 }
 
 Devo.Core._resizeWatcher = function() {
-	var docheight = document.viewport.getHeight();
-	//var docwidth = document.viewport.getWidth();
-	$('game-table').setStyle({height: docheight - 100 + 'px'});
-	var gtl = $('game-table').getLayout();
-	var boardheight = gtl.get('height') - gtl.get('padding-top') - gtl.get('padding-bottom');
-	var card_slot_height = parseInt((boardheight / 10) * 3) - 9;
-	var card_slot_width = parseInt(card_slot_height / 1.6);
-	var boardwidth = (card_slot_width * 5) + 100;
-	$('game-table').setStyle({width: boardwidth + 'px', marginLeft: 'auto', marginRight: 'auto'});
-	$$('.card-slots-container').each(function(element) {
-		$(element).setStyle({width: (card_slot_width * 5) + 70 + 'px', height: card_slot_height + 4 + 'px'});
-		$(element).select('.card-slot').each(function(card_element) {
-			$(card_element).setStyle({height: card_slot_height + 'px', width: card_slot_width + 'px'});
+	if ($('game-table')) {
+		var docheight = document.viewport.getHeight();
+		//var docwidth = document.viewport.getWidth();
+		$('game-table').setStyle({height: docheight - 100 + 'px'});
+		var gtl = $('game-table').getLayout();
+		var boardheight = gtl.get('height') - gtl.get('padding-top') - gtl.get('padding-bottom');
+		var card_slot_height = parseInt((boardheight / 10) * 3) - 9;
+		var card_slot_width = parseInt(card_slot_height / 1.6);
+		var boardwidth = (card_slot_width * 5) + 100;
+		$('game-table').setStyle({width: boardwidth + 'px', marginLeft: 'auto', marginRight: 'auto'});
+		$$('.card-slots-container').each(function(element) {
+			$(element).setStyle({width: (card_slot_width * 5) + 70 + 'px', height: card_slot_height + 4 + 'px'});
+			$(element).select('.card-slot').each(function(card_element) {
+				$(card_element).setStyle({height: card_slot_height + 'px', width: card_slot_width + 'px'});
+			});
 		});
-	});
-	var play_area_height = boardheight - ((card_slot_height + 20) * 2) - 10;
-	$('play-area').setStyle({height: play_area_height + 'px'});
-	$('event-slot').setStyle({height: play_area_height - 9 + 'px', width: parseInt((play_area_height - 15) / 1.6) + 'px'});
+		var play_area_height = boardheight - ((card_slot_height + 20) * 2) - 10;
+		$('play-area').setStyle({height: play_area_height + 'px'});
+		$('event-slot').setStyle({height: play_area_height - 9 + 'px', width: parseInt((play_area_height - 15) / 1.6) + 'px'});
+	}
 }
 
-Devo.Core.initialize = function() {
+Devo.Core.Pollers.Callbacks.invitePoller = function() {
+	if (!Devo.Core.Pollers.Locks.invitepoller) {
+		Devo.Core.Pollers.Locks.invitepoller = false;
+		Devo.Main.Helpers.ajax(Devo.options['ask_url'], {
+			additional_params: '&for=game_invites',
+			form: 'existing_game_invites',
+			loading: {
+				callback: function() {
+					Devo.Core.Pollers.Locks.invitepoller = true;
+				}
+			},
+			success: {
+				callback: function(json) {
+					if (json.invites) {
+						for (var d in json.invites) {
+							if (json.invites.hasOwnProperty(d)) {
+								var invite = json.invites[d];
+								console.log(invite);
+								$('existing_game_invites').insert('<input type="hidden" name="invites['+invite.invite_id+']" value="'+invite.invite_id+'">');
+								var invite_element = $('__game_invite_template').clone(true);
+								invite_element.id = 'game_invite_' + invite.invite_id;
+								$(invite_element).insert('<input type="hidden" name="invite_id" value="'+invite.invite_id+'">');
+								$(invite_element).down('.player_name').update(invite.player_name);
+								$(invite_element).show();
+								$('game_invites').insert(invite_element);
+								window.setTimeout( function() { $(invite_element).addClassName('visible animated fadeInLeft'); }, 100);
+							}
+						}
+					}
+				}
+			},
+			complete: {
+				callback: function() {
+					Devo.Core.Pollers.Locks.invitepoller = false;
+				}
+			}
+		});
+	}
+};
+
+Devo.Core._initializeInvitePoller = function() {
+	if ($('existing_game_invites') && $('__game_invite_template')) {
+		Devo.Core.Pollers.invitepoller = new PeriodicalExecuter(Devo.Core.Pollers.Callbacks.invitePoller, 15);
+		Devo.Core.Pollers.Callbacks.invitePoller();
+	}
+}
+
+Devo.Core.initialize = function(options) {
+	Devo.options = options;
+	Devo.Core._initializeInvitePoller();
 	Event.observe(window, 'resize', Devo.Core._resizeWatcher);
 	Devo.Core._resizeWatcher();
 }
@@ -411,6 +468,31 @@ Devo.Admin.Cards.saveAttack = function(form) {
 		form: form.id,
 		loading: {indicator: 'save_attack_indicator'},
 		success: cb
+	});
+};
+
+Devo.Chat.poll = function() {
+	
+};
+
+Devo.Chat.say = function(form) {
+	form = $(form);
+	var url = form.action;
+	var indicator = form.down('img');
+	Devo.Main.Helpers.ajax(url, {
+		form: form.id,
+		loading: {
+			indicator: indicator.id,
+			callback: function() {
+				$(form.down('input[type=submit]')).addClassName('disabled');
+			}
+		},
+		success: {
+			callback: function() {
+				Devo.Chat.poll();
+				form.down('input[type=text]').value = '';
+			}
+		}
 	});
 };
 

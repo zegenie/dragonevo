@@ -172,6 +172,14 @@
 		protected $_invites = 0;
 
 		/**
+		 * Games user is invited to
+		 *
+		 * @Relates(class="\application\entities\GameInvite", collection=true, foreign_column="to_player_id")
+		 * @var array|\application\entities\GameInvite
+		 */
+		protected $_game_invites;
+
+		/**
 		 * Take a raw password and convert it to the hashed format
 		 * 
 		 * @param string $password
@@ -670,6 +678,16 @@
 		public function setInvites($invites)
 		{
 			$this->_invites = $invites;
+		}
+
+		public function getGameInvites()
+		{
+			return $this->_b2dbLazyload('_game_invites');
+		}
+
+		public function getAvatar()
+		{
+			return 'default.png';
 		}
 
 	}
