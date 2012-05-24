@@ -10,6 +10,13 @@
 	class Actions extends \caspar\core\Actions
 	{
 
+		public function preExecute(Request $request, $action)
+		{
+			if (!$this->getUser()->isAuthenticated()) {
+				return $this->forward403();
+			}
+		}
+
 		/**
 		 * Index page
 		 *  

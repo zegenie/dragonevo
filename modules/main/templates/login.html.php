@@ -1,4 +1,4 @@
-<?php $csp_response->setTitle('Lobby'); ?>
+<?php $csp_response->setTitle('Log in'); ?>
 <div class="content login">
 	<div class="menu-left<?php if ($csp_user->isAuthenticated()): ?> small<?php endif; ?>">
 		<img src="/images/swirl_top_right.png" class="swirl top-right">

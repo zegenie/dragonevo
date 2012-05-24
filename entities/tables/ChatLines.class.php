@@ -30,19 +30,21 @@
 			parent::_addInteger('chat_lines.room_id', 10);
 		}
 
-		public function getLinesByRoomId($room_id, $since, $limit = null)
+		public function getLinesByRoomId($room_id, $since = null, $limit = null)
 		{
 			$crit = $this->getCriteria();
 			$crit->addJoin(Users::getTable(), 'users.id', 'chat_lines.user_id');
 			$crit->addWhere('chat_lines.room_id', $room_id);
-			$crit->addWhere('chat_lines.posted', $since, Criteria::DB_GREATER_THAN_EQUAL);
-			$crit->orderBy('chat_lines.posted', Criteria::DB_SORT_DESC);
+			if ($since) {
+				$crit->addWhere('chat_lines.id', $since, Criteria::DB_GREATER_THAN);
+			}
+			$crit->addOrderBy('chat_lines.posted', Criteria::SORT_DESC);
 			$crit->setLimit($limit);
 
 			$lines = array();
 			if ($res = $this->doSelect($crit)) {
 				while ($row = $res->getNextRow()) {
-					$lines[$row->get('chat_lines.id')] = array('user_id' => $row->get('users.id'), 'user_username' => $row->get('users.username'), 'text' => $row->get('chat_lines.text'), 'posted' => $row->get('chat_lines.posted'));
+					array_unshift($lines, array('line_id' => $row->get('chat_lines.id'), 'user_id' => $row->get('users.id'), 'user_username' => $row->get('users.username'), 'text' => $row->get('chat_lines.text'), 'posted' => $row->get('chat_lines.posted'), 'posted_formatted_hours' => date('H:i'), 'posted_formatted_date' => date('d/m/Y')));
 				}
 			}
 

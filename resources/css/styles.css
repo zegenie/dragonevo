@@ -4,10 +4,10 @@
 @import url('http://fonts.googleapis.com/css?family=Open+Sans:400,700,400italic,700italic');
 @import url('http://fonts.googleapis.com/css?family=IM+Fell+English+SC');*/
 
-/*@import url('http://fonts.googleapis.com/css?family=Metamorphous');
+@import url('http://fonts.googleapis.com/css?family=Metamorphous');
 @import url('http://fonts.googleapis.com/css?family=Gentium+Basic:400,700italic,700,400italic');
 @import url('http://fonts.googleapis.com/css?family=Fredericka+the+Great');
-@import url('http://fonts.googleapis.com/css?family=Amaranth:400,700,400italic,700italic');*/
+@import url('http://fonts.googleapis.com/css?family=Amaranth:400,700,400italic,700italic');
 
 /*
 html5doctor.com Reset Stylesheet
@@ -1563,20 +1563,60 @@ li.card-slot {
 	position: absolute;
 	top: 0;
 	left: 0;
-	padding: 25px 20px 10px 20px;
+	padding: 20px 20px 15px 20px;
 	width: 675px;
-	background: -moz-linear-gradient(top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0, 0, 0, 1)), color-stop(100%,rgba(0, 0, 0, 0))); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top, rgba(0, 0, 0, 1) 0%,rgba(0, 0, 0, 0) 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top, rgba(0, 0, 0, 1) 0%,rgba(0, 0, 0, 0) 100%); /* Opera11.10+ */
-	background: -ms-linear-gradient(top, rgba(0, 0, 0, 1) 0%,rgba(0, 0, 0, 0) 100%); /* IE10+ */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='rgba(0, 0, 0, 1)', endColorstr='rgba(0, 0, 0, 0)',GradientType=0 ); /* IE6-9 */
-	background: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%,rgba(0, 0, 0, 0) 100%); /* W3C */
+	background: -moz-linear-gradient(top, rgba(0, 0, 0, 1) 25%, rgba(0, 0, 0, 0.5) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0, 0, 0, 1)), color-stop(100%,rgba(0, 0, 0, 0.5))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, rgba(0, 0, 0, 1) 25%,rgba(0, 0, 0, 0.5) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, rgba(0, 0, 0, 1) 25%,rgba(0, 0, 0, 0.5) 100%); /* Opera11.10+ */
+	background: -ms-linear-gradient(top, rgba(0, 0, 0, 1) 25%,rgba(0, 0, 0, 0.5) 100%); /* IE10+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='rgba(0, 0, 0, 1)', endColorstr='rgba(0, 0, 0, 0.5)',GradientType=0 ); /* IE6-9 */
+	background: linear-gradient(to bottom, rgba(0, 0, 0, 1) 25%,rgba(0, 0, 0, 0.5) 100%); /* W3C */
 	box-shadow: 0 3px 3px rgba(0, 0, 0, 0.4);
 	border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 	z-index: 10;
+	font-family: 'Amaranth';
+}
+.chat_room_loading {
+	position: absolute;
+	top: 0;
+	left: 0;
+	padding: 0;
+	height: 100%;
+	width: 100%;
+	background: rgba(0, 0, 0, 0.5);
+	z-index: 100;
+}
+.chat_room_loading img {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin-left: -15px;
+	margin-top: -15px;
 }
 .chat_room_lines {
 	height: 500px;
 	overflow: auto;
+	font-family: 'Amaranth';
+}
+.chat_room_lines .chat_nickname {
+	font-size: 0.8em;
+	font-weight: bold;
+	color: #AAA;
+	padding: 5px 0 0 5px;
+}
+.chat_room_lines .chat_timestamp {
+	font-weight: normal;
+}
+.chat_room_lines .chat_timestamp .date {
+	display: none;
+}
+.chat_room_lines .chat_line:hover .date {
+	display: inline;
+}
+.chat_room_lines .chat_line {
+	font-size: 1em;
+	font-weight: normal;
+	color: #FFF;
+	padding: 0 0 5px 5px;
 }
