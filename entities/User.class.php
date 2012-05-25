@@ -180,6 +180,13 @@
 		protected $_game_invites;
 
 		/**
+		 * Games the user is playing
+		 *
+		 * @var array|\application\entities\Game
+		 */
+		protected $_games;
+
+		/**
 		 * Take a raw password and convert it to the hashed format
 		 * 
 		 * @param string $password
@@ -198,7 +205,13 @@
 				$password = self::hashPassword($password);
 			}
 			$user = self::getB2DBTable()->loginCheck($username, $password);
-			return ($user instanceof User) ? $user : new User();
+			if ($user instanceof User) {
+				$user->updateLastSeen();
+				$user->save();
+			} else {
+				$user = new User();
+			}
+			return $user;
 		}
 
 		/**
@@ -688,6 +701,19 @@
 		public function getAvatar()
 		{
 			return 'default.png';
+		}
+
+		protected function _populateGames()
+		{
+			if ($this->_games === null) {
+				$this->_games = \application\entities\tables\Games::getTable()->getGamesByUserId($this->getId());
+			}
+		}
+
+		public function getGames()
+		{
+			$this->_populateGames();
+			return $this->_games;
 		}
 
 	}

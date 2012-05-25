@@ -91,5 +91,13 @@
 		{
 			\application\entities\tables\ChatLines::getTable()->say($text, $user_id, $this->getId());
 		}
+
+		public function getNumberOfUsers()
+		{
+			if ($this->_id == 1) {
+				return tables\Users::getTable()->getNumberOfLoggedInUsers();
+			}
+			return 0;
+		}
 		
 	}

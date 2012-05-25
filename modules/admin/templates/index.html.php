@@ -13,9 +13,9 @@
 				<strong>Players registered last 7 days:</strong> <?php echo application\entities\tables\Users::getTable()->getNumberOfRegisteredUsersLastWeek(); ?><br>
 				<strong>Players registered last 24 hours:</strong> <?php echo application\entities\tables\Users::getTable()->getNumberOfRegisteredUsersLast24Hours(); ?><br>
 				<br>
-				<strong>Players logged in last 7 days:</strong> <?php echo application\entities\tables\Users::getTable()->getNumberOfLoggedInUsersLastWeek(); ?><br>
-				<strong>Players logged in last 24 hours:</strong> <?php echo application\entities\tables\Users::getTable()->getNumberOfLoggedInUsersLast24Hours(); ?>
 			</span>
+			<strong>Players logged in last 7 days:</strong> <?php echo application\entities\tables\Users::getTable()->getNumberOfLoggedInUsersLastWeek(); ?><br>
+			<strong>Players logged in last 24 hours:</strong> <?php echo application\entities\tables\Users::getTable()->getNumberOfLoggedInUsersLast24Hours(); ?>
 		</p>
 	</div>
 	<div class="feature">

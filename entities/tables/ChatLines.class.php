@@ -44,7 +44,8 @@
 			$lines = array();
 			if ($res = $this->doSelect($crit)) {
 				while ($row = $res->getNextRow()) {
-					array_unshift($lines, array('line_id' => $row->get('chat_lines.id'), 'user_id' => $row->get('users.id'), 'user_username' => $row->get('users.username'), 'text' => $row->get('chat_lines.text'), 'posted' => $row->get('chat_lines.posted'), 'posted_formatted_hours' => date('H:i'), 'posted_formatted_date' => date('d/m/Y')));
+					$posted = $row->get('chat_lines.posted');
+					array_unshift($lines, array('line_id' => $row->get('chat_lines.id'), 'user_id' => $row->get('users.id'), 'user_username' => $row->get('users.username'), 'user_level' => $row->get('users.level'), 'text' => htmlspecialchars($row->get('chat_lines.text'), ENT_NOQUOTES, 'utf-8'), 'posted' => $posted, 'posted_formatted_hours' => date('H:i', $posted), 'posted_formatted_date' => date('d/m/Y', $posted)));
 				}
 			}
 

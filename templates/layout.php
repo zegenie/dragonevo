@@ -124,7 +124,7 @@
 				</footer>
 				<script type="text/javascript">
 					document.observe('dom:loaded', function() {
-						Devo.Core.initialize({ask_url: '<?php echo make_url('ask'); ?>'});
+						Devo.Core.initialize({ask_url: '<?php echo make_url('ask'); ?>', user_id: <?php echo $csp_user->getId(); ?>});
 					});
 				</script>
 			</div>

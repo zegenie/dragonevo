@@ -125,3 +125,8 @@ board:
   url: /board/:game_id/*
   module: game
   action: board
+
+pick_cards:
+  url: /cards/pick/:game_id/*
+  module: game
+  action: pickcards

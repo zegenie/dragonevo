@@ -22,11 +22,13 @@ var Devo = {
 	Admin: {
 		Cards: {}
 	},
+	Play: {},
+	Games: {},
 	effect_queues: {
 		successmessage: 'Devo_successmessage',
 		failedmessage: 'Devo_failedmessage'
 	},
-	debug: true
+	debug: false
 }
 
 Devo.Core._processCommonAjaxPostEvents = function(options) {
@@ -291,8 +293,9 @@ Devo.Main.Helpers.ajax = function(url, options) {
 			if (response.responseJSON) {
 				Devo.Main.Helpers.Message.error(json.error, json.message);
 			} else {
-				//Devo.Main.Helpers.Message.error(response.responseText);
-				$('csp-dbg-content').insert(response.responseText, 'before');
+				if (Devo.debug) {
+					$('csp-dbg-content').insert(response.responseText, 'before');
+				}
 			}
 			if (options.failure) {
 				Devo.Core._processCommonAjaxPostEvents(options.failure);
@@ -405,7 +408,6 @@ Devo.Core._resizeWatcher = function() {
 
 Devo.Core.Pollers.Callbacks.invitePoller = function() {
 	if (!Devo.Core.Pollers.Locks.invitepoller) {
-		Devo.Core.Pollers.Locks.invitepoller = false;
 		Devo.Main.Helpers.ajax(Devo.options['ask_url'], {
 			additional_params: '&for=game_invites',
 			form: 'existing_game_invites',
@@ -427,9 +429,16 @@ Devo.Core.Pollers.Callbacks.invitePoller = function() {
 								$(invite_element).down('.player_name').update(invite.player_name);
 								$(invite_element).show();
 								$('game_invites').insert(invite_element);
-								window.setTimeout( function() { $(invite_element).addClassName('visible animated fadeInLeft'); }, 100);
 							}
 						}
+						window.setTimeout( function() {
+							for (var d in json.invites) {
+								if (json.invites.hasOwnProperty(d)) {
+									var invite = json.invites[d];
+									$('game_invite_' + invite.invite_id).addClassName('visible animated fadeInLeft');
+								}
+							}
+						}, 100);
 					}
 				}
 			},
@@ -444,7 +453,6 @@ Devo.Core.Pollers.Callbacks.invitePoller = function() {
 
 Devo.Core.Pollers.Callbacks.chatRoomPoller = function() {
 	if (!Devo.Core.Pollers.Locks.chatroompoller) {
-		Devo.Core.Pollers.Locks.chatroompoller = false;
 		Devo.Main.Helpers.ajax(Devo.options['ask_url'], {
 			additional_params: '&for=chat_lines',
 			form: 'chat_rooms_joined',
@@ -458,15 +466,20 @@ Devo.Core.Pollers.Callbacks.chatRoomPoller = function() {
 					if (json.chat_lines) {
 						for (var d in json.chat_lines) {
 							if (json.chat_lines.hasOwnProperty(d)) {
-								var room_lines = json.chat_lines[d];
+								var room = json.chat_lines[d];
 								var room_id = d;
-								for (var l in room_lines) {
-									if (room_lines.hasOwnProperty(l)) {
-										var line = room_lines[l];
+								for (var l in room['lines']) {
+									if (room['lines'].hasOwnProperty(l)) {
+										var line = room['lines'][l];
 										var line_id = line['line_id'];
 										if (!$('chat_line_'+line_id)) {
 											$('chat_room_'+room_id+'_since').setValue(line_id);
-											$('chat_room_'+room_id+'_lines').insert('<div id="chat_line_'+line_id+'" class="chat_line"><div class="chat_nickname">'+line['user_username']+'&nbsp;<span class="chat_timestamp">('+line['posted_formatted_hours']+'<span class="date"> - '+line['posted_formatted_date']+'</span>)</div><div class="chat_line">'+line['text']+'</div></div>');
+											var chat_line = '<div id="chat_line_'+line_id+'" class="chat_line"><div class="chat_nickname">';
+											if (line['user_id'] != Devo.options['user_id']) {
+												chat_line += '<div class="tooltip lighter">Username: '+line['user_username']+'<br>Level: '+line['user_level']+'<br><div class="buttons"><button class="button button-silver" onclick="Devo.Play.invite('+line['user_id']+', this);"><img src="/images/spinning_16.gif" style="display: none;">Invite to game</button></div></div>';
+											}
+											chat_line += line['user_username']+'&nbsp;<span class="chat_timestamp">('+line['posted_formatted_hours']+'<span class="date"> - '+line['posted_formatted_date']+'</span>)</div><div class="chat_line_content">'+line['text']+'</div></div>';
+											$('chat_room_'+room_id+'_lines').insert(chat_line);
 											$('chat_room_'+room_id+'_lines').scrollTop = $('chat_line_'+line_id).offsetTop;
 										}
 									}
@@ -482,13 +495,33 @@ Devo.Core.Pollers.Callbacks.chatRoomPoller = function() {
 						for (var d in json.chat_lines) {
 							if (json.chat_lines.hasOwnProperty(d)) {
 								var room_id = d;
-								if ($('chat_room_'+room_id+'_loading').visible) {
+								if ($('chat_room_'+room_id+'_loading').visible()) {
 									$('chat_room_'+room_id+'_loading').hide();
 								}
+								$('chat_room_'+room_id+'_num_users').update(json.chat_lines[d]['users']['count']);
 							}
 						}
 					}
 					Devo.Core.Pollers.Locks.chatroompoller = false;
+				}
+			}
+		});
+	}
+};
+
+Devo.Core.Pollers.Callbacks.quickMatchPoller = function() {
+	if (!Devo.Core.Pollers.Locks.quickmatchpoller) {
+		Devo.Main.Helpers.ajax(Devo.options['ask_url'], {
+			additional_params: '&for=quickmatch',
+			form: 'chat_rooms_joined',
+			loading: {
+				callback: function() {
+					Devo.Core.Pollers.Locks.quickmatchpoller = true;
+				}
+			},
+			complete: {
+				callback: function() {
+					Devo.Core.Pollers.Locks.quickmatchpoller = false;
 				}
 			}
 		});
@@ -503,13 +536,24 @@ Devo.Core._initializeInvitePoller = function() {
 }
 
 Devo.Core._initializeChatRoomPoller = function() {
-	Devo.Core.Pollers.chatroompoller = new PeriodicalExecuter(Devo.Core.Pollers.Callbacks.chatRoomPoller, 3.5);
-	Devo.Core.Pollers.Callbacks.chatRoomPoller();
+	if ($('chat_rooms_joined')) {
+		Devo.Core.Pollers.chatroompoller = new PeriodicalExecuter(Devo.Core.Pollers.Callbacks.chatRoomPoller, 2);
+		Devo.Core.Pollers.Callbacks.chatRoomPoller();
+	}
+}
+
+Devo.Core._initializeQuickmatchPoller = function() {
+	Devo.Core.Pollers.quickmatchpoller = new PeriodicalExecuter(Devo.Core.Pollers.Callbacks.quickMatchPoller, 5);
+}
+
+Devo.Core._destroyQuickmatchPoller = function() {
+	Devo.Core.Pollers.quickmatchpoller.stop();
+	Devo.Core.Pollers.Locks.quickmatchpoller = undefined;
 }
 
 Devo.Core.initialize = function(options) {
 	Devo.options = options;
-//	Devo.Core._initializeInvitePoller();
+	Devo.Core._initializeInvitePoller();
 	Devo.Core._initializeChatRoomPoller();
 	Event.observe(window, 'resize', Devo.Core._resizeWatcher);
 	Devo.Core._resizeWatcher();
@@ -558,6 +602,40 @@ Devo.Chat.say = function(form) {
 		}
 	});
 };
+
+Devo.Play.quickmatch = function() {
+	$('quickmatch_overlay').show();
+	$('quickmatch_overlay').addClassName('loading');
+	window.setTimeout( function() { $('cancel_quickmatch_button').addClassName('animated fadeIn'); }, 5000);
+	Devo.Core._initializeQuickmatchPoller();
+}
+
+Devo.Play.invite = function(user_id, button) {
+	Devo.Main.Helpers.ajax(Devo.options['ask_url'], {
+		params: '&for=invite&user_id='+user_id,
+		loading: {
+			callback: function() {
+				$(button).down('img').show();
+			}
+		},
+		success: {
+			callback: function(json) {
+				$('my_ongoing_games').insert(json.game);
+			}
+		},
+		complete: {
+			callback: function() {
+				$(button).down('img').hide();
+			}
+		}
+	});
+}
+
+Devo.Play.cancelQuickmatch = function() {
+	$('quickmatch_overlay').hide();
+	$('quickmatch_overlay').removeClassName('loading');
+	Devo.Core._destroyQuickmatchPoller();
+}
 
 Devo.Core.upload = function(fileInputId, fileIndex) {
 	// take the file from the input

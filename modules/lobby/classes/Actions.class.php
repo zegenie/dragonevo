@@ -24,13 +24,14 @@
 		 */
 		public function runIndex(Request $request)
 		{
+			$this->games = $this->getUser()->getGames();
 		}
 
 		public function runSay(Request $request)
 		{
 			try {
 				$room = new \application\entities\ChatRoom($request['room_id']);
-				$room->say($request['text'], $this->getUser()->getId());
+				$room->say(stripslashes($request->getRawParameter('text')), $this->getUser()->getId());
 				return $this->renderJSON(array('say' => 'ok'));
 			} catch (\Exception $e) {
 				$this->getResponse()->setHttpStatus(400);
