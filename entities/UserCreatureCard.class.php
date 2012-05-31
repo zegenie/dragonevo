@@ -15,32 +15,29 @@
 	class UserCreatureCard extends CreatureCard
 	{
 		
-		protected $_user_card_level = 1;
-		
-		protected $_user_dmp;
-		
-		public function generateRandomDefenceMultiplier() {
+		public function generateRandomDefenceMultiplier()
+		{
 			$level = rand(1, 100);
 			switch (true) {
 				case $level == 100:
 					$this->setUserDMP(8);
 					break;
-				case $level > 98:
+				case $level > 99:
 					$this->setUserDMP(7);
 					break;
-				case $level > 95:
+				case $level > 97:
 					$this->setUserDMP(6);
 					break;
-				case $level > 91:
+				case $level > 94:
 					$this->setUserDMP(5);
 					break;
-				case $level > 86:
+				case $level > 90:
 					$this->setUserDMP(4);
 					break;
-				case $level > 80:
+				case $level > 85:
 					$this->setUserDMP(3);
 					break;
-				case $level > 73:
+				case $level > 75:
 					$this->setUserDMP(2);
 					break;
 				default:
@@ -52,12 +49,17 @@
 		public function generateUniqueDetails()
 		{
 			$this->generateRandomDefenceMultiplier();
-		}
-		
-		public function setUserDMP($multiplier)
-		{
-			$multiplier = ($multiplier > $this->_base_dmp) ? $this->_base_dmp : $multiplier;
-			$this->_user_dmp = $multiplier;
+			$attacks = 0;
+			foreach ($this->getOriginalCard()->getAttacks() as $attack) {
+				if (!$attack->isMandatory()) {
+					if (rand(0, 10) > rand(0, 10)) continue;
+				}
+				$cattack = clone $attack;
+				$cattack->setCard($this);
+				$cattack->save();
+				$attacks++;
+				if ($attacks == 3) break;
+			}
 		}
 		
 	}

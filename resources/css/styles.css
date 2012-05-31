@@ -177,6 +177,9 @@ p {
 #backdrop_detail_content .tab_menu { margin-top: 30px; margin-bottom: 10px; font-size: 1.1em; }
 .backdrop_detail_footer { clear: both; font-weight: bold; font-size: 0.9em; padding: 5px; text-align: right; }
 
+.rounded_box.white { background-color: #FFF; border-color: #CCC; font-family: 'Open Sans'; font-size: 1em; }
+.rounded_box.white h3 { padding-left: 5px; background: none; color: #000; font-family: 'Open Sans'; }
+
 #dialog_title, #dialog_content {margin-left: 75px; }
 #dialog_yes, #dialog_no { border-bottom: none !important; }
 /* end backdrop styling */
@@ -762,8 +765,8 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 }
 .button-silver, .button.disabled, .button.disabled:active, .button.disabled:hover {
 	background: #c5c5c5;
-	background: -webkit-gradient(linear, left top, left bottom, from(#F5F5F5), to(#E5E5E5) );
-	background: -moz-linear-gradient(-90deg, #F5F5F5, #E5E5E5);
+	background: -webkit-gradient(linear, left top, left bottom, from(#F5F5F5), to(#E5E5E5) ) !important;
+	background: -moz-linear-gradient(-90deg, #F5F5F5, #E5E5E5) !important;
 	filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr='#f5f5f5', EndColorStr='#e5e5e5');
 }
 
@@ -795,6 +798,7 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 	background: #4477a1;
 	background: -webkit-gradient(linear, left top, left bottom, from(#81a8cb), to(#4477a1) );
 	background: -moz-linear-gradient(-90deg, #81a8cb, #4477a1);
+	border-color: rgba(50, 87, 118, 0.9);
 	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#81a8cb', endColorstr='#4477a1');
 	color: #fff; text-shadow: 1px 1px 1px #666;
 }
@@ -912,14 +916,79 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 /*.button-orange:active { background: #f09c15; }*/
 /*----------------------------*/
 
-.profile-intro { font-family: 'IM Fell English SC'; font-size: 1.4em; padding: 5px; color: #555; font-weight: normal; }
-
-.character_setup { color: #444; }
+.character_setup { color: #F1F1F1; font-size: 1.2em; padding: 10px; }
+.character_setup strong { font-weight: bold; font-style: italic; }
+.character_setup p { padding: 10px 5px; }
+.character_setup .account_info { font-size: 0.8em; }
 .character_setup label { float: left; padding: 4px 4px 4px 0; }
 #character_name_input { padding: 4px; width: 300px; }
 .character_setup input[type="submit"] { padding: 3px; font-weight: bold; }
+.character_setup input.pick_faction { padding: 10px 15px !important; font-weight: normal; font-size: 0.8em; left: 50%; width: 160px; margin-left: -95px; top: 295px; position: absolute; z-index: 10; }
+.character_setup .card {
+	z-index: 1;
+	margin: 0 auto; opacity: 0.5;
+	-webkit-transition: opacity 0.7s ease;
+	-moz-transition: opacity 0.7s ease;
+	-o-transition: opacity 0.7s ease;
+	transition: opacity 0.7s ease;
+	position: relative;
+}
+.character_setup form:hover .card {
+	opacity: 1;
+	-webkit-transition: opacity 0.7s ease;
+	-moz-transition: opacity 0.7s ease;
+	-o-transition: opacity 0.7s ease;
+	transition: opacity 0.7s ease;
+}
 
-.cards { overflow: visible; padding: 0; height: 200px; list-style: none; margin: 0; }
+.profile { font-size: 1.1em; }
+#user_level strong { font-weight: bold; font-style: italic; }
+.profile .statistics { list-style: none; padding: 0; margin: 0; }
+
+.shelf { 
+	background-image: url('/images/shelve_dark.png');
+	background-position: top left;
+	background-repeat: repeat;
+	box-shadow: inset 0 0 10px rgba(0, 0, 0, 1);
+	border-radius: 10px;
+	position: relative;
+	margin-bottom: 200px;
+}
+.shelf ul { list-style: none; padding: 10px 35px; position: relative; }
+.shelf li { margin: 17px 11px 57px 10px; float: left; }
+.shelf .card { height: 100%; background-size: contain; width: 100%; box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.8); }
+.shelf .card.selected { 
+	opacity: 1;
+}
+.shelf .card.faded { opacity: 0.3; }
+.shelf .card_actions {
+	background-color: #AAA; 
+	box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.7); 
+	padding: 10px;
+	color: #111;
+	text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.9);
+	font-weight: normal;
+	font-size: 1.1em;
+	position: absolute;
+	margin-top: 15px;
+	left: 0;
+	width: 960px;
+	z-index: 100;
+	height: 300px;
+}
+.shelf .card_actions h3 { background: none; padding-left: 5px; text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.4); color: #444; }
+.shelf .card_actions h5 { background: none; padding-left: 5px; text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.4); color: #444; }
+.shelf .card_actions h6 { background: none; padding-left: 5px; text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.4); color: #444; font-size: 0.7em; margin-bottom: 0; padding-bottom: 0; }
+.shelf .card_actions p, .shelf .cardattack_damage { font-size: 0.95em; font-weight: normal; font-family: 'Gentium Basic'; text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5); color: #444; }
+.shelf .card_actions_actions { text-align: right; position: absolute; top: 10px; right: 10px; }
+.shelf .card_actions_actions img { opacity: 0.8; position: absolute; left: 0; top: 0; }
+.shelf .card_actions_actions a { display: block; float: right; position: relative; padding: 6px 5px 6px 35px; font-size: 1.0em; color: #555; text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.4); }
+.shelf .card_actions_actions a:hover { color: #666; text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5); }
+.shelf .card_actions_attacks, .shelf .card_actions_description { float: left; width: 330px; margin-right: 30px; }
+.shelf .card_actions_attacks p { padding: 0 5px; font-size: 0.9em; }
+.shelf .cardattack_damage { padding: 5px 5px 8px; font-size: 0.9em; }
+
+.cards { padding: 0; list-style: none; margin: 0; }
 li.cards { list-style: none; }
 .card {
     z-index: 5;
@@ -937,7 +1006,10 @@ li.cards { list-style: none; }
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
 	font-family: 'Amaranth';
+	background-clip: border-box;
 }
+.card.small { height: 130px; width: 100px; }
+.card.medium { height: 209px; width: 160px; overflow: visible; }
 .card.creature {
     background-image: url('/images/card_white.png');
 }
@@ -946,6 +1018,9 @@ li.cards { list-style: none; }
 }
 .card.item {
     background-image: url('/images/card_red.png');
+}
+.card.flipped, .card.event.flipped, .card.item.flipped, .card.item.flipped {
+    background-image: url('/images/card_flipside.png');
 }
 li.card {
 	float: left;
@@ -977,6 +1052,34 @@ li.card {
 	background-color: rgba(255, 255, 255, 0.1);
 	border-width: 1px 1px 0 1px;
 	border-style: solid;
+}
+.card.small .name {
+	top: 3px;
+	left: 7px;
+	font-size: 8px;
+	text-shadow: none;
+	font-weight: bold;
+	color: #000;
+	border: 0;
+	letter-spacing: 0;
+	padding: 1px 2px 0 6px;
+	height: 9px;
+	min-height: 9px;
+	width: 80px;
+}
+.card.medium .name {
+	top: 6px;
+	left: 11px;
+	font-size: 10px;
+	text-shadow: none;
+	font-weight: bold;
+	color: #000;
+	border: 0;
+	letter-spacing: 0;
+	padding: 2px 2px 0 6px;
+	height: 12px;
+	min-height: 12px;
+	width: 132px;
 }
 .card.neutral .name {
 	background-color: rgba(255, 255, 255, 0.5);
@@ -1012,8 +1115,28 @@ li.card {
 	line-height: 1;
 	overflow: hidden;
 }
+.card.small .card_image {
+	top: 12px;
+	left: 9px;
+	width: 82px;
+	height: 57px;
+	background-size: cover;
+}
+.card.medium .card_image {
+	top: 20px;
+	left: 15px;
+	width: 131px;
+	height: 91px;
+	background-size: cover;
+}
 .card .main_image {
 	height: 155px;
+}
+.card.small .main_image {
+	height: 57px;
+}
+.card.medium .main_image {
+	height: 91px;
 }
 .card .card_reflection {
 	z-index: 1;
@@ -1024,11 +1147,27 @@ li.card {
 	width: 224px;
 	overflow: hidden;
 }
+.card.small .card_reflection {
+	top: 69px;
+	left: 9px;
+	height: 12px;
+	width: 82px;
+}
+.card.medium .card_reflection {
+	top: 111px;
+	left: 15px;
+	height: 15px;
+	width: 131px;
+}
 .card .card_reflection img {
     -moz-transform: scaleY(-1);
     -webkit-transform: scaleY(-1);
     -ms-transform: scaleY(-1);
     opacity: .25;
+}
+.card.medium .card_reflection img {
+	height: 91px;
+	width: 131px;
 }
 .card .card_reflection .cover {
 	z-index: 2;
@@ -1043,6 +1182,18 @@ li.card {
 	border-top: 2px solid rgba(85, 71, 67, 0.9);
 	border-right: none;
 	background-color: #D4CECB;
+	box-shadow: inset 1px 3px 3px -2px rgba(85, 71, 67, 0.6);
+}
+.card.small .card_reflection .cover {
+	width: 37px;
+	height: 4px;
+	border-top-left-radius: 4px 2px;
+	box-shadow: inset 1px 3px 3px -2px rgba(85, 71, 67, 0.6);
+}
+.card.medium .card_reflection .cover {
+	width: 83px;
+	height: 4px;
+	border-top-left-radius: 15px 8px;
 	box-shadow: inset 1px 3px 3px -2px rgba(85, 71, 67, 0.6);
 }
 .card.item .card_reflection .cover {
@@ -1065,6 +1216,12 @@ li.card {
 	left: 24px;
 	width: 227px;
 }
+.card.medium .attacks {
+	left: 9px;
+	top: 125px;
+	font-size: 0.8em;
+	width: 140px;
+}
 .card .attacks .attack {
 	font-size: 0.7em;
 	position: relative;
@@ -1072,6 +1229,11 @@ li.card {
 	height: 27px;
 	background-repeat: no-repeat;
 	background-position: 4px 6px;
+}
+.card.medium .attacks .attack {
+	height: 18px;
+	padding-bottom: 0;
+	background-position: 5px 2px;
 }
 .card .attacks .attack div, .card .attack .attack_details {
 	clear: none;
@@ -1105,11 +1267,17 @@ li.card {
 	font-size: 1.5em;
 	z-index: 10;
 }
+.card.medium .attacks .attack .attack_name {
+	font-size: 1.4em;
+}
 .card .attacks .attack .attack_impact {
 	position: absolute;
 	bottom: 2px;
 	left: 20px;
 	color: darkred;
+}
+.card.medium .attacks .attack .attack_impact {
+	bottom: 0;
 }
 .card .attacks .attack .attack_cost {
 	position: absolute;
@@ -1121,6 +1289,21 @@ li.card {
 	background-color: rgba(255, 255, 255, 0.5);
 	border-radius: 7px;
 	padding: 4px 7px;
+}
+.card.medium .attacks .attack .attack_cost {
+	right: 5px;
+	top: 2px;
+	border-radius: 5px;
+	padding: 1px 4px 3px;
+}
+.card.medium .attacks .attack .tooltip {
+	font-size: 1.2em;
+	width: 180px;
+	bottom: 25px;
+}
+.card.medium .attacks .attack:hover .tooltip {
+	left: -30px;
+	bottom: 30px;
 }
 .card .attacks .attack .attack_cost div {
 	float: left;
@@ -1243,15 +1426,80 @@ li.card {
 	z-index: 10;
 	background-color: transparent;
 }
+.card.small .hp, .card.small .magic {
+	bottom: 6px;
+	letter-spacing: 0;
+	font-size: 11px;
+	width: 11px;
+	background-color: rgba(255, 255, 255, 0.9);
+	border: 1px solid rgba(0, 0, 0, 0.4);
+	border-radius: 4px;
+	text-shadow: none;
+}
+.card.medium .hp, .card.medium .magic {
+	bottom: 5px;
+	letter-spacing: 0;
+	font-size: 12px;
+	width: 18px;
+	background-color: #000;
+	border: 1px solid rgba(255, 255, 100, 0.8);
+	border-radius: 5px;
+	text-shadow: none;
+}
+.card .dmp {
+	position: absolute;
+	bottom: 15px;
+	left: 108px;
+	padding: 20px 0 0 0;
+	background: url('/images/dmp.png') no-repeat -2px 0;
+	font-family: 'Metamorphous';
+	line-height: 1;
+	text-align: center;
+}
+.card.medium .dmp {
+	background: url('/images/dmp_small.png') no-repeat 2px 0;
+	bottom: 5px;
+	left: 62px;
+	padding: 12px 0 0 0;
+	font-size: 12px;
+}
+.card .dmp .box {
+	background-color: #000;
+	border: 1px solid rgba(255, 255, 100, 0.8);
+	text-align: center;
+	border-radius: 10px;
+	text-shadow: none;
+	color: #FFF;
+	width: 27px;
+}
+.card.medium .dmp .box {
+	width: 18px;
+	border-radius: 5px;
+}
 .card .hp {
 	left: 31px;
 	color: rgba(108, 213, 127, 1);
 	text-shadow: 1px 1px 3px rgba(108, 213, 127, 0.5), -1px 1px 3px rgba(108, 213, 127, 0.5), 1px -1px 3px rgba(108, 213, 127, 0.5), 1px 1px 3px rgba(108, 213, 127, 0.5);
 }
+.card.small .hp {
+	color: rgba(68, 163, 67, 1);
+	left: 10px;
+}
+.card.medium .hp {
+	color: rgba(68, 163, 67, 1);
+	left: 14px;
+}
 .card .magic {
 	left: 72px;
 	color: rgba(125, 125, 225, 1);
 	text-shadow: 1px 1px 3px rgba(125, 125, 225, 0.5), -1px 1px 3px rgba(125, 125, 225, 0.5), 1px -1px 3px rgba(125, 125, 225, 0.5), 1px 1px 3px rgba(125, 125, 225, 0.5);
+}
+.card.small .magic {
+	left: 24px;
+	color: rgba(50, 50, 150, 1);
+}
+.card.medium .magic {
+	left: 38px;
 }
 
 #opponents_hand { display: none; }
@@ -1542,7 +1790,7 @@ li.card-slot {
 	left: 75%;
 }
 .lobby_game_actions .button.single_quest .tooltip {
-	margin-left: -130px;
+	margin-left: -117px;
 }
 .lobby_game_actions .button .tooltip {
 	bottom: 35px;
@@ -1553,7 +1801,7 @@ li.card-slot {
 }
 .lobby_game_actions .button:hover .tooltip {
 	font-size: 14px;
-	width: 228px;
+	width: 207px;
 	left: 0;
 	font-weight: normal;
 	text-align: left;
@@ -1593,8 +1841,44 @@ li.card-slot {
 	padding: 0;
 }
 .my_games li {
+	position: relative;
 	margin: 0;
-	padding: 0;
+	padding: 0 0 5px 0;
+}
+.my_games li .button { float: right; margin: 10px 0 0 0; }
+.my_games li .versus_player {
+	font-size: 1.3em;
+	font-weight: bold;
+	line-height: 1;
+	font-family: 'Amaranth';
+	width: 190px;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+.my_games li .versus_player:first-line {
+	font-size: 0.65em;
+	font-weight: normal;
+}
+.my_games li .tooltip {
+	width: 400px;
+	font-family: 'Amaranth';
+	bottom: 45px;
+}
+.my_games li:hover .tooltip {
+	bottom: 50px;
+}
+.my_games li .tooltip .game_tooltip_turn {
+	padding: 10px 0;
+	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 5px rgba(101, 193, 218, 1), 0 0 7px rgba(101, 193, 218, 0.8), 0 0 13px rgba(101, 193, 218, 0.6);
+}
+.my_games li .tooltip .game_tooltip_versus {
+	font-size: 1.4em;
+	font-weight: bold;
+}
+.my_games li .tooltip .game_tooltip_versus_versus {
+	font-size: 0.7em;
+	font-weight: normal;
 }
 
 .lobby_chat {

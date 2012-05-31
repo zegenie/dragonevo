@@ -2,6 +2,9 @@
 
 	namespace application\entities\tables;
 
+	use b2db\Table,
+		b2db\Criteria;
+
 	/**
 	 * Equippable item cards table
 	 *
@@ -39,6 +42,18 @@
 			$crit->addWhere('equippable_item_cards.user_id', $user_id);
 			$crit->addWhere('equippable_item_cards.card_state', \application\entities\Card::STATE_OWNED);
 			return $this->select($crit);
+		}
+
+		public function removeUserCards()
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('equippable_item_cards.user_id', 0, Criteria::DB_NOT_EQUALS);
+			if ($res = $this->doSelect($crit)) {
+				while ($row = $res->getNextRow()) {
+					$card_id = $row->get('equippable_item_cards.id');
+					$this->doDeleteById($card_id);
+				}
+			}
 		}
 
 	}

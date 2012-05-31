@@ -61,6 +61,14 @@
 		protected $_invitation_sent;
 
 		/**
+		 * Whether invitations have been confirmed
+		 *
+		 * @Column(type="boolean", default=false)
+		 * @var boolean
+		 */
+		protected $_invitation_confirmed;
+
+		/**
 		 * Quickmatch state
 		 *
 		 * @Column(type="integer", default=0)
@@ -138,6 +146,21 @@
 			return $this->_b2dbLazyload('_player_id');
 		}
 		
+		public function getCurrentPlayerKey()
+		{
+			return ($this->getCurrentPlayerId() == $this->getPlayer()->getId()) ? 'player' : 'opponent';
+		}
+
+		public function isPlayerTurn()
+		{
+			return ($this->getCurrentPlayerKey() == 'player');
+		}
+
+		public function isOpponentTurn()
+		{
+			return ($this->getCurrentPlayerKey() == 'opponent');
+		}
+
 		public function setCurrentPlayerId($current_player_id)
 		{
 			$this->_current_player_id = $current_player_id;
@@ -151,6 +174,11 @@
 		public function getCurrentPlayer()
 		{
 			return $this->_b2dbLazyload('_current_player_id');
+		}
+
+		public function getCurrentPlayerId()
+		{
+			return ($this->_current_player_id instanceof User) ? $this->_current_player_id->getId() : $this->_current_player_id;
 		}
 
 		public function setOpponentId($opponent_id)
@@ -181,6 +209,21 @@
 		public function setInvitationSent($invitation_sent = true)
 		{
 			$this->_invitation_sent = $invitation_sent;
+		}
+
+		public function getInvitationConfirmed()
+		{
+			return $this->_invitation_confirmed;
+		}
+
+		public function isInvitationConfirmed()
+		{
+			return $this->getInvitationConfirmed();
+		}
+
+		public function setInvitationConfirmed($invitation_confirmed = true)
+		{
+			$this->_invitation_confirmed = $invitation_confirmed;
 		}
 
 		public function invite(User $user)

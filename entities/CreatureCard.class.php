@@ -120,6 +120,32 @@
 		 */
 		protected $_attacks;
 
+		/**
+		 * If owned, the original card id
+		 *
+		 * @Column(type="integer", length=10)
+		 * @Relates(class="\application\entities\CreatureCard")
+		 *
+		 * @var \application\entities\CreatureCard
+		 */
+		protected $_original_card_id;
+
+		/**
+		 * User card level
+		 *
+		 * @Column(type="integer", length=10, default=1)
+		 * @var integer
+		 */
+		protected $_user_card_level = 1;
+
+		/**
+		 * User DMP
+		 *
+		 * @Column(type="integer", length=5, default=1)
+		 * @var integer
+		 */
+		protected $_user_dmp = 1;
+
 		public static function getCreatureClasses()
 		{
 			return array(
@@ -288,6 +314,27 @@
 			$this->_card_level = $form_data['level'];
 			$this->_slot_1_available = (bool) $form_data['slot_1_available'];
 			$this->_slot_2_available = (bool) $form_data['slot_2_available'];
+		}
+
+		public function setUserDMP($multiplier)
+		{
+			$multiplier = ($multiplier > $this->_base_dmp) ? $this->_base_dmp : $multiplier;
+			$this->_user_dmp = $multiplier;
+		}
+
+		public function getUserDMP()
+		{
+			return $this->_user_dmp;
+		}
+
+		public function getUserCardLevel()
+		{
+			return $this->_user_card_level;
+		}
+
+		public function setUserCardLevel($user_card_level)
+		{
+			$this->_user_card_level = $user_card_level;
 		}
 
 	}

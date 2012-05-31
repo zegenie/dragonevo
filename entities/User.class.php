@@ -643,6 +643,12 @@
 			$this->_populateCards();
 			return (bool) count($this->_cards);
 		}
+
+		public function getCards()
+		{
+			$this->_populateCards();
+			return $this->_cards;
+		}
 		
 		public function generateStarterPack($faction)
 		{
@@ -659,19 +665,22 @@
 			$cc = 1;
 			while ($cc <= 5) {
 				if (empty($pickablecards)) break;
-				
-				$id = $pickablecards[array_rand($pickablecards)];
-				if (array_key_exists($id, $cards)) {
-					$card = $cards[$id];
+
+				$id = array_rand($pickablecards);
+				$card_id = $pickablecards[$id];
+				if (array_key_exists($card_id, $cards)) {
+					$card = $cards[$card_id];
 					$picked_card = clone $card;
 					$picked_card->giveTo($this);
 					$picked_card = $picked_card->morph();
+					$picked_card->save();
+					$picked_card->setOriginalCard($card);
 					$picked_card->generateUniqueDetails();
 					$picked_card->save();
-					$return_cards[$card->getId()] = $picked_card;
-					unset($cards[$id]);
+					$return_cards[$picked_card->getId()] = $picked_card;
+					unset($pickablecards[$id]);
+					$cc++;
 				}
-				$cc++;
 			}
 			
 			$this->_populateCards();

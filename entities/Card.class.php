@@ -400,7 +400,7 @@
 		{
 			foreach (array('name', 'brief_description', 'long_description') as $field) {
 				$property_name = "_{$field}";
-				$this->$property_name = (string) $form_data[$field];
+				$this->$property_name = (string) stripslashes($form_data[$field]);
 			}
 			$this->_is_special_card = (bool) $form_data['is_special_card'];
 			foreach (array('cost', 'likelihood') as $field) {
@@ -454,7 +454,27 @@
 		{
 			return $this->_b2dbLazyload('_user_id');
 		}
-		
+
+		public function getOriginalCard()
+		{
+			return $this->_b2dbLazyload('_original_card_id');
+		}
+
+		public function getOriginalCardId()
+		{
+			return ($this->_original_card_id instanceof Card) ? $this->_original_card_id->getId() : $this->_original_card_id;
+		}
+
+		public function setOriginalCardId($original_card_id)
+		{
+			$this->_original_card_id = $original_card_id;
+		}
+
+		public function setOriginalCard(Card $original_card_id)
+		{
+			$this->_original_card_id = $original_card_id;
+		}
+
 		public function giveTo($user)
 		{
 			$this->_card_state = self::STATE_OWNED;

@@ -528,6 +528,49 @@ Devo.Core.Pollers.Callbacks.quickMatchPoller = function() {
 	}
 };
 
+Devo.Core.Pollers.Callbacks.gameListPoller = function() {
+	if (!Devo.Core.Pollers.Locks.gamelistpoller) {
+		Devo.Main.Helpers.ajax(Devo.options['ask_url'], {
+			additional_params: '&for=gamelist',
+			form: 'my_ongoing_games_form',
+			loading: {
+				callback: function() {
+					Devo.Core.Pollers.Locks.gamelistpoller = true;
+				}
+			},
+			success: {
+				callback: function(json) {
+					if (json.games) {
+						for (var d in json.games) {
+							if (json.games.hasOwnProperty(d)) {
+								var game = json.games[d];
+								var game_id = d;
+								if ($('game_'+game_id+'_opponent_turn')) {
+									(game.turn.opponent && game.invitation_confirmed) ? $('game_'+game_id+'_opponent_turn').show() : $('game_'+game_id+'_opponent_turn').hide();
+									(game.turn.player && game.invitation_confirmed) ? $('game_'+game_id+'_player_turn').show() : $('game_'+game_id+'_player_turn').hide();
+									if (game.invitation_confirmed) {
+										$('game_'+game_id+'_invitation_unconfirmed').hide();
+										var button = $('game_'+game_id+'_list').down('.button');
+										button.removeClassName('disabled');
+										button.enable();
+									} else {
+										$('game_'+game_id+'_invitation_unconfirmed').show();
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			complete: {
+				callback: function() {
+					Devo.Core.Pollers.Locks.gamelistpoller = false;
+				}
+			}
+		});
+	}
+};
+
 Devo.Core._initializeInvitePoller = function() {
 	if ($('existing_game_invites') && $('__game_invite_template')) {
 		Devo.Core.Pollers.invitepoller = new PeriodicalExecuter(Devo.Core.Pollers.Callbacks.invitePoller, 15);
@@ -537,8 +580,15 @@ Devo.Core._initializeInvitePoller = function() {
 
 Devo.Core._initializeChatRoomPoller = function() {
 	if ($('chat_rooms_joined')) {
-		Devo.Core.Pollers.chatroompoller = new PeriodicalExecuter(Devo.Core.Pollers.Callbacks.chatRoomPoller, 2);
+		Devo.Core.Pollers.chatroompoller = new PeriodicalExecuter(Devo.Core.Pollers.Callbacks.chatRoomPoller, 3);
 		Devo.Core.Pollers.Callbacks.chatRoomPoller();
+	}
+}
+
+Devo.Core._initializeGameListPoller = function() {
+	if ($('my_ongoing_games')) {
+		Devo.Core.Pollers.gamelistpoller = new PeriodicalExecuter(Devo.Core.Pollers.Callbacks.gameListPoller, 10);
+		Devo.Core.Pollers.Callbacks.gameListPoller();
 	}
 }
 
@@ -555,6 +605,7 @@ Devo.Core.initialize = function(options) {
 	Devo.options = options;
 	Devo.Core._initializeInvitePoller();
 	Devo.Core._initializeChatRoomPoller();
+	Devo.Core._initializeGameListPoller();
 	Event.observe(window, 'resize', Devo.Core._resizeWatcher);
 	Devo.Core._resizeWatcher();
 }
@@ -607,6 +658,7 @@ Devo.Play.quickmatch = function() {
 	$('quickmatch_overlay').show();
 	$('quickmatch_overlay').addClassName('loading');
 	window.setTimeout( function() { $('cancel_quickmatch_button').addClassName('animated fadeIn'); }, 5000);
+	window.setTimeout( function() { $('cancel_quickmatch_button').removeClassName('animated fadeIn'); }, 7000);
 	Devo.Core._initializeQuickmatchPoller();
 }
 
@@ -620,7 +672,10 @@ Devo.Play.invite = function(user_id, button) {
 		},
 		success: {
 			callback: function(json) {
+				$('my_ongoing_games_none').hide();
 				$('my_ongoing_games').insert(json.game);
+				window.setTimeout(function() { $('my_ongoing_games').childElements().last().addClassName('animated tada'); }, 100);
+				window.setTimeout(function() { $('my_ongoing_games').childElements().last().removeClassName('animated tada'); }, 3000);
 			}
 		},
 		complete: {
@@ -636,6 +691,22 @@ Devo.Play.cancelQuickmatch = function() {
 	$('quickmatch_overlay').removeClassName('loading');
 	Devo.Core._destroyQuickmatchPoller();
 }
+
+Devo.Main.showCardActions = function(card_id) {
+	var card = $('card_'+card_id);
+	var cards = $$('.card');
+	$$('.card_actions').each(function(element) { $(element).hide(); });
+	if (card.hasClassName('selected')) {
+		card.removeClassName('selected');
+		cards.each(function(element) { $(element).removeClassName('faded'); });
+	} else {
+		cards.each(function(element) { $(element).addClassName('faded'); $(element).removeClassName('selected'); });
+		card.removeClassName('faded');
+		$('card_'+card_id).addClassName('selected');
+		var ca = $('card_'+card_id+'_actions');
+		ca.show();
+	}
+};
 
 Devo.Core.upload = function(fileInputId, fileIndex) {
 	// take the file from the input

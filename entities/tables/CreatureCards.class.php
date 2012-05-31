@@ -2,6 +2,9 @@
 
 	namespace application\entities\tables;
 
+	use b2db\Table,
+		b2db\Criteria;
+
 	/**
 	 * @Table(name="creature_cards")
 	 * @Entity(class="\application\entities\CreatureCard")
@@ -42,6 +45,19 @@
 		public function getById($id)
 		{
 			return $this->selectById($id);
+		}
+
+		public function removeUserCards()
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('creature_cards.user_id', 0, Criteria::DB_NOT_EQUALS);
+			if ($res = $this->doSelect($crit)) {
+				while ($row = $res->getNextRow()) {
+					$card_id = $row->get('creature_cards.id');
+					Attacks::getTable()->removeByCardId($card_id);
+					$this->doDeleteById($card_id);
+				}
+			}
 		}
 
 	}

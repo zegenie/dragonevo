@@ -292,4 +292,13 @@
 			return $this->renderJSON(array('message' => $this->getI18n()->__('Attack saved'), 'content' => Actions::returnTemplateHTML('admin/cardattack', compact('attack'))));
 		}
 
+		public function runResetUserCards(Request $request)
+		{
+			\application\entities\tables\EventCards::getTable()->removeUserCards();
+			\application\entities\tables\CreatureCards::getTable()->removeUserCards();
+			\application\entities\tables\PotionItemCards::getTable()->removeUserCards();
+			\application\entities\tables\EquippableItemCards::getTable()->removeUserCards();
+			$this->forward($this->getRouting()->generate('admin'));
+		}
+
 	}

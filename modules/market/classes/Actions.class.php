@@ -45,6 +45,8 @@
 //			$lobby = new \application\entities\ChatRoom();
 //			$lobby->setTopic('Welcome to the Dragon Evo lobby chat. This chat room is open for all users.');
 //			$lobby->save();
+			\b2db\Core::simpleQuery('ALTER TABLE creature_cards ADD COLUMN user_card_level INT(10) DEFAULT 1');
+			\b2db\Core::simpleQuery('ALTER TABLE creature_cards ADD COLUMN user_dmp INT(5) DEFAULT 1');
 			\application\entities\tables\GameInvites::getTable()->create();
 			\application\entities\tables\Games::getTable()->create();
 		}

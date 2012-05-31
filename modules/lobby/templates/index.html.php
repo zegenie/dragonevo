@@ -29,15 +29,16 @@
 		<button class="button button-lightblue single_quest" onclick="Devo.Main.Helpers.Message.success('Not implemented yet', 'This feature has not yet been implemented');"><div class="tooltip">Replay any of your completed quest from story mode!</div>Single quest</button>
 		<br style="clear: both;">
 		<h3>My ongoing games</h3>
-		<ul id="my_ongoing_games" class="my_games">
-			<?php if (count($games)): ?>
-				<?php foreach ($games as $game): ?>
-					<?php include_template('lobby/game', compact('game')); ?>
-				<?php endforeach; ?>
-			<?php else: ?>
-				<li class="faded_out">You are not currently playing any games</li>
-			<?php endif; ?>
-		</ul>
+		<form id="my_ongoing_games_form">
+			<ul id="my_ongoing_games" class="my_games">
+				<?php if (count($games)): ?>
+					<?php foreach ($games as $game): ?>
+						<?php include_template('lobby/game', compact('game')); ?>
+					<?php endforeach; ?>
+				<?php endif; ?>
+				<li class="faded_out" id="my_ongoing_games_none"<?php if (count($games)): ?> style="display: none;"<?php endif; ?>>You are not currently playing any games</li>
+			</ul>
+		</form>
 	</div>
 	<form id="chat_rooms_joined" action="<?php echo make_url('ask'); ?>" method="post">
 	</form>

@@ -5,6 +5,16 @@ home:
   module: main
   action: index
 
+profile:
+  url: /profile
+  module: main
+  action: profile
+
+cards:
+  url: /cards
+  module: main
+  action: cards
+
 login:
   url: /login
   module: main
@@ -49,6 +59,11 @@ admin_card_of_the_week:
   url: /admin/cotw
   module: admin
   action: cardoftheweek
+
+admin_reset_user_cards:
+  url: /admin/reset/usercards
+  module: admin
+  action: resetusercards
 
 admin_news:
   url: /admin/news

@@ -1,5 +1,11 @@
 <?php $csp_response->setTitle(__('Dragon Evo - The Card Game')); ?>
-<?php include_component('main/latestnews'); ?>
+<div class="content left">
+	<?php if ($csp_user->isAuthenticated()): ?>
+		<?php include_template('main/profileleftmenu'); ?>
+		<br>
+	<?php endif; ?>
+	<?php include_component('main/latestnews'); ?>
+</div>
 <div class="content right">
 	<h1>Welcome to the Dragon Evo Universe</h1>
 	<p>

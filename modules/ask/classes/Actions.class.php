@@ -45,7 +45,7 @@
 			return $this->renderJSON(compact('chat_lines'));
 		}
 
-		protected function _processQuickmatch(Request $request)
+		protected function _findQuickmatch(Request $request)
 		{
 			$user = $this->getUser();
 			$qm_game = \application\entities\tables\Games::getTable()->getQuickmatchGameForUser($user->getId());
@@ -53,7 +53,7 @@
 				if ($qm_game->getOpponent() instanceof \application\entities\User) {
 					$qm_game->completeQuickmatch();
 					$qm_game->save();
-					return $this->renderJSON(array('forward' => $this->getRouting()->generate('pick_cards', array('game_id' => $qm_game->getId()))));
+					return $qm_game;
 				}
 			}
 			$game = \application\entities\tables\Games::getTable()->getAvailableGameForQuickmatch($user->getId());
@@ -63,7 +63,7 @@
 				if ($qm_game instanceof \application\entities\Game) {
 					$qm_game->delete();
 				}
-				return $this->renderJSON(array('forward' => $this->getRouting()->generate('pick_cards', array('game_id' => $game->getId()))));
+				return $game;
 			} else {
 				if (!$qm_game instanceof \application\entities\Game) {
 					$qm_game = new \application\entities\Game();
@@ -71,6 +71,15 @@
 					$qm_game->initiateQuickmatch();
 					$qm_game->save();
 				}
+			}
+		}
+
+		protected function _processQuickmatch(Request $request)
+		{
+			$game = $this->_findQuickmatch($request);
+			if ($game instanceof \application\entities\Game) {
+				return $this->renderJSON(array('forward' => $this->getRouting()->generate('pick_cards', array('game_id' => $game->getId()))));
+			} else {
 				return $this->renderJSON(array('game' => 'not found'));
 			}
 		}
@@ -85,6 +94,15 @@
 			$game->invite($user);
 			$game->save();
 			return $this->renderJSON(array('game' => $this->getTemplateHTML('lobby/game', compact('game'))));
+		}
+
+		protected function _processGameList(Request $request)
+		{
+			$games = array();
+			foreach ($this->getUser()->getGames() as $game) {
+				$games[$game->getId()] = array('invitation_confirmed' => $game->isInvitationConfirmed(), 'turn' => array('opponent' => $game->isOpponentTurn(), 'player' => $game->isPlayerTurn()));
+			}
+			return $this->renderJSON(compact('games'));
 		}
 
 		/**
@@ -107,6 +125,9 @@
 						break;
 					case 'invite':
 						return $this->_processInvite($request);
+						break;
+					case 'gamelist':
+						return $this->_processGameList($request);
 						break;
 					default:
 						return $this->renderJSON(array('for' => $request['for']));

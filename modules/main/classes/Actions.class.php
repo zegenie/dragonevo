@@ -45,9 +45,9 @@ class Actions extends \caspar\core\Actions
 	{
 		$this->forward403unless($this->getUser()->isAuthenticated());
 		$greetings = array('Hello', 'Hey there', 'Hola', 'Bonjour', 'Ohoy', 'Heya', 'Hey', 'Welcome', 'There you are');
+		$this->intro = $greetings[array_rand($greetings)];
 		$user = $this->getUser();
 
-		$this->intro = $greetings[array_rand($greetings)];
 		$this->message = \caspar\core\Caspar::getMessageAndClear('profile_message');
 		$this->error = \caspar\core\Caspar::getMessageAndClear('profile_error');
 		$this->games_played = 0;
@@ -125,6 +125,22 @@ class Actions extends \caspar\core\Actions
 	public function runLobby(Request $request)
 	{
 
+	}
+
+	/**
+	 * Cards overview
+	 *
+	 * @param Request $request
+	 */
+	public function runCards(Request $request)
+	{
+//		$this->getUser()->generateStarterPack('rutai');
+//		$this->getUser()->generateStarterPack('neutrals');
+//		$this->getUser()->generateStarterPack('empire');
+//		$this->getUser()->generateStarterPack('rutai');
+//		$this->getUser()->generateStarterPack('neutrals');
+//		$this->getUser()->generateStarterPack('empire');
+		$this->cards = $this->getUser()->getCards();
 	}
 
 	/**

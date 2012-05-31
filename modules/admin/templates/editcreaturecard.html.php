@@ -88,6 +88,10 @@
 		<?php endforeach; ?>
 	</fieldset>
 	<br style="clear: both;">
+	<div style="clear: both; text-align: right; padding: 10px; margin-top: 10px; background-color: rgba(80, 54, 32, 0.4); border: 1px dotted rgba(72, 48, 28, 0.8); border-left: none; border-right: none;">
+		<input type="submit" value="Save card" style="font-size: 1em; padding: 3px 10px !important;">
+	</div>
+	<br style="clear: both;">
 	<fieldset>
 		<legend>Attacks</legend>
 		<?php if (!$card->getB2DBID()): ?>
@@ -104,8 +108,4 @@
 		<?php endif; ?>
 		<button class="button button-standard" onclick="Devo.Main.Helpers.Backdrop.show('<?php echo make_url('get_backdrop_partial', array('key' => 'attack', 'card_id' => $card->getId())); ?>');return false;">Add new attack</button>
 	</fieldset>
-	<br style="clear: both;">
-	<div style="clear: both; text-align: right; padding: 10px; margin-top: 10px; background-color: rgba(80, 54, 32, 0.4); border: 1px dotted rgba(72, 48, 28, 0.8); border-left: none; border-right: none;">
-		<input type="submit" value="Save card" style="font-size: 1em; padding: 3px 10px !important;">
-	</div>
 </form>
