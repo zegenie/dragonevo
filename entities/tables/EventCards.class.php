@@ -12,13 +12,17 @@
 	 *
 	 * @Table(name="event_cards")
 	 * @Entity(class="\application\entities\EventCard")
+	 * @Entities(identifier="card_state")
+	 * @SubClasses(template="\application\entities\EventCard", owned="\application\entities\UserEventCard")
 	 */
 	class EventCards extends \b2db\Table
 	{
 		
 		public function getAll()
 		{
-			return $this->selectAll();
+			$crit = $this->getCriteria();
+			$crit->addWhere('event_cards.card_state', \application\entities\Card::STATE_TEMPLATE);
+			return $this->select($crit);
 		}
 		
 		public function getNumberOfCards()
@@ -28,18 +32,19 @@
 			return $this->count($crit);
 		}
 
-		public function getByFaction($faction)
-		{
-			$crit = $this->getCriteria();
-			$crit->addWhere('event_cards.faction', $faction);
-			$crit->addWhere('event_cards.card_state', \application\entities\Card::STATE_TEMPLATE);
-			return $this->select($crit);
-		}
-
 		public function getByUserId($user_id)
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere('event_cards.user_id', $user_id);
+			$crit->addWhere('event_cards.card_state', \application\entities\Card::STATE_OWNED);
+			return $this->select($crit);
+		}
+
+		public function getByUserIdAndGameId($user_id, $game_id)
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('event_cards.user_id', $user_id);
+			$crit->addWhere('event_cards.game_id', $game_id);
 			$crit->addWhere('event_cards.card_state', \application\entities\Card::STATE_OWNED);
 			return $this->select($crit);
 		}

@@ -24,13 +24,6 @@
 		const CLASS_POTION_ALTERATION = 11;
 
 		/**
-		 * Card type
-		 *
-		 * @Column(type="string", length=20)
-		 */
-		protected $_card_type = Card::TYPE_ITEM;
-
-		/**
 		 * Item class
 		 *
 		 * @Column(type="integer", length=10, not_null=true)

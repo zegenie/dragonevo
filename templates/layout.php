@@ -39,7 +39,7 @@
 				<span id="dragonevo_successmessage_content"></span>
 			</div>
 		</div>
-		<div id="fullpage_backdrop" class="fullpage_backdrop" style="display: none;">
+		<div id="fullpage_backdrop" class="fullpage_backdrop" style="<?php if ($csp_routing->getCurrentRouteModule() != 'game'): ?>display: none;<?php endif; ?>">
 			<div style="position: absolute; top: 45%; left: 40%; z-index: 100001; color: #FFF; font-size: 15px; font-weight: bold;" id="fullpage_backdrop_indicator">
 				<?php echo image_tag('/images/spinning_32.gif'); ?><br>
 				<?php echo __('Please wait ...'); ?>
@@ -63,7 +63,7 @@
 			</div>
 			<div style="background-color: #000; width: 100%; height: 100%; position: absolute; top: 0; left: 0; margin: 0; padding: 0; z-index: 999;" class="semi_transparent"> </div>
 		</div>
-		<?php if ($csp_routing->getCurrentRouteModule() != 'game'): ?>
+		<?php if ($csp_routing->getCurrentRouteModule() != 'game' || $csp_routing->getCurrentRouteName() == 'pick_cards'): ?>
 			<?php /*if ($csp_response->getPage() != 'home'): ?>
 				<div id="header-strip">
 					<div class="header-content">
@@ -90,7 +90,11 @@
 			<?php endif; */?>
 			<div class="main-content">
 				<div class="banner-container">
-					<img src="/images/banner.jpg">
+					<?php if ($csp_routing->getCurrentRouteName() == 'home'): ?>
+						<img src="/images/banner.jpg">
+					<?php else: ?>
+						<img src="/images/banner_shorter.jpg">
+					<?php endif; ?>
 					<a class="devo-box" href="<?php echo make_url('home'); ?>">
 						DRAGON EVO<br>
 						<span class="slogan">the online action card game</span>
@@ -122,14 +126,14 @@
 						<?php endif; ?>
 					</div>
 				</footer>
-				<script type="text/javascript">
-					document.observe('dom:loaded', function() {
-						Devo.Core.initialize({ask_url: '<?php echo make_url('ask'); ?>', user_id: <?php echo $csp_user->getId(); ?>});
-					});
-				</script>
 			</div>
 		<?php else: ?>
 			<?php echo $content; ?>
 		<?php endif; ?>
+		<script type="text/javascript">
+			document.observe('dom:loaded', function() {
+				Devo.Core.initialize({location: '<?php echo $csp_routing->getCurrentRouteName(); ?>', title: '<?php echo $csp_response->getTitle(); ?>', ask_url: '<?php echo make_url('ask'); ?>', say_url: '<?php echo make_url('say'); ?>', user_id: <?php echo $csp_user->getId(); ?>});
+			});
+		</script>
 	</body>
 </html>

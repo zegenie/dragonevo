@@ -16,6 +16,13 @@
 	{
 
 		/**
+		 * Card type
+		 *
+		 * @Column(type="string", length=20)
+		 */
+		protected $_card_type = Card::TYPE_EQUIPPABLE_ITEM;
+
+		/**
 		 * @Column(type="boolean", default=false)
 		 * @var boolean
 		 */

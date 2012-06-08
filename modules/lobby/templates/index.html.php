@@ -25,8 +25,8 @@
 	</div>
 	<div class="lobby_game_actions">
 		<button class="button button-standard quickmatch" id="quickmatch_button" onclick="Devo.Play.quickmatch();"><div class="tooltip">Battle it out against a randomly chosen opponent!</div>Play quickmatch</button>
-		<button class="button button-lightblue play_story" onclick="Devo.Main.Helpers.Message.success('Not implemented yet', 'This feature has not yet been implemented');"><div class="tooltip">Start or continue your journey through the Dragon Evo story!</div>Play story</button>
-		<button class="button button-lightblue single_quest" onclick="Devo.Main.Helpers.Message.success('Not implemented yet', 'This feature has not yet been implemented');"><div class="tooltip">Replay any of your completed quest from story mode!</div>Single quest</button>
+		<button class="button button-lightblue play_story disabled" onclick="Devo.Main.Helpers.Message.success('Not implemented yet', 'This feature has not yet been implemented');" disabled><div class="tooltip">Start or continue your journey through the Dragon Evo story!<br><br>Not implemented yet!</div>Play story</button>
+		<button class="button button-lightblue single_quest disabled" onclick="Devo.Main.Helpers.Message.success('Not implemented yet', 'This feature has not yet been implemented');" disabled><div class="tooltip">Replay any of your completed quest from story mode!<br><br>Not implemented yet!</div>Single quest</button>
 		<br style="clear: both;">
 		<h3>My ongoing games</h3>
 		<form id="my_ongoing_games_form">
@@ -47,3 +47,8 @@
 	</div>
 	<br style="clear: both;">
 </div>
+<script>
+	Devo.Core.Events.listen('devo:core:initialized', function(options) {
+		Devo.Main.initializeLobby();
+	});
+</script>

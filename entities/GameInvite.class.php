@@ -73,7 +73,10 @@
 		{
 			$this->_game_id = $game;
 		}
-		
+
+		/**
+		 * @return \application\entities\Game
+		 */
 		public function getGame()
 		{
 			return $this->_b2dbLazyload('_game_id');
@@ -112,6 +115,28 @@
 		public function getToPlayer()
 		{
 			return $this->_b2dbLazyload('_to_player_id');
+		}
+
+		public function accept()
+		{
+			$this->getGame()->setInvitationConfirmed();
+			$event = new GameEvent();
+			$event->setEventType(GameEvent::TYPE_INVITATION_ACCEPTED);
+			$event->setEventData(array('player_id' => $this->getToPlayer()->getId(), 'player_name' => $this->getToPlayer()->getUsername()));
+			$this->getGame()->addEvent($event);
+			$this->getGame()->changePlayer();
+			$this->getGame()->save();
+		}
+		
+		public function reject()
+		{
+			$this->getGame()->setInvitationRejected();
+			$this->getGame()->save();
+		}
+		
+		public function cancel()
+		{
+			
 		}
 
 	}

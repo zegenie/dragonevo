@@ -20,13 +20,15 @@
 		protected function _processGameInvites(Request $request)
 		{
 			$invites = array();
+			$removed_invites = array();
 			if ($this->getUser()->isAuthenticated()) {
 				$game_invites = \application\entities\tables\GameInvites::getTable()->getInvitesByUserId($this->getUser()->getId(), $request->getParameter('invites', array()));
+				$removed_invites = \application\entities\tables\GameInvites::getTable()->getRemovedInvitesByUserId($this->getUser()->getId(), $request->getParameter('invites', array()));
 				foreach ($game_invites as $invite_id => $invite) {
 					$invites[$invite_id] = array('player_name' => $invite->getFromPlayer()->getName(), 'game_id' => $invite->getGameId(), 'invite_id' => $invite->getId());
 				}
 			}
-			return $this->renderJSON(compact('invites'));
+			return $this->renderJSON(compact('invites', 'removed_invites'));
 		}
 
 		protected function _processChatLines(Request $request)
@@ -78,7 +80,7 @@
 		{
 			$game = $this->_findQuickmatch($request);
 			if ($game instanceof \application\entities\Game) {
-				return $this->renderJSON(array('forward' => $this->getRouting()->generate('pick_cards', array('game_id' => $game->getId()))));
+				return $this->renderJSON(array('forward' => $this->getRouting()->generate('board', array('game_id' => $game->getId()))));
 			} else {
 				return $this->renderJSON(array('game' => 'not found'));
 			}
@@ -100,17 +102,75 @@
 		{
 			$games = array();
 			foreach ($this->getUser()->getGames() as $game) {
-				$games[$game->getId()] = array('invitation_confirmed' => $game->isInvitationConfirmed(), 'turn' => array('opponent' => $game->isOpponentTurn(), 'player' => $game->isPlayerTurn()));
+				$games[$game->getId()] = array('invitation_confirmed' => $game->isInvitationConfirmed(), 'invitation_rejected' => $game->isInvitationRejected(), 'turn' => array('opponent' => $game->isOpponentTurn(), 'player' => $game->isPlayerTurn()));
 			}
 			return $this->renderJSON(compact('games'));
 		}
 
+		protected function _processAcceptGameInvite(Request $request)
+		{
+			try {
+				$invite = new \application\entities\GameInvite($request['invite_id']);
+			} catch (\Exception $e) {
+				return $this->renderJSON(array('accepted' => 'removed', 'invite_id' => $request['invite_id'], 'message' => 'This invite is no longer available'));
+			}
+			$invite->accept();
+			$game_id = $invite->getGameId();
+			$invite->delete();
+			return $this->renderJSON(array('forward' => $this->getRouting()->generate('board', array('game_id' => $game_id))));
+		}
+
+		protected function _processRejectGameInvite(Request $request)
+		{
+			try {
+				$invite = new \application\entities\GameInvite($request['invite_id']);
+				$invite->reject();
+				$invite->delete();
+			} catch (\Exception $e) {}
+			return $this->renderJSON(array('rejected' => 'ok', 'invite_id' => $request['invite_id']));
+		}
+
+		protected function _processCancelGame(Request $request)
+		{
+			$game = new \application\entities\Game($request['game_id']);
+			$game->cancel();
+			$game->delete();
+			return $this->renderJSON(array('cancelled' => 'ok', 'game_id' => $game->getId()));
+		}
+
+		protected function _processPollGameData(Request $request)
+		{
+			$game_data = array();
+			$game = new \application\entities\Game($request['game_id']);
+			$game_data['current_player_id'] = $game->getCurrentPlayerId();
+			$gameevents = \application\entities\tables\GameEvents::getTable()->getLatestEventsByGameId($game->getId(), $request['latest_event_id']);
+			$events = array();
+			foreach ($gameevents as $event) {
+				$events[] = array('id' => $event->getId(), 'type' => $event->getEventType(), 'data' => json_decode($event->getEventData()), 'event_content' => $this->getTemplateHTML('game/event', compact('event')));
+			}
+			return $this->renderJSON(array('game' => array('data' => $game_data, 'events' => $events)));
+		}
+
+		protected function _processEndTurn(Request $request)
+		{
+			$game = new \application\entities\Game($request['game_id']);
+			if ($game->getCurrentPlayerId() == $this->getUser()->getId()) {
+				$game->changePlayer();
+				$game->save();
+				return $this->renderJSON(array('end_turn' => 'ok'));
+			} else {
+				$this->getResponse()->setHttpStatus(400);
+				return $this->renderJSON(array('error' => "It's not your turn"));
+			}
+		}
+
+
 		/**
-		 * Index page
+		 * Ask action
 		 *  
 		 * @param Request $request
 		 */
-		public function runIndex(Request $request)
+		public function runAsk(Request $request)
 		{
 			try {
 				switch ($request['for']) {
@@ -123,11 +183,11 @@
 					case 'quickmatch':
 						return $this->_processQuickmatch($request);
 						break;
-					case 'invite':
-						return $this->_processInvite($request);
-						break;
 					case 'gamelist':
 						return $this->_processGameList($request);
+						break;
+					case 'game_data':
+						return $this->_processPollGameData($request);
 						break;
 					default:
 						return $this->renderJSON(array('for' => $request['for']));
@@ -136,6 +196,41 @@
 				$this->getResponse()->setHttpStatus(400);
 				return $this->renderJSON(array('error' => 'An error occured'));
 			}
+			return $this->renderJSON(array($request['for'] => 'ok, no data'));
+		}
+
+		/**
+		 * Say action
+		 *
+		 * @param Request $request
+		 */
+		public function runSay(Request $request)
+		{
+			try {
+				switch ($request['topic']) {
+					case 'invite':
+						return $this->_processInvite($request);
+						break;
+					case 'reject_invite':
+						return $this->_processRejectGameInvite($request);
+						break;
+					case 'cancel_game':
+						return $this->_processCancelGame($request);
+						break;
+					case 'accept_invite':
+						return $this->_processAcceptGameInvite($request);
+						break;
+					case 'end_turn':
+						return $this->_processEndTurn($request);
+						break;
+					default:
+						return $this->renderJSON(array('topic' => $request['topic']));
+				}
+			} catch (\Exception $e) {
+				$this->getResponse()->setHttpStatus(400);
+				return $this->renderJSON(array('error' => 'An error occured'));
+			}
+			return $this->renderJSON(array($request['topic'] => 'ok, no data'));
 		}
 
 	}

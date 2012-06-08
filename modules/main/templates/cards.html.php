@@ -13,14 +13,16 @@
 								<h3><?php echo $card->getName(); ?></h3>
 								<p><?php echo nl2br($card->getLongDescription()); ?></p>
 							</div>
-							<div class="card_actions_attacks">
-								<h3>Attacks</h3>
-								<?php foreach ($card->getAttacks() as $attack): ?>
-									<h6><?php echo $attack->getName(); ?></h6>
-									<p><?php echo $attack->getDescription(); ?></p>
-									<div class="cardattack_damage"><?php include_template('game/cardattackdamage', compact('attack')); ?></div>
-								<?php endforeach; ?>
-							</div>
+							<?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE): ?>
+								<div class="card_actions_attacks">
+									<h3>Attacks</h3>
+									<?php foreach ($card->getAttacks() as $attack): ?>
+										<h6><?php echo $attack->getName(); ?></h6>
+										<p><?php echo $attack->getDescription(); ?></p>
+										<div class="cardattack_damage"><?php include_template('game/cardattackdamage', compact('attack')); ?></div>
+									<?php endforeach; ?>
+								</div>
+							<?php endif; ?>
 							<br style="clear: both;">
 							<div class="card_actions_actions">
 								<h5>Actions</h5>

@@ -26,7 +26,9 @@
 			$crit = $this->getCriteria();
 			$crit->addWhere('games.player_id', $user_id);
 			$crit->addWhere('games.opponent_id', 0, Criteria::DB_NOT_EQUALS);
-			$crit->addOr('games.opponent_id', $user_id);
+			$ctn = $crit->returnCriterion('games.opponent_id', $user_id);
+			$ctn->addWhere('games.invitation_confirmed', true);
+			$crit->addOr($ctn);
 
 			return $this->select($crit);
 		}
@@ -82,6 +84,32 @@
 			$crit->setLimit(1);
 
 			return $this->selectOne($crit);
+		}
+
+		public function getNumberOfCurrentGames()
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('games.state', \application\entities\Game::STATE_ONGOING);
+
+			return $this->count($crit);
+		}
+
+		public function getNumberOfGamesLast24Hours()
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('games.state', \application\entities\Game::STATE_COMPLETED);
+			$crit->addWhere('games.ended_at', time() - 86400, \b2db\Criteria::DB_GREATER_THAN_EQUAL);
+
+			return $this->count($crit);
+		}
+
+		public function getNumberOfGamesLastWeek()
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('games.state', \application\entities\Game::STATE_COMPLETED);
+			$crit->addWhere('games.ended_at', time() - 604800, \b2db\Criteria::DB_GREATER_THAN_EQUAL);
+
+			return $this->count($crit);
 		}
 
 	}

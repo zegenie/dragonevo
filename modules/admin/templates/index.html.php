@@ -34,10 +34,10 @@
 	<br style="clear: both;">
 	<div class="feature">
 		<h5>Game statistics</h5>
-		<p class="faded_out">
-			<strong>Games being played right now:</strong> 0<br>
-			<strong>Games played last 24 hours:</strong> 0<br>
-			<strong>Games played last 7 days:</strong> 0
+		<p>
+			<strong>Ongoing games:</strong> <?php echo application\entities\tables\Games::getTable()->getNumberOfCurrentGames(); ?><br>
+			<strong>Games played last 24 hours:</strong> <?php echo application\entities\tables\Games::getTable()->getNumberOfGamesLast24Hours(); ?><br>
+			<strong>Games played last 7 days:</strong> <?php echo application\entities\tables\Games::getTable()->getNumberOfGamesLastWeek(); ?>
 		</p>
 	</div>
 	<div class="feature">

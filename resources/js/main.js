@@ -8,7 +8,9 @@ var Devo = {
 		Pollers: {
 			Locks: {},
 			Callbacks: {}
-		}
+		},
+		Events: {},
+		Listeners: {}
 	},
     Main: {
         Helpers: {
@@ -23,7 +25,7 @@ var Devo = {
 		Cards: {}
 	},
 	Play: {},
-	Games: {},
+	Game: {},
 	effect_queues: {
 		successmessage: 'Devo_successmessage',
 		failedmessage: 'Devo_failedmessage'
@@ -42,7 +44,7 @@ Devo.Core._processCommonAjaxPostEvents = function(options) {
 	if (options.hide) {
 		if (is_string(options.hide)) {
 			if ($(options.hide)) $(options.hide).hide();
-		} else {
+		}else {
 			options.hide.each(function(s) {if (is_string(s) && $(s)) $(s).hide();else if ($(s)) s.hide();});
 		}
 	}
@@ -88,9 +90,21 @@ Devo.Core._escapeWatcher = function(event) {
 	Devo.Main.Helpers.Backdrop.reset();
 };
 
-/**
- * Clears all popup messages from the effect queue
- */
+Devo.Core.Events.trigger = function(key, options) {
+	if (Devo.Core.Listeners[key]) {
+		Devo.Core.Listeners[key].each(function(callback) {
+			callback(options);
+		});
+	}
+};
+
+Devo.Core.Events.listen = function(key, callback) {
+	if (!Devo.Core.Listeners[key]) {
+		Devo.Core.Listeners[key] = [];
+	}
+	Devo.Core.Listeners[key].push(callback);
+};
+
 Devo.Main.Helpers.Message.clear = function() {
 	Effect.Queues.get(Devo.effect_queues.successmessage).each(function(effect) {effect.cancel();});
 	Effect.Queues.get(Devo.effect_queues.failedmessage).each(function(effect) {effect.cancel();});
@@ -102,12 +116,6 @@ Devo.Main.Helpers.Message.clear = function() {
 	}
 };
 
-/**
- * Shows an error popup message
- *
- * @param title string The title to show
- * @param content string Error details
- */
 Devo.Main.Helpers.Message.error = function(title, content) {
 	$('dragonevo_failuremessage_title').update(title);
 	$('dragonevo_failuremessage_content').update(content);
@@ -124,12 +132,6 @@ Devo.Main.Helpers.Message.error = function(title, content) {
 	new Effect.Fade('dragonevo_failuremessage', {queue: {position: 'end', scope: Devo.effect_queues.failedmessage, limit: 2}, delay: 30, duration: 0.2});
 };
 
-/**
- * Shows a "success"-style popup message
- *
- * @param title string The title to show
- * @param content string Message details
- */
 Devo.Main.Helpers.Message.success = function(title, content) {
 	$('dragonevo_successmessage_title').update(title);
 	$('dragonevo_successmessage_content').update(content);
@@ -180,47 +182,6 @@ Devo.Main.Helpers.Dialog.dismiss = function() {
 	$('dialog_backdrop').fade({duration: 0.2});
 }
 
-/**
- * Convenience function for running an AJAX call and updating / showing / hiding
- * divs on json feedback
- *
- * Available options:
- *   loading: {} Instructions for the onLoading event
- *   success: {} Instructions for the onSuccess event
- *   failure: {} Instructions for the onComplete event
- *   complete: {} Instructions for the onComplete event
- *
- *   Common options for all on* events:
- *     hide: string/array A list of / element id(s) to hide
- *     reset: string/array A list of / element id(s) to reset
- *     show: string/array A list of / element id(s) to show
- *     clear: string/array A list of / element id(s) to clear
- *     remove: string/array A list of / element id(s) to remove
- *     enable: string/array A list of / element id(s) to enable
- *     disable: string/array A list of / element id(s) to disable
- *     callback: a function to call at the end of the event. For
- *		         success/failure/complete events, the callback
- *		         function retrieves the json object
- *
- *   The loading.indicator element will be toggled off in the onComplete event
- *
- *   Options for the onSuccess event instruction set:
- *     update: either an element id which will receive the value of the
- *             json.content property or an object with instructions:
- *     replace: either an element id which will be replace with the value of the
- *             json.content property or an object with instructions:
- *
- *     Available instructions for the success "update" object:
- *       element: the id of the element to update
- *       insertion: true / false / ommitted. If "true" the element will get the
- *                  content inserted after the existing content, instead of
- *                  the content replacing the existing content
- *       from: if the json return value does not contain a "content" key,
- *			   specify which json key should be used
- *
- * @param url The URL to call
- * @param options An associated array of options
- */
 Devo.Main.Helpers.ajax = function(url, options) {
 	var params = (options.params) ? options.params : '';
 	if (options.form && options.form != undefined) params = Form.serialize(options.form);
@@ -383,29 +344,6 @@ Devo.Main.Login.register = function(url)
 	});
 }
 
-Devo.Core._resizeWatcher = function() {
-	if ($('game-table')) {
-		var docheight = document.viewport.getHeight();
-		//var docwidth = document.viewport.getWidth();
-		$('game-table').setStyle({height: docheight - 100 + 'px'});
-		var gtl = $('game-table').getLayout();
-		var boardheight = gtl.get('height') - gtl.get('padding-top') - gtl.get('padding-bottom');
-		var card_slot_height = parseInt((boardheight / 10) * 3) - 9;
-		var card_slot_width = parseInt(card_slot_height / 1.6);
-		var boardwidth = (card_slot_width * 5) + 100;
-		$('game-table').setStyle({width: boardwidth + 'px', marginLeft: 'auto', marginRight: 'auto'});
-		$$('.card-slots-container').each(function(element) {
-			$(element).setStyle({width: (card_slot_width * 5) + 70 + 'px', height: card_slot_height + 4 + 'px'});
-			$(element).select('.card-slot').each(function(card_element) {
-				$(card_element).setStyle({height: card_slot_height + 'px', width: card_slot_width + 'px'});
-			});
-		});
-		var play_area_height = boardheight - ((card_slot_height + 20) * 2) - 10;
-		$('play-area').setStyle({height: play_area_height + 'px'});
-		$('event-slot').setStyle({height: play_area_height - 9 + 'px', width: parseInt((play_area_height - 15) / 1.6) + 'px'});
-	}
-}
-
 Devo.Core.Pollers.Callbacks.invitePoller = function() {
 	if (!Devo.Core.Pollers.Locks.invitepoller) {
 		Devo.Main.Helpers.ajax(Devo.options['ask_url'], {
@@ -418,13 +356,31 @@ Devo.Core.Pollers.Callbacks.invitePoller = function() {
 			},
 			success: {
 				callback: function(json) {
+					if (json.removed_invites) {
+						for (var d in json.removed_invites) {
+							if (json.removed_invites.hasOwnProperty(d)) {
+								var invite_id = d;
+								Devo.Play.removeInvite(invite_id);
+							}
+						}
+					}
 					if (json.invites) {
 						for (var d in json.invites) {
 							if (json.invites.hasOwnProperty(d)) {
 								var invite = json.invites[d];
-								$('existing_game_invites').insert('<input type="hidden" name="invites['+invite.invite_id+']" value="'+invite.invite_id+'">');
+								$('existing_game_invites').insert('<input type="hidden" id="invites_input_'+invite.invite_id+'" name="invites['+invite.invite_id+']" value="'+invite.invite_id+'">');
 								var invite_element = $('__game_invite_template').clone(true);
 								invite_element.id = 'game_invite_' + invite.invite_id;
+								var accept_button = $(invite_element).down('.buttons').down('.button-accept');
+								accept_button.observe('click', function(event) {
+									var button = Event.element(event);
+									Devo.Play.acceptInvite(invite.invite_id, $(button));
+								});
+								var reject_button = $(invite_element).down('.buttons').down('.button-reject');
+								reject_button.observe('click', function(event) {
+									var button = Event.element(event);
+									Devo.Play.rejectInvite(invite.invite_id, $(button));
+								});
 								$(invite_element).insert('<input type="hidden" name="invite_id" value="'+invite.invite_id+'">');
 								$(invite_element).down('.player_name').update(invite.player_name);
 								$(invite_element).show();
@@ -468,6 +424,7 @@ Devo.Core.Pollers.Callbacks.chatRoomPoller = function() {
 							if (json.chat_lines.hasOwnProperty(d)) {
 								var room = json.chat_lines[d];
 								var room_id = d;
+								var blinking = $('chat_room_'+room_id+'_loading').visible();
 								for (var l in room['lines']) {
 									if (room['lines'].hasOwnProperty(l)) {
 										var line = room['lines'][l];
@@ -481,6 +438,12 @@ Devo.Core.Pollers.Callbacks.chatRoomPoller = function() {
 											chat_line += line['user_username']+'&nbsp;<span class="chat_timestamp">('+line['posted_formatted_hours']+'<span class="date"> - '+line['posted_formatted_date']+'</span>)</div><div class="chat_line_content">'+line['text']+'</div></div>';
 											$('chat_room_'+room_id+'_lines').insert(chat_line);
 											$('chat_room_'+room_id+'_lines').scrollTop = $('chat_line_'+line_id).offsetTop;
+											if (!blinking && !Devo.Core._infocus) {
+												clearInterval(Devo.Core._titleBlinkInterval);
+												Devo.options.alternate_title = line['user_username'] + ' says ...';
+												Devo.Core._titleBlinkInterval = setInterval(Devo.Core._blinkTitle, 2000);
+												blinking = true;
+											}
 										}
 									}
 								}
@@ -550,9 +513,15 @@ Devo.Core.Pollers.Callbacks.gameListPoller = function() {
 									(game.turn.player && game.invitation_confirmed) ? $('game_'+game_id+'_player_turn').show() : $('game_'+game_id+'_player_turn').hide();
 									if (game.invitation_confirmed) {
 										$('game_'+game_id+'_invitation_unconfirmed').hide();
-										var button = $('game_'+game_id+'_list').down('.button');
-										button.removeClassName('disabled');
-										button.enable();
+										var button_play = $('game_'+game_id+'_list').down('.button-play');
+										button_play.removeClassName('disabled');
+										button_play.enable();
+										var button_cancel = $('game_'+game_id+'_list').down('.button-cancel');
+										button_cancel.hide();
+									} else if (game.invitation_rejected) {
+										$('game_'+game_id+'_invitation_rejected').show();
+										$('game_'+game_id+'_invitation_unconfirmed').hide();
+										$('game_'+game_id+'_list').addClassName('rejected');
 									} else {
 										$('game_'+game_id+'_invitation_unconfirmed').show();
 									}
@@ -604,10 +573,17 @@ Devo.Core._destroyQuickmatchPoller = function() {
 Devo.Core.initialize = function(options) {
 	Devo.options = options;
 	Devo.Core._initializeInvitePoller();
+	Devo.Core._infocus = true;
+	Devo.Core._isOldTitle = true;
+	Devo.Core._titleBlinkInterval = undefined;
+	Event.observe(window, 'focus', Devo.Core._stopBlinkTitle);
+	Event.observe(window, 'blur', function() {Devo.Core._infocus = false;});
+	Devo.Core.Events.trigger('devo:core:initialized');
+}
+
+Devo.Main.initializeLobby = function() {
 	Devo.Core._initializeChatRoomPoller();
 	Devo.Core._initializeGameListPoller();
-	Event.observe(window, 'resize', Devo.Core._resizeWatcher);
-	Devo.Core._resizeWatcher();
 }
 
 Devo.Admin.Cards.saveAttack = function(form) {
@@ -654,17 +630,369 @@ Devo.Chat.say = function(form) {
 	});
 };
 
+Devo.Game.resizeWatcher = function() {
+//	if ($('game-table')) {
+//		var docheight = document.viewport.getHeight();
+//		$('game-table').setStyle({height: docheight - 100 + 'px'});
+//		var gtl = $('game-table').getLayout();
+//		var boardheight = gtl.get('height') - gtl.get('padding-top') - gtl.get('padding-bottom');
+//		var card_slot_height = parseInt((boardheight / 10) * 3) - 9;
+//		var card_slot_width = parseInt(card_slot_height / 1.4);
+//		var boardwidth = (card_slot_width * 5) + 100;
+//		$('game-table').setStyle({width: boardwidth + 'px', marginLeft: 'auto', marginRight: 'auto'});
+//		$$('.card-slots-container').each(function(element) {
+//			$(element).setStyle({width: (card_slot_width * 5) + 70 + 'px', height: card_slot_height + 4 + 'px'});
+//			$(element).select('.card-slot').each(function(card_element) {
+//				$(card_element).setStyle({height: card_slot_height + 'px', width: card_slot_width + 'px'});
+//			});
+//		});
+//		var play_area_height = boardheight - ((card_slot_height + 20) * 2) - 10;
+//		$('play-area').setStyle({height: play_area_height + 'px'});
+//		$('event-slot').setStyle({height: play_area_height - 9 + 'px', width: parseInt((play_area_height - 15) / 1.6) + 'px'});
+//	}
+}
+
+Devo.Game._initializeResizeWatcher = function() {
+	Event.observe(window, 'resize', Devo.Game.resizeWatcher);
+	Devo.Game.resizeWatcher();
+};
+
+Devo.Core.Pollers.Callbacks.gameDataPoller = function() {
+	if (!Devo.Core.Pollers.Locks.gamedatapoller) {
+		Devo.Main.Helpers.ajax(Devo.options['ask_url'], {
+			additional_params: '&for=game_data&game_id='+Devo.Game._id+'&latest_event_id='+Devo.Game._latest_event_id,
+			loading: {
+				callback: function() {
+					Devo.Core.Pollers.Locks.gamedatapoller = true;
+				}
+			},
+			success: {
+				callback: function(json) {
+					Devo.Game.processGameData(json.game.data);
+					Devo.Game.processGameEvents(json.game.events);
+					Devo.Game.data = json.game.data;
+				}
+			},
+			complete: {
+				callback: function() {
+					Devo.Core.Pollers.Locks.gamedatapoller = false;
+				},
+				hide: 'fullpage_backdrop'
+			}
+		});
+	}
+};
+
+Devo.Game.processGameData = function(data) {
+};
+
+Devo.Game.processGameEvents = function(events) {
+	events.each(function(event) {
+		Devo.Game._latest_event_id = event.id;
+		switch (event.type) {
+			case 'player_change':
+				Devo.Game.processPlayerChange(event.data);
+				break;
+		}
+		$('game_events').insert(event.event_content);
+	});
+};
+
+Devo.Game.processPlayerChange = function(data) {
+	$('turn-info').childElements().each(function(element) {
+		if (element.id == 'player-'+data.player_id+'-turn') {
+			// Make the element "visible", but invisible
+			window.setTimeout(function() {
+				$(element).setStyle({opacity: 0});
+				$(element).show();
+			}, 1400);
+
+			// Make the element fade in after a very tiny delay
+			window.setTimeout(function() {
+				$(element).addClassName('fadeIn');
+			}, 1500);
+
+			// Remove fade in effect after it is done (1.5s) and make it permanently visible
+			window.setTimeout(function() {
+				$(element).removeClassName('fadeIn');
+				$(element).addClassName('tada');
+				$(element).setStyle({opacity: 1});
+			}, 3000);
+			
+			// Remove fade in effect after it is done (1.5s) and make it permanently visible
+			window.setTimeout(function() {
+				$(element).removeClassName('tada');
+			}, 4500);
+
+		} else {
+			// Make the element fade out
+			$(element).addClassName('fadeOut');
+
+			// Remove the fadeout effect and hide the element after the fadeout effect animation is complete (1.5s)
+			window.setTimeout(function() {
+				$(element).hide();
+				$(element).removeClassName('fadeOut');
+			}, 1500);
+		}
+	});
+	if (data.player_id == Devo.options.user_id) {
+		Devo.Game.enableTurn();
+	} else {
+		Devo.Game.disableTurn();
+	}
+};
+
+Devo.Game.enableTurn = function() {
+	var button = $('end-turn-button');
+	button.removeClassName('disabled');
+	button.addClassName('animated pulse');
+	window.setTimeout(function() {button.removeClassName('animated pulse');}, 1500);
+	Devo.Game._movable = true;
+	Devo.Game._initializeDragDrop();
+};
+
+Devo.Game.disableTurn = function() {
+	var button = $('end-turn-button');
+	button.addClassName('disabled');
+	Devo.Game._movable = false;
+	Devo.Game._uninitializeDragDrop();
+};
+
+Devo.Game._initializeGameDataPoller = function() {
+	Devo.Game.data = {};
+	Devo.Core.Pollers.gamedatapoller = new PeriodicalExecuter(Devo.Core.Pollers.Callbacks.gameDataPoller, 2);
+	Devo.Core.Events.listen('game:data:player_change', Devo.Game.processPlayerChange);
+	Devo.Core.Pollers.Callbacks.gameDataPoller();
+};
+
+Devo.Game._calculateDropSlots = function(card) {
+	if (card.up('#player_hand')) {
+		$('player_stuff').addClassName('dragging');
+	} else {
+		if (!card.hasClassName('is-placed')) {
+			$('player_stuff').addClassName('droptarget');
+			$('player_stuff').removeClassName('fadeOut');
+		} else {
+			$('player_slots').addClassName('droptargets');
+		}
+	}
+};
+
+Devo.Game.card_dragstart = function(e) {
+	Devo.Game.dropped = undefined;
+	this.classList.add('dragging');
+	e.dataTransfer.effectAllowed = 'move';
+	e.dataTransfer.setData('text/plain', this.id);
+	Devo.Game._calculateDropSlots($(this));
+	return false;
+};
+
+Devo.Game.card_dragover = function(e) { 
+	if (e.preventDefault) {
+		e.preventDefault();
+	}
+	e.dataTransfer.dropEffect = 'move';
+	return false;
+};
+
+Devo.Game.card_dragend = function(e) {
+	e.preventDefault();
+	$('player_stuff').removeClassName('dragging');
+	$('player_stuff').removeClassName('droptarget');
+	this.classList.remove('dragging');
+	if (Devo.Game.dropped) {
+		var jthis = jQuery(this);
+		var pthis = $(this);
+		var orig_pos = jthis.data('original_position');
+		if (!orig_pos) {
+			jthis.data({'original_position': pthis.up().id});
+		} else if (orig_pos == Devo.Game.dropped) {
+			jthis.data({'original_position': undefined});
+		}
+		var card = pthis.remove();
+		$(Devo.Game.dropped).insert(card);
+		if (Devo.Game.dropped != 'player_hand' && !pthis.hasClassName('medium')) pthis.addClassName('medium');
+		if (Devo.Game.dropped == 'player_hand' && pthis.hasClassName('medium')) pthis.removeClassName('medium');
+	}
+};
+
+Devo.Game.cardslot_dragover = function(e) {
+	e.dataTransfer.dropEffect = 'move';
+	var slot = $(this);
+	if (this.id == 'player_stuff') {
+		slot.addClassName('peek');
+		e.preventDefault();
+	} else if ((slot.hasClassName('player') && !slot.down('.card')) ||
+		(slot.hasClassName('opponent') && slot.down('.card'))) {
+		slot.addClassName('drop-hover');
+		e.preventDefault();
+	}
+};
+
+Devo.Game.cardslot_dragleave = function(e) {
+	this.classList.remove('drop-hover');
+	this.classList.remove('peek');
+};
+
+Devo.Game.cardslot_drop = function(e) {
+	e.stopPropagation();
+	e.preventDefault();
+	if (!$(this).hasClassName('drop-hover') && !$(this).hasClassName('droptarget')) {
+		return;
+	}
+	this.classList.remove('drop-hover');
+	this.classList.remove('peek');
+	Devo.Game.dropped = (this.id == 'player_stuff') ? 'player_hand' : this.id;
+};
+
+Devo.Game._initializeCardDragDrop = function(card) {
+	card.addEventListener('dragstart', Devo.Game.card_dragstart, false);
+	card.addEventListener('dragover', Devo.Game.card_dragover, false);
+	card.addEventListener('dragend', Devo.Game.card_dragend, false);
+};
+
+Devo.Game._initializeDragDrop = function() {
+	var cards = document.querySelectorAll('.player .card');
+	[].forEach.call(cards, function(card) {
+		Devo.Game._initializeCardDragDrop(card);
+	});
+	var hand_cards = document.querySelectorAll('#player_hand .card');
+	[].forEach.call(hand_cards, function(card) {
+		Devo.Game._initializeCardDragDrop(card);
+	});
+	var cardslots = document.querySelectorAll('.card-slots .card-slot');
+	[].forEach.call(cardslots, function(cardslot) {
+		cardslot.addEventListener('dragover', Devo.Game.cardslot_dragover, false);
+		cardslot.addEventListener('dragleave', Devo.Game.cardslot_dragleave, false);
+		cardslot.addEventListener('drop', Devo.Game.cardslot_drop, false);
+	});
+	var phand = $('player_stuff');
+	phand.addEventListener('dragover', Devo.Game.cardslot_dragover, false);
+	phand.addEventListener('dragleave', Devo.Game.cardslot_dragleave, false);
+	phand.addEventListener('drop', Devo.Game.cardslot_drop, false);
+};
+
+Devo.Game._uninitializeDragDrop = function() {
+	var cards = document.querySelectorAll('.player .card');
+	[].forEach.call(cards, function(card) {
+		card.removeEventListener('dragstart', Devo.Game.card_dragstart);
+		card.removeEventListener('dragover', Devo.Game.card_dragover);
+		card.removeEventListener('dragend', Devo.Game.card_dragend);
+	});
+	var cardslots = document.querySelectorAll('.card-slots .card-slot');
+	[].forEach.call(cardslots, function(cardslot) {
+		cardslot.removeEventListener('dragover', Devo.Game.cardslot_dragover);
+		cardslot.removeEventListener('dragleave', Devo.Game.cardslot_dragleave);
+		cardslot.removeEventListener('drop', Devo.Game.cardslot_drop);
+	});
+};
+
+Devo.Game._initializeCards = function() {
+	Devo.Game._initializeDragDrop();
+};
+
+Devo.Core._blinkTitle = function() {
+	document.title = Devo.Core._isOldTitle ? Devo.options.title : Devo.options.alternate_title;
+	Devo.Core._isOldTitle = !Devo.Core._isOldTitle;
+};
+
+Devo.Core._stopBlinkTitle = function() {
+	Devo.Core._infocus = true;
+	clearInterval(Devo.Core._titleBlinkInterval);
+	document.title = Devo.options.title;
+};
+
+Devo.Game.initialize = function(options) {
+	Devo.Game._id = options.game_id;
+	Devo.Game._latest_event_id = options.latest_event_id;
+	Devo.Game._movable = options.movable;
+	Devo.Game._initializeResizeWatcher();
+	Devo.Game._initializeGameDataPoller();
+	Devo.Game._initializeCards();
+	Devo.Core._initializeChatRoomPoller();
+};
+
+Devo.Game.toggleHand = function() {
+	$('player_stuff').toggleClassName('visible');
+};
+
+Devo.Game.toggleEvents = function() {
+	if ($('game_events').hasClassName('visible')) {
+		$('game_events').toggleClassName('fadeIn');
+		$('game_events').toggleClassName('fadeOut');
+		window.setTimeout( function() {
+			$('game_events').toggleClassName('visible');
+		}, 1500);
+	} else {
+		$('game_events').toggleClassName('visible');
+		window.setTimeout( function() {
+			$('game_events').toggleClassName('fadeIn');
+			$('game_events').toggleClassName('fadeOut');
+		}, 100);
+	}
+};
+
+Devo.Game.endTurn = function(button) {
+	if (!$(button).hasClassName('disabled')) {
+		Devo.Main.Helpers.ajax(Devo.options['say_url'], {
+			additional_params: '&topic=end_turn&game_id='+Devo.Game._id,
+			loading: {
+				callback: function() {
+					$(button).down('img').show();
+					$(button).addClassName('disabled');
+				}
+			},
+			complete: {
+				callback: function() {
+					$(button).down('img').hide();
+				}
+			}
+		});
+	}
+};
+
+Devo.Main.showCardActions = function(card_id) {
+	var card = $('card_'+card_id);
+	var cards = $$('.card');
+	$$('.card_actions').each(function(element) {$(element).hide();});
+	if (card.hasClassName('selected')) {
+		card.removeClassName('selected');
+		cards.each(function(element) {$(element).removeClassName('faded');});
+	} else {
+		cards.each(function(element) {$(element).addClassName('faded');$(element).removeClassName('selected');});
+		card.removeClassName('faded');
+		$('card_'+card_id).addClassName('selected');
+		var ca = $('card_'+card_id+'_actions');
+		ca.show();
+	}
+};
+
+Devo.Play.pickCardToggle = function(card_id) {
+	var card = $('card_'+card_id);
+	if (card.hasClassName('selected')) {
+		$('picked_card_' + card_id).setValue(0);
+	} else {
+		$('picked_card_' + card_id).setValue(1);
+	}
+	card.toggleClassName('selected');
+	var num_cards = $$('.card.selected').size();
+	console.log(num_cards);
+	$$('input[type=submit].play-button').each(function(element) {
+		(num_cards >= 5) ? $(element).enable() : $(element).disable();
+	});
+};
+
 Devo.Play.quickmatch = function() {
 	$('quickmatch_overlay').show();
 	$('quickmatch_overlay').addClassName('loading');
-	window.setTimeout( function() { $('cancel_quickmatch_button').addClassName('animated fadeIn'); }, 5000);
-	window.setTimeout( function() { $('cancel_quickmatch_button').removeClassName('animated fadeIn'); }, 7000);
+	window.setTimeout( function() {$('cancel_quickmatch_button').addClassName('animated fadeIn');}, 5000);
+	window.setTimeout( function() {$('cancel_quickmatch_button').removeClassName('animated fadeIn');}, 7000);
 	Devo.Core._initializeQuickmatchPoller();
 }
 
 Devo.Play.invite = function(user_id, button) {
-	Devo.Main.Helpers.ajax(Devo.options['ask_url'], {
-		params: '&for=invite&user_id='+user_id,
+	Devo.Main.Helpers.ajax(Devo.options['say_url'], {
+		params: '&topic=invite&user_id='+user_id,
 		loading: {
 			callback: function() {
 				$(button).down('img').show();
@@ -672,10 +1000,11 @@ Devo.Play.invite = function(user_id, button) {
 		},
 		success: {
 			callback: function(json) {
-				$('my_ongoing_games_none').hide();
-				$('my_ongoing_games').insert(json.game);
-				window.setTimeout(function() { $('my_ongoing_games').childElements().last().addClassName('animated tada'); }, 100);
-				window.setTimeout(function() { $('my_ongoing_games').childElements().last().removeClassName('animated tada'); }, 3000);
+				$('my_ongoing_games_none').removeClassName('animated fadeIn');
+				$('my_ongoing_games_none').addClassName('animated fadeOut');
+				window.setTimeout(function() {$('my_ongoing_games_none').hide();$('my_ongoing_games').insert(json.game);}, 1100);
+				window.setTimeout(function() {$('my_ongoing_games').childElements().last().addClassName('animated tada');}, 1200);
+				window.setTimeout(function() {$('my_ongoing_games').childElements().last().removeClassName('animated tada');}, 3000);
 			}
 		},
 		complete: {
@@ -692,72 +1021,84 @@ Devo.Play.cancelQuickmatch = function() {
 	Devo.Core._destroyQuickmatchPoller();
 }
 
-Devo.Main.showCardActions = function(card_id) {
-	var card = $('card_'+card_id);
-	var cards = $$('.card');
-	$$('.card_actions').each(function(element) { $(element).hide(); });
-	if (card.hasClassName('selected')) {
-		card.removeClassName('selected');
-		cards.each(function(element) { $(element).removeClassName('faded'); });
-	} else {
-		cards.each(function(element) { $(element).addClassName('faded'); $(element).removeClassName('selected'); });
-		card.removeClassName('faded');
-		$('card_'+card_id).addClassName('selected');
-		var ca = $('card_'+card_id+'_actions');
-		ca.show();
-	}
-};
-
-Devo.Core.upload = function(fileInputId, fileIndex) {
-	// take the file from the input
-	var file = document.getElementById(fileInputId).files[fileIndex];
-	var reader = new FileReader();
-	reader.readAsBinaryString(file); // alternatively you can use readAsDataURL
-	reader.onloadend  = function(evt)
-	{
-			// create XHR instance
-			xhr = new XMLHttpRequest();
-
-			// send the file through POST
-			xhr.open("POST", 'upload.php', true);
-
-			// make sure we have the sendAsBinary method on all browsers
-			XMLHttpRequest.prototype.mySendAsBinary = function(text){
-				var data = new ArrayBuffer(text.length);
-				var ui8a = new Uint8Array(data, 0);
-				for (var i = 0; i < text.length; i++) ui8a[i] = (text.charCodeAt(i) & 0xff);
-				var bb = new (window.MozBlobBuilder || window.WebKitBlobBuilder || window.BlobBuilder)();
-				bb.append(data);
-				var blob = bb.getBlob();
-				this.send(blob);
+Devo.Play.acceptInvite = function(invite_id, button) {
+	Devo.Main.Helpers.ajax(Devo.options['say_url'], {
+		params: '&topic=accept_invite&invite_id='+invite_id,
+		loading: {
+			callback: function() {
+				$(button).down('img').show();
 			}
-
-			// let's track upload progress
-			var eventSource = xhr.upload || xhr;
-			eventSource.addEventListener("progress", function(e) {
-				// get percentage of how much of the current file has been sent
-				var position = e.position || e.loaded;
-				var total = e.totalSize || e.total;
-				var percentage = Math.round((position/total)*100);
-
-				// here you should write your own code how you wish to proces this
-			});
-
-			// state change observer - we need to know when and if the file was successfully uploaded
-			xhr.onreadystatechange = function()
-			{
-				if(xhr.readyState == 4)
-				{
-					if(xhr.status == 200)
-					{
-						// process success
-					}else{
-						// process error
-					}
+		},
+		success: {
+			callback: function(json) {
+				if (json.accepted == 'removed') {
+					Devo.Play.removeInvite(json.invite_id);
 				}
-			};
-
-			// start sending
-			xhr.mySendAsBinary(evt.target.result);
-	};
+			}
+		},
+		complete: {
+			callback: function() {
+				$(button).down('img').hide();
+			}
+		}
+	});
 };
+
+Devo.Play.rejectInvite = function(invite_id, button) {
+	Devo.Main.Helpers.ajax(Devo.options['say_url'], {
+		params: '&topic=reject_invite&invite_id='+invite_id,
+		loading: {
+			callback: function() {
+				$(button).down('img').show();
+			}
+		},
+		success: {
+			callback: function(json) {
+				if (json.rejected == 'ok') {
+					Devo.Play.removeInvite(json.invite_id);
+				}
+			}
+		},
+		complete: {
+			callback: function() {
+				$(button).down('img').hide();
+			}
+		}
+	});
+};
+
+Devo.Play.cancelGame = function(game_id) {
+	var button_ok = $('game_'+game_id+'_list').down('.button-ok');
+	var button = $(button_ok).visible() ? button : $('game_'+game_id+'_list').down('.button-cancel');
+
+	Devo.Main.Helpers.ajax(Devo.options['say_url'], {
+		params: '&topic=cancel_game&game_id='+game_id,
+		loading: {
+			callback: function() {
+				$(button).down('img').show();
+			}
+		},
+		success: {
+			callback: function(json) {
+				if (json.cancelled == 'ok') {
+					if ($('my_ongoing_games').childElements().size() == 2) {
+						window.setTimeout(function() {$('my_ongoing_games_none').show();$('my_ongoing_games_none').removeClassName('animated fadeOut');$('my_ongoing_games_none').addClassName('animated fadeIn');}, 1500);
+					}
+					$('game_'+json.game_id+'_list').addClassName('animated bounceOut');
+					window.setTimeout(function() {$('game_'+json.game_id+'_list').remove();}, 1400);
+				}
+			}
+		},
+		complete: {
+			callback: function() {
+				$(button).down('img').hide();
+			}
+		}
+	});
+};
+
+Devo.Play.removeInvite = function(invite_id) {
+	$('game_invite_' + invite_id).addClassName('animated fadeOutLeft');
+	$('invites_input_' + invite_id).remove();
+	window.setTimeout(function() {$('game_invite_' + invite_id).remove();}, 1000);
+}

@@ -18,6 +18,8 @@
 		const TYPE_EVENT = 'event';
 		const TYPE_CREATURE = 'creature';
 		const TYPE_ITEM = 'item';
+		const TYPE_EQUIPPABLE_ITEM = 'equippable_item';
+		const TYPE_POTION_ITEM = 'potion_item';
 
 		const FACTION_NEUTRALS = 'neutrals';
 		const FACTION_RUTAI = 'rutai';
@@ -53,6 +55,25 @@
 		 * @var \application\entities\User
 		 */
 		protected $_user_id;
+
+		/**
+		 * If in a game, the game_id of the game
+		 *
+		 * @Column(type="integer", length=10)
+		 * @Relates(class="\application\entities\Game")
+		 *
+		 * @var \application\entities\Game
+		 */
+		protected $_game_id;
+
+		/**
+		 * If in a game, the slot the card is on
+		 *
+		 * @Column(type="integer", length=10)
+		 *
+		 * @var integer
+		 */
+		protected $_slot;
 
 		/**
 		 * Card name
@@ -453,6 +474,36 @@
 		public function getUser()
 		{
 			return $this->_b2dbLazyload('_user_id');
+		}
+
+		public function setGameId($game_id)
+		{
+			$this->_game_id = $game_id;
+		}
+
+		public function setGame($game)
+		{
+			$this->_game_id = $game;
+		}
+
+		public function getGame()
+		{
+			return $this->_b2dbLazyload('_game_id');
+		}
+
+		public function setSlot($slot)
+		{
+			$this->_slot = $slot;
+		}
+
+		public function getSlot()
+		{
+			return $this->_slot;
+		}
+
+		public function isInGame()
+		{
+			return (bool) $this->getGame() instanceof Game;
 		}
 
 		public function getOriginalCard()

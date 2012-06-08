@@ -42,6 +42,15 @@
 			return $this->select($crit);
 		}
 
+		public function getByUserIdAndGameId($user_id, $game_id)
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('creature_cards.user_id', $user_id);
+			$crit->addWhere('creature_cards.game_id', $game_id);
+			$crit->addWhere('creature_cards.card_state', \application\entities\Card::STATE_OWNED);
+			return $this->select($crit);
+		}
+
 		public function getById($id)
 		{
 			return $this->selectById($id);

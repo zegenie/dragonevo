@@ -16,6 +16,13 @@
 	{
 
 		/**
+		 * Card type
+		 *
+		 * @Column(type="string", length=20)
+		 */
+		protected $_card_type = Card::TYPE_POTION_ITEM;
+
+		/**
 		 * Turn duration
 		 *
 		 * @Column(type="integer", length=10, default=1)

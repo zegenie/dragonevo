@@ -124,10 +124,15 @@ lobby:
 ask:
   url: /ask
   module: ask
-  action: index
+  action: ask
 
 say:
-  url: /say/:room_id
+  url: /say
+  module: ask
+  action: say
+
+room_say:
+  url: /room/:room_id/say
   module: lobby
   action: say
 

@@ -9,8 +9,8 @@
 				<b>Player: </b><span class="player_name">Player name</span>
 			</p>
 			<div class="buttons">
-				<button class="button button-standard">Accept</button>
-				<button class="button button-silver">Refuse</button>
+				<button class="button button-standard button-accept"><img src="/images/spinning_16.gif" style="display: none;">Accept</button>
+				<button class="button button-silver button-reject"><img src="/images/spinning_16.gif" style="display: none;">Reject</button>
 			</div>
 		</div>
 		<div class="bg"></div>

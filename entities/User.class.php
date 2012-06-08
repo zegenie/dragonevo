@@ -649,10 +649,10 @@
 			$this->_populateCards();
 			return $this->_cards;
 		}
-		
-		public function generateStarterPack($faction)
+
+		protected function _pickCards($cards, $num = 5)
 		{
-			$cards = \application\entities\tables\CreatureCards::getTable()->getByFaction($faction);
+			if (!count($cards)) return array();
 			$pickablecards = array();
 			foreach ($cards as $card) {
 				if ($card->getLikelihood() == 0) continue;
@@ -663,7 +663,7 @@
 
 			$return_cards = array();
 			$cc = 1;
-			while ($cc <= 5) {
+			while ($cc <= $num) {
 				if (empty($pickablecards)) break;
 
 				$id = array_rand($pickablecards);
@@ -682,6 +682,21 @@
 					$cc++;
 				}
 			}
+
+			return $return_cards;
+		}
+
+		public function generateStarterPack($faction)
+		{
+			$creature_cards = \application\entities\tables\CreatureCards::getTable()->getByFaction($faction);
+			$potion_item_cards = \application\entities\tables\PotionItemCards::getTable()->getAll();
+			$equippable_item_cards = \application\entities\tables\EquippableItemCards::getTable()->getAll();
+			$event_cards = \application\entities\tables\EventCards::getTable()->getAll();
+
+			$this->_pickCards($creature_cards, 5);
+			$this->_pickCards($potion_item_cards, 1);
+			$this->_pickCards($equippable_item_cards, 1);
+			$this->_pickCards($event_cards, 1);
 			
 			$this->_populateCards();
 			return $this->_cards;
