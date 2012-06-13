@@ -18,6 +18,10 @@
 		const TYPE_GAME_CREATED = 'game_created';
 		const TYPE_PLAYER_CHANGE = 'player_change';
 		const TYPE_INVITATION_ACCEPTED = 'invitation_accepted';
+		const TYPE_PHASE_CHANGE = 'phase_change';
+		const TYPE_REPLENISH = 'replenish';
+		const TYPE_CARD_MOVED_OFF_SLOT = 'card_moved_off_slot';
+		const TYPE_CARD_MOVED_ONTO_SLOT = 'card_moved_onto_slot';
 
 		/**
 		 * Unique identifier

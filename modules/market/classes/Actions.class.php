@@ -50,13 +50,13 @@
 //			-------------------
 //			\application\entities\tables\Games::getTable()->create();
 //			\application\entities\tables\GameInvites::getTable()->create();
-//			\application\entities\tables\GameEvents::getTable()->create();
+			\application\entities\tables\GameEvents::getTable()->create();
 //			-------------------
-			\b2db\Core::simpleQuery('ALTER TABLE games ADD COLUMN current_phase INT(10) DEFAULT 0');
-			\b2db\Core::simpleQuery('ALTER TABLE creature_cards ADD COLUMN slot INT(10) DEFAULT 0');
-			\b2db\Core::simpleQuery('ALTER TABLE equippable_item_cards ADD COLUMN slot INT(10) DEFAULT 0');
-			\b2db\Core::simpleQuery('ALTER TABLE potion_item_cards ADD COLUMN slot INT(10) DEFAULT 0');
-			\b2db\Core::simpleQuery('ALTER TABLE event_cards ADD COLUMN slot INT(10) DEFAULT 0');
+//			\b2db\Core::simpleQuery('ALTER TABLE games ADD COLUMN current_phase INT(10) DEFAULT 0');
+//			\b2db\Core::simpleQuery('ALTER TABLE creature_cards ADD COLUMN is_in_play BOOLEAN DEFAULT false');
+//			\b2db\Core::simpleQuery('ALTER TABLE equippable_item_cards ADD COLUMN is_in_play BOOLEAN DEFAULT false');
+//			\b2db\Core::simpleQuery('ALTER TABLE potion_item_cards ADD COLUMN is_in_play BOOLEAN DEFAULT false');
+//			\b2db\Core::simpleQuery('ALTER TABLE event_cards ADD COLUMN is_in_play BOOLEAN DEFAULT false');
 		}
 
 	}

@@ -7,7 +7,7 @@
 	<?php if (count($cards)): ?>
 		<form action="<?php echo make_url('pick_cards', array('game_id' => $game->getId())); ?>" method="post">
 			<?php foreach ($cards as $card): ?>
-				<input type="hidden" name="cards[<?php echo $card->getId(); ?>]" value="<?php echo (int) ($card->isInGame() && $card->getGame()->getId() == $game->getId()); ?>" id="picked_card_<?php echo $card->getId(); ?>">
+				<input type="hidden" name="cards[<?php echo $card->getId(); ?>]" value="<?php echo (int) ($card->isInGame() && $card->getGame()->getId() == $game->getId()); ?>" id="picked_card_<?php echo $card->getUniqueId(); ?>">
 				<input type="hidden" name="card_types[<?php echo $card->getId(); ?>]" value="<?php echo $card->getCardType(); ?>">
 			<?php endforeach; ?>
 			<div style="text-align: right; padding: 10px 0 20px;">
@@ -17,7 +17,7 @@
 				<ul>
 					<?php foreach ($cards as $card): ?>
 						<li>
-							<div onclick="Devo.Play.pickCardToggle(<?php echo $card->getId(); ?>);" style="cursor: pointer; position: relative;">
+							<div onclick="Devo.Play.pickCardToggle('<?php echo $card->getUniqueId(); ?>');" style="cursor: pointer; position: relative;">
 								<?php include_template('game/card', array('card' => $card, 'mode' => 'medium', 'selected' => ($card->isInGame() && $card->getGame()->getId() == $game->getId()))); ?>
 							</div>
 						</li>

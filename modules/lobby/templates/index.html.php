@@ -20,7 +20,7 @@
 	<?php include_template('lobby/gameinvites'); ?>
 	<div class="profile_header">
 		<img src="/images/avatars/<?php echo $csp_user->getAvatar(); ?>" class="avatar">
-		<h1><?php echo $csp_user->getName(); ?></h1>
+		<h1><a href="<?php echo make_url('profile'); ?>"><?php echo $csp_user->getName(); ?></a></h1>
 		<div class="summary">Level <?php echo $csp_user->getLevel(); ?></div>
 	</div>
 	<div class="lobby_game_actions">

@@ -61,6 +61,15 @@
 
 		protected $_player_cards;
 
+		/**
+		 * Player gold
+		 *
+		 * @Column(type="integer", length=10)
+		 *
+		 * @var integer
+		 */
+		protected $_player_gold;
+
 		/** 
 		 * The opponent player
 		 * 
@@ -72,6 +81,15 @@
 		protected $_opponent_id;
 
 		protected $_opponent_cards;
+
+		/**
+		 * Opponent gold
+		 *
+		 * @Column(type="integer", length=10)
+		 *
+		 * @var integer
+		 */
+		protected $_opponent_gold;
 
 		/**
 		 * Whether invitations have been sent
@@ -169,6 +187,7 @@
 		{
 			if ($is_new && !$this->_created_at) {
 				$this->_created_at = time();
+				$this->_current_phase = 1;
 
 				$chatroom = new ChatRoom();
 				$chatroom->setUser($this->getUserPlayer());
@@ -242,6 +261,31 @@
 			return $this->_b2dbLazyload('_player_id');
 		}
 
+		public function getPlayerGold()
+		{
+			return $this->_player_gold;
+		}
+
+		public function setPlayerGold($player_gold)
+		{
+			$this->_player_gold = $player_gold;
+		}
+
+		public function getUserPlayerGold()
+		{
+			return ($this->getPlayer()->getId() == Caspar::getUser()->getId()) ? $this->getPlayerGold() : $this->getOpponentGold();
+		}
+
+		public function getOpponentGold()
+		{
+			return $this->_opponent_gold;
+		}
+
+		public function setOpponentGold($opponent_gold)
+		{
+			$this->_opponent_gold = $opponent_gold;
+		}
+
 		protected function _populatePlayerCards()
 		{
 			if ($this->_player_cards === null) {
@@ -267,6 +311,12 @@
 					if ($card->getSlot() == $slot) return $card;
 				}
 			}
+		}
+
+		public function setPlayerCardSlot($slot, $card_id)
+		{
+			$cards = $this->getPlayerCards();
+			$this->_processCardSlotMoving($cards, $slot, $card_id);
 		}
 
 		public function hasPlayerCards()
@@ -392,6 +442,37 @@
 			}
 		}
 
+		protected function _processCardSlotMoving($all_cards, $slot, $card_id)
+		{
+			foreach ($all_cards as $type => $cards) {
+				foreach ($cards as $card) {
+					if ($card->getSlot() == $slot && $card->getUniqueId() != $card_id) {
+						$card->setSlot(0);
+						$event = new GameEvent();
+						$event->setEventType(GameEvent::TYPE_CARD_MOVED_OFF_SLOT);
+						$event->setEventData(array('player_id' => $this->getCurrentPlayerId(), 'player_name' => $this->getCurrentPlayer()->getUsername(), 'card_id' => $card->getUniqueId(), 'card_name' => $card->getName()));
+						$this->addEvent($event);
+					}
+					if ($card->getUniqueId() == $card_id && $card->getSlot() != $slot) {
+						$event = new GameEvent();
+						$event->setEventType(GameEvent::TYPE_CARD_MOVED_ONTO_SLOT);
+						$event->setEventData(array('player_id' => $this->getCurrentPlayerId(), 'in_play' => $card->isInPlay(), 'player_name' => $this->getCurrentPlayer()->getUsername(), 'card_id' => $card->getUniqueId(), 'card_name' => $card->getName(), 'slot' => $slot));
+						$this->addEvent($event);
+						$card->setSlot($slot);
+					}
+					if ($card->getSlot() == $slot || $card->getUniqueId() == $card_id) {
+						$card->save();
+					}
+				}
+			}
+		}
+
+		public function setOpponentCardSlot($slot, $card_id)
+		{
+			$cards = $this->getOpponentCards();
+			$this->_processCardSlotMoving($cards, $slot, $card_id);
+		}
+
 		public function hasOpponentCards()
 		{
 			$cards = $this->getOpponentCards();
@@ -413,9 +494,26 @@
 			return ($this->getUserPlayer()->getId() == $this->getPlayer()->getId()) ? $this->getPlayerCardSlot($slot) : $this->getOpponentCardSlot($slot);
 		}
 
+		public function setUserPlayerCardSlot($slot, $card_id)
+		{
+			return ($this->getUserPlayer()->getId() == $this->getPlayer()->getId()) ? $this->setPlayerCardSlot($slot, $card_id) : $this->setOpponentCardSlot($slot, $card_id);
+		}
+
 		public function getUserOpponentCardSlot($slot)
 		{
 			return ($this->getUserPlayer()->getId() == $this->getPlayer()->getId()) ? $this->getOpponentCardSlot($slot) : $this->getPlayerCardSlot($slot);
+		}
+
+		public function getUserPlayerCardSlotId($slot)
+		{
+			$card = $this->getUserPlayerCardSlot($slot);
+			return ($card instanceof Card) ? $card->getUniqueId() : 0;
+		}
+
+		public function getUserOpponentCardSlotId($slot)
+		{
+			$card = $this->getUserOpponentCardSlot($slot);
+			return ($card instanceof Card) ? $card->getUniqueId() : 0;
 		}
 
 		public function hasCards()
@@ -426,6 +524,11 @@
 		public function getCards()
 		{
 			return $this->getUserPlayerCards();
+		}
+
+		public function getCurrentPlayerCards()
+		{
+			return ($this->getCurrentPlayerId() == $this->getPlayer()->getId()) ? $this->getPlayerCards() : $this->getOpponentCards();
 		}
 
 		public function getChatroom()
@@ -518,6 +621,86 @@
 		{
 			$event->setGame($this);
 			$event->save();
+		}
+
+		public function replenish()
+		{
+			$this->_replenish();
+		}
+
+		protected function _replenish()
+		{
+			$gold = 0;
+			$p_cards = ($this->getCurrentPlayerKey() == 'player') ? $this->getPlayerCards() : $this->getOpponentCards();
+			$o_cards = ($this->getCurrentPlayerKey() == 'player') ? $this->getOpponentCards() : $this->getPlayerCards();
+			$old_gold = ($this->getCurrentPlayerKey() == 'player') ? $this->getPlayerGold() : $this->getOpponentGold();
+			$hp_cards = array();
+			foreach ($p_cards as $card_type => $cards) {
+				foreach ($cards as $card) {
+					if (!$card->isInPlay()) continue;
+					$gold += $card->getGPTIncreasePlayer();
+					$gold -= $card->getGPTDecreasePlayer();
+					if ($card instanceof CreatureCard) {
+						$hp = $card->getInGameHealth();
+						$base_hp = $card->getBaseHealth();
+						if ($hp < $base_hp) {
+							$hp *= floor(1.05);
+							if ($hp > $base_hp) $hp = $base_hp;
+							$card->setInGameHealth($hp);
+							$hp_cards[] = array('card_id' => $card->getUniqueId(), 'hp' => $hp);
+						}
+
+					}
+				}
+			}
+			foreach ($o_cards as $card_type => $cards) {
+				foreach ($cards as $card) {
+					if (!$card->isInPlay()) continue;
+					$gold += $card->getGPTIncreaseOpponent();
+					$gold -= $card->getGPTDecreaseOpponent();
+				}
+			}
+			$new_gold = $old_gold + $gold;
+			if ($new_gold < 0) $new_gold = 0;
+			($this->getCurrentPlayerKey() == 'player') ? $this->setPlayerGold($new_gold) : $this->setOpponentGold($new_gold);
+			
+			$event = new GameEvent();
+			$event->setEventType(GameEvent::TYPE_REPLENISH);
+			$event->setEventData(array('player_id' => $this->getCurrentPlayerId(), 'player_name' => $this->getCurrentPlayer()->getUsername(), 'gold' => array('from' => $old_gold, 'to' => $new_gold, 'diff' => $gold), 'hp' => $hp_cards));
+			$this->addEvent($event);
+		}
+
+		protected function _resolve()
+		{
+			foreach ($this->getCurrentPlayerCards() as $cards) {
+				foreach ($cards as $card) {
+					if ($card->getSlot() && !$card->isInPlay()) {
+						$card->setIsInPlay();
+						$card->save();
+					}
+				}
+			}
+		}
+
+		public function endPhase()
+		{
+			$old_phase = $this->_current_phase;
+			($old_phase < self::PHASE_RESOLUTION) ? $this->_current_phase++ : $this->_current_phase = 1;
+			$event = new GameEvent();
+			$event->setEventType(GameEvent::TYPE_PHASE_CHANGE);
+			$event->setEventData(array('player_id' => $this->getCurrentPlayerId(), 'player_name' => $this->getCurrentPlayer()->getUsername(), 'old_phase' => $old_phase, 'new_phase' => $this->_current_phase));
+			$this->addEvent($event);
+			if ($this->_current_phase == self::PHASE_REPLENISH) {
+				$this->changePlayer();
+				$this->_replenish();
+			} elseif ($this->_current_phase == self::PHASE_RESOLUTION) {
+				$this->_resolve();
+			}
+		}
+
+		public function getCurrentPhase()
+		{
+			return $this->_current_phase;
 		}
 
 		public function changePlayer()

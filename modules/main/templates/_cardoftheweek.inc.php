@@ -29,7 +29,10 @@
 				case application\entities\Card::TYPE_EVENT:
 					echo 'Event card';
 					break;
-				case application\entities\Card::TYPE_ITEM:
+				case application\entities\Card::TYPE_POTION_ITEM:
+					echo 'Potion card';
+					break;
+				case application\entities\Card::TYPE_EQUIPPABLE_ITEM:
 					echo 'Item card';
 					break;
 			}

@@ -22,13 +22,16 @@
 	<p>
 		Click the name of any card you want to select as card of the week. This card will be featured on the frontpage. Remember that the card must have a description!
 	</p>
-	<?php foreach (array('creature', 'item', 'event') as $type): ?>
+	<?php foreach (array('creature', 'equippable_item', 'potion_item', 'event') as $type): ?>
 		<div class="feature">
 			<h4 style="margin-top: 15px;"><?php
 			
 				switch($type) {
-					case 'item':
+					case 'equippable_item':
 						echo 'Item cards';
+						break;
+					case 'potion_item':
+						echo 'Potion cards';
 						break;
 					case 'event':
 						echo 'Event cards';

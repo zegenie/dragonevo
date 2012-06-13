@@ -48,7 +48,7 @@
 			$crit->addWhere('potion_item_cards.user_id', 0, Criteria::DB_NOT_EQUALS);
 			if ($res = $this->doSelect($crit)) {
 				while ($row = $res->getNextRow()) {
-					$card_id = $row->get('potion_cards.id');
+					$card_id = $row->get('potion_item_cards.id');
 					$this->doDeleteById($card_id);
 				}
 			}

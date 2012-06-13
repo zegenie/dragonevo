@@ -5,10 +5,10 @@
 			<ul>
 				<?php foreach ($cards as $card): ?>
 					<li>
-						<div onclick="Devo.Main.showCardActions(<?php echo $card->getId(); ?>);" style="cursor: pointer;">
+						<div onclick="Devo.Main.showCardActions('<?php echo $card->getUniqueId(); ?>');" style="cursor: pointer;">
 							<?php include_template('game/card', array('card' => $card, 'mode' => 'medium')); ?>
 						</div>
-						<div id="card_<?php echo $card->getId(); ?>_actions" class="card_actions" style="display: none;">
+						<div id="card_<?php echo $card->getUniqueId(); ?>_actions" class="card_actions" style="display: none;">
 							<div class="card_actions_description">
 								<h3><?php echo $card->getName(); ?></h3>
 								<p><?php echo nl2br($card->getLongDescription()); ?></p>

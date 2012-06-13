@@ -7,7 +7,7 @@
 
 ?>
 <h2 style="margin: 10px 0 0 10px;">
-	<?php echo link_tag(make_url('edit_cards', array('card_type' => 'potion')), "Edit potion cards"); ?>&nbsp;&rArr;
+	<?php echo link_tag(make_url('edit_cards', array('card_type' => 'potion_item')), "Edit potion cards"); ?>&nbsp;&rArr;
 	<?php echo $card->getB2DBID() ? $card->getName() : __('New potion card'); ?>
 </h2>
 <?php if (isset($error) && $error): ?>

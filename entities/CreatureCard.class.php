@@ -47,6 +47,14 @@
 		protected $_base_health_randomness = 0;
 
 		/**
+		 * Current in-game health
+		 *
+		 * @Column(type="integer", length=10, default=1)
+		 * @var integer
+		 */
+		protected $_in_game_health = 1;
+
+		/**
 		 * Base ep
 		 *
 		 * @Column(type="integer", length=10, default=0)
@@ -169,14 +177,29 @@
 			return $this->getBaseHealth();
 		}
 
-		public function getHP()
-		{
-			return $this->getBaseHP();
-		}
-
 		public function setBaseHealth($base_health)
 		{
 			$this->_base_health = (int) $base_health;
+		}
+
+		public function getInGameHealth()
+		{
+			return (int) $this->_in_game_health;
+		}
+
+		public function getInGameHP()
+		{
+			return $this->getInGameHealth();
+		}
+
+		public function getHP()
+		{
+			return ($this->isInPlay()) ? $this->getInGameHP() : $this->getBaseHealth();
+		}
+
+		public function setInGameHealth($in_game_health)
+		{
+			$this->_in_game_health = (int) $in_game_health;
 		}
 
 		public function getBaseHealthRandomness()
@@ -335,6 +358,14 @@
 		public function setUserCardLevel($user_card_level)
 		{
 			$this->_user_card_level = $user_card_level;
+		}
+
+		public function setIsInPlay($is_in_play = true)
+		{
+			parent::setIsInPlay($is_in_play);
+			if ($is_in_play) {
+				$this->_in_game_health = $this->_base_health;
+			}
 		}
 
 	}

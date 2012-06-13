@@ -151,19 +151,39 @@
 			return $this->renderJSON(array('game' => array('data' => $game_data, 'events' => $events)));
 		}
 
-		protected function _processEndTurn(Request $request)
+		protected function _processGetCard(Request $request)
+		{
+			$game = new \application\entities\Game($request['game_id']);
+			try {
+				$card = \application\entities\tables\Cards::getTable()->getCardByUniqueId($request['card_id']);
+				$class = ($card->getUser()->getId() == $this->getUser()->getId()) ? '' : 'flipped';
+
+				return $this->renderJSON(array('card' => $this->getTemplateHTML('game/card', array('card' => $card, 'mode' => $class))));
+			} catch (\Exception $e) {
+				var_dump($e->getMessage());
+				var_dump($e->getTraceAsString());
+				die();
+			}
+		}
+
+		protected function _processEndPhase(Request $request)
 		{
 			$game = new \application\entities\Game($request['game_id']);
 			if ($game->getCurrentPlayerId() == $this->getUser()->getId()) {
-				$game->changePlayer();
+				if ($game->getCurrentPhase() == \application\entities\Game::PHASE_MOVE) {
+					$slots = $request['slots'];
+					foreach ($slots as $slot_no => $card_id) {
+						$game->setUserPlayerCardSlot($slot_no, $card_id);
+					}
+				}
+				$game->endPhase();
 				$game->save();
-				return $this->renderJSON(array('end_turn' => 'ok'));
+				return $this->renderJSON(array('end_phase' => 'ok'));
 			} else {
 				$this->getResponse()->setHttpStatus(400);
 				return $this->renderJSON(array('error' => "It's not your turn"));
 			}
 		}
-
 
 		/**
 		 * Ask action
@@ -188,6 +208,9 @@
 						break;
 					case 'game_data':
 						return $this->_processPollGameData($request);
+						break;
+					case 'card':
+						return $this->_processGetCard($request);
 						break;
 					default:
 						return $this->renderJSON(array('for' => $request['for']));
@@ -220,8 +243,8 @@
 					case 'accept_invite':
 						return $this->_processAcceptGameInvite($request);
 						break;
-					case 'end_turn':
-						return $this->_processEndTurn($request);
+					case 'end_phase':
+						return $this->_processEndPhase($request);
 						break;
 					default:
 						return $this->renderJSON(array('topic' => $request['topic']));

@@ -17,7 +17,6 @@
 
 		const TYPE_EVENT = 'event';
 		const TYPE_CREATURE = 'creature';
-		const TYPE_ITEM = 'item';
 		const TYPE_EQUIPPABLE_ITEM = 'equippable_item';
 		const TYPE_POTION_ITEM = 'potion_item';
 
@@ -74,6 +73,14 @@
 		 * @var integer
 		 */
 		protected $_slot;
+
+		/**
+		 * Whether the card is a in play or not
+		 *
+		 * @Column(type="boolean", default=false)
+		 * @var boolean
+		 */
+		protected $_is_in_play = false;
 
 		/**
 		 * Card name
@@ -217,6 +224,11 @@
 			return $this->_id;
 		}
 
+		public function getUniqueId()
+		{
+			return $this->getCardType() . '_' . $this->getId();
+		}
+
 		public function setId($id)
 		{
 			$this->_id = $id;
@@ -295,6 +307,26 @@
 		public function setIsSpecialCard($is_special_card = true)
 		{
 			$this->_is_special_card = (bool) $is_special_card;
+		}
+
+		public function getIsInPlay()
+		{
+			return (bool) $this->_is_in_play;
+		}
+
+		public function isInPlay()
+		{
+			return $this->getIsInPlay();
+		}
+
+		public function setIsInPlay($is_in_play = true)
+		{
+			$this->_is_in_play = (bool) $is_in_play;
+		}
+
+		public function resolve()
+		{
+			
 		}
 
 		public function getGPTIncreasePlayer()

@@ -12,9 +12,9 @@
 	</ul>
 	<h1 style="margin-top: 25px;">Edit cards</h1>
 	<ul>
-		<?php foreach (array('event', 'creature', 'item', 'potion') as $type): ?>
+		<?php foreach (array('event' => 'event', 'creature' => 'creature', 'equippable_item' => 'equippable', 'potion_item' => 'potion') as $type => $description): ?>
 			<li>
-				<?php echo link_tag(make_url('edit_cards', array('card_type' => $type)), "Edit {$type} cards"); ?>
+				<?php echo link_tag(make_url('edit_cards', array('card_type' => $type)), "Edit {$description} cards"); ?>
 			</li>
 		<?php endforeach; ?>
 			<li><a href="javascript:void(0);" onclick="Devo.Main.Helpers.Dialog.show('Do you really want to reset all user cards', 'All users will have their cards removed and will have to pick a new starter pack from scratch.', {yes: {href: '<?php echo make_url('admin_reset_user_cards'); ?>'}, no: {click: function() {Devo.Main.Helpers.Dialog.dismiss();}}});">Reset all user cards</a></li>

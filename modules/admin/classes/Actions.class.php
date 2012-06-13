@@ -46,13 +46,13 @@
 					$this->getResponse()->setTemplate('admin/creaturecards');
 					$this->redirect('editCreatureCards');
 					break;
-				case 'item':
-					$this->getResponse()->setTemplate('admin/itemcards');
-					$this->redirect('editItemCards');
+				case 'equippable_item':
+					$this->getResponse()->setTemplate('admin/equippableitemcards');
+					$this->redirect('editEquippableItemCards');
 					break;
-				case 'potion':
-					$this->getResponse()->setTemplate('admin/potioncards');
-					$this->redirect('editPotionCards');
+				case 'potion_item':
+					$this->getResponse()->setTemplate('admin/potionitemcards');
+					$this->redirect('editPotionItemCards');
 					break;
 			}
 		}
@@ -73,13 +73,13 @@
 					$this->getResponse()->setTemplate('admin/creaturecard');
 					$this->redirect('editCreatureCard');
 					break;
-				case 'item':
-					$this->getResponse()->setTemplate('admin/itemcard');
-					$this->redirect('editItemCard');
+				case 'equippable_item':
+					$this->getResponse()->setTemplate('admin/equippableitemcard');
+					$this->redirect('editEquippableItemCard');
 					break;
-				case 'potion':
-					$this->getResponse()->setTemplate('admin/potioncard');
-					$this->redirect('editPotionCard');
+				case 'potion_item':
+					$this->getResponse()->setTemplate('admin/potionitemcard');
+					$this->redirect('editPotionItemCard');
 					break;
 			}
 		}
@@ -118,12 +118,12 @@
 			$this->cards = $cards;
 		}
 
-		public function runEditItemCards(Request $request)
+		public function runEditEquippableItemCards(Request $request)
 		{
 			$this->cards = \application\entities\tables\EquippableItemCards::getTable()->getAll();
 		}
 
-		public function runEditPotionCards(Request $request)
+		public function runEditPotionItemCards(Request $request)
 		{
 			$this->cards = \application\entities\tables\PotionItemCards::getTable()->getAll();
 		}
@@ -186,7 +186,7 @@
 			}
 		}
 
-		public function runEditItemCard(Request $request)
+		public function runEditEquippableItemCard(Request $request)
 		{
 			$card_id = $request['card_id'];
 
@@ -207,7 +207,7 @@
 					if ($request->isPost()) {
 						$this->card->mergeFormData($request);
 						$this->card->save();
-						$this->forward($this->getRouting()->generate('edit_card', array('card_id' => $this->card->getB2DBID(), 'card_type' => 'item')));
+						$this->forward($this->getRouting()->generate('edit_card', array('card_id' => $this->card->getB2DBID(), 'card_type' => 'equippable_item')));
 					}
 				}
 			} catch (\Exception $e) {
@@ -215,7 +215,7 @@
 			}
 		}
 
-		public function runEditPotionCard(Request $request)
+		public function runEditPotionItemCard(Request $request)
 		{
 			$card_id = $request['card_id'];
 
@@ -236,7 +236,7 @@
 					if ($request->isPost()) {
 						$this->card->mergeFormData($request);
 						$this->card->save();
-						$this->forward($this->getRouting()->generate('edit_card', array('card_id' => $this->card->getB2DBID(), 'card_type' => 'potion')));
+						$this->forward($this->getRouting()->generate('edit_card', array('card_id' => $this->card->getB2DBID(), 'card_type' => 'potion_item')));
 					}
 				}
 			} catch (\Exception $e) {
@@ -257,7 +257,7 @@
 			foreach (\application\entities\Card::getFactions() as $faction => $description) {
 				$creature[$faction] = \application\entities\tables\CreatureCards::getTable()->getByFaction($faction);
 			}
-			$this->cards = compact('item', 'event', 'creature');
+			$this->cards = compact('equippable_item', 'potion_item', 'event', 'creature');
 		}
 
 		public function runNews(Request $request)
