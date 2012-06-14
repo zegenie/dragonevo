@@ -142,6 +142,14 @@
 		protected $_current_phase;
 
 		/**
+		 * The current players currently available actions
+		 *
+		 * @Column(type="integer", length=10)
+		 * @var integer
+		 */
+		protected $_current_player_actions = 0;
+
+		/**
 		 * The player who won the game
 		 *
 		 * @Column(type="integer", length=10)
@@ -276,6 +284,11 @@
 			return ($this->getPlayer()->getId() == Caspar::getUser()->getId()) ? $this->getPlayerGold() : $this->getOpponentGold();
 		}
 
+		public function setUserPlayerGold($gold)
+		{
+			return ($this->getPlayer()->getId() == Caspar::getUser()->getId()) ? $this->setPlayerGold($gold) : $this->setOpponentGold($gold);
+		}
+
 		public function getOpponentGold()
 		{
 			return $this->_opponent_gold;
@@ -284,6 +297,16 @@
 		public function setOpponentGold($opponent_gold)
 		{
 			$this->_opponent_gold = $opponent_gold;
+		}
+
+		public function getUserOpponentGold()
+		{
+			return ($this->getOpponent()->getId() == Caspar::getUser()->getId()) ? $this->getOpponentGold() : $this->getPlayerGold();
+		}
+
+		public function setUserOpponentGold($gold)
+		{
+			return ($this->getOpponent()->getId() == Caspar::getUser()->getId()) ? $this->setOpponentGold($gold) : $this->setPlayerGold($gold);
 		}
 
 		protected function _populatePlayerCards()
@@ -634,7 +657,7 @@
 			$p_cards = ($this->getCurrentPlayerKey() == 'player') ? $this->getPlayerCards() : $this->getOpponentCards();
 			$o_cards = ($this->getCurrentPlayerKey() == 'player') ? $this->getOpponentCards() : $this->getPlayerCards();
 			$old_gold = ($this->getCurrentPlayerKey() == 'player') ? $this->getPlayerGold() : $this->getOpponentGold();
-			$hp_cards = array();
+			$card_updates = array();
 			foreach ($p_cards as $card_type => $cards) {
 				foreach ($cards as $card) {
 					if (!$card->isInPlay()) continue;
@@ -643,13 +666,27 @@
 					if ($card instanceof CreatureCard) {
 						$hp = $card->getInGameHealth();
 						$base_hp = $card->getBaseHealth();
+						$ep = $card->getInGameEP();
+						$base_ep = $card->getBaseEP();
+						$changed = false;
+						if ($hp < $base_hp || $ep < $base_ep) {
+							$changed = true;
+						}
 						if ($hp < $base_hp) {
-							$hp *= floor(1.05);
+							$hp += ceil(($base_hp / 100) * rand(5, 15));
 							if ($hp > $base_hp) $hp = $base_hp;
 							$card->setInGameHealth($hp);
-							$hp_cards[] = array('card_id' => $card->getUniqueId(), 'hp' => $hp);
+							$card->save();
 						}
-
+						if ($ep < $base_ep) {
+							$ep += ceil(($base_ep / 100) * rand(15, 50));
+							if ($ep > $base_ep) $ep = $base_ep;
+							$card->setInGameEP($ep);
+						}
+						if ($changed) {
+							$card_updates[] = array('card_id' => $card->getUniqueId(), 'hp' => $hp, 'ep' => $ep);
+							$card->save();
+						}
 					}
 				}
 			}
@@ -666,7 +703,7 @@
 			
 			$event = new GameEvent();
 			$event->setEventType(GameEvent::TYPE_REPLENISH);
-			$event->setEventData(array('player_id' => $this->getCurrentPlayerId(), 'player_name' => $this->getCurrentPlayer()->getUsername(), 'gold' => array('from' => $old_gold, 'to' => $new_gold, 'diff' => $gold), 'hp' => $hp_cards));
+			$event->setEventData(array('player_id' => $this->getCurrentPlayerId(), 'player_name' => $this->getCurrentPlayer()->getUsername(), 'gold' => array('from' => $old_gold, 'to' => $new_gold, 'diff' => $gold), 'card_updates' => $card_updates));
 			$this->addEvent($event);
 		}
 
@@ -690,17 +727,40 @@
 			$event->setEventType(GameEvent::TYPE_PHASE_CHANGE);
 			$event->setEventData(array('player_id' => $this->getCurrentPlayerId(), 'player_name' => $this->getCurrentPlayer()->getUsername(), 'old_phase' => $old_phase, 'new_phase' => $this->_current_phase));
 			$this->addEvent($event);
-			if ($this->_current_phase == self::PHASE_REPLENISH) {
-				$this->changePlayer();
-				$this->_replenish();
-			} elseif ($this->_current_phase == self::PHASE_RESOLUTION) {
-				$this->_resolve();
+			switch ($this->_current_phase) {
+				case self::PHASE_REPLENISH:
+					$this->changePlayer();
+					$this->_replenish();
+					break;
+				case self::PHASE_MOVE:
+					break;
+				case self::PHASE_ACTION:
+					$this->setCurrentPlayerActions(2);
+					break;
+				case self::PHASE_RESOLUTION:
+					$this->_resolve();
+					break;
 			}
 		}
 
 		public function getCurrentPhase()
 		{
 			return $this->_current_phase;
+		}
+
+		public function getCurrentPlayerActions()
+		{
+			return $this->_current_player_actions;
+		}
+
+		public function setCurrentPlayerActions($actions)
+		{
+			$this->_current_player_actions = $actions;
+		}
+
+		public function useAction()
+		{
+			$this->_current_player_actions--;
 		}
 
 		public function changePlayer()
@@ -713,6 +773,18 @@
 			$event = new GameEvent();
 			$event->setEventType(GameEvent::TYPE_PLAYER_CHANGE);
 			$event->setEventData(array('player_id' => $this->getCurrentPlayerId(), 'player_name' => $this->getCurrentPlayer()->getUsername()));
+			$this->addEvent($event);
+		}
+
+		public function removeCard(Card $card)
+		{
+			$card->setSlot(0);
+			$card->setIsInPlay(false);
+			$card->setGameId(0);
+
+			$event = new GameEvent();
+			$event->setEventType(GameEvent::TYPE_CARD_REMOVED);
+			$event->setEventData(array('player_id' => $this->getCurrentPlayerId(), 'player_name' => $this->getCurrentPlayer()->getUsername(), 'card_id' => $card->getUniqueId()));
 			$this->addEvent($event);
 		}
 

@@ -554,6 +554,11 @@
 			$this->_introduction_level = $introduction_level;
 		}
 
+		/**
+		 * Return this attack's card
+		 *
+		 * @return CreatureCard
+		 */
 		public function getCard()
 		{
 			$this->_b2dbLazyload('_card_id');
@@ -825,6 +830,46 @@
 			$this->_steal_magic_amount = $request['steal_magic_amount'];
 			$this->_requires_level = $request['requires_level'];
 			$this->_requires_item_card_type = $request['requires_item_card_type'];
+		}
+
+		public function perform(CreatureCard $card)
+		{
+			$game = $this->getCard()->getGame();
+
+			// Apply costs
+			$attacking_from_gold = $game->getUserPlayerGold();
+			$game->setUserPlayerGold($attacking_from_gold - $this->getCostGold());
+			$attacking_from_ep = $this->getCard()->getInGameEP();
+			$this->getCard()->setInGameEP($attacking_from_ep - $this->getCostMagic());
+			$game->useAction();
+
+			// Generate damage and apply damage to opponent card
+			$dmg = rand($this->getAttackPointsMin(), $this->getAttackPointsMax());
+			// Reduce dmg by user dmp value
+			$dmg -= ($dmg / 100) * rand(0, $card->getUserDMP() * 10);
+			$attacked_from_hp = $card->getInGameHP();
+			$card->removeHP($dmg);
+
+			$event = new GameEvent();
+			$event->setEventType(GameEvent::TYPE_ATTACK);
+			$event->setEventData(array(
+									'player_id' => $game->getCurrentPlayerId(),
+									'attacking_card_id' => $this->getCard()->getUniqueId(),
+									'attacked_card_id' => $card->getUniqueId(),
+									'remaining_actions' => $game->getCurrentPlayerActions(),
+									'cost' => array(
+												'gold' => array('from' => $attacking_from_gold, 'to' => $game->getUserPlayerGold(), 'diff' => $this->getCostGold()),
+												'ep' => array('from' => $attacking_from_ep, 'to' => $this->getCard()->getEP(), 'diff' => $this->getCostMagic())
+												),
+									'hp' => array('from' => $attacked_from_hp, 'to' => $card->getInGameHP(), 'diff' => $dmg)
+									));
+			$game->addEvent($event);
+
+			if ($card->getHP() == 0) {
+				$game->removeCard($card);
+			}
+
+			return array($game, $this->getCard());
 		}
 
 	}

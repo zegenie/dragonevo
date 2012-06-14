@@ -71,6 +71,14 @@
 		protected $_base_ep_randomness = 0;
 
 		/**
+		 * Current in-game health
+		 *
+		 * @Column(type="integer", length=10, default=1)
+		 * @var integer
+		 */
+		protected $_in_game_ep = 1;
+
+		/**
 		 * Base defence multiplier
 		 *
 		 * @Column(type="integer", length=10, default=1)
@@ -202,6 +210,12 @@
 			$this->_in_game_health = (int) $in_game_health;
 		}
 
+		public function removeHP($dmg)
+		{
+			$this->_in_game_health -= $dmg;
+			if ($this->_in_game_health < 0) $this->_in_game_health = 0;
+		}
+
 		public function getBaseHealthRandomness()
 		{
 			return $this->_base_health_randomness;
@@ -217,14 +231,30 @@
 			return $this->_base_ep;
 		}
 
-		public function getEP()
-		{
-			return $this->getBaseEP();
-		}
-
 		public function setBaseEP($base_ep)
 		{
 			$this->_base_ep = (int) $base_ep;
+		}
+
+		public function getInGameEP()
+		{
+			return (int) $this->_in_game_ep;
+		}
+
+		public function getEP()
+		{
+			return ($this->isInPlay()) ? $this->getInGameEP() : $this->getBaseEP();
+		}
+
+		public function setInGameEP($in_game_ep)
+		{
+			$this->_in_game_ep = (int) $in_game_ep;
+		}
+
+		public function removeEP($dmg)
+		{
+			$this->_in_game_ep -= $dmg;
+			if ($this->_in_game_ep < 0) $this->_in_game_ep = 0;
 		}
 
 		public function getBaseEPRandomness()
@@ -365,6 +395,7 @@
 			parent::setIsInPlay($is_in_play);
 			if ($is_in_play) {
 				$this->_in_game_health = $this->_base_health;
+				$this->_in_game_ep = $this->_base_ep;
 			}
 		}
 

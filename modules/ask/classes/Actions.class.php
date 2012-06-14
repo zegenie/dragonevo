@@ -185,6 +185,33 @@
 			}
 		}
 
+		protected function _processAttack(Request $request)
+		{
+			$game = new \application\entities\Game($request['game_id']);
+			if ($game->getCurrentPlayerId() == $this->getUser()->getId()) {
+				if ($game->getCurrentPhase() == \application\entities\Game::PHASE_ACTION) {
+					if ($game->getCurrentPlayerActions() > 0) {
+						$attack = new \application\entities\Attack($request['attack_id']);
+						$card = \application\entities\tables\Cards::getTable()->getCardByUniqueId($request['attacked_card_id']);
+						list($game, $attacking_card) = $attack->perform($card);
+						$game->save();
+						$card->save();
+						$attacking_card->save();
+					} else {
+						$this->getResponse()->setHttpStatus(400);
+						return $this->renderJSON(array('error' => "You don't have any attacks left"));
+					}
+				} else {
+					$this->getResponse()->setHttpStatus(400);
+					return $this->renderJSON(array('error' => "You cannot attack during this phase"));
+				}
+				return $this->renderJSON(array('attack' => 'ok'));
+			} else {
+				$this->getResponse()->setHttpStatus(400);
+				return $this->renderJSON(array('error' => "It's not your turn"));
+			}
+		}
+
 		/**
 		 * Ask action
 		 *  
@@ -245,6 +272,9 @@
 						break;
 					case 'end_phase':
 						return $this->_processEndPhase($request);
+						break;
+					case 'attack':
+						return $this->_processAttack($request);
 						break;
 					default:
 						return $this->renderJSON(array('topic' => $request['topic']));

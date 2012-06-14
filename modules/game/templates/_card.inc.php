@@ -15,7 +15,12 @@
 					echo 'equippable_item item';
 					break;
 			}
-		?> <?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE) echo $card->getFaction(); ?><?php if (isset($mode)) echo " $mode"; ?><?php if (isset($selected) && $selected) echo " selected"; ?><?php if ($card->getSlot() != 0 && $card->isInPlay()) echo ' placed'; ?><?php if ($card->getSlot() != 0 && !$card->isInPlay() && $card->isOwned() && $card->getUser()->getId() != $csp_user->getId() && ((!isset($mode) || $mode != 'flipped'))) echo ' flipped'; ?>" id="card_<?php echo $card_id; ?>" data-card-id="<?php echo $card_id; ?>">
+		?> <?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE) echo $card->getFaction(); ?><?php if (isset($mode)) echo " $mode"; ?><?php if($card->isOwned() && $card->getUser()->getId() == $csp_user->getId()) echo ' player'; ?><?php if (isset($selected) && $selected) echo " selected"; ?><?php if ($card->getSlot() != 0 && $card->isInPlay()) echo ' placed'; ?><?php if ($card->getSlot() != 0 && !$card->isInPlay() && $card->isOwned() && $card->getUser()->getId() != $csp_user->getId() && ((!isset($mode) || $mode != 'flipped'))) echo ' flipped'; ?>" id="card_<?php echo $card_id; ?>" data-card-id="<?php echo $card_id; ?>" <?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE): ?> data-ep="<?php echo $card->getEP(); ?>" data-hp="<?php echo $card->getHP(); ?>"<?php endif; ?>>
+		<?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE && $card->getGPTIncreasePlayer()): ?>
+			<div class="gold_increase">
+				<span>+</span><?php echo $card->getGPTIncreasePlayer(); ?>
+			</div>
+		<?php endif; ?>
 		<div class="name" id="card_<?php echo $card_id; ?>_name"><?php echo strtoupper($card->getName()); ?></div>
 		<div class="card_image" id="card_<?php echo $card_id; ?>_image" style="background-image: url('/images/cards/<?php echo $card->getKey(); ?>.png');">
 		</div>
@@ -32,7 +37,7 @@
 		<?php endif; ?>
 		<?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE): ?>
 			<div class="hp"><?php echo $card->getHP(); ?></div>
-			<div class="magic"><?php echo ($card->getEP()) ? $card->getEP() : '-'; ?></div>
+			<div class="ep magic"><?php echo ($card->getEP()) ? $card->getEP() : '-'; ?></div>
 			<div class="dmp"><div class="box"><?php echo ($card->isOwned()) ? (($card->getUserDMP()) ? $card->getUserDMP() : '-') : $card->getBaseDMP(); ?></div></div>
 		<?php endif; ?>
 		<div class="selection_indicator"><img src="/images/icon_ok.png"></div>

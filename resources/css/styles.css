@@ -1062,7 +1062,7 @@ li.cards { list-style: none; }
     z-index: 5;
 	background-size: cover;
     color: black;
-    width: 264px;
+    width: 265px;
 	padding: 0;
     height: 355px;
 	overflow: hidden;
@@ -1094,7 +1094,7 @@ li.cards { list-style: none; }
 	transition: none;
 }
 .card.small { height: 130px; width: 100px; }
-.card.medium { height: 209px; width: 160px; overflow: visible; }
+.card.medium { height: 214px; width: 160px; overflow: visible; }
 .card.creature {
     background-image: url('/images/card_white.png');
 }
@@ -1123,9 +1123,9 @@ li.card {
 
 .card .name {
 	position: absolute;
-	top: 13px;
-	left: 20px;
-	width: 220px;
+	top: 10px;
+	left: 15px;
+	width: 224px;
 	padding: 2px 6px 6px 6px;
 	height: 12px;
 	min-height: 12px;
@@ -1158,8 +1158,8 @@ li.card {
 	width: 80px;
 }
 .card.medium .name {
-	top: 6px;
-	left: 11px;
+	top: 5px;
+	left: 9px;
 	font-size: 10px;
 	text-shadow: none;
 	font-weight: bold;
@@ -1169,7 +1169,7 @@ li.card {
 	padding: 2px 2px 0 6px;
 	height: 12px;
 	min-height: 12px;
-	width: 132px;
+	width: 137px;
 }
 .card.neutral .name {
 	background-color: rgba(255, 255, 255, 0.5);
@@ -1190,15 +1190,38 @@ li.card {
 .card.item .name {
 	background-color: rgba(255, 255, 255, 0.1);
 }
+.card .gold_increase {
+    background-image: url('/images/coin_large.png');
+	background-clip: border-box;
+	background-size: cover;
+	width: 50px;
+	text-align: center;
+	height: 50px;
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.9);
+	z-index: 10001;
+	opacity: 0.9;
+}
+.card.medium .gold_increase {
+    background-image: url('/images/coin_medium.png');
+	width: 25px;
+	height: 22px;
+	font-size: 1.2em;
+	vertical-align: middle;
+	padding: 3px 0 0;
+}
+.card.medium .gold_increase span { font-size: 0.8em; }
 .card .card_image {
 	z-index: 2;
 	background-repeat: no-repeat;
 	background-position: top left;
 	position: absolute;
-	top: 34px;
-	left: 24px;
-	width: 224px;
-	height: 155px;
+	top: 31px;
+	left: 20px;
+	width: 228px;
+	height: 158px;
 	box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.75);
 	-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.75);
 	-moz-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.75);
@@ -1213,10 +1236,10 @@ li.card {
 	background-size: cover;
 }
 .card.medium .card_image {
-	top: 20px;
-	left: 15px;
-	width: 131px;
-	height: 91px;
+	top: 19px;
+	left: 12px;
+	width: 137px;
+	height: 95px;
 	background-size: cover;
 }
 .card .main_image {
@@ -1232,9 +1255,9 @@ li.card {
 	z-index: 1;
     position: absolute;
     top: 189px;
-    left: 24px;
+    left: 20px;
 	height: 23px;
-	width: 224px;
+	width: 228px;
 	overflow: hidden;
 }
 .card.small .card_reflection {
@@ -1244,10 +1267,10 @@ li.card {
 	width: 82px;
 }
 .card.medium .card_reflection {
-	top: 111px;
-	left: 15px;
+	top: 114px;
+	left: 12px;
 	height: 15px;
-	width: 131px;
+	width: 137px;
 }
 .card .card_reflection img {
     -moz-transform: scaleY(-1);
@@ -1256,8 +1279,8 @@ li.card {
     opacity: .25;
 }
 .card.medium .card_reflection img {
-	height: 91px;
-	width: 131px;
+	height: 95px;
+	width: 137px;
 }
 .card .card_reflection .cover {
 	z-index: 2;
@@ -1303,14 +1326,14 @@ li.card {
 .card .attacks {
 	position: absolute;
 	top: 215px;
-	left: 24px;
-	width: 227px;
+	left: 20px;
+	width: 228px;
 }
 .card.medium .attacks {
-	left: 9px;
-	top: 125px;
+	left: 8px;
+	top: 129px;
 	font-size: 0.8em;
-	width: 140px;
+	width: 145px;
 }
 .card .attacks .attack {
 	font-size: 0.7em;
@@ -1319,6 +1342,52 @@ li.card {
 	height: 27px;
 	background-repeat: no-repeat;
 	background-position: 4px 6px;
+}
+.card .attacks .attack.disabled, .card .attacks .attack.temp_disabled {
+	opacity: 0.3;
+}
+.card .attacks .attack.attacking {
+	color: #FFF;
+	font-weight: bold;
+	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 5px rgba(101, 193, 218, 1), 0 0 7px rgba(101, 193, 218, 0.8), 0 0 13px rgba(101, 193, 218, 0.6);
+	-webkit-animation-name: glowing;
+	-webkit-animation-duration: 3s;
+	-webkit-animation-iteration-count: infinite;
+	-webkit-animation-timing-function: linear;
+	-moz-animation-name: glowing;
+	-moz-animation-duration: 3s;
+	-moz-animation-iteration-count: infinite;
+	-moz-animation-timing-function: linear;
+	animation-name: glowing;
+	animation-duration: 3s;
+	animation-iteration-count: infinite;
+	animation-timing-function: linear;
+}
+.card .attacks .attack.attacking .attack_cost, .card .attacks .attack.attacking .attack_impact {
+	opacity: 0;
+	-webkit-transition: opacity 0.3s ease-in-out;
+	-moz-transition: opacity 0.3s ease-in-out;
+	-o-transition: opacity 0.3s ease-in-out;
+	transition: opacity 0.3s ease-in-out;
+}
+#player-slots .card.selected {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	z-index: 10000;
+}
+#player-slots li:last-child .card.selected {
+	left: auto;
+	right: 0;
+}
+#player-slots.actionable .card.placed .attack {
+	cursor: pointer;
+}
+#player-slots.actionable .card {
+	opacity: 0.2;
+}
+#player-slots.actionable .card.placed {
+	opacity: 1;
 }
 .card.medium .attacks .attack {
 	height: 18px;
@@ -1365,6 +1434,10 @@ li.card {
 	bottom: 2px;
 	left: 20px;
 	color: darkred;
+	-webkit-transition: opacity 0.3s ease-in-out;
+	-moz-transition: opacity 0.3s ease-in-out;
+	-o-transition: opacity 0.3s ease-in-out;
+	transition: opacity 0.3s ease-in-out;
 }
 .card.medium .attacks .attack .attack_impact {
 	bottom: 0;
@@ -1379,6 +1452,10 @@ li.card {
 	background-color: rgba(255, 255, 255, 0.5);
 	border-radius: 7px;
 	padding: 4px 7px;
+	-webkit-transition: opacity 0.3s ease-in-out;
+	-moz-transition: opacity 0.3s ease-in-out;
+	-o-transition: opacity 0.3s ease-in-out;
+	transition: opacity 0.3s ease-in-out;
 }
 .card.medium .attacks .attack .attack_cost {
 	right: 5px;
@@ -1524,7 +1601,7 @@ li.card {
 }
 .card .hp, .card .magic {
 	position: absolute;
-	bottom: 16px;
+	bottom: 14px;
 	width: 20px;
 	text-align: center;
 	padding: 0;
@@ -1548,7 +1625,7 @@ li.card {
 	text-shadow: none;
 }
 .card.medium .hp, .card.medium .magic {
-	bottom: 5px;
+	bottom: 4px;
 	letter-spacing: 0;
 	font-size: 12px;
 	width: 18px;
@@ -1559,8 +1636,8 @@ li.card {
 }
 .card .dmp {
 	position: absolute;
-	bottom: 15px;
-	left: 108px;
+	bottom: 12px;
+	left: 104px;
 	padding: 20px 0 0 0;
 	background: url('/images/dmp.png') no-repeat -2px 0;
 	font-family: 'Metamorphous';
@@ -1569,8 +1646,8 @@ li.card {
 }
 .card.medium .dmp {
 	background: url('/images/dmp_small.png') no-repeat 2px 0;
-	bottom: 5px;
-	left: 62px;
+	bottom: 4px;
+	left: 61px;
 	padding: 12px 0 0 0;
 	font-size: 12px;
 }
@@ -1588,7 +1665,7 @@ li.card {
 	border-radius: 5px;
 }
 .card .hp {
-	left: 31px;
+	left: 27px;
 	color: rgba(108, 213, 127, 1);
 	text-shadow: 1px 1px 3px rgba(108, 213, 127, 0.5), -1px 1px 3px rgba(108, 213, 127, 0.5), 1px -1px 3px rgba(108, 213, 127, 0.5), 1px 1px 3px rgba(108, 213, 127, 0.5);
 }
@@ -1598,10 +1675,10 @@ li.card {
 }
 .card.medium .hp {
 	color: rgba(68, 163, 67, 1);
-	left: 14px;
+	left: 12px;
 }
 .card .magic {
-	left: 72px;
+	left: 69px;
 	color: rgba(125, 125, 225, 1);
 	text-shadow: 1px 1px 3px rgba(125, 125, 225, 0.5), -1px 1px 3px rgba(125, 125, 225, 0.5), 1px -1px 3px rgba(125, 125, 225, 0.5), 1px 1px 3px rgba(125, 125, 225, 0.5);
 }
@@ -1610,7 +1687,7 @@ li.card {
 	color: rgba(50, 50, 150, 1);
 }
 .card.medium .magic {
-	left: 38px;
+	left: 37px;
 }
 
 #opponents_hand { display: none; }
@@ -1716,7 +1793,7 @@ input:-moz-placeholder { color:#AAA; }
 	height: 700px;
 }
 .card-slots-container {
-	height: 209px;
+	height: 214px;
 	clear: both;
 	width: 820px;
 	margin: 0 auto;
@@ -1735,23 +1812,49 @@ li.card-slot {
 	margin: 0 5px 0 0;
 	padding: 0;
 	width: 156px;
-	height: 205px;
+	height: 210px;
 	background-color: rgba(200, 200, 200, 0.07);
 	border: 2px dashed rgba(255, 255, 255, 0.13);
 	border-radius: 5px;
+	position: relative;
 	float: left;
 	-webkit-transition: border-color 0.3s ease-in-out, background-color 0.3s ease-in-out;
 	-moz-transition: border-color 0.3s ease-in-out, background-color 0.3s ease-in-out;
 	-o-transition: border-color 0.3s ease-in-out, background-color 0.3s ease-in-out;
 	transition: border-color 0.3s ease-in-out, background-color 0.3s ease-in-out;
 }
-.card-slot.drop-hover {
+.card-slot.drop-hover, .card-slot.targetted {
 	border-color: rgba(255, 255, 255, 0.7);
 	background-color: rgba(200, 200, 200, 0.4);
 	-webkit-transition: border-color 0.3s ease-in-out, background-color 0.3s ease-in-out;
 	-moz-transition: border-color 0.3s ease-in-out, background-color 0.3s ease-in-out;
 	-o-transition: border-color 0.3s ease-in-out, background-color 0.3s ease-in-out;
 	transition: border-color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+}
+.card-slot.targetted {
+	-webkit-animation-name: glowing-box;
+	-webkit-animation-duration: 1.5s;
+	-webkit-animation-iteration-count: infinite;
+	-webkit-animation-timing-function: linear;
+	-moz-animation-name: glowing-box;
+	-moz-animation-duration: 1.5s;
+	-moz-animation-iteration-count: infinite;
+	-moz-animation-timing-function: linear;
+	animation-name: glowing-box;
+	animation-duration: 1.5s;
+	animation-iteration-count: infinite;
+	animation-timing-function: linear;
+}
+.card-slot.targetted:hover {
+	-webkit-animation-name: glowing-box-highlighted;
+	-moz-animation-name: glowing-box-highlighted;
+	animation-name: glowing-box-highlighted;
+}
+.card-slot.targetted .card:hover {
+	cursor: pointer;
+}
+.card-slot.targetted .attack:hover .tooltip {
+	display: none;
 }
 .card-slot.drop-hover .card {
 	opacity: 0.4;
@@ -2482,6 +2585,78 @@ li.card-slot {
 	}
 }
 
+@-webkit-keyframes glowing-box {
+	0% {
+		box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 5px rgba(101, 193, 218, 1), 0 0 7px rgba(101, 193, 218, 0.8), 0 0 13px rgba(101, 193, 218, 0.6);
+	}
+	50% {
+		box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 10px rgba(101, 193, 218, 1), 0 0 8px rgba(255, 128, 0, 0.5), 0 0 18px rgba(255, 255, 0, 0.4), 0 0 22px rgba(101, 193, 218, 0.9), 0 0 33px rgba(101, 193, 218, 0.8);
+	}
+	100% {
+		box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 5px rgba(101, 193, 218, 1), 0 0 7px rgba(101, 193, 218, 0.8), 0 0 13px rgba(101, 193, 218, 0.6);
+	}
+}
+
+@-moz-keyframes glowing-box {
+	0% {
+		box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 5px rgba(101, 193, 218, 1), 0 0 7px rgba(101, 193, 218, 0.8), 0 0 13px rgba(101, 193, 218, 0.6);
+	}
+	50% {
+		box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 10px rgba(101, 193, 218, 1), 0 0 8px rgba(255, 128, 0, 0.5), 0 0 18px rgba(255, 255, 0, 0.4), 0 0 22px rgba(101, 193, 218, 0.9), 0 0 33px rgba(101, 193, 218, 0.8);
+	}
+	100% {
+		box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 5px rgba(101, 193, 218, 1), 0 0 7px rgba(101, 193, 218, 0.8), 0 0 13px rgba(101, 193, 218, 0.6);
+	}
+}
+
+@keyframes glowing-box {
+	0% {
+		box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 5px rgba(101, 193, 218, 1), 0 0 7px rgba(101, 193, 218, 0.8), 0 0 13px rgba(101, 193, 218, 0.6);
+	}
+	50% {
+		box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 10px rgba(101, 193, 218, 1), 0 0 8px rgba(255, 128, 0, 0.5), 0 0 18px rgba(255, 255, 0, 0.4), 0 0 22px rgba(101, 193, 218, 0.9), 0 0 33px rgba(101, 193, 218, 0.8);
+	}
+	100% {
+		box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 5px rgba(101, 193, 218, 1), 0 0 7px rgba(101, 193, 218, 0.8), 0 0 13px rgba(101, 193, 218, 0.6);
+	}
+}
+
+@-webkit-keyframes glowing-box-highlighted {
+	0% {
+		box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 5px rgba(218, 179, 87, 1), 0 0 7px rgba(218, 179, 87, 0.8), 0 0 13px rgba(218, 179, 87, 0.6);
+	}
+	50% {
+		box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 10px rgba(218, 179, 87, 1), 0 0 8px rgba(255, 128, 0, 0.5), 0 0 18px rgba(255, 255, 0, 0.4), 0 0 22px rgba(218, 179, 87, 0.9), 0 0 33px rgba(218, 179, 87, 0.8);
+	}
+	100% {
+		box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 5px rgba(218, 179, 87, 1), 0 0 7px rgba(218, 179, 87, 0.8), 0 0 13px rgba(218, 179, 87, 0.6);
+	}
+}
+
+@-moz-keyframes glowing-box-highlighted {
+	0% {
+		box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 5px rgba(218, 179, 87, 1), 0 0 7px rgba(218, 179, 87, 0.8), 0 0 13px rgba(218, 179, 87, 0.6);
+	}
+	50% {
+		box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 10px rgba(218, 179, 87, 1), 0 0 8px rgba(255, 128, 0, 0.5), 0 0 18px rgba(255, 255, 0, 0.4), 0 0 22px rgba(218, 179, 87, 0.9), 0 0 33px rgba(218, 179, 87, 0.8);
+	}
+	100% {
+		box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 5px rgba(218, 179, 87, 1), 0 0 7px rgba(218, 179, 87, 0.8), 0 0 13px rgba(218, 179, 87, 0.6);
+	}
+}
+
+@keyframes glowing-box-highlighted {
+	0% {
+		box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 5px rgba(218, 179, 87, 1), 0 0 7px rgba(218, 179, 87, 0.8), 0 0 13px rgba(218, 179, 87, 0.6);
+	}
+	50% {
+		box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 10px rgba(218, 179, 87, 1), 0 0 8px rgba(255, 128, 0, 0.5), 0 0 18px rgba(255, 255, 0, 0.4), 0 0 22px rgba(218, 179, 87, 0.9), 0 0 33px rgba(218, 179, 87, 0.8);
+	}
+	100% {
+		box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 5px rgba(218, 179, 87, 1), 0 0 7px rgba(218, 179, 87, 0.8), 0 0 13px rgba(218, 179, 87, 0.6);
+	}
+}
+
 @-webkit-keyframes flipRight {
     0% {
         -webkit-transform: perspective(400px) rotateY(0deg);
@@ -2649,9 +2824,10 @@ li.card-slot {
     margin: 10px 0 0 -100px;
     position: relative;
     width: 200px;
+	font-family: 'Fredericka The Great';
 }
 #phase-1-overlay #replenish_gold_summary { position: relative; }
-#phase-1-overlay #replenish_gold_summary .diff {
+.diff {
 	left: 50%;
     margin: 0 0 0 -75px;
     padding: 0;
@@ -2662,6 +2838,9 @@ li.card-slot {
     width: 150px;
 	font-weight: normal;
 }
-#phase-1-overlay #replenish_gold_summary .diff.positive:before { content: '+'; }
-#phase-1-overlay #replenish_gold_summary .diff.negative { color: darkred; }
-#phase-1-overlay #replenish_gold_summary .diff.negative:before { content: '-'; }
+.diff.positive:before { content: '+'; }
+.diff.negative { color: darkred; }
+.diff.negative:before { content: '-'; }
+
+#phase-3-actions { font-size: 1em; font-family: 'Amaranth'; font-weight: normal; color: #FFF; vertical-align: middle; clear: none; display: inline-block; padding: 0 10px 0; }
+#phase-3-actions span { font-weight: bold; font-size: 1.4em; font-family: 'Fredericka The Great'; }

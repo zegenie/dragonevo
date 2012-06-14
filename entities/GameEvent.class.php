@@ -20,6 +20,8 @@
 		const TYPE_INVITATION_ACCEPTED = 'invitation_accepted';
 		const TYPE_PHASE_CHANGE = 'phase_change';
 		const TYPE_REPLENISH = 'replenish';
+		const TYPE_ATTACK = 'attack';
+		const TYPE_CARD_REMOVED = 'card_removed';
 		const TYPE_CARD_MOVED_OFF_SLOT = 'card_moved_off_slot';
 		const TYPE_CARD_MOVED_ONTO_SLOT = 'card_moved_onto_slot';
 

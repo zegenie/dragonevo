@@ -518,6 +518,11 @@
 			$this->_game_id = $game;
 		}
 
+		/**
+		 * Returns the currently assigned game
+		 *
+		 * @return Game
+		 */
 		public function getGame()
 		{
 			return $this->_b2dbLazyload('_game_id');
