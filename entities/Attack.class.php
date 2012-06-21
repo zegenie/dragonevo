@@ -983,7 +983,7 @@
 
 		protected function _stun(CreatureCard $card, Game $game)
 		{
-			if (rand(0, 100) >= rand($this->getStunPercentageMin(), $this->getStunPercentageMax())) {
+			if (rand(0, 100) <= rand($this->getStunPercentageMin(), $this->getStunPercentageMax())) {
 				$stun_duration = rand($this->getStunDurationMin(), $this->getStunDurationMax());
 				$card->stun($stun_duration);
 				$event = new GameEvent();
@@ -999,7 +999,7 @@
 
 		protected function _stealGold(Game $game)
 		{
-			if (rand(0, 100) > rand(0, $this->getStealGoldChance())) {
+			if (rand(0, 100) <= rand(0, $this->getStealGoldChance())) {
 				$gold = $game->getUserOpponentGold();
 				$player_gold = $game->getUserPlayerGold();
 				$amount = ceil(($gold / 100) * rand(0, $this->getStealGoldAmount()));
@@ -1017,7 +1017,7 @@
 		
 		protected function _stealMagic(CreatureCard $card)
 		{
-			if (rand(0, 100) > rand(0, $this->getStealMagicChance())) {
+			if (rand(0, 100) <= rand(0, $this->getStealMagicChance())) {
 				$ep = $card->getEP();
 				$player_ep = $this->getCard()->getEP();
 				$amount = ceil(($ep / 100) * rand(0, $this->getStealMagicAmount()));

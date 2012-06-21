@@ -1045,7 +1045,7 @@ Devo.Game.processGameEvents = function(events) {
 Devo.Game.processCardRemoved = function(data) {
 	var card = $('card_' + data.card_id);
 	if (card) {
-		var is_placed = card.hasClassName('placed');
+		var is_placed = (card.hasClassName('placed') || !card.hasClassName('player'));
 		var fadeclass = (card.hasClassName('player')) ? 'fadeOutDown' : 'fadeOutUp';
 
 		if (!is_placed) {
