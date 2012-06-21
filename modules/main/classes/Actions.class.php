@@ -33,7 +33,7 @@ class Actions extends \caspar\core\Actions
 
 	public function runNotFound(Request $request)
 	{
-            $this->getResponse()->setHttpStatus(404);
+		$this->getResponse()->setHttpStatus(404);
 	}
 
 	/**

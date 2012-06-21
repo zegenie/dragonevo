@@ -22,7 +22,7 @@
 
 		const FACTION_NEUTRALS = 'neutrals';
 		const FACTION_RUTAI = 'rutai';
-		const FACTION_EMPIRE = 'empire';
+		const FACTION_RESISTANCE = 'resistance';
 		const FACTION_WORLD = 'world';
 
 		const STATE_TEMPLATE = 'template';
@@ -213,7 +213,7 @@
 		{
 			return array(
 				self::FACTION_NEUTRALS => 'Highwinds',
-				self::FACTION_EMPIRE => 'Hologev',
+				self::FACTION_RESISTANCE => 'Hologev',
 				self::FACTION_RUTAI => 'Rutai',
 				self::FACTION_WORLD => 'World'
 			);
@@ -460,6 +460,10 @@
 				$property_name = "_{$field}";
 				$this->$property_name = (integer) $form_data[$field];
 			}
+			$this->_gpt_increase_opponent = 0;
+			$this->_gpt_decrease_opponent = 0;
+			$this->_gpt_increase_player = 0;
+			$this->_gpt_decrease_player = 0;
 			foreach (array('gpt') as $resource) {
 				foreach (array('player', 'opponent') as $pl) {
 					$property_name = "_{$resource}_".$form_data["{$resource}_{$pl}"]."_{$pl}";

@@ -20,5 +20,12 @@
 	 */
 	class ChatRooms extends \b2db\Table
 	{
+		
+		public function resetChatRooms() 
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('chat_rooms.id', 1, Criteria::DB_GREATER_THAN);
+			$this->doDelete($crit);
+		}
 
 	}

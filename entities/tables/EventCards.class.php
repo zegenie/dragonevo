@@ -61,4 +61,15 @@
 			}
 		}
 
+		public function resetUserCards($game_id = null)
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('event_cards.user_id', 0, Criteria::DB_NOT_EQUALS);
+			if ($game_id !== null) $crit->addWhere('event_cards.game_id', $game_id);
+			$crit->addUpdate('event_card.slot', 0);
+			$crit->addUpdate('event_card.game_id', 0);
+			$crit->addUpdate('event_card.is_in_play', false);
+			$this->doUpdate($crit);
+		}
+
 	}

@@ -301,4 +301,19 @@
 			$this->forward($this->getRouting()->generate('admin'));
 		}
 
+		public function runResetGames(Request $request)
+		{
+			\application\entities\tables\Games::getTable()->create();
+			\application\entities\tables\GameInvites::getTable()->create();
+			\application\entities\tables\GameEvents::getTable()->create();
+			\application\entities\tables\ChatRooms::getTable()->resetChatRooms();
+			\application\entities\tables\ChatLines::getTable()->resetChatLines();
+			\application\entities\tables\EventCards::getTable()->resetUserCards();
+			\application\entities\tables\CreatureCards::getTable()->resetUserCards();
+			\application\entities\tables\PotionItemCards::getTable()->resetUserCards();
+			\application\entities\tables\EquippableItemCards::getTable()->resetUserCards();
+			
+			$this->forward($this->getRouting()->generate('admin'));
+		}
+
 	}

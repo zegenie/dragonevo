@@ -69,4 +69,16 @@
 			}
 		}
 
+		public function resetUserCards($game_id = null)
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('creature_cards.user_id', 0, Criteria::DB_NOT_EQUALS);
+			if ($game_id !== null) $crit->addWhere('creature_cards.game_id', $game_id);
+			$crit->addUpdate('creature_card.slot', 0);
+			$crit->addUpdate('creature_card.game_id', 0);
+			$crit->addUpdate('creature_card.is_in_play', false);
+			$crit->addUpdate('creature_card.stunned_turn', 0);
+			$this->doUpdate($crit);
+		}
+
 	}

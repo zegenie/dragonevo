@@ -46,6 +46,11 @@
 				<label for="card_restores_health_percentage">Restore HP</label>
 				Restores <input type="text" name="restores_health_percentage" class="points" id="card_restores_health_percentage" value="<?php echo $card->getRestoresHealthPercentage(); ?>">% of the character's max HP
 			</div>
+			<legend>Energy restoration details</legend>
+			<div>
+				<label for="card_restores_health_percentage">Restore EP</label>
+				Restores <input type="text" name="restores_energy_percentage" class="points" id="card_restores_energy_percentage" value="<?php echo $card->getRestoresEnergyPercentage(); ?>">% of the character's max EP
+			</div>
 		</fieldset>
 		<fieldset id="properties_<?php echo ItemCard::CLASS_POTION_ALTERATION; ?>"<?php if ($card->getPotionType() != ItemCard::CLASS_POTION_ALTERATION): ?> style="display: none;"<?php endif; ?>>
 			<legend>Boost effect</legend>

@@ -16,6 +16,19 @@
 	<?php endif; ?>
 <?php endif; ?>
 <br>
+<?php if ($attack->canStun()): ?>
+	<?php if ($attack->hasStunPercentageRange()): ?>
+		+ <?php echo $attack->getStunPercentageMin() . '-' . $attack->getStunPercentageMax(); ?>% chance of stunning the opponent
+	<?php else: ?>
+		+ <?php echo $attack->getStunPercentageMin(); ?>% chance of stunning the opponent
+	<?php endif; ?>
+	<?php if ($attack->hasStunDurationRange()): ?>
+		for <?php echo $attack->getStunDurationMin() . '-' . $attack->getStunDurationMax(); ?> round(s)
+	<?php else: ?>
+		for <?php echo $attack->getStunDurationMin(); ?> round(s)
+	<?php endif; ?>
+	<br>
+<?php endif; ?>
 <?php if ($attack->isUnblockable()): ?>
 	<div class="attack_unblockable">This attack cannot be blocked!</div>
 <?php endif; ?>

@@ -13,7 +13,10 @@
 
 		public function getCardByUniqueId($unique_id)
 		{
-			list ($type, $card_id) = explode('_', $unique_id);
+			$delimiter = strrpos($unique_id, '_');
+			$type = substr($unique_id, 0, $delimiter);
+			$card_id = substr($unique_id, $delimiter + 1);
+
 			switch ($type) {
 				case Card::TYPE_EVENT:
 					$card = new \application\entities\EventCard($card_id);

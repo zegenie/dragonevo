@@ -20,6 +20,13 @@
 			return $this->selectOne($crit);
 		}
 
+		public function getLoggedInUsers()
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('users.lastseen', time() - 900, \b2db\Criteria::DB_GREATER_THAN_EQUAL);
+			return $this->select($crit);
+		}
+
 		public function getNumberOfRegisteredUsers()
 		{
 			$crit = $this->getCriteria();

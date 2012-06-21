@@ -162,6 +162,14 @@
 		 */
 		protected $_user_dmp = 1;
 
+		/**
+		 * Until which turn a card is stunned
+		 *
+		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
+		 */
+		protected $_stunned_turn = 0;
+
 		public static function getCreatureClasses()
 		{
 			return array(
@@ -208,6 +216,11 @@
 		public function setInGameHealth($in_game_health)
 		{
 			$this->_in_game_health = (int) $in_game_health;
+		}
+
+		public function setInGameHP($hp)
+		{
+			$this->setInGameHealth($hp);
 		}
 
 		public function removeHP($dmg)
@@ -290,6 +303,26 @@
 		public function getCreatureClass()
 		{
 			return $this->_creature_class;
+		}
+
+		public function getCreatureClassKey()
+		{
+			switch ($this->getCreatureClass()) {
+				case self::CLASS_ANIMAL:
+					return 'animal';
+				case self::CLASS_CIVILIAN:
+					return 'civilian';
+				case self::CLASS_MAGIC:
+					return 'magic';
+				case self::CLASS_MILITARY:
+					return 'military';
+				case self::CLASS_MYTHICAL_ANIMAL:
+					return 'mythical_animal';
+				case self::CLASS_PHYSICAL:
+					return 'physical';
+				case self::CLASS_RANGED:
+					return 'ranged';
+			}
 		}
 
 		public function setCreatureClass($creature_class)
@@ -397,6 +430,51 @@
 				$this->_in_game_health = $this->_base_health;
 				$this->_in_game_ep = $this->_base_ep;
 			}
+		}
+
+		public function getStunnedTurnNumber()
+		{
+			return $this->_stunned_turn;
+		}
+
+		public function isStunned()
+		{
+			return ($this->getGame() instanceof Game && $this->_stunned_turn && $this->_stunned_turn > $this->getGame()->getTurnNumber());
+		}
+
+		public function stun($turns, $stun_self = false)
+		{
+			// Multiply it by 2 since we add 1 turn every player end turn
+			$turns *= 2;
+			if ($this->_stunned_turn == 0) {
+				$this->_stunned_turn = $this->getGame()->getTurnNumber() + $turns;
+			} else {
+				$this->_stunned_turn += $turns;
+			}
+
+			// Add one to add up to other players turn
+			if (!$stun_self) $this->_stunned_turn++;
+		}
+
+		public function clearStun()
+		{
+			$this->_stunned_turn = 0;
+		}
+
+		public function getPowerupCards()
+		{
+			$powerup_cards = array();
+			if ($this->getGame()->getPlayer()->getId() == $this->getUser()->getId()) {
+				$card_1 = $this->getGame()->getPlayerCardSlotPowerup1($this->getSlot());
+				$card_2 = $this->getGame()->getPlayerCardSlotPowerup2($this->getSlot());
+			} else {
+				$card_1 = $this->getGame()->getOpponentCardSlotPowerup1($this->getSlot());
+				$card_2 = $this->getGame()->getOpponentCardSlotPowerup2($this->getSlot());
+			}
+			if ($card_1 instanceof EquippableItemCard) $powerup_cards[$card_1->getUniqueId()] = $card_1;
+			if ($card_2 instanceof EquippableItemCard) $powerup_cards[$card_2->getUniqueId()] = $card_2;
+
+			return $powerup_cards;
 		}
 
 	}

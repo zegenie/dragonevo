@@ -1,6 +1,8 @@
 <?php if ($card instanceof application\entities\Card): ?>
 	<?php $card_id = $card->getUniqueId(); ?>
-	<div draggable="true" class="card <?php
+	<div draggable="true" 
+		 class="card <?php
+
 			switch ($card->getCardType()) {
 				case application\entities\Card::TYPE_CREATURE:
 					echo 'creature';
@@ -15,10 +17,24 @@
 					echo 'equippable_item item';
 					break;
 			}
-		?> <?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE) echo $card->getFaction(); ?><?php if (isset($mode)) echo " $mode"; ?><?php if($card->isOwned() && $card->getUser()->getId() == $csp_user->getId()) echo ' player'; ?><?php if (isset($selected) && $selected) echo " selected"; ?><?php if ($card->getSlot() != 0 && $card->isInPlay()) echo ' placed'; ?><?php if ($card->getSlot() != 0 && !$card->isInPlay() && $card->isOwned() && $card->getUser()->getId() != $csp_user->getId() && ((!isset($mode) || $mode != 'flipped'))) echo ' flipped'; ?>" id="card_<?php echo $card_id; ?>" data-card-id="<?php echo $card_id; ?>" <?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE): ?> data-ep="<?php echo $card->getEP(); ?>" data-hp="<?php echo $card->getHP(); ?>"<?php endif; ?>>
-		<?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE && $card->getGPTIncreasePlayer()): ?>
+
+		?> <?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE) echo $card->getFaction() . ' class-' . $card->getCreatureClassKey(); ?><?php if (isset($mode)) echo " $mode"; ?><?php if($card->isOwned() && $card->getUser()->getId() == $csp_user->getId()) echo ' player'; ?><?php if (isset($selected) && $selected) echo " selected"; ?><?php if ($card->getSlot() != 0 && $card->isInPlay()) echo ' placed'; ?><?php if ($card->getSlot() != 0 && !$card->isInPlay() && $card->isOwned() && $card->getUser()->getId() != $csp_user->getId() && ((!isset($mode) || $mode != 'flipped'))) echo ' flipped'; ?><?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE && $card->isStunned()) echo ' stunned'; ?>"
+		 id="card_<?php echo $card_id; ?>"
+		 data-card-id="<?php echo $card_id; ?>"
+		 <?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE): ?>
+			 data-ep="<?php echo $card->getEP(); ?>"
+			 data-hp="<?php echo $card->getHP(); ?>"
+		 <?php elseif ($card->getCardType() == application\entities\Card::TYPE_EQUIPPABLE_ITEM): ?>
+			 <?php if ($card->isEquippableByCivilianCards()): ?> data-equippable-by-civilian="true"<?php endif; ?>
+			 <?php if ($card->isEquippableByMagicCards()): ?> data-equippable-by-magic="true"<?php endif; ?>
+			 <?php if ($card->isEquippableByMilitaryCards()): ?> data-equippable-by-military="true"<?php endif; ?>
+			 <?php if ($card->isEquippableByPhysicalCards()): ?> data-equippable-by-physical="true"<?php endif; ?>
+			 <?php if ($card->isEquippableByRangedCards()): ?> data-equippable-by-ranged="true"<?php endif; ?>
+		 <?php endif; ?>
+	>
+		<?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE && $card->getGPTPlayerModifier()): ?>
 			<div class="gold_increase">
-				<span>+</span><?php echo $card->getGPTIncreasePlayer(); ?>
+				<span><?php echo ($card->getGPTDecreasePlayer()) ? '-' : '+'; ?></span><?php echo $card->getGPTPlayerModifier(); ?>
 			</div>
 		<?php endif; ?>
 		<div class="name" id="card_<?php echo $card_id; ?>_name"><?php echo strtoupper($card->getName()); ?></div>
@@ -37,8 +53,29 @@
 		<?php endif; ?>
 		<?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE): ?>
 			<div class="hp"><?php echo $card->getHP(); ?></div>
-			<div class="ep magic"><?php echo ($card->getEP()) ? $card->getEP() : '-'; ?></div>
+			<div class="ep magic"><?php echo $card->getEP(); ?></div>
 			<div class="dmp"><div class="box"><?php echo ($card->isOwned()) ? (($card->getUserDMP()) ? $card->getUserDMP() : '-') : $card->getBaseDMP(); ?></div></div>
+			<div class="stunned_overlay"><span>Stunned!</span></div>
+		<?php endif; ?>
+		<?php if ($card->getCardType() != application\entities\Card::TYPE_CREATURE): ?>
+			<div class="description">
+				<div class="description_content">
+					<?php echo ($card->getCardType() == application\entities\Card::TYPE_CREATURE) ? $card->getBriefDescription() : $card->getLongDescription(); ?>
+				</div>
+				<?php if ($card->getCardType() != application\entities\Card::TYPE_POTION_ITEM && $card->getBriefDescription()): ?>
+					<div class="tooltip"><?php echo $card->getBriefDescription(); ?></div>
+				<?php endif; ?>
+			</div>
+			<?php if ($card->getCardType() == application\entities\Card::TYPE_EQUIPPABLE_ITEM): ?>
+				<div class="modifier_summary">
+					<?php include_template('game/cardmodifiersummary', compact('card')); ?>
+				</div>
+			<?php endif; ?>
+		<?php endif; ?>
+		<?php if ($card->getCardType() == application\entities\Card::TYPE_POTION_ITEM): ?>
+			<div class="attacks">
+				<?php include_template('game/potionattack', compact('card')); ?>
+			</div>
 		<?php endif; ?>
 		<div class="selection_indicator"><img src="/images/icon_ok.png"></div>
 	</div>

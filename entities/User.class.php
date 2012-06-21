@@ -694,8 +694,8 @@
 			$event_cards = \application\entities\tables\EventCards::getTable()->getAll();
 
 			$this->_pickCards($creature_cards, 5);
-			$this->_pickCards($potion_item_cards, 1);
-			$this->_pickCards($equippable_item_cards, 1);
+			$this->_pickCards($potion_item_cards, 4);
+			$this->_pickCards($equippable_item_cards, 2);
 			$this->_pickCards($event_cards, 1);
 			
 			$this->_populateCards();

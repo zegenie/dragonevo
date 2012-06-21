@@ -31,7 +31,6 @@
 			try {
 				$this->game = new Game($game_id);
 			} catch (\Exception $e) {
-
 			}
 		}
 
@@ -45,6 +44,11 @@
 			$this->forward($this->getRouting()->generate('home'));
 		}
 
+		public function runNoBoard(Request $request)
+		{
+			
+		}
+
 		/**
 		 * Board page
 		 *  
@@ -52,44 +56,55 @@
 		 */
 		public function runBoard(Request $request)
 		{
-			if (!$this->game->hasCards()) {
-				return $this->forward($this->getRouting()->generate('pick_cards', array('game_id' => $this->game->getId())));
+			if ($this->game instanceof Game) {
+				if (!$this->game->isGameOver() && !$this->game->hasCards()) {
+					return $this->forward($this->getRouting()->generate('pick_cards', array('game_id' => $this->game->getId())));
+				}
+				if ($this->game->isGameOver()) {
+					$this->statistics = $this->game->getStatistics($this->getUser()->getId());
+				} else {
+					$this->statistics = array('hp' => 0, 'cards' => 0);
+				}
 			}
 			$this->event_id = 0;
 		}
 
 		public function runPickCards(Request $request)
 		{
-			if ($request->isPost()) {
-				$cards = $request->getParameter('cards', array());
-				$card_types = $request->getParameter('card_types', array());
-				foreach ($cards as $card_id => $selected) {
-					if ($selected) {
-						switch ($card_types[$card_id]) {
-							case \application\entities\Card::TYPE_CREATURE:
-								$card = new \application\entities\CreatureCard($card_id);
-								break;
-							case \application\entities\Card::TYPE_EVENT:
-								$card = new \application\entities\EventCard($card_id);
-								break;
-							case \application\entities\Card::TYPE_EQUIPPABLE_ITEM:
-								$card = new \application\entities\EquippableItemCard($card_id);
-								break;
-							case \application\entities\Card::TYPE_POTION_ITEM:
-								$card = new \application\entities\PotionItemCard($card_id);
-								break;
-						}
-						if (!$card->isInGame()) {
-							$card->setGame($this->game);
-							$card->save();
+			if (!$this->game->isGameOver()) {
+				if ($request->isPost()) {
+					$cards = $request->getParameter('cards', array());
+					$card_types = $request->getParameter('card_types', array());
+					foreach ($cards as $card_id => $selected) {
+						if ($selected) {
+							switch ($card_types[$card_id]) {
+								case \application\entities\Card::TYPE_CREATURE:
+									$card = new \application\entities\CreatureCard($card_id);
+									break;
+								case \application\entities\Card::TYPE_EVENT:
+									$card = new \application\entities\EventCard($card_id);
+									break;
+								case \application\entities\Card::TYPE_EQUIPPABLE_ITEM:
+									$card = new \application\entities\EquippableItemCard($card_id);
+									break;
+								case \application\entities\Card::TYPE_POTION_ITEM:
+									$card = new \application\entities\PotionItemCard($card_id);
+									break;
+							}
+							if (!$card->isInGame()) {
+								$card->setGame($this->game);
+								$card->save();
+							}
 						}
 					}
 				}
-			}
-			if ($this->game->hasCards()) {
+				if ($this->game->hasCards()) {
+					return $this->forward($this->getRouting()->generate('board', array('game_id' => $this->game->getId())));
+				}
+				$this->cards = $this->getUser()->getCards();
+			} else {
 				return $this->forward($this->getRouting()->generate('board', array('game_id' => $this->game->getId())));
 			}
-			$this->cards = $this->getUser()->getCards();
 		}
 		
 	}

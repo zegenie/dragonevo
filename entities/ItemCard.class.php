@@ -30,7 +30,7 @@
 		 * @var integer
 		 */
 		protected $_item_class;
-		
+
 		public static function getItemClasses()
 		{
 			$classes = array(

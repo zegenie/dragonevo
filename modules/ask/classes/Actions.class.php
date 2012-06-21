@@ -47,6 +47,25 @@
 			return $this->renderJSON(compact('chat_lines'));
 		}
 
+		protected function _processChatUsers(Request $request)
+		{
+			$chat_users = array();
+			if ($this->getUser()->isAuthenticated()) {
+				foreach ($request->getParameter('rooms', array()) as $room_id) {
+					$room = new \application\entities\ChatRoom($room_id);
+					$users = array();
+					foreach ($room->getUsers() as $user) {
+						$users[$user->getId()] = array('username' => $user->getUsername(), 'user_id' => $user->getId(), 'level' => $user->getLevel());
+					}
+					$chat_users[$room_id] = array(
+						'users' => $users,
+						'count' => $room->getNumberOfUsers()
+					);
+				}
+			}
+			return $this->renderJSON(compact('chat_users'));
+		}
+
 		protected function _findQuickmatch(Request $request)
 		{
 			$user = $this->getUser();
@@ -172,8 +191,10 @@
 			if ($game->getCurrentPlayerId() == $this->getUser()->getId()) {
 				if ($game->getCurrentPhase() == \application\entities\Game::PHASE_MOVE) {
 					$slots = $request['slots'];
-					foreach ($slots as $slot_no => $card_id) {
-						$game->setUserPlayerCardSlot($slot_no, $card_id);
+					foreach ($slots as $slot_no => $slot) {
+						$game->setUserPlayerCardSlot($slot_no, $slot['card_id']);
+						$game->setUserPlayerCardSlotPowerupCard1($slot_no, $slot['powerupcard1_id']);
+						$game->setUserPlayerCardSlotPowerupCard2($slot_no, $slot['powerupcard2_id']);
 					}
 				}
 				$game->endPhase();
@@ -212,6 +233,46 @@
 			}
 		}
 
+		protected function _processPotion(Request $request)
+		{
+			$game = new \application\entities\Game($request['game_id']);
+			if ($game->getCurrentPlayerId() == $this->getUser()->getId()) {
+				if ($game->getCurrentPhase() == \application\entities\Game::PHASE_ACTION) {
+					if ($game->getCurrentPlayerActions() > 0) {
+						$potion_card = \application\entities\tables\Cards::getTable()->getCardByUniqueId($request['card_id']);
+						$card = \application\entities\tables\Cards::getTable()->getCardByUniqueId($request['attacked_card_id']);
+						$potion_card->cast($game, $card);
+						$game->save();
+						$card->save();
+						if ($potion_card->getNumberOfUses() == 0) {
+							$game->removeCard($potion_card);
+						}
+						if ($potion_card->isOneTimePotion() && $potion_card->getNumberOfUses() == 0) {
+							$potion_card->delete();
+						} else {
+							$potion_card->save();
+						}
+					} else {
+						$this->getResponse()->setHttpStatus(400);
+						return $this->renderJSON(array('error' => "You don't have any attacks left"));
+					}
+				} else {
+					$this->getResponse()->setHttpStatus(400);
+					return $this->renderJSON(array('error' => "You cannot attack during this phase"));
+				}
+				return $this->renderJSON(array('potion' => 'ok'));
+			} else {
+				$this->getResponse()->setHttpStatus(400);
+				return $this->renderJSON(array('error' => "It's not your turn"));
+			}
+		}
+
+		protected function _processGameStats(Request $request)
+		{
+			$game = new \application\entities\Game($request['game_id']);
+			return $this->renderJSON(array('stats' => $game->getStatistics($this->getUser()->getId())));
+		}
+
 		/**
 		 * Ask action
 		 *  
@@ -227,6 +288,9 @@
 					case 'chat_lines':
 						return $this->_processChatLines($request);
 						break;
+					case 'chat_users':
+						return $this->_processChatUsers($request);
+						break;
 					case 'quickmatch':
 						return $this->_processQuickmatch($request);
 						break;
@@ -235,6 +299,9 @@
 						break;
 					case 'game_data':
 						return $this->_processPollGameData($request);
+						break;
+					case 'game_stats':
+						return $this->_processGameStats($request);
 						break;
 					case 'card':
 						return $this->_processGetCard($request);
@@ -275,6 +342,9 @@
 						break;
 					case 'attack':
 						return $this->_processAttack($request);
+						break;
+					case 'potion':
+						return $this->_processPotion($request);
 						break;
 					default:
 						return $this->renderJSON(array('topic' => $request['topic']));

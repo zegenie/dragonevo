@@ -15,7 +15,7 @@
 	class UserCreatureCard extends CreatureCard
 	{
 		
-		public function generateRandomDefenceMultiplier()
+		protected function _generateRandomDefenceMultiplier()
 		{
 			$level = rand(1, 100);
 			switch (true) {
@@ -46,9 +46,21 @@
 			}
 		}
 		
+		protected function _generateRandomBaseHealth()
+		{
+			$base_hp = $this->getBaseHP();
+			$diff = ($base_hp / 100) * $this->getBaseHealthRandomness();
+			if (rand(0, 100) > 50) {
+				$this->setBaseHealth(ceil($base_hp + $diff));
+			} else {
+				$this->setBaseHealth(floor($base_hp - $diff));
+			}
+		}
+
 		public function generateUniqueDetails()
 		{
-			$this->generateRandomDefenceMultiplier();
+			$this->_generateRandomDefenceMultiplier();
+			$this->_generateRandomBaseHealth();
 			$attacks = 0;
 			foreach ($this->getOriginalCard()->getAttacks() as $attack) {
 				if (!$attack->isMandatory()) {

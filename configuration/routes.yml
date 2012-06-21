@@ -65,6 +65,11 @@ admin_reset_user_cards:
   module: admin
   action: resetusercards
 
+admin_reset_games:
+  url: /admin/reset/games
+  module: admin
+  action: resetgames
+
 admin_news:
   url: /admin/news
   module: admin

@@ -30,4 +30,27 @@
 			return $this->select($crit);
 		}
 
+		public function getStatisticsByGameId($game_id, $player_id)
+		{
+			$stats = array('hp' => 0, 'cards' => 0);
+
+			$crit = $this->getCriteria();
+			$crit->addWhere('game_events.game_id', $game_id);
+			$crit->addWhere('game_events.player_id', $player_id);
+
+			$hp_crit = clone $crit;
+			$hp_crit->addSelectionColumn('game_events.hp', 'hp', Criteria::DB_SUM);
+			if ($row = $this->doSelectOne($hp_crit)) {
+				$stats['hp'] = (int) $row->get('hp');
+			}
+
+			$card_crit = clone $crit;
+			$card_crit->addSelectionColumn('game_events.killed_card', 'cards', Criteria::DB_SUM);
+			if ($row = $this->doSelectOne($card_crit)) {
+				$stats['cards'] = (int) $row->get('cards');
+			}
+
+			return $stats;
+		}
+
 	}

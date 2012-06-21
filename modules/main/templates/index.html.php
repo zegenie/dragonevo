@@ -9,13 +9,13 @@
 <div class="content right">
 	<h1>Welcome to the Dragon Evo Universe</h1>
 	<p>
-		<strong>Dragon Evo: The Card Game</strong> is a unique online card game experience inspired by, and set in the Dragon Evo fantasy universe.
+		<strong>Dragon Evo: The Card Game</strong> lets you play through the eyes of the powerful, bloodthirsty Rutai, the scorned, resourceful Highwind, or the peaceful, welcoming Hologev. March across Tyrenir in the name of the Dragon Emperor and conquer your enemies. Regroup, rebuild, and retaliate against your oppressors to save your nation and safeguard your borders. Form alliances with other races and creatures to restore the balance of nature to ensure the Nations of Man once again can find peace and welcome the Dragons back to Erendor.
 	</p>
 	<p>
-		Build a powerful deck with countless cards and variations available. Increase your powers by levelling up cards, attacks and abilities to become a fearless adversary. Combine elements, powers and magic, and choose from a variety of strategies to achieve domination.
+		With many features found in traditional MMO’s, <strong>Dragon Evo: The Card Game</strong> lets you build powerful decks by recruiting members from an array of resources. Level up your cards, abilities, and attack options. Augment your deck with elements, magic, and powers and become a formidable adversary capable of crushing your opponent with each turn. 
 	</p>
 	<p>
-		<strong>Dragon Evo: The Card Game</strong> is unique, online trading card game - not a game of luck or dices, but one of tactics, timing and skill.
+		This is not a game where the luck and the roll of the dice will determine who wins and loses. Polish your tactics and skill and time your attacks wisely.
 	</p>
 	<div class="border-container">
 		<div class="border-overlay"></div>

@@ -21,13 +21,27 @@
 	class Games extends \b2db\Table
 	{
 
-		public function getGamesByUserId($user_id)
+		public function getGamesByUserId($user_id, $ongoing = true)
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere('games.player_id', $user_id);
+			if ($ongoing !== null) {
+				if ($ongoing) {
+					$crit->addWhere('games.state', \application\entities\Game::STATE_COMPLETED, Criteria::DB_NOT_EQUALS);
+				} else {
+					$crit->addWhere('games.state', \application\entities\Game::STATE_COMPLETED);
+				}
+			}
 			$crit->addWhere('games.opponent_id', 0, Criteria::DB_NOT_EQUALS);
 			$ctn = $crit->returnCriterion('games.opponent_id', $user_id);
 			$ctn->addWhere('games.invitation_confirmed', true);
+			if ($ongoing !== null) {
+				if ($ongoing) {
+					$ctn->addWhere('games.state', \application\entities\Game::STATE_COMPLETED, Criteria::DB_NOT_EQUALS);
+				} else {
+					$ctn->addWhere('games.state', \application\entities\Game::STATE_COMPLETED);
+				}
+			}
 			$crit->addOr($ctn);
 
 			return $this->select($crit);

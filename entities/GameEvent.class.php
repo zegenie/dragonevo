@@ -21,6 +21,12 @@
 		const TYPE_PHASE_CHANGE = 'phase_change';
 		const TYPE_REPLENISH = 'replenish';
 		const TYPE_ATTACK = 'attack';
+		const TYPE_DAMAGE = 'damage';
+		const TYPE_RESTORE_HEALTH = 'restore_health';
+		const TYPE_RESTORE_ENERGY = 'restore_energy';
+		const TYPE_STUN = 'stun';
+		const TYPE_STEAL_GOLD = 'steal_gold';
+		const TYPE_GAME_OVER = 'game_over';
 		const TYPE_CARD_REMOVED = 'card_removed';
 		const TYPE_CARD_MOVED_OFF_SLOT = 'card_moved_off_slot';
 		const TYPE_CARD_MOVED_ONTO_SLOT = 'card_moved_onto_slot';
@@ -45,6 +51,16 @@
 		protected $_game_id = '';
 
 		/**
+		 * The player who initiated the event
+		 *
+		 * @Column(type="integer", length=10)
+		 * @Relates(class="\application\entities\User")
+		 *
+		 * @var \application\entities\User
+		 */
+		protected $_player_id;
+
+		/**
 		 * @Column(type="integer", length=10)
 		 * @var integer
 		 */
@@ -59,6 +75,22 @@
 		 * @Column(type="text")
 		 */
 		protected $_event_data;
+
+		/**
+		 * Amount of hp removed
+		 *
+		 * @Column(type="integer", length=10, default=0)
+		 * @var integer
+		 */
+		protected $_hp = 0;
+
+		/**
+		 * If the attack killed a card
+		 *
+		 * @Column(type="boolean", default=false)
+		 * @var integer
+		 */
+		protected $_killed_card = false;
 
 		protected function _preSave($is_new)
 		{
@@ -85,6 +117,21 @@
 		public function setGame($game)
 		{
 			$this->_game_id = $game;
+		}
+
+		public function setPlayerId($player_id)
+		{
+			$this->_player_id = $player_id;
+		}
+
+		public function setPlayer($user)
+		{
+			$this->_player_id = $user;
+		}
+
+		public function getPlayer()
+		{
+			return $this->_b2dbLazyload('_player_id');
 		}
 
 		/**
@@ -118,6 +165,17 @@
 
 		public function setEventData($event_data)
 		{
+			if (is_array($event_data)) {
+				if (array_key_exists('player_id', $event_data)) {
+					$this->_player_id = $event_data['player_id'];
+				}
+				if ($this->getEventType() == self::TYPE_DAMAGE) {
+					if (array_key_exists('hp', $event_data)) {
+						if (array_key_exists('diff', $event_data['hp'])) $this->_hp = $event_data['hp']['diff'];
+						if (array_key_exists('to', $event_data['hp']) && $event_data['hp']['to'] == 0) $this->_killed_card = true;
+					}
+				}
+			}
 			$this->_event_data = json_encode($event_data);
 		}
 

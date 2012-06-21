@@ -7,7 +7,7 @@
 		<strong>Faction:</strong> <?php
 
 			switch ($card->getFaction()) {
-				case 'empire':
+				case 'resistance':
 					echo 'The Hologev';
 					break;
 				case 'neutrals':

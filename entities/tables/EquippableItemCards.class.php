@@ -61,4 +61,15 @@
 			}
 		}
 
+		public function resetUserCards($game_id = null)
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('equippable_item_cards.user_id', 0, Criteria::DB_NOT_EQUALS);
+			if ($game_id !== null) $crit->addWhere('equippable_item_cards.game_id', $game_id);
+			$crit->addUpdate('equippable_item_card.slot', 0);
+			$crit->addUpdate('equippable_item_card.game_id', 0);
+			$crit->addUpdate('equippable_item_card.is_in_play', false);
+			$this->doUpdate($crit);
+		}
+
 	}

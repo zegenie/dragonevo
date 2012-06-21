@@ -30,6 +30,13 @@
 			parent::_addInteger('chat_lines.room_id', 10);
 		}
 
+		public function resetChatLines() 
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('chat_lines.room_id', 1, Criteria::DB_NOT_EQUALS);
+			$this->doDelete($crit);
+		}
+
 		public function getLinesByRoomId($room_id, $since = null, $limit = null)
 		{
 			$crit = $this->getCriteria();

@@ -140,6 +140,14 @@
 		 * @var integer
 		 */
 		protected $_current_phase;
+		
+		/**
+		 * The current game turn
+		 * 
+		 * @Column(type="integer", length=10, default=1)
+		 * @var integer
+		 */
+		protected $_turn_number = 1;
 
 		/**
 		 * The current players currently available actions
@@ -191,11 +199,19 @@
 		 */
 		protected $_chatroom_id;
 
+		/**
+		 * Whether the winning player has chosen his loot
+		 *
+		 * @Column(type="boolean", default=false)
+		 * @var boolean
+		 */
+		protected $_loot_decided = false;
+
 		protected function _preSave($is_new)
 		{
 			if ($is_new && !$this->_created_at) {
 				$this->_created_at = time();
-				$this->_current_phase = 1;
+				$this->_current_phase = self::PHASE_MOVE;
 
 				$chatroom = new ChatRoom();
 				$chatroom->setUser($this->getUserPlayer());
@@ -253,7 +269,58 @@
 		{
 			$this->_name = $name;
 		}
+		
+		public function getTurnNumber()
+		{
+			return $this->_turn_number;
+		}
+		
+		public function setTurnNumber($turn_number)
+		{
+			$this->_turn_number = $turn_number;
+		}
+		
+		protected function resetUserCards()
+		{
+			\application\entities\tables\EventCards::getTable()->resetUserCards($this->getId());
+			\application\entities\tables\CreatureCards::getTable()->resetUserCards($this->getId());
+			\application\entities\tables\PotionItemCards::getTable()->resetUserCards($this->getId());
+			\application\entities\tables\EquippableItemCards::getTable()->resetUserCards($this->getId());
+		}
 
+		protected function _calculateWinningConditions()
+		{
+			$player_cards = $this->hasPlayerCardsInPlay();
+			$opponent_cards = $this->hasOpponentCardsInPlay();
+
+			if ($this->_turn_number > 2 && (!$player_cards || !$opponent_cards)) {
+				return true;
+			}
+
+			return false;
+		}
+
+		public function endTurn()
+		{
+			if (!$this->_calculateWinningConditions()) {
+				$this->_current_phase = self::PHASE_REPLENISH;
+				$this->_turn_number++;
+			} else {
+				$this->_current_phase = self::PHASE_RESOLUTION;
+				$this->_state = self::STATE_COMPLETED;
+				$this->_ended_at = time();
+				$this->resetUserCards();
+				$this->_winning_player_id = ($this->hasPlayerCardsInPlay()) ? $this->getPlayer() : $this->getOpponent();
+
+				$event = new GameEvent();
+				$event->setEventType(GameEvent::TYPE_GAME_OVER);
+				$event->setEventData(array('player_id' => $this->getCurrentPlayerId(), 'player_name' => $this->getCurrentPlayer()->getUsername(), 'winning_player_id' => $this->getWinningPlayerId()));
+				$this->addEvent($event);
+
+				$this->_current_player_id = 0;
+			}
+		}
+		
 		public function setPlayerId($player_id)
 		{
 			$this->_player_id = $player_id;
@@ -329,9 +396,27 @@
 
 		public function getPlayerCardSlot($slot)
 		{
-			foreach ($this->getPlayerCards() as $type => $cards) {
+			foreach ($this->getPlayerCards() as $cards) {
 				foreach ($cards as $card) {
-					if ($card->getSlot() == $slot) return $card;
+					if ($card->getCardType() == Card::TYPE_CREATURE && $card->getSlot() == $slot) return $card;
+				}
+			}
+		}
+
+		public function getPlayerCardSlotPowerup1($slot)
+		{
+			foreach ($this->getPlayerCards() as $cards) {
+				foreach ($cards as $card) {
+					if ($card->getCardType() == Card::TYPE_EQUIPPABLE_ITEM && $card->getSlot() == $slot && $card->isPowerupSlot1()) return $card;
+				}
+			}
+		}
+
+		public function getPlayerCardSlotPowerup2($slot)
+		{
+			foreach ($this->getPlayerCards() as $cards) {
+				foreach ($cards as $card) {
+					if ($card->getCardType() == Card::TYPE_EQUIPPABLE_ITEM && $card->getSlot() == $slot && $card->isPowerupSlot2()) return $card;
 				}
 			}
 		}
@@ -342,12 +427,35 @@
 			$this->_processCardSlotMoving($cards, $slot, $card_id);
 		}
 
+		public function setPlayerCardSlotPowerup1($slot, $card_id)
+		{
+			$cards = $this->getPlayerCards();
+			$this->_processCardSlotPowerupCard1Moving($cards, $slot, $card_id);
+		}
+
+		public function setPlayerCardSlotPowerup2($slot, $card_id)
+		{
+			$cards = $this->getPlayerCards();
+			$this->_processCardSlotPowerupCard2Moving($cards, $slot, $card_id);
+		}
+
 		public function hasPlayerCards()
 		{
 			$cards = $this->getPlayerCards();
 			return (bool) count($cards['creature']) + count($cards['potion_item']) + count($cards['equippable_item']) + count($cards['event']);
 		}
-		
+
+		public function hasPlayerCardsInPlay()
+		{
+			foreach ($this->getPlayerCards() as $cards) {
+				foreach ($cards as $card) {
+					if ($card->isInPlay()) return true;
+				}
+			}
+			
+			return false;
+		}
+
 		public function getCurrentPlayerKey()
 		{
 			return ($this->getCurrentPlayerId() == $this->getPlayer()->getId()) ? 'player' : 'opponent';
@@ -356,6 +464,11 @@
 		public function getUserCurrentPlayerKey()
 		{
 			return ($this->getCurrentPlayerId() == $this->getUserPlayer()->getId()) ? 'player' : 'opponent';
+		}
+
+		public function getStatistics($player_id)
+		{
+			return tables\GameEvents::getTable()->getStatisticsByGameId($this->getId(), $player_id);
 		}
 
 		public function getUserPlayer()
@@ -460,30 +573,108 @@
 		{
 			foreach ($this->getOpponentCards() as $type => $cards) {
 				foreach ($cards as $card) {
-					if ($card->getSlot() == $slot) return $card;
+					if ($card->getCardType() == Card::TYPE_CREATURE && $card->getSlot() == $slot) return $card;
+				}
+			}
+		}
+
+		public function getOpponentCardSlotPowerup1($slot)
+		{
+			foreach ($this->getOpponentCards() as $cards) {
+				foreach ($cards as $card) {
+					if ($card->getCardType() == Card::TYPE_EQUIPPABLE_ITEM && $card->getSlot() == $slot && $card->isPowerupSlot1()) return $card;
+				}
+			}
+		}
+
+		public function getOpponentCardSlotPowerup2($slot)
+		{
+			foreach ($this->getOpponentCards() as $cards) {
+				foreach ($cards as $card) {
+					if ($card->getCardType() == Card::TYPE_EQUIPPABLE_ITEM && $card->getSlot() == $slot && $card->isPowerupSlot2()) return $card;
 				}
 			}
 		}
 
 		protected function _processCardSlotMoving($all_cards, $slot, $card_id)
 		{
-			foreach ($all_cards as $type => $cards) {
+			foreach ($all_cards as $cards) {
 				foreach ($cards as $card) {
-					if ($card->getSlot() == $slot && $card->getUniqueId() != $card_id) {
+					if ($card->getCardType() == Card::TYPE_CREATURE && $card->getSlot() == $slot && $card->getUniqueId() != $card_id) {
 						$card->setSlot(0);
+						$card->setIsInPlay(false);
 						$event = new GameEvent();
 						$event->setEventType(GameEvent::TYPE_CARD_MOVED_OFF_SLOT);
 						$event->setEventData(array('player_id' => $this->getCurrentPlayerId(), 'player_name' => $this->getCurrentPlayer()->getUsername(), 'card_id' => $card->getUniqueId(), 'card_name' => $card->getName()));
 						$this->addEvent($event);
 					}
-					if ($card->getUniqueId() == $card_id && $card->getSlot() != $slot) {
+					if ($card->getCardType() == Card::TYPE_CREATURE && $card->getUniqueId() == $card_id && $card->getSlot() != $slot) {
+						$card->setSlot($slot);
+						$card->setIsInPlay(false);
 						$event = new GameEvent();
 						$event->setEventType(GameEvent::TYPE_CARD_MOVED_ONTO_SLOT);
 						$event->setEventData(array('player_id' => $this->getCurrentPlayerId(), 'in_play' => $card->isInPlay(), 'player_name' => $this->getCurrentPlayer()->getUsername(), 'card_id' => $card->getUniqueId(), 'card_name' => $card->getName(), 'slot' => $slot));
 						$this->addEvent($event);
-						$card->setSlot($slot);
 					}
-					if ($card->getSlot() == $slot || $card->getUniqueId() == $card_id) {
+					if ($card->getCardType() == Card::TYPE_CREATURE && ($card->getSlot() == $slot || $card->getUniqueId() == $card_id)) {
+						$card->save();
+					}
+				}
+			}
+		}
+
+		protected function _processCardSlotPowerupCard1Moving($all_cards, $slot, $card_id)
+		{
+			foreach ($all_cards as $cards) {
+				foreach ($cards as $card) {
+					if ($card->getCardType() == Card::TYPE_EQUIPPABLE_ITEM && $card->getSlot() == $slot && $card->getUniqueId() != $card_id && $card->isPowerupSlot1()) {
+						$card->setSlot(0);
+						$card->setPowerupSlot1(false);
+						$card->setIsInPlay(false);
+						$event = new GameEvent();
+						$event->setEventType(GameEvent::TYPE_CARD_MOVED_OFF_SLOT);
+						$event->setEventData(array('player_id' => $this->getCurrentPlayerId(), 'player_name' => $this->getCurrentPlayer()->getUsername(), 'card_id' => $card->getUniqueId(), 'card_name' => $card->getName()));
+						$this->addEvent($event);
+					}
+					if ($card->getCardType() == Card::TYPE_EQUIPPABLE_ITEM && $card->getUniqueId() == $card_id && $card->getSlot() != $slot) {
+						$card->setSlot($slot);
+						$card->setPowerupSlot1();
+						$card->setIsInPlay(false);
+						$event = new GameEvent();
+						$event->setEventType(GameEvent::TYPE_CARD_MOVED_ONTO_SLOT);
+						$event->setEventData(array('player_id' => $this->getCurrentPlayerId(), 'in_play' => $card->isInPlay(), 'player_name' => $this->getCurrentPlayer()->getUsername(), 'card_id' => $card->getUniqueId(), 'card_name' => $card->getName(), 'slot' => $slot));
+						$this->addEvent($event);
+					}
+					if ($card->getCardType() == Card::TYPE_EQUIPPABLE_ITEM && (($card->getSlot() == $slot && $card->isPowerupSlot1()) || $card->getUniqueId() == $card_id)) {
+						$card->save();
+					}
+				}
+			}
+		}
+
+		protected function _processCardSlotPowerupCard2Moving($all_cards, $slot, $card_id)
+		{
+			foreach ($all_cards as $cards) {
+				foreach ($cards as $card) {
+					if ($card->getCardType() == Card::TYPE_EQUIPPABLE_ITEM && $card->getSlot() == $slot && $card->getUniqueId() != $card_id && $card->isPowerupSlot2()) {
+						$card->setSlot(0);
+						$card->setPowerupSlot2(false);
+						$card->setIsInPlay(false);
+						$event = new GameEvent();
+						$event->setEventType(GameEvent::TYPE_CARD_MOVED_OFF_SLOT);
+						$event->setEventData(array('player_id' => $this->getCurrentPlayerId(), 'player_name' => $this->getCurrentPlayer()->getUsername(), 'card_id' => $card->getUniqueId(), 'card_name' => $card->getName()));
+						$this->addEvent($event);
+					}
+					if ($card->getCardType() == Card::TYPE_EQUIPPABLE_ITEM && $card->getUniqueId() == $card_id && $card->getSlot() != $slot) {
+						$card->setSlot($slot);
+						$card->setPowerupSlot2();
+						$card->setIsInPlay(false);
+						$event = new GameEvent();
+						$event->setEventType(GameEvent::TYPE_CARD_MOVED_ONTO_SLOT);
+						$event->setEventData(array('player_id' => $this->getCurrentPlayerId(), 'in_play' => $card->isInPlay(), 'player_name' => $this->getCurrentPlayer()->getUsername(), 'card_id' => $card->getUniqueId(), 'card_name' => $card->getName(), 'slot' => $slot));
+						$this->addEvent($event);
+					}
+					if ($card->getCardType() == Card::TYPE_EQUIPPABLE_ITEM && (($card->getSlot() == $slot && $card->isPowerupSlot2()) || $card->getUniqueId() == $card_id)) {
 						$card->save();
 					}
 				}
@@ -496,10 +687,33 @@
 			$this->_processCardSlotMoving($cards, $slot, $card_id);
 		}
 
+		public function setOpponentCardSlotPowerup1($slot, $card_id)
+		{
+			$cards = $this->getOpponentCards();
+			$this->_processCardSlotPowerupCard1Moving($cards, $slot, $card_id);
+		}
+
+		public function setOpponentCardSlotPowerup2($slot, $card_id)
+		{
+			$cards = $this->getOpponentCards();
+			$this->_processCardSlotPowerupCard2Moving($cards, $slot, $card_id);
+		}
+
 		public function hasOpponentCards()
 		{
 			$cards = $this->getOpponentCards();
 			return (bool) count($cards['creature']) + count($cards['potion_item']) + count($cards['equippable_item']) + count($cards['event']);
+		}
+
+		public function hasOpponentCardsInPlay()
+		{
+			foreach ($this->getOpponentCards() as $cards) {
+				foreach ($cards as $card) {
+					if ($card->isInPlay()) return true;
+				}
+			}
+
+			return false;
 		}
 
 		public function hasUserPlayerCards()
@@ -517,14 +731,44 @@
 			return ($this->getUserPlayer()->getId() == $this->getPlayer()->getId()) ? $this->getPlayerCardSlot($slot) : $this->getOpponentCardSlot($slot);
 		}
 
+		public function getUserPlayerCardSlotPowerupCard1($slot)
+		{
+			return ($this->getUserPlayer()->getId() == $this->getPlayer()->getId()) ? $this->getPlayerCardSlotPowerup1($slot) : $this->getOpponentCardSlotPowerup1($slot);
+		}
+
+		public function getUserPlayerCardSlotPowerupCard2($slot)
+		{
+			return ($this->getUserPlayer()->getId() == $this->getPlayer()->getId()) ? $this->getPlayerCardSlotPowerup2($slot) : $this->getOpponentCardSlotPowerup2($slot);
+		}
+
 		public function setUserPlayerCardSlot($slot, $card_id)
 		{
 			return ($this->getUserPlayer()->getId() == $this->getPlayer()->getId()) ? $this->setPlayerCardSlot($slot, $card_id) : $this->setOpponentCardSlot($slot, $card_id);
 		}
 
+		public function setUserPlayerCardSlotPowerupCard1($slot, $card_id)
+		{
+			return ($this->getUserPlayer()->getId() == $this->getPlayer()->getId()) ? $this->setPlayerCardSlotPowerup1($slot, $card_id) : $this->setOpponentCardSlotPowerup1($slot, $card_id);
+		}
+
+		public function setUserPlayerCardSlotPowerupCard2($slot, $card_id)
+		{
+			return ($this->getUserPlayer()->getId() == $this->getPlayer()->getId()) ? $this->setPlayerCardSlotPowerup2($slot, $card_id) : $this->setOpponentCardSlotPowerup2($slot, $card_id);
+		}
+
 		public function getUserOpponentCardSlot($slot)
 		{
 			return ($this->getUserPlayer()->getId() == $this->getPlayer()->getId()) ? $this->getOpponentCardSlot($slot) : $this->getPlayerCardSlot($slot);
+		}
+
+		public function getUserOpponentCardSlotPowerupCard1($slot)
+		{
+			return ($this->getUserPlayer()->getId() == $this->getPlayer()->getId()) ? $this->getOpponentCardSlotPowerup1($slot) : $this->getPlayerCardSlotPowerup1($slot);
+		}
+
+		public function getUserOpponentCardSlotPowerupCard2($slot)
+		{
+			return ($this->getUserPlayer()->getId() == $this->getPlayer()->getId()) ? $this->getOpponentCardSlotPowerup2($slot) : $this->getPlayerCardSlotPowerup2($slot);
 		}
 
 		public function getUserPlayerCardSlotId($slot)
@@ -533,9 +777,33 @@
 			return ($card instanceof Card) ? $card->getUniqueId() : 0;
 		}
 
+		public function getUserPlayerCardSlotPowerupCard1Id($slot)
+		{
+			$card = $this->getUserPlayerCardSlotPowerupCard1($slot);
+			return ($card instanceof Card) ? $card->getUniqueId() : 0;
+		}
+
+		public function getUserPlayerCardSlotPowerupCard2Id($slot)
+		{
+			$card = $this->getUserPlayerCardSlotPowerupCard2($slot);
+			return ($card instanceof Card) ? $card->getUniqueId() : 0;
+		}
+
 		public function getUserOpponentCardSlotId($slot)
 		{
 			$card = $this->getUserOpponentCardSlot($slot);
+			return ($card instanceof Card) ? $card->getUniqueId() : 0;
+		}
+
+		public function getUserOpponentCardSlotPowerupCard1Id($slot)
+		{
+			$card = $this->getUserOpponentCardSlotPowerupCard1($slot);
+			return ($card instanceof Card) ? $card->getUniqueId() : 0;
+		}
+
+		public function getUserOpponentCardSlotPowerupCard2Id($slot)
+		{
+			$card = $this->getUserOpponentCardSlotPowerupCard2($slot);
 			return ($card instanceof Card) ? $card->getUniqueId() : 0;
 		}
 
@@ -557,6 +825,11 @@
 		public function getChatroom()
 		{
 			return $this->_b2dbLazyload('_chatroom_id');
+		}
+
+		public function isInProgress()
+		{
+			return (bool) ($this->_state == self::STATE_ONGOING);
 		}
 
 		public function getInvitationSent()
@@ -661,8 +934,10 @@
 			foreach ($p_cards as $card_type => $cards) {
 				foreach ($cards as $card) {
 					if (!$card->isInPlay()) continue;
-					$gold += $card->getGPTIncreasePlayer();
-					$gold -= $card->getGPTDecreasePlayer();
+					if (!$card instanceof CreatureCard || !$card->isStunned()) {
+						$gold += $card->getGPTIncreasePlayer();
+						$gold -= $card->getGPTDecreasePlayer();
+					}
 					if ($card instanceof CreatureCard) {
 						$hp = $card->getInGameHealth();
 						$base_hp = $card->getBaseHealth();
@@ -676,15 +951,18 @@
 							$hp += ceil(($base_hp / 100) * rand(5, 15));
 							if ($hp > $base_hp) $hp = $base_hp;
 							$card->setInGameHealth($hp);
-							$card->save();
 						}
 						if ($ep < $base_ep) {
 							$ep += ceil(($base_ep / 100) * rand(15, 50));
 							if ($ep > $base_ep) $ep = $base_ep;
 							$card->setInGameEP($ep);
 						}
+						if ($card->getStunnedTurnNumber() && $card->getStunnedTurnNumber() <= $this->getTurnNumber()) {
+							$card->clearStun();
+							$changed = true;
+						}
 						if ($changed) {
-							$card_updates[] = array('card_id' => $card->getUniqueId(), 'hp' => $hp, 'ep' => $ep);
+							$card_updates[] = array('card_id' => $card->getUniqueId(), 'hp' => $hp, 'ep' => $ep, 'stunned' => $card->isStunned());
 							$card->save();
 						}
 					}
@@ -722,25 +1000,42 @@
 		public function endPhase()
 		{
 			$old_phase = $this->_current_phase;
-			($old_phase < self::PHASE_RESOLUTION) ? $this->_current_phase++ : $this->_current_phase = 1;
-			$event = new GameEvent();
-			$event->setEventType(GameEvent::TYPE_PHASE_CHANGE);
-			$event->setEventData(array('player_id' => $this->getCurrentPlayerId(), 'player_name' => $this->getCurrentPlayer()->getUsername(), 'old_phase' => $old_phase, 'new_phase' => $this->_current_phase));
-			$this->addEvent($event);
-			switch ($this->_current_phase) {
-				case self::PHASE_REPLENISH:
-					$this->changePlayer();
-					$this->_replenish();
-					break;
-				case self::PHASE_MOVE:
-					break;
-				case self::PHASE_ACTION:
-					$this->setCurrentPlayerActions(2);
-					break;
-				case self::PHASE_RESOLUTION:
-					$this->_resolve();
-					break;
+			if ($old_phase < self::PHASE_RESOLUTION) {
+				$this->_current_phase++;
+			} else {
+				$this->endTurn();
 			}
+
+			if (!$this->isGameOver()) {
+				$event = new GameEvent();
+				$event->setEventType(GameEvent::TYPE_PHASE_CHANGE);
+				$event->setEventData(array('player_id' => $this->getCurrentPlayerId(), 'player_name' => $this->getCurrentPlayer()->getUsername(), 'old_phase' => $old_phase, 'new_phase' => $this->_current_phase));
+				$this->addEvent($event);
+				switch ($this->_current_phase) {
+					case self::PHASE_REPLENISH:
+						$this->changePlayer();
+						$this->_replenish();
+						break;
+					case self::PHASE_MOVE:
+						break;
+					case self::PHASE_ACTION:
+						$this->setCurrentPlayerActions(2);
+						break;
+					case self::PHASE_RESOLUTION:
+						$this->_resolve();
+						break;
+				}
+			}
+		}
+
+		public function isGameOver()
+		{
+			return (bool) ($this->_state == self::STATE_COMPLETED);
+		}
+
+		public function isCompleted()
+		{
+			return $this->isGameOver();
 		}
 
 		public function getCurrentPhase()
@@ -778,14 +1073,33 @@
 
 		public function removeCard(Card $card)
 		{
+			if ($card->getCardType() == Card::TYPE_CREATURE) {
+				foreach ($card->getPowerupCards() as $c) {
+					$this->removeCard($c);
+				}
+			}
 			$card->setSlot(0);
 			$card->setIsInPlay(false);
+			if ($card->getCardType() == Card::TYPE_EQUIPPABLE_ITEM) {
+				$card->setPowerupSlot1(false);
+				$card->setPowerupSlot2(false);
+			}
 			$card->setGameId(0);
 
 			$event = new GameEvent();
 			$event->setEventType(GameEvent::TYPE_CARD_REMOVED);
 			$event->setEventData(array('player_id' => $this->getCurrentPlayerId(), 'player_name' => $this->getCurrentPlayer()->getUsername(), 'card_id' => $card->getUniqueId()));
 			$this->addEvent($event);
+		}
+
+		public function setLootDecided($decided = true)
+		{
+			$this->_loot_decided = $decided;
+		}
+
+		public function isLootDecided()
+		{
+			return (bool) $this->_loot_decided;
 		}
 
 	}

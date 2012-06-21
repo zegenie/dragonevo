@@ -6,6 +6,7 @@
 		<meta name="description" content="Dragon Evo - online action card game">
 		<meta name="keywords" content="dragonevo dragonevotcg ccg cardgame card game action">
 		<meta name="author" content="dragonevo.com">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 		<link rel="shortcut icon" href="/images/favicon.ico">
 		<title><?php echo strip_tags($csp_response->getTitle()); ?></title>
 		<link rel="shortcut icon" href="<?php print $csp_response->getFaviconURL(); ?>">
@@ -39,7 +40,7 @@
 				<span id="dragonevo_successmessage_content"></span>
 			</div>
 		</div>
-		<div id="fullpage_backdrop" class="fullpage_backdrop" style="<?php if ($csp_routing->getCurrentRouteModule() != 'game'): ?>display: none;<?php endif; ?>">
+		<div id="fullpage_backdrop" class="fullpage_backdrop" style="display: none;">
 			<div style="position: absolute; top: 45%; left: 40%; z-index: 100001; color: #FFF; font-size: 15px; font-weight: bold;" id="fullpage_backdrop_indicator">
 				<?php echo image_tag('/images/spinning_32.gif'); ?><br>
 				<?php echo __('Please wait ...'); ?>

@@ -1,17 +1,19 @@
 <?php if ($attack instanceof application\entities\Attack): ?>
 	<div class="attack <?php echo strtolower($attack_types[$attack->getAttackType()]); ?>" data-attack-id="<?php echo $attack->getId(); ?>" data-cost-gold="<?php echo $attack->getCostGold(); ?>" data-cost-ep="<?php echo $attack->getCostMagic(); ?>" id="attack_<?php echo $attack->getId(); ?>">
 		<div class="attack_name"><?php echo $attack->getName(); ?></div>
-		<div class="attack_cost">
-			<?php if ($attack->hasCostGold()): ?>
-				<div class="cost_gold"><?php echo $attack->getCostGold(); ?></div>
-			<?php endif; ?>
-			<?php if ($attack->hasCostMagic() && $attack->hasCostGold()): ?>
-				<div class="plus">+</div>
-			<?php endif; ?>
-			<?php if ($attack->hasCostMagic()): ?>
-				<div class="cost_magic"><?php echo $attack->getCostMagic(); ?></div>
-			<?php endif; ?>
-		</div>
+		<?php if ($attack->hasCostMagic() || $attack->hasCostGold()): ?>
+			<div class="attack_cost">
+				<?php if ($attack->hasCostGold()): ?>
+					<div class="cost_gold"><?php echo $attack->getCostGold(); ?></div>
+				<?php endif; ?>
+				<?php if ($attack->hasCostMagic() && $attack->hasCostGold()): ?>
+					<div class="plus">+</div>
+				<?php endif; ?>
+				<?php if ($attack->hasCostMagic()): ?>
+					<div class="cost_magic"><?php echo $attack->getCostMagic(); ?></div>
+				<?php endif; ?>
+			</div>
+		<?php endif; ?>
 		<div class="attack_impact"><?php
 		
 			if ($attack->hasAttackPointsRange()) {

@@ -832,6 +832,211 @@
 			$this->_requires_item_card_type = $request['requires_item_card_type'];
 		}
 
+		protected function _generateAttack(CreatureCard $card, $this_powerup_cards, $opponent_powerup_cards, $type = 'regular')
+		{
+			if ($type == 'regular') {
+				$dmg = rand($this->getAttackPointsMin(), $this->getAttackPointsMax());
+			} else {
+				$dmg = rand($this->getRepeatAttackPointsMin(), $this->getRepeatAttackPointsMax());
+			}
+
+			if (count($this_powerup_cards)) {
+				switch ($this->getAttackType()) {
+					case self::TYPE_AIR:
+						foreach($this_powerup_cards as $pc) {
+							if ($pc instanceof EquippableItemCard && $pc->isInPlay() && $pc->getAirAttackDamagePercentageModifier()) {
+								$dmg += floor(($dmg / 100) * $pc->getAirAttackDamagePercentageModifier());
+							}
+						}
+						break;
+					case self::TYPE_DARK:
+						foreach($this_powerup_cards as $pc) {
+							if ($pc instanceof EquippableItemCard && $pc->isInPlay() && $pc->getDarkAttackDamagePercentageModifier()) {
+								$dmg += floor(($dmg / 100) * $pc->getDarkAttackDamagePercentageModifier());
+							}
+						}
+						break;
+					case self::TYPE_EARTH:
+						foreach($this_powerup_cards as $pc) {
+							if ($pc instanceof EquippableItemCard && $pc->isInPlay() && $pc->getEarthAttackDamagePercentageModifier()) {
+								$dmg += floor(($dmg / 100) * $pc->getEarthAttackDamagePercentageModifier());
+							}
+						}
+						break;
+					case self::TYPE_FIRE:
+						foreach($this_powerup_cards as $pc) {
+							if ($pc instanceof EquippableItemCard && $pc->isInPlay() && $pc->getFireAttackDamagePercentageModifier()) {
+								$dmg += floor(($dmg / 100) * $pc->getFireAttackDamagePercentageModifier());
+							}
+						}
+						break;
+					case self::TYPE_FREEZE:
+						foreach($this_powerup_cards as $pc) {
+							if ($pc instanceof EquippableItemCard && $pc->isInPlay() && $pc->getFreezeAttackDamagePercentageModifier()) {
+								$dmg += floor(($dmg / 100) * $pc->getFreezeAttackDamagePercentageModifier());
+							}
+						}
+						break;
+					case self::TYPE_MELEE:
+						foreach($this_powerup_cards as $pc) {
+							if ($pc instanceof EquippableItemCard && $pc->isInPlay() && $pc->getMeleeAttackDamagePercentageModifier()) {
+								$dmg += floor(($dmg / 100) * $pc->getMeleeAttackDamagePercentageModifier());
+							}
+						}
+						break;
+					case self::TYPE_POISON:
+						foreach($this_powerup_cards as $pc) {
+							if ($pc instanceof EquippableItemCard && $pc->isInPlay() && $pc->getPoisonAttackDamagePercentageModifier()) {
+								$dmg += floor(($dmg / 100) * $pc->getPoisonAttackDamagePercentageModifier());
+							}
+						}
+						break;
+					case self::TYPE_RANGED:
+						foreach($this_powerup_cards as $pc) {
+							if ($pc instanceof EquippableItemCard && $pc->isInPlay() && $pc->getRangedAttackDamagePercentageModifier()) {
+								$dmg += floor(($dmg / 100) * $pc->getRangedAttackDamagePercentageModifier());
+							}
+						}
+						break;
+				}
+			}
+
+			// Reduce dmg by user dmp value
+			if (!$this->isUnblockable()) $dmg -= floor(($dmg / 100) * rand(0, $card->getUserDMP() * 10));
+			if (count($opponent_powerup_cards)) {
+				switch ($this->getAttackType()) {
+					case self::TYPE_AIR:
+						foreach($opponent_powerup_cards as $pc) {
+							if ($pc instanceof EquippableItemCard && $pc->isInPlay() && $pc->getAirAttackDmpPercentageModifier()) {
+								$dmg -= floor(($dmg / 100) * rand(0, $pc->getAirAttackDmpPercentageModifier()));
+							}
+						}
+						break;
+					case self::TYPE_DARK:
+						foreach($opponent_powerup_cards as $pc) {
+							if ($pc instanceof EquippableItemCard && $pc->isInPlay() && $pc->getDarkAttackDmpPercentageModifier()) {
+								$dmg -= floor(($dmg / 100) * rand(0, $pc->getDarkAttackDmpPercentageModifier()));
+							}
+						}
+						break;
+					case self::TYPE_EARTH:
+						foreach($opponent_powerup_cards as $pc) {
+							if ($pc instanceof EquippableItemCard && $pc->isInPlay() && $pc->getEarthAttackDmpPercentageModifier()) {
+								$dmg -= floor(($dmg / 100) * rand(0, $pc->getEarthAttackDmpPercentageModifier()));
+							}
+						}
+						break;
+					case self::TYPE_FIRE:
+						foreach($opponent_powerup_cards as $pc) {
+							if ($pc instanceof EquippableItemCard && $pc->isInPlay() && $pc->getFireAttackDmpPercentageModifier()) {
+								$dmg -= floor(($dmg / 100) * rand(0, $pc->getFireAttackDmpPercentageModifier()));
+							}
+						}
+						break;
+					case self::TYPE_FREEZE:
+						foreach($opponent_powerup_cards as $pc) {
+							if ($pc instanceof EquippableItemCard && $pc->isInPlay() && $pc->getFreezeAttackDmpPercentageModifier()) {
+								$dmg -= floor(($dmg / 100) * rand(0, $pc->getFreezeAttackDmpPercentageModifier()));
+							}
+						}
+						break;
+					case self::TYPE_MELEE:
+						foreach($opponent_powerup_cards as $pc) {
+							if ($pc instanceof EquippableItemCard && $pc->isInPlay() && $pc->getMeleeAttackDmpPercentageModifier()) {
+								$dmg -= floor(($dmg / 100) * rand(0, $pc->getMeleeAttackDmpPercentageModifier()));
+							}
+						}
+						break;
+					case self::TYPE_POISON:
+						foreach($opponent_powerup_cards as $pc) {
+							if ($pc instanceof EquippableItemCard && $pc->isInPlay() && $pc->getPoisonAttackDmpPercentageModifier()) {
+								$dmg -= floor(($dmg / 100) * rand(0, $pc->getPoisonAttackDmpPercentageModifier()));
+							}
+						}
+						break;
+					case self::TYPE_RANGED:
+						foreach($opponent_powerup_cards as $pc) {
+							if ($pc instanceof EquippableItemCard && $pc->isInPlay() && $pc->getRangedAttackDmpPercentageModifier()) {
+								$dmg -= floor(($dmg / 100) * rand(0, $pc->getRangedAttackDmpPercentageModifier()));
+							}
+						}
+						break;
+				}
+			}
+
+			$attacked_from_hp = $card->getInGameHP();
+			$card->removeHP($dmg);
+
+			$event = new GameEvent();
+			$event->setEventType(GameEvent::TYPE_DAMAGE);
+			$event->setEventData(array(
+									'player_id' => $this->getCard()->getGame()->getCurrentPlayerId(),
+									'attacking_card_id' => $this->getCard()->getUniqueId(),
+									'attacking_card_name' => $this->getCard()->getName(),
+									'attacked_card_id' => $card->getUniqueId(),
+									'attacked_card_name' => $card->getName(),
+									'attack_name' => $this->getName(),
+									'hp' => array('from' => $attacked_from_hp, 'to' => $card->getInGameHP(), 'diff' => $dmg)
+									));
+			$this->getCard()->getGame()->addEvent($event);
+		}
+
+		protected function _stun(CreatureCard $card, Game $game)
+		{
+			if (rand(0, 100) >= rand($this->getStunPercentageMin(), $this->getStunPercentageMax())) {
+				$stun_duration = rand($this->getStunDurationMin(), $this->getStunDurationMax());
+				$card->stun($stun_duration);
+				$event = new GameEvent();
+				$event->setEventType(GameEvent::TYPE_STUN);
+				$event->setEventData(array(
+										'player_id' => $game->getCurrentPlayerId(),
+										'attacked_card_id' => $card->getUniqueId(),
+										'attacked_card_name' => $card->getName()
+										));
+				$game->addEvent($event);
+			}
+		}
+
+		protected function _stealGold(Game $game)
+		{
+			if (rand(0, 100) > rand(0, $this->getStealGoldChance())) {
+				$gold = $game->getUserOpponentGold();
+				$player_gold = $game->getUserPlayerGold();
+				$amount = ceil(($gold / 100) * rand(0, $this->getStealGoldAmount()));
+				$game->setUserOpponentGold($gold - $amount);
+				$game->setUserPlayerGold($player_gold + $amount);
+				$event = new GameEvent();
+				$event->setEventType(GameEvent::TYPE_STEAL_GOLD);
+				$event->setEventData(array(
+										'player_id' => $game->getCurrentPlayerId(),
+										'amount' => array('from' => $gold, 'diff' => $amount, 'to' => $game->getUserOpponentGold())
+										));
+				$game->addEvent($event);
+			}
+		}
+		
+		protected function _stealMagic(CreatureCard $card)
+		{
+			if (rand(0, 100) > rand(0, $this->getStealMagicChance())) {
+				$ep = $card->getEP();
+				$player_ep = $this->getCard()->getEP();
+				$amount = ceil(($ep / 100) * rand(0, $this->getStealMagicAmount()));
+				$card->setInGameEP($ep - $amount);
+				$this->getCard()->setInGameEP($player_ep + $amount);
+				$event = new GameEvent();
+				$event->setEventType(GameEvent::TYPE_STEAL_MAGIC);
+				$event->setEventData(array(
+										'player_id' => $card->getCurrentPlayerId(),
+										'attacking_card_id' => $this->getCard()->getUniqueId(),
+										'attacking_card_name' => $this->getCard()->getName(),
+										'attacked_card_id' => $card->getUniqueId(),
+										'attacked_card_name' => $card->getName(),
+										'amount' => array('from' => $ep, 'diff' => $amount, 'to' => $this->getCard()->getInGameEP())
+										));
+				$card->addEvent($event);
+			}
+		}
+
 		public function perform(CreatureCard $card)
 		{
 			$game = $this->getCard()->getGame();
@@ -843,30 +1048,48 @@
 			$this->getCard()->setInGameEP($attacking_from_ep - $this->getCostMagic());
 			$game->useAction();
 
-			// Generate damage and apply damage to opponent card
-			$dmg = rand($this->getAttackPointsMin(), $this->getAttackPointsMax());
-			// Reduce dmg by user dmp value
-			$dmg -= ($dmg / 100) * rand(0, $card->getUserDMP() * 10);
-			$attacked_from_hp = $card->getInGameHP();
-			$card->removeHP($dmg);
-
 			$event = new GameEvent();
 			$event->setEventType(GameEvent::TYPE_ATTACK);
 			$event->setEventData(array(
 									'player_id' => $game->getCurrentPlayerId(),
-									'attacking_card_id' => $this->getCard()->getUniqueId(),
-									'attacked_card_id' => $card->getUniqueId(),
 									'remaining_actions' => $game->getCurrentPlayerActions(),
+									'attacking_card_id' => $this->getCard()->getUniqueId(),
+									'attacking_card_name' => $this->getCard()->getName(),
+									'attacked_card_id' => $card->getUniqueId(),
+									'attacked_card_name' => $card->getName(),
 									'cost' => array(
 												'gold' => array('from' => $attacking_from_gold, 'to' => $game->getUserPlayerGold(), 'diff' => $this->getCostGold()),
 												'ep' => array('from' => $attacking_from_ep, 'to' => $this->getCard()->getEP(), 'diff' => $this->getCostMagic())
-												),
-									'hp' => array('from' => $attacked_from_hp, 'to' => $card->getInGameHP(), 'diff' => $dmg)
+												)
 									));
 			$game->addEvent($event);
 
+			$this_powerup_cards = $this->getCard()->getPowerupCards();
+			$opponent_powerup_cards = $card->getPowerupCards();
+			$this->_generateAttack($card, $this_powerup_cards, $opponent_powerup_cards);
+			
+			if ($card->getInGameHP() > 0 && $this->isRepeatable()) {
+				$repeat_rounds = rand($this->getRepeatRoundsMin(), $this->getRepeatRoundsMax());
+				for ($cc = 1; $cc <= $repeat_rounds; $cc++) {
+					$this->_generateAttack($card, $this_powerup_cards, $opponent_powerup_cards, 'repeat');
+					if ($card->getInGameHP() == 0) break;
+				}
+			}
+
+			if ($this->canStealGold()) {
+				$this->_stealGold($game);
+			}
+
+			if ($this->canStealMagic()) {
+				$this->_stealMagic($game);
+			}
+
 			if ($card->getHP() == 0) {
 				$game->removeCard($card);
+			} else {
+				if ($this->canStun()) {
+					$this->_stun($card, $game);
+				}
 			}
 
 			return array($game, $this->getCard());

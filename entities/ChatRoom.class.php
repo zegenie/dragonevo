@@ -100,4 +100,12 @@
 			return 0;
 		}
 		
+		public function getUsers()
+		{
+			if ($this->_id == 1) {
+				return tables\Users::getTable()->getLoggedInUsers();
+			}
+			return array();
+		}
+
 	}
