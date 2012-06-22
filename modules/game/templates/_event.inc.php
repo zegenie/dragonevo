@@ -72,6 +72,40 @@
 					}
 				}
 				break;
+			case GameEvent::TYPE_CARD_MOVED_OFF_SLOT:
+				if ($is_current_player) {
+					echo "You moved {$data['card_name']} off slot {$data['slot']}";
+				} else {
+					echo "{$data['player_name']} moved {$data['card_name']} off slot {$data['slot']}";
+				}
+				break;
+			case GameEvent::TYPE_ATTACK:
+				if ($is_current_player) {
+					echo "Your {$data['attacking_card_name']} attacks {$data['attacked_card_name']}";
+				} else {
+					echo "Your {$data['attacked_card_name']} is attacked by {$data['attacking_card_name']}";
+				}
+				break;
+			case GameEvent::TYPE_STEAL_MAGIC:
+				if ($is_current_player) {
+					echo "Your {$data['attacking_card_name']} steals {$data['amount']['diff']} EP from {$data['attacked_card_name']}!";
+				} else {
+					echo "{$data['attacking_card_name']} steals {$data['amount']['diff']} EP from your {$data['attacked_card_name']}!";
+				}
+				break;
+			case GameEvent::TYPE_STEAL_GOLD:
+				if ($is_current_player) {
+					echo "Your {$data['attacking_card_name']} steals {$data['amount']['diff']} gold!";
+				} else {
+					echo "{$data['attacking_card_name']} steals {$data['amount']['diff']} gold from you!";
+				}
+				break;
+			case GameEvent::TYPE_DAMAGE:
+				echo "{$data['attacked_card_name']} loses {$data['hp']['diff']} HP";
+				break;
+			case GameEvent::TYPE_STUN:
+				echo "{$data['attacked_card_name']} is stunned for {$data['duration']} rounds!";
+				break;
 			case application\entities\GameEvent::TYPE_REPLENISH:
 				if ($is_current_player) {
 					echo "Your resources replenishes!";

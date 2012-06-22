@@ -95,7 +95,7 @@
 						<label for="attack_<?php echo $attack->getId(); ?>_rep_min">Repeat</label><input id="attack_<?php echo $attack->getId(); ?>_rep_min" type="text" name="rep_min" value="<?php echo $attack->getRepeatRoundsMin(); ?>" style="width: 25px; text-align: center;"> - <input id="attack_<?php echo $attack->getId(); ?>_rep_max" type="text" name="rep_max" value="<?php echo $attack->getRepeatRoundsMax(); ?>" style="width: 25px; text-align: center;"> times<br>
 					</div>
 					<div>
-						<label for="attack_<?php echo $attack->getId(); ?>_rep_hp_min">Repeat damage</label><input id="attack_<?php echo $attack->getId(); ?>_rep_hp_min" type="text" name="rep_hp_min" value="<?php echo $attack->getRepeatAttackPointsMin(); ?>" style="width: 25px; text-align: center;"> - <input id="attack_<?php echo $attack->getId(); ?>_rep_hp_max" type="text" name="rep_hp_max" value="<?php echo $attack->getRepeatAttackPointsMax(); ?>" style="width: 25px; text-align: center;"> AP<br>
+						<label for="attack_<?php echo $attack->getId(); ?>_rep_hp_min">Repeat damage</label><input id="attack_<?php echo $attack->getId(); ?>_rep_hp_min" type="text" name="rep_hp_min" value="<?php echo $attack->getRepeatAttackPointsMin(); ?>" style="width: 25px; text-align: center;"> - <input id="attack_<?php echo $attack->getId(); ?>_rep_hp_max" type="text" name="rep_hp_max" value="<?php echo $attack->getRepeatAttackPointsMax(); ?>" style="width: 25px; text-align: center;"> HP<br>
 					</div>
 				</div>
 				<div style="width: 380px; float: left; clear: none;">
@@ -109,6 +109,7 @@
 					</div>
 					<div>
 						<label for="attack_<?php echo $attack->getId(); ?>_hp_restored">HP restored</label><input id="attack_<?php echo $attack->getId(); ?>_hp_restored" type="text" name="hp_restored" value="<?php echo $attack->getAttackPointsRestored(); ?>" style="width: 25px; text-align: right;"> %<br>
+						<div class="faded_out" style="padding: 10px 0 0 140px;">"Vampire" effect - steals HP</div>
 					</div>
 				</div>
 			</fieldset>
@@ -134,7 +135,7 @@
 				</div>
 				<div style="width: 380px; float: left; clear: none;">
 					<div>
-						<label for="attack_<?php echo $attack->getId(); ?>_penalty_dmg">Penalty dmg</label><input id="attack_<?php echo $attack->getId(); ?>_penalty_dmg" type="text" name="penalty_dmg" value="<?php echo $attack->getPenaltyDmg(); ?>" style="width: 25px; text-align: center;"> %<br>
+						<label for="attack_<?php echo $attack->getId(); ?>_penalty_dmg">Penalty dmg</label><input id="attack_<?php echo $attack->getId(); ?>_penalty_dmg" type="text" name="penalty_dmg" value="<?php echo $attack->getPenaltyDmg(); ?>" style="width: 25px; text-align: center;"> HP<br>
 					</div>
 				</div>
 			</fieldset>

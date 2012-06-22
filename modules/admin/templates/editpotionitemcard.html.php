@@ -40,25 +40,22 @@
 	</fieldset>
 	<br style="clear: both;">
 	<div id="potion_sub_details">
-		<fieldset id="properties_<?php echo ItemCard::CLASS_POTION_HEALTH; ?>"<?php if ($card->getPotionType() != ItemCard::CLASS_POTION_HEALTH): ?> style="display: none;"<?php endif; ?>>
+		<fieldset>
 			<legend>Health restoration details</legend>
 			<div>
 				<label for="card_restores_health_percentage">Restore HP</label>
 				Restores <input type="text" name="restores_health_percentage" class="points" id="card_restores_health_percentage" value="<?php echo $card->getRestoresHealthPercentage(); ?>">% of the character's max HP
 			</div>
-			<legend>Energy restoration details</legend>
-			<div>
-				<label for="card_restores_health_percentage">Restore EP</label>
-				Restores <input type="text" name="restores_energy_percentage" class="points" id="card_restores_energy_percentage" value="<?php echo $card->getRestoresEnergyPercentage(); ?>">% of the character's max EP
-			</div>
 		</fieldset>
-		<fieldset id="properties_<?php echo ItemCard::CLASS_POTION_ALTERATION; ?>"<?php if ($card->getPotionType() != ItemCard::CLASS_POTION_ALTERATION): ?> style="display: none;"<?php endif; ?>>
-			<legend>Boost effect</legend>
-			<div>
-				<label for="card_turn_duration">Duration</label>
-				Effects lasts for <input type="text" name="turn_duration" class="points" id="card_turn_duration" value="<?php echo $card->getTurnDuration(); ?>"> turn(s)</span>
-			</div>
-			<?php include_template('admin/modifiercardform', compact('card')); ?>
+		<fieldset>
+			<legend>Effect removal</legend>
+			<?php foreach (array('air', 'dark', 'earth', 'freeze', 'fire', 'poison', 'stun') as $element): ?>
+				<div>
+					<?php $doesMethod = 'doesRemove'.ucfirst($element); ?>
+					<label for="card_removes_<?php echo $element; ?>">Removes <?php echo $element; ?> effect</label>
+					<input type="checkbox" name="removes_<?php echo $element; ?>" id="card_removes_<?php echo $element; ?>" <?php if ($card->$doesMethod()) echo ' checked'; ?>>
+				</div>
+			<?php endforeach; ?>
 		</fieldset>
 	</div>
 	<br style="clear: both;">

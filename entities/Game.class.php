@@ -569,6 +569,13 @@
 			return $this->_opponent_cards;
 		}
 
+		/**
+		 * Return user player card
+		 *
+		 * @param integer $slot
+		 *
+		 * @return CreatureCard
+		 */
 		public function getOpponentCardSlot($slot)
 		{
 			foreach ($this->getOpponentCards() as $type => $cards) {
@@ -578,6 +585,13 @@
 			}
 		}
 
+		/**
+		 * Return user player card
+		 *
+		 * @param integer $slot
+		 *
+		 * @return CreatureCard
+		 */
 		public function getOpponentCardSlotPowerup1($slot)
 		{
 			foreach ($this->getOpponentCards() as $cards) {
@@ -587,6 +601,13 @@
 			}
 		}
 
+		/**
+		 * Return user player card
+		 *
+		 * @param integer $slot
+		 *
+		 * @return CreatureCard
+		 */
 		public function getOpponentCardSlotPowerup2($slot)
 		{
 			foreach ($this->getOpponentCards() as $cards) {
@@ -726,16 +747,37 @@
 			return ($this->getUserPlayer()->getId() == $this->getPlayer()->getId()) ? $this->getPlayerCards() : $this->getOpponentCards();
 		}
 
+		/**
+		 * Return user player card
+		 *
+		 * @param integer $slot
+		 *
+		 * @return CreatureCard
+		 */
 		public function getUserPlayerCardSlot($slot)
 		{
 			return ($this->getUserPlayer()->getId() == $this->getPlayer()->getId()) ? $this->getPlayerCardSlot($slot) : $this->getOpponentCardSlot($slot);
 		}
 
+		/**
+		 * Return powerup card slot 1
+		 *
+		 * @param integer $slot
+		 *
+		 * @return EquippableItemCard
+		 */
 		public function getUserPlayerCardSlotPowerupCard1($slot)
 		{
 			return ($this->getUserPlayer()->getId() == $this->getPlayer()->getId()) ? $this->getPlayerCardSlotPowerup1($slot) : $this->getOpponentCardSlotPowerup1($slot);
 		}
 
+		/**
+		 * Return powerup card slot 2
+		 *
+		 * @param integer $slot
+		 *
+		 * @return EquippableItemCard
+		 */
 		public function getUserPlayerCardSlotPowerupCard2($slot)
 		{
 			return ($this->getUserPlayer()->getId() == $this->getPlayer()->getId()) ? $this->getPlayerCardSlotPowerup2($slot) : $this->getOpponentCardSlotPowerup2($slot);
@@ -756,16 +798,37 @@
 			return ($this->getUserPlayer()->getId() == $this->getPlayer()->getId()) ? $this->setPlayerCardSlotPowerup2($slot, $card_id) : $this->setOpponentCardSlotPowerup2($slot, $card_id);
 		}
 
+		/**
+		 * Return user player card
+		 *
+		 * @param integer $slot
+		 *
+		 * @return CreatureCard
+		 */
 		public function getUserOpponentCardSlot($slot)
 		{
 			return ($this->getUserPlayer()->getId() == $this->getPlayer()->getId()) ? $this->getOpponentCardSlot($slot) : $this->getPlayerCardSlot($slot);
 		}
 
+		/**
+		 * Return powerup card slot 1
+		 *
+		 * @param integer $slot
+		 *
+		 * @return EquippableItemCard
+		 */
 		public function getUserOpponentCardSlotPowerupCard1($slot)
 		{
 			return ($this->getUserPlayer()->getId() == $this->getPlayer()->getId()) ? $this->getOpponentCardSlotPowerup1($slot) : $this->getPlayerCardSlotPowerup1($slot);
 		}
 
+		/**
+		 * Return powerup card slot 2
+		 *
+		 * @param integer $slot
+		 *
+		 * @return EquippableItemCard
+		 */
 		public function getUserOpponentCardSlotPowerupCard2($slot)
 		{
 			return ($this->getUserPlayer()->getId() == $this->getPlayer()->getId()) ? $this->getOpponentCardSlotPowerup2($slot) : $this->getPlayerCardSlotPowerup2($slot);

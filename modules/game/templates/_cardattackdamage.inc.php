@@ -1,7 +1,15 @@
 <?php if ($attack->hasAttackPointsRange()): ?>
 	Deals <?php echo $attack->getAttackPointsMin() . '-' . $attack->getAttackPointsMax(); ?> HP damage
-<?php else: ?>
+<?php elseif ($attack->getAttackPointsMin()): ?>
 	Deals <?php echo $attack->getAttackPointsMin(); ?> HP damage
+<?php elseif ($attack->isBonusAttack()): ?>
+	<?php if ($attack->doesRegenerateHP()): ?>
+		(Re-)generates <?php echo $attack->getGenerateHpAmount(); ?>% HP
+	<?php elseif ($attack->doesRegenerateEP()): ?>
+		(Re-)generates <?php echo $attack->getGenerateMagicAmount(); ?> EP
+	<?php elseif ($attack->doesGenerateGold()): ?>
+		Generates <?php echo $attack->getGenerateGoldAmount(); ?> gold
+	<?php endif; ?>
 <?php endif; ?>
 <?php if ($attack->isRepeatable()): ?>
 	<?php if ($attack->hasRepeatAttackPointsRange()): ?>

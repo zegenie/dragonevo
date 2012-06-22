@@ -2,18 +2,27 @@
 
 	namespace application\entities;
 
-	use \caspar\core\Caspar;
+	use \caspar\core\Caspar,
+		\application\entities\Attack;
 
 	/**
-	 * Dragon Evo modifier event
+	 * Dragon Evo modifier effect
 	 *
 	 * @package dragonevo
 	 * @subpackage core
 	 *
-	 * @Table(name="\application\entities\tables\ModifierEvents")
+	 * @Table(name="\application\entities\tables\ModifierEffects")
 	 */
-	class ModifierEvent extends \b2db\Saveable
+	class ModifierEffect extends \b2db\Saveable
 	{
+
+		const TYPE_AIR = 1;
+		const TYPE_DARK = 2;
+		const TYPE_EARTH = 3;
+		const TYPE_FIRE = 4;
+		const TYPE_FREEZE = 5;
+		const TYPE_POISON = 6;
+		const TYPE_STUN = 7;
 
 		/**
 		 * Unique identifier
@@ -53,6 +62,22 @@
 		 * @var \application\entities\CreatureCard
 		 */
 		protected $_card_id;
+
+		/**
+		 * Attack type
+		 *
+		 * @Column(type="integer", length=5)
+		 * @var integer
+		 */
+		protected $_effect_type;
+
+		/**
+		 * Attack HP damage (%)
+		 *
+		 * @Column(type="integer", length=5)
+		 * @var integer
+		 */
+		protected $_attack_points_percentage;
 
 		/**
 		 * Which turn number the modifier event is valid until
@@ -459,6 +484,16 @@
 		public function setCardId($card_id)
 		{
 			$this->_card_id = $card_id;
+		}
+
+		public function getEffectType()
+		{
+			return $this->_effect_type;
+		}
+
+		public function setEffectType($effect_type)
+		{
+			$this->_effect_type = $effect_type;
 		}
 
 		public function getIncreasesBasicAttackHitPercentage()
@@ -1136,12 +1171,58 @@
 			return $this->getIncreasesRangedAttackDmpPercentage() + $this->getDecreasesRangedAttackDmpPercentage();
 		}
 
+		public function setAttackPointsPercentage($percentage)
+		{
+			$this->_attack_points_percentage = $percentage;
+		}
+
+		public function getAttackPointsPercentage()
+		{
+			return $this->_attack_points_percentage;
+		}
+
 		public function isValid()
 		{
 			return ($this->getGame() instanceof Game && $this->_duration_turn && $this->_duration_turn > $this->getGame()->getTurnNumber());
 		}
 
-		public function apply($turns, $applies_to_self = true)
+		protected function _applyRandomValue($random_value)
+		{
+			$this->_decreases_air_attack_damage_percentage = $random_value;
+			$this->_decreases_basic_attack_damage_percentage = $random_value;
+			$this->_decreases_dark_attack_damage_percentage = $random_value;
+			$this->_decreases_earth_attack_damage_percentage = $random_value;
+			$this->_decreases_fire_attack_damage_percentage = $random_value;
+			$this->_decreases_freeze_attack_damage_percentage = $random_value;
+			$this->_decreases_melee_attack_damage_percentage = $random_value;
+			$this->_decreases_poison_attack_damage_percentage = $random_value;
+			$this->_decreases_ranged_attack_damage_percentage = $random_value;
+		}
+
+		protected function _generateEffectDetails($percentage)
+		{
+			switch ($this->_effect_type) {
+				case self::TYPE_AIR:
+					$this->_attack_points_percentage = $percentage;
+					break;
+				case self::TYPE_DARK:
+				case self::TYPE_POISON:
+					$this->_attack_points_percentage = $percentage;
+					$this->_applyRandomValue(rand(10, 50));
+					break;
+				case self::TYPE_EARTH:
+					break;
+				case self::TYPE_FIRE:
+					break;
+				case self::TYPE_FREEZE:
+					break;
+				case self::TYPE_STUN:
+					break;
+					break;
+			}
+		}
+
+		public function apply($turns, $percentage, $applies_to_self = false)
 		{
 			// Multiply it by 2 since we add 1 turn every player end turn
 			$turns *= 2;
@@ -1153,6 +1234,8 @@
 
 			// Add one to add up to other players turn
 			if (!$applies_to_self) $this->_duration_turn++;
+
+			$this->_generateEffectDetails($percentage);
 		}
 
 	}

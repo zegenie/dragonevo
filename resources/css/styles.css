@@ -1578,14 +1578,14 @@ li.card {
 .card.potion_item .attacks .attack .attack_impact {
 	left: 0;
 }
-.card.potion_item .attacks .attack .attack_impact.health {
+.card.potion_item .attacks .attack .attack_impact.health, .card .attacks .attack .attack_impact.bonus_health {
 	color: olivedrab;
 }
-.card.potion_item .attacks .attack .attack_impact.health {
-	color: olivedrab;
-}
-.card.potion_item .attacks .attack .attack_impact.energy {
+.card.potion_item .attacks .attack .attack_impact.energy, .card .attacks .attack .attack_impact.bonus_ep {
 	color: royalblue;
+}
+.card.potion_item .attacks .attack .attack_impact.energy, .card .attacks .attack .attack_impact.bonus_gold {
+	color: #BF7F00;
 }
 .card.medium .attacks .attack .attack_impact {
 	bottom: 0;
@@ -1701,11 +1701,11 @@ li.card {
 	opacity: 1;
 	visibility: visible;
 	overflow: visible;
-	-webkit-transition: opacity 0.7s ease, visibility 0.7s ease 1s, bottom 0.7s ease;
-	-moz-transition: opacity 0.7s ease, visibility 0.7s ease 1s, bottom 0.7s ease;
-	-ms-transition: opacity 0.7s ease, visibility 0.7s ease 1s, bottom 0.7s ease;
-	-o-transition: opacity 0.7s ease, visibility 0.7s ease 1s, bottom 0.7s ease;
-	transition: opacity 0.7s ease, visibility 0.7s ease 1s, bottom 0.7s ease;
+	-webkit-transition: opacity 0.7s ease 1s, visibility 0.7s ease 1s, bottom 0.7s ease 0.9s;
+	-moz-transition: opacity 0.7s ease 1s, visibility 0.7s ease 1s, bottom 0.7s ease 0.9s;
+	-ms-transition: opacity 0.7s ease 1s, visibility 0.7s ease 1s, bottom 0.7s ease 0.9s;
+	-o-transition: opacity 0.7s ease 1s, visibility 0.7s ease 1s, bottom 0.7s ease 0.9s;
+	transition: opacity 0.7s ease 1s, visibility 0.7s ease 1s, bottom 0.7s ease 0.9s;
 }
 *:hover > .tooltip.from-above, *:active > .tooltip.from-above {
 	bottom: auto;
@@ -1860,7 +1860,17 @@ li.card {
 .card.medium .ep .diff {
 	font-size: 2em;
 }
-.card.restore_properties {
+.card.bonus_defence {
+	-webkit-animation-name: glowing-hp;
+	-moz-animation-name: glowing-hp;
+	animation-name: glowing-hp;
+}
+.card.bonus_attack {
+	-webkit-animation-name: glowing-ep;
+	-moz-animation-name: glowing-ep;
+	animation-name: glowing-ep;
+}
+.card.bonus_active, .card.restore_properties {
 	-webkit-transform: scale(1.1);
 	-moz-transform: scale(1.1);
 	-ms-transform: scale(1.1);
@@ -2282,6 +2292,21 @@ li.card-slot {
 	animation-iteration-count: infinite;
 	animation-timing-function: linear;
 }
+#last-event {
+	font-family: 'Open Sans';
+	width: 400px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	font-size: 0.7em;
+	font-weight: normal;
+	text-shadow: none;
+	color: rgba(255, 255, 255, 0.8);
+	text-align: left;
+	position: absolute;
+	left: 10px;
+	top: 60px;
+}
 #end-phase-4-button {
 	opacity: 1;
 	-webkit-transition: opacity 0.7s ease-in-out;
@@ -2470,7 +2495,7 @@ li.card-slot {
 	transition: height 0.7s ease-in-out, box-shadow 0.7s ease-in-out;
 }
 #game_chat .chat_room_form_container { opacity: 0; }
-#game_chat:hover .chat_room, #game_chat:hover .chat_room_lines { 
+#game_chat:hover .chat_room, #game_chat:hover .chat_room_lines {
 	height: 500px;
 	-webkit-transition: height 0.7s ease-in-out;
 	-moz-transition: height 0.7s ease-in-out;
@@ -2797,6 +2822,9 @@ li.card-slot {
 }
 .chat_room_form_container img {
 	left: 637px;
+	position: absolute;
+	z-index: 100;
+	top: 5px;
 }
 .chat_room_loading {
 	position: absolute;

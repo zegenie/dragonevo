@@ -4,11 +4,18 @@
 	&nbsp;&nbsp;&ndash;&nbsp;&nbsp;<span class="attack_impact"><?php
 		
 		if ($attack->hasAttackPointsRange()) {
-			echo $attack->getAttackPointsMin() . '-' . $attack->getAttackPointsMax();
-		} else {
-			echo $attack->getAttackPointsMin();
+			echo $attack->getAttackPointsMin() . '-' . $attack->getAttackPointsMax() . 'HP';
+		} elseif ($attack->getAttackPointsMin()) {
+			echo $attack->getAttackPointsMin() . 'HP';
+		} elseif ($attack->isBonusAttack()) {
+			if ($attack->doesRegenerateHP()) {
+				echo '(Re-)generates '.$attack->getGenerateHpAmount().'% HP';
+			} elseif ($attack->doesRegenerateEP()) {
+				echo '(Re-)generates '.$attack->getGenerateMagicAmount().' EP';
+			} elseif ($attack->doesGenerateGold()) {
+				echo 'Generates '.$attack->getGenerateGoldAmount().' gold';
+			}
 		}
-		echo 'HP';
 
 		if ($attack->isRepeatable()) {
 			echo '(+';

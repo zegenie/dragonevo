@@ -66,6 +66,7 @@
 			<div id="player-<?php echo $game->getPlayer()->getId(); ?>-turn" class="animated" style="<?php if ($game->getCurrentPlayerId() != $game->getPlayer()->getId()) echo 'display: none;'; ?>"><?php echo ($csp_user->getId() == $game->getPlayer()->getId()) ? "It is your turn" : "It is {$game->getPlayer()->getUsername()}'s turn"; ?></div>
 			<div id="player-<?php echo $game->getOpponent()->getId(); ?>-turn" class="animated" style="<?php if ($game->getCurrentPlayerId() != $game->getOpponent()->getId()) echo 'display: none;'; ?>"><?php echo ($csp_user->getId() == $game->getOpponent()->getId()) ? "It is your turn" : "It is {$game->getOpponent()->getUsername()}'s turn"; ?></div>
 		</div>
+		<div id="last-event" class="animated"></div>
 		<div style="position: absolute; top: 5px; right: 5px;" class="button_group">
 			<a href="javascript:void(0);" id="toggle-hand-button" class="toggle-button button button-orange" onclick="Devo.Game.toggleHand();">Show my hand</a>
 			<a href="javascript:void(0);" id="toggle-events-button" class="toggle-button button button-orange" onclick="Devo.Game.toggleEvents();">Show events</a>

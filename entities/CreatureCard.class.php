@@ -170,6 +170,14 @@
 		 */
 		protected $_stunned_turn = 0;
 
+		/**
+		 * List of this card's attacks
+		 *
+		 * @var array|ModifierEffect
+		 * @Relates(class="\application\entities\ModifierEffect", collection=true, foreign_column="card_id")
+		 */
+		protected $_applied_effects;
+
 		public static function getCreatureClasses()
 		{
 			return array(
@@ -475,6 +483,11 @@
 			if ($card_2 instanceof EquippableItemCard) $powerup_cards[$card_2->getUniqueId()] = $card_2;
 
 			return $powerup_cards;
+		}
+
+		public function getModifierEffects()
+		{
+			return $this->_b2dbLazyLoad('_applied_effects');
 		}
 
 	}

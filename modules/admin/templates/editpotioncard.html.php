@@ -28,32 +28,29 @@
 				<option value="0"<?php if (!$card->isOneTimePotion()) echo ' selected'; ?>>No</option>
 			</select>
 			&nbsp;<span class="faded_out">If used, a one time potion is destroyed after expiration or when the game ends</span>
-		</div>
-		<div>
-			<label for="card_potion_type">Potion type</label>
-			<select name="item_class" id="card_potion_type" onchange="$('potion_sub_details').select('fieldset').each(function(element) { $(element).hide(); }); $('properties_'+$(this).getValue()).show();">
-				<?php foreach (PotionItemCard::getPotionTypes() as $type => $description): ?>
-					<option value="<?php echo $type; ?>"<?php if ($card->getPotionType() == $type) echo ' selected'; ?>><?php echo $description; ?></option>
-				<?php endforeach; ?>
-			</select>
+			<input type="hidden" name="item_class" value="<?php echo ItemCard::CLASS_POTION_HEALTH; ?>">
 		</div>
 	</fieldset>
 	<br style="clear: both;">
 	<div id="potion_sub_details">
-		<fieldset id="properties_<?php echo ItemCard::CLASS_POTION_HEALTH; ?>"<?php if ($card->getPotionType() != ItemCard::CLASS_POTION_HEALTH): ?> style="display: none;"<?php endif; ?>>
+		<fieldset>
 			<legend>Health restoration details</legend>
 			<div>
 				<label for="card_restores_health_percentage">Restore HP</label>
 				Restores <input type="text" name="restores_health_percentage" class="points" id="card_restores_health_percentage" value="<?php echo $card->getRestoresHealthPercentage(); ?>">% of the character's max HP
 			</div>
 		</fieldset>
-		<fieldset id="properties_<?php echo ItemCard::CLASS_POTION_ALTERATION; ?>"<?php if ($card->getPotionType() != ItemCard::CLASS_POTION_ALTERATION): ?> style="display: none;"<?php endif; ?>>
-			<legend>Boost effect</legend>
-			<div>
-				<label for="card_turn_duration">Duration</label>
-				Effects lasts for <input type="text" name="turn_duration" class="points" id="card_turn_duration" value="<?php echo $card->getTurnDuration(); ?>"> turn(s)</span>
-			</div>
-			<?php include_template('admin/modifiercardform', compact('card')); ?>
+		<fieldset>
+			<legend>Effect removal</legend>
+			<?php foreach (array(array('air', 'dark', 'earth', 'freeze'), array('fire', 'poison', 'stun')) as $arr): ?>
+				<div>
+					<?php foreach ($arr as $element): ?>
+						<?php $doesMethod = 'doesRemove'.ucfirst($element); ?>
+						<label for="card_removes_<?php echo $element; ?>">Removes <?php echo $element; ?> effect</label>
+						Restores <input type="checkbox" name="removes_<?php echo $element; ?>" id="card_removes_<?php echo $element; ?>" <?php if ($card->$doesMethod()) echo ' checked'; ?>>
+					<?php endforeach; ?>
+				</div>
+			<?php endforeach; ?>
 		</fieldset>
 	</div>
 	<br style="clear: both;">

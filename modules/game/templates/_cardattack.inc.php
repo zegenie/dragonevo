@@ -1,5 +1,5 @@
 <?php if ($attack instanceof application\entities\Attack): ?>
-	<div class="attack <?php echo strtolower($attack_types[$attack->getAttackType()]); ?>" data-attack-id="<?php echo $attack->getId(); ?>" data-cost-gold="<?php echo $attack->getCostGold(); ?>" data-cost-ep="<?php echo $attack->getCostMagic(); ?>" id="attack_<?php echo $attack->getId(); ?>">
+	<div class="attack <?php echo strtolower($attack_types[$attack->getAttackType()]); ?>" data-attack-id="<?php echo $attack->getId(); ?>" data-cost-gold="<?php echo $attack->getCostGold(); ?>" data-cost-ep="<?php echo $attack->getCostMagic(); ?>" <?php if ($attack->isBonusAttack()): ?>data-is-bonus-attack<?php endif; ?> id="attack_<?php echo $attack->getId(); ?>">
 		<div class="attack_name"><?php echo $attack->getName(); ?></div>
 		<?php if ($attack->hasCostMagic() || $attack->hasCostGold()): ?>
 			<div class="attack_cost">
@@ -14,14 +14,21 @@
 				<?php endif; ?>
 			</div>
 		<?php endif; ?>
-		<div class="attack_impact"><?php
+		<div class="attack_impact<?php if ($attack->isBonusAttack() && $attack->doesRegenerateHP()) echo ' bonus_health'; ?><?php if ($attack->isBonusAttack() && $attack->doesRegenerateEP()) echo ' bonus_ep'; ?><?php if ($attack->isBonusAttack() && $attack->doesGenerateGold()) echo ' bonus_gold'; ?>"><?php
 		
 			if ($attack->hasAttackPointsRange()) {
-				echo $attack->getAttackPointsMin() . '-' . $attack->getAttackPointsMax();
-			} else {
-				echo $attack->getAttackPointsMin();
+				echo $attack->getAttackPointsMin() . '-' . $attack->getAttackPointsMax() . 'HP';
+			} elseif ($attack->getAttackPointsMin()) {
+				echo $attack->getAttackPointsMin() . 'HP';
+			} elseif ($attack->isBonusAttack()) {
+				if ($attack->doesRegenerateHP()) {
+					echo '+'.$attack->getGenerateHpAmount().'% HP';
+				} elseif ($attack->doesRegenerateEP()) {
+					echo '+'.$attack->getGenerateMagicAmount().' EP';
+				} elseif ($attack->doesGenerateGold()) {
+					echo '+'.$attack->getGenerateGoldAmount().' gold';
+				}
 			}
-			echo 'HP';
 			
 			if ($attack->isRepeatable()) {
 				echo ' (+';

@@ -49,6 +49,48 @@
 		protected $_is_used = true;
 
 		/**
+		 * @Column(type="boolean", default=false)
+		 * @var boolean
+		 */
+		protected $_removes_stun = false;
+
+		/**
+		 * @Column(type="boolean", default=false)
+		 * @var boolean
+		 */
+		protected $_removes_freeze = false;
+
+		/**
+		 * @Column(type="boolean", default=false)
+		 * @var boolean
+		 */
+		protected $_removes_air = false;
+
+		/**
+		 * @Column(type="boolean", default=false)
+		 * @var boolean
+		 */
+		protected $_removes_dark = false;
+
+		/**
+		 * @Column(type="boolean", default=false)
+		 * @var boolean
+		 */
+		protected $_removes_fire = false;
+
+		/**
+		 * @Column(type="boolean", default=false)
+		 * @var boolean
+		 */
+		protected $_removes_earth = false;
+
+		/**
+		 * @Column(type="boolean", default=false)
+		 * @var boolean
+		 */
+		protected $_removes_poison = false;
+
+		/**
 		 * @Column(type="integer", length=10, default=0)
 		 * @var integer
 		 */
@@ -131,6 +173,76 @@
 			$this->_restores_energy_percentage = $restores_energy_percentage;
 		}
 
+		public function setRemovesStun($removes = true)
+		{
+			$this->_removes_stun = $removes;
+		}
+
+		public function doesRemoveStun()
+		{
+			return $this->_removes_stun;
+		}
+
+		public function setRemovesFreeze($removes = true)
+		{
+			$this->_removes_freeze = $removes;
+		}
+
+		public function doesRemoveFreeze()
+		{
+			return $this->_removes_freeze;
+		}
+
+		public function setRemovesAir($removes = true)
+		{
+			$this->_removes_air = $removes;
+		}
+
+		public function doesRemoveAir()
+		{
+			return $this->_removes_air;
+		}
+
+		public function setRemovesDark($removes = true)
+		{
+			$this->_removes_dark = $removes;
+		}
+
+		public function doesRemoveDark()
+		{
+			return $this->_removes_dark;
+		}
+
+		public function setRemovesEarth($removes = true)
+		{
+			$this->_removes_earth = $removes;
+		}
+
+		public function doesRemoveEarth()
+		{
+			return $this->_removes_earth;
+		}
+
+		public function setRemovesFire($removes = true)
+		{
+			$this->_removes_fire = $removes;
+		}
+
+		public function doesRemoveFire()
+		{
+			return $this->_removes_fire;
+		}
+
+		public function setRemovesPoison($removes = true)
+		{
+			$this->_removes_poison = $removes;
+		}
+
+		public function doesRemovePoison()
+		{
+			return $this->_removes_poison;
+		}
+
 		public function getPotionType()
 		{
 			return $this->getItemClass();
@@ -147,13 +259,15 @@
 			$this->setPotionType($form_data['item_class']);
 			$this->_is_one_time_potion = (bool) $form_data['is_one_time_potion'];
 			$this->_number_of_uses = (bool) $form_data['number_of_uses'];
-			if ($this->getPotionType() == ItemCard::CLASS_POTION_ALTERATION) {
-				$this->_turn_duration = $form_data['turn_duration'];
-			}
-			elseif ($this->getPotionType() == ItemCard::CLASS_POTION_HEALTH) {
-				$this->_restores_health_percentage = $form_data['restores_health_percentage'];
-				$this->_restores_energy_percentage = $form_data['restores_energy_percentage'];
-			}
+			$this->_restores_health_percentage = $form_data['restores_health_percentage'];
+			$this->_restores_energy_percentage = $form_data['restores_energy_percentage'];
+			$this->_removes_air = (bool) $form_data['removes_air'];
+			$this->_removes_dark = (bool) $form_data['removes_dark'];
+			$this->_removes_earth = (bool) $form_data['removes_earth'];
+			$this->_removes_fire =(bool)  $form_data['removes_fire'];
+			$this->_removes_freeze = (bool) $form_data['removes_freeze'];
+			$this->_removes_poison = (bool) $form_data['removes_poison'];
+			$this->_removes_stun = (bool) $form_data['removes_stun'];
 		}
 
 		public function cast(Game $game, CreatureCard $card)
