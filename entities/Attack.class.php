@@ -384,6 +384,11 @@
 			return (int) $this->_cost_magic;
 		}
 
+		public function hasPenaltyRoundsRange()
+		{
+			return ($this->_penalty_rounds_min != $this->_penalty_rounds_max);
+		}
+
 		public function hasAttackPointsRange()
 		{
 			return ($this->_attack_points_min != $this->_attack_points_max);
@@ -860,17 +865,119 @@
 			return ($this->_generate_gold_amount > 0);
 		}
 
-		protected function _generateAttack(CreatureCard $card, $this_powerup_cards, $opponent_powerup_cards, $type = 'regular')
+		public function hasOwnPenaltyRounds()
+		{
+			return ($this->_penalty_rounds_min > 0);
+		}
+
+		protected function _generateGold(Game $game)
+		{
+			$amount = $this->getGenerateGoldAmount();
+			$player_gold = $game->getUserPlayerGold();
+			$game->setUserPlayerGold($player_gold + $amount);
+			$event = new GameEvent();
+			$event->setEventType(GameEvent::TYPE_GENERATE_GOLD);
+			$event->setEventData(array(
+									'player_id' => $game->getCurrentPlayerId(),
+									'attacking_card_id' => $this->getCard()->getUniqueId(),
+									'attacking_card_name' => $this->getCard()->getName(),
+									'attack_name' => $this->getName(),
+									'amount' => array('from' => $player_gold, 'diff' => $amount, 'to' => $game->getUserPlayerGold())
+									));
+			$game->addEvent($event);
+		}
+
+		protected function _generateAttack(CreatureCard $card, $this_powerup_cards, $opponent_powerup_cards, $type = 'regular', $percentage = 0)
 		{
 			if ($type == 'regular') {
 				$dmg = rand($this->getAttackPointsMin(), $this->getAttackPointsMax());
+			} elseif ($type == 'effect') {
+				$dmg = ceil(($card->getBaseHP() / 100) * $percentage);
 			} else {
 				$dmg = rand($this->getRepeatAttackPointsMin(), $this->getRepeatAttackPointsMax());
 			}
 
 			$bonus_cards = array();
 			$defence_bonus_cards = array();
+			$effects = $this->getCard()->getModifierEffects();
 
+			if (count($effects)) {
+				switch ($this->getAttackType()) {
+					case self::TYPE_AIR:
+						foreach($effects as $effect) {
+							if ($effect->getDecreasesAirAttackDamagePercentage()) {
+								$dmg -= floor(($dmg / 100) * rand(0, $effect->getDecreasesAirAttackDamagePercentage()));
+							} elseif ($effect->getIncreasesAirAttackDamagePercentage()) {
+								$dmg += ceil(($dmg / 100) * rand(0, $effect->getIncreasesAirAttackDamagePercentage()));
+							}
+						}
+						break;
+					case self::TYPE_DARK:
+						foreach($effects as $effect) {
+							if ($effect->getDecreasesDarkAttackDamagePercentage()) {
+								$dmg -= floor(($dmg / 100) * rand(0, $effect->getDecreasesDarkAttackDamagePercentage()));
+							} elseif ($effect->getIncreasesDarkAttackDamagePercentage()) {
+								$dmg += ceil(($dmg / 100) * rand(0, $effect->getIncreasesDarkAttackDamagePercentage()));
+							}
+						}
+						break;
+					case self::TYPE_EARTH:
+						foreach($effects as $effect) {
+							if ($effect->getDecreasesEarthAttackDamagePercentage()) {
+								$dmg -= floor(($dmg / 100) * rand(0, $effect->getDecreasesEarthAttackDamagePercentage()));
+							} elseif ($effect->getIncreasesEarthAttackDamagePercentage()) {
+								$dmg += ceil(($dmg / 100) * rand(0, $effect->getIncreasesEarthAttackDamagePercentage()));
+							}
+						}
+						break;
+					case self::TYPE_FIRE:
+						foreach($effects as $effect) {
+							if ($effect->getDecreasesFireAttackDamagePercentage()) {
+								$dmg -= floor(($dmg / 100) * rand(0, $effect->getDecreasesFireAttackDamagePercentage()));
+							} elseif ($effect->getIncreasesFireAttackDamagePercentage()) {
+								$dmg += ceil(($dmg / 100) * rand(0, $effect->getIncreasesFireAttackDamagePercentage()));
+							}
+						}
+						break;
+					case self::TYPE_FREEZE:
+						foreach($effects as $effect) {
+							if ($effect->getDecreasesFreezeAttackDamagePercentage()) {
+								$dmg -= floor(($dmg / 100) * rand(0, $effect->getDecreasesFreezeAttackDamagePercentage()));
+							} elseif ($effect->getIncreasesFreezeAttackDamagePercentage()) {
+								$dmg += ceil(($dmg / 100) * rand(0, $effect->getIncreasesFreezeAttackDamagePercentage()));
+							}
+						}
+						break;
+					case self::TYPE_MELEE:
+						foreach($effects as $effect) {
+							if ($effect->getDecreasesMeleeAttackDamagePercentage()) {
+								$dmg -= floor(($dmg / 100) * rand(0, $effect->getDecreasesMeleeAttackDamagePercentage()));
+							} elseif ($effect->getIncreasesMeleeAttackDamagePercentage()) {
+								$dmg += ceil(($dmg / 100) * rand(0, $effect->getIncreasesMeleeAttackDamagePercentage()));
+							}
+						}
+						break;
+					case self::TYPE_POISON:
+						foreach($effects as $effect) {
+							if ($effect->getDecreasesPoisonAttackDamagePercentage()) {
+								$dmg -= floor(($dmg / 100) * rand(0, $effect->getDecreasesPoisonAttackDamagePercentage()));
+							} elseif ($effect->getIncreasesPoisonAttackDamagePercentage()) {
+								$dmg += ceil(($dmg / 100) * rand(0, $effect->getIncreasesPoisonAttackDamagePercentage()));
+							}
+						}
+						break;
+					case self::TYPE_RANGED:
+						foreach($effects as $effect) {
+							if ($effect->getDecreasesRangedAttackDamagePercentage()) {
+								$dmg -= floor(($dmg / 100) * rand(0, $effect->getDecreasesRangedAttackDamagePercentage()));
+							} elseif ($effect->getIncreasesRangedAttackDamagePercentage()) {
+								$dmg += ceil(($dmg / 100) * rand(0, $effect->getIncreasesRangedAttackDamagePercentage()));
+							}
+						}
+						break;
+				}
+			}
+			
 			if (count($this_powerup_cards)) {
 				switch ($this->getAttackType()) {
 					case self::TYPE_AIR:
@@ -1011,35 +1118,40 @@
 				}
 			}
 
-			$defence_bonus_cards = array_unique($defence_bonus_cards);
-			$bonus_cards = array_unique($bonus_cards);
+			if ($dmg > 0) {
 
-			$attacked_from_hp = $card->getInGameHP();
-			$card->removeHP($dmg);
+				$defence_bonus_cards = array_unique($defence_bonus_cards);
+				$bonus_cards = array_unique($bonus_cards);
 
-			$event = new GameEvent();
-			$event->setEventType(GameEvent::TYPE_DAMAGE);
-			$event->setEventData(array(
-									'player_id' => $this->getCard()->getGame()->getCurrentPlayerId(),
-									'attacking_card_id' => $this->getCard()->getUniqueId(),
-									'attacking_card_name' => $this->getCard()->getName(),
-									'attacked_card_id' => $card->getUniqueId(),
-									'attacked_card_name' => $card->getName(),
-									'attack_name' => $this->getName(),
-									'hp' => array('from' => $attacked_from_hp, 'to' => $card->getInGameHP(), 'diff' => $dmg),
-									'bonus_cards' => $bonus_cards,
-									'defence_bonus_cards' => $defence_bonus_cards
-									));
-			$this->getCard()->getGame()->addEvent($event);
+				$attacked_from_hp = $card->getInGameHP();
+				$card->removeHP($dmg);
+
+				$event = new GameEvent();
+				$event->setEventType(GameEvent::TYPE_DAMAGE);
+				$event->setEventData(array(
+										'player_id' => $this->getCard()->getGame()->getCurrentPlayerId(),
+										'attacking_card_id' => $this->getCard()->getUniqueId(),
+										'attacking_card_name' => $this->getCard()->getName(),
+										'attacked_card_id' => $card->getUniqueId(),
+										'attacked_card_name' => $card->getName(),
+										'attack_name' => $this->getName(),
+										'hp' => array('from' => $attacked_from_hp, 'to' => $card->getInGameHP(), 'diff' => $dmg),
+										'bonus_cards' => $bonus_cards,
+										'defence_bonus_cards' => $defence_bonus_cards
+										));
+				$this->getCard()->getGame()->addEvent($event);
+			}
 		}
 
-		protected function _applyEffect(CreatureCard $card, Game $game, $type, $duration, $percentage = 0)
+		protected function _applyEffect(CreatureCard $card, Game $game, $type, $duration, $percentage = 0, $applies_to_self = false)
 		{
+			$duration = floor($duration);
+			$percentage = floor($percentage);
 			$effect = new ModifierEffect();
 			$effect->setEffectType($type);
 			$effect->setCard($card);
 			$effect->setGame($game);
-			$effect->apply($duration, $percentage);
+			$effect->apply($duration, $percentage, $applies_to_self);
 			$effect->save();
 
 			$event = new GameEvent();
@@ -1063,13 +1175,15 @@
 				$duration = rand($this->getEffectDurationMin(), $this->getEffectDurationMax());
 				$this->_applyEffect($card, $game, ModifierEffect::TYPE_AIR, $duration, $percentage);
 			}
-			$pcard_1 = null;
-			$pcard_2 = null;
+
+			if (rand(0, 100) <= 10) {
+				$this->_applyEffect($card, $game, ModifierEffect::TYPE_STUN, 1);
+			}
 
 			$pcard_1 = $game->getUserOpponentCardSlotPowerupCard1Id($card->getSlot());
 			$pcard_2 = $game->getUserOpponentCardSlotPowerupCard2Id($card->getSlot());
 				
-			if (($pcard_1 || $pcard_2) && rand(0, 100) > 15) {
+			if (($pcard_1 || $pcard_2) && rand(0, 100) <= rand(0, 20)) {
 				if ($pcard_1) $game->setUserPlayerCardSlotPowerupCard1($card->getSlot(), 0);
 				if ($pcard_2) $game->setUserPlayerCardSlotPowerupCard2($card->getSlot(), 0);
 			}
@@ -1086,18 +1200,79 @@
 
 		protected function _generateEarthEffect(CreatureCard $card, Game $game)
 		{
+			$percentage = rand($this->getEffectPercentageMin(), $this->getEffectPercentageMax());
+			$cards = array($card->getSlot());
+			switch ($card->getSlot()) {
+				case 1:
+				case 5:
+					if (rand(0, 50) <= rand(0, 50)) {
+						$cards[] = ($card->getSlot() == 1) ? 2 : 4;
+						if (rand(0, 50) <= rand(0, 50)) {
+							$cards[] = 3;
+						}
+					}
+					break;
+				case 2:
+				case 4:
+					if (rand(0, 50) <= rand(0, 50)) {
+						$cards[] = ($card->getSlot() == 2) ? 1 : 5;
+						if (rand(0, 50) <= rand(0, 50)) {
+							$cards[] = 3;
+						}
+					}
+					break;
+				case 3:
+					if (rand(0, 50) <= rand(0, 50)) {
+						$cards[] = 2;
+						if (rand(0, 50) <= rand(0, 50)) {
+							$cards[] = 4;
+						}
+					}
+					break;
+			}
+			if (rand(0, 50) <= rand(0, 50)) {
+				$powerup_cards = $this->getCard()->getPowerupCards();
+				foreach ($cards as $slot) {
+					$c = $game->getUserOpponentCardSlot($slot);
+					$this->_generateAttack($c, $powerup_cards, $c->getPowerupCards(), 'effect', ceil($percentage));
+					if ($slot == $card->getSlot()) $percentage /= 2;
+				}
+			} else {
+				$duration = rand($this->getEffectDurationMin(), $this->getEffectDurationMax());
+				foreach ($cards as $slot) {
+					$c = $game->getUserOpponentCardSlot($slot);
+					$this->_applyEffect($card, $game, ModifierEffect::TYPE_STUN, ceil($duration));
+					if ($slot == $card->getSlot()) $duration /= 2;
+				}
+			}
 		}
 
 		protected function _generateFireEffect(CreatureCard $card, Game $game)
 		{
+			$percentage = rand($this->getEffectPercentageMin(), $this->getEffectPercentageMax());
+			if ($percentage > 0) {
+				$duration = rand($this->getEffectDurationMin(), $this->getEffectDurationMax());
+				$this->_applyEffect($card, $game, ModifierEffect::TYPE_FIRE, $duration, $percentage);
+			}
 		}
 
 		protected function _generateFreezeEffect(CreatureCard $card, Game $game)
 		{
+			$freeze_duration = rand($this->getEffectDurationMin(), $this->getEffectDurationMax());
+			$percentage = rand($this->getEffectPercentageMin(), $this->getEffectPercentageMax());
+			$this->_applyEffect($card, $game, ModifierEffect::TYPE_FREEZE, $freeze_duration, $percentage);
+			
+			$stun_duration = rand($this->getEffectDurationMin(), $this->getEffectDurationMax());
+			$this->_applyEffect($card, $game, ModifierEffect::TYPE_STUN, $stun_duration);
 		}
 
 		protected function _generatePoisonEffect(CreatureCard $card, Game $game)
 		{
+			$percentage = rand($this->getEffectPercentageMin(), $this->getEffectPercentageMax());
+			if ($percentage > 0) {
+				$duration = rand($this->getEffectDurationMin(), $this->getEffectDurationMax());
+				$this->_applyEffect($card, $game, ModifierEffect::TYPE_DARK, $duration, $percentage);
+			}
 		}
 
 		protected function _stealGold(Game $game)
@@ -1142,18 +1317,27 @@
 			}
 		}
 
-		public function perform(CreatureCard $card)
+		protected function _generateOwnPenaltyRounds(Game $game)
+		{
+			$duration = rand($this->getPenaltyRoundsMin(), $this->getPenaltyRoundsMax());
+			if ($duration > 0) {
+				$this->_applyEffect($this->getCard(), $game, ModifierEffect::TYPE_STUN, $duration, 0, true);
+			}
+		}
+
+		public function perform(CreatureCard $card, $recursive = false)
 		{
 			$game = $this->getCard()->getGame();
 
-			// Apply costs
 			$attacking_from_gold = $game->getUserPlayerGold();
-			$game->setUserPlayerGold($attacking_from_gold - $this->getCostGold());
 			$attacking_from_ep = $this->getCard()->getInGameEP();
-			$this->getCard()->setInGameEP($attacking_from_ep - $this->getCostMagic());
 			$attacking_from_hp = $this->getCard()->getInGameHP();
-			$this->getCard()->setInGameHP($attacking_from_hp - floor(($attacking_from_hp / 100) * $this->getPenaltyDmg()));
-			$game->useAction();
+			if (!$recursive) {
+				$game->setUserPlayerGold($attacking_from_gold - $this->getCostGold());
+				$this->getCard()->setInGameEP($attacking_from_ep - $this->getCostMagic());
+				$this->getCard()->setInGameHP($attacking_from_hp - floor(($attacking_from_hp / 100) * $this->getPenaltyDmg()));
+				$game->useAction();
+			}
 
 			$event = new GameEvent();
 			$event->setEventType(GameEvent::TYPE_ATTACK);
@@ -1165,9 +1349,9 @@
 									'attacked_card_id' => $card->getUniqueId(),
 									'attacked_card_name' => $card->getName(),
 									'cost' => array(
-												'gold' => array('from' => $attacking_from_gold, 'to' => $game->getUserPlayerGold(), 'diff' => $this->getCostGold()),
-												'ep' => array('from' => $attacking_from_ep, 'to' => $this->getCard()->getEP(), 'diff' => $this->getCostMagic()),
-												'hp' => array('from' => $attacking_from_hp, 'to' => $this->getCard()->getHP(), 'diff' => $attacking_from_hp - $this->getCard()->getHP())
+												'gold' => array('from' => $attacking_from_gold, 'to' => (($recursive) ? $attacking_from_gold : $game->getUserPlayerGold()), 'diff' => (($recursive) ? 0 : $this->getCostGold())),
+												'ep' => array('from' => $attacking_from_ep, 'to' => (($recursive) ? $attacking_from_ep : $this->getCard()->getEP()), 'diff' => (($recursive) ? 0 : $this->getCostMagic())),
+												'hp' => array('from' => $attacking_from_hp, 'to' => (($recursive) ? $attacking_from_hp : $this->getCard()->getHP()), 'diff' => (($recursive) ? 0 : $attacking_from_hp - $this->getCard()->getHP()))
 												)
 									));
 			$game->addEvent($event);
@@ -1185,10 +1369,6 @@
 						if ($card->getInGameHP() == 0) break;
 					}
 				}
-			}
-
-			if ($this->canStealGold()) {
-				$this->_stealGold($game);
 			}
 
 			if ($this->canStealMagic()) {
@@ -1219,6 +1399,29 @@
 							$this->_generatePoisonEffect($card, $game);
 							break;
 					}
+				}
+			}
+
+			if (!$recursive && $this->doesAttackAll()) {
+				for ($cc = 1; $cc <= 5; $cc++) {
+					if ($cc == $card->getSlot()) continue;
+					if ($c = $game->getUserOpponentCardSlot($cc)) {
+						$this->perform($c, true);
+					}
+				}
+			}
+
+			if (!$recursive) {
+				if ($this->hasOwnPenaltyRounds()) {
+					$this->_generateOwnPenaltyRounds($game);
+				}
+
+				if ($this->canStealGold()) {
+					$this->_stealGold($game);
+				}
+
+				if ($this->doesGenerateGold()) {
+					$this->_generateGold($game);
 				}
 			}
 

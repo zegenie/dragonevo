@@ -19,16 +19,16 @@
 
 			switch ($type) {
 				case Card::TYPE_EVENT:
-					$card = new \application\entities\EventCard($card_id);
+					$card = \application\entities\tables\EventCards::getTable()->selectById($card_id);
 					break;
 				case Card::TYPE_CREATURE:
-					$card = new \application\entities\CreatureCard($card_id);
+					$card = \application\entities\tables\CreatureCards::getTable()->selectById($card_id);
 					break;
 				case Card::TYPE_EQUIPPABLE_ITEM:
-					$card = new \application\entities\EquippableItemCard($card_id);
+					$card = \application\entities\tables\EquippableItemCards::getTable()->selectById($card_id);
 					break;
 				case Card::TYPE_POTION_ITEM:
-					$card = new \application\entities\PotionItemCard($card_id);
+					$card = \application\entities\tables\PotionItemCards::getTable()->selectById($card_id);
 					break;
 			}
 

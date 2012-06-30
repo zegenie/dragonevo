@@ -2,7 +2,12 @@
 
 	namespace application\modules\ask;
 
-	use \caspar\core\Request;
+	use caspar\core\Request,
+		application\entities\Game,
+		application\entities\tables\Games,
+		application\entities\tables\Attacks,
+		application\entities\tables\Cards,
+		application\entities\tables\GameInvites;
 
 	/**
 	 * Actions for the market module
@@ -22,8 +27,8 @@
 			$invites = array();
 			$removed_invites = array();
 			if ($this->getUser()->isAuthenticated()) {
-				$game_invites = \application\entities\tables\GameInvites::getTable()->getInvitesByUserId($this->getUser()->getId(), $request->getParameter('invites', array()));
-				$removed_invites = \application\entities\tables\GameInvites::getTable()->getRemovedInvitesByUserId($this->getUser()->getId(), $request->getParameter('invites', array()));
+				$game_invites = GameInvites::getTable()->getInvitesByUserId($this->getUser()->getId(), $request->getParameter('invites', array()));
+				$removed_invites = GameInvites::getTable()->getRemovedInvitesByUserId($this->getUser()->getId(), $request->getParameter('invites', array()));
 				foreach ($game_invites as $invite_id => $invite) {
 					$invites[$invite_id] = array('player_name' => $invite->getFromPlayer()->getName(), 'game_id' => $invite->getGameId(), 'invite_id' => $invite->getId());
 				}
@@ -53,6 +58,7 @@
 			if ($this->getUser()->isAuthenticated()) {
 				foreach ($request->getParameter('rooms', array()) as $room_id) {
 					$room = new \application\entities\ChatRoom($room_id);
+					$room->ping($this->getUser()->getId());
 					$users = array();
 					foreach ($room->getUsers() as $user) {
 						$users[$user->getId()] = array('username' => $user->getUsername(), 'user_id' => $user->getId(), 'level' => $user->getLevel());
@@ -108,7 +114,7 @@
 		protected function _processInvite(Request $request)
 		{
 			$user_id = $request['user_id'];
-			$user = new \application\entities\User($user_id);
+			$user = \application\entities\tables\Users::getTable()->selectById($user_id);
 			$game = new \application\entities\Game();
 			$game->setPlayer($this->getUser());
 			$game->save();
@@ -151,7 +157,7 @@
 
 		protected function _processCancelGame(Request $request)
 		{
-			$game = new \application\entities\Game($request['game_id']);
+			$game = Games::getTable()->selectById($request['game_id']);
 			$game->cancel();
 			$game->delete();
 			return $this->renderJSON(array('cancelled' => 'ok', 'game_id' => $game->getId()));
@@ -160,9 +166,22 @@
 		protected function _processPollGameData(Request $request)
 		{
 			$game_data = array();
-			$game = new \application\entities\Game($request['game_id']);
+			$game = Games::getTable()->selectById($request['game_id']);
 			$game_data['current_player_id'] = $game->getCurrentPlayerId();
-			$gameevents = \application\entities\tables\GameEvents::getTable()->getLatestEventsByGameId($game->getId(), $request['latest_event_id']);
+			$gameevents = \application\entities\tables\GameEvents::getTable()->getLatestEventsByGame($game, $request['latest_event_id']);
+			$events = array();
+			foreach ($gameevents as $event) {
+				$events[] = array('id' => $event->getId(), 'type' => $event->getEventType(), 'data' => json_decode($event->getEventData()), 'event_content' => $this->getTemplateHTML('game/event', compact('event')));
+			}
+			return $this->renderJSON(array('game' => array('data' => $game_data, 'events' => $events)));
+		}
+
+		protected function _processGetCards(Request $request)
+		{
+			$game_data = array();
+			$game = Games::getTable()->selectById($request['game_id']);
+			$game_data['current_player_id'] = $this->getUser()->getId();
+			$gameevents = \application\entities\tables\GameEvents::getTable()->getOpponentCardEventsByGame($game, $request['latest_event_id']);
 			$events = array();
 			foreach ($gameevents as $event) {
 				$events[] = array('id' => $event->getId(), 'type' => $event->getEventType(), 'data' => json_decode($event->getEventData()), 'event_content' => $this->getTemplateHTML('game/event', compact('event')));
@@ -172,12 +191,12 @@
 
 		protected function _processGetCard(Request $request)
 		{
-			$game = new \application\entities\Game($request['game_id']);
+			$game = Games::getTable()->selectById($request['game_id']);
 			try {
 				$card = \application\entities\tables\Cards::getTable()->getCardByUniqueId($request['card_id']);
 				$class = ($card->getUser()->getId() == $this->getUser()->getId()) ? '' : 'flipped';
 
-				return $this->renderJSON(array('card' => $this->getTemplateHTML('game/card', array('card' => $card, 'mode' => $class))));
+				return $this->renderJSON(array('card' => $this->getTemplateHTML('game/card', array('card' => $card, 'ingame' => true, 'mode' => $class))));
 			} catch (\Exception $e) {
 				var_dump($e->getMessage());
 				var_dump($e->getTraceAsString());
@@ -187,9 +206,9 @@
 
 		protected function _processEndPhase(Request $request)
 		{
-			$game = new \application\entities\Game($request['game_id']);
-			if ($game->getCurrentPlayerId() == $this->getUser()->getId()) {
-				if ($game->getCurrentPhase() == \application\entities\Game::PHASE_MOVE) {
+			$game = Games::getTable()->selectById($request['game_id']);
+			if ($game->getCurrentPlayerId() == $this->getUser()->getId() || $game->canUserMove($this->getUser()->getId())) {
+				if ($game->getCurrentPhase() == \application\entities\Game::PHASE_MOVE || $game->getTurnNumber() <= 2) {
 					$slots = $request['slots'];
 					foreach ($slots as $slot_no => $slot) {
 						$game->setUserPlayerCardSlot($slot_no, $slot['card_id']);
@@ -197,9 +216,25 @@
 						$game->setUserPlayerCardSlotPowerupCard2($slot_no, $slot['powerupcard2_id']);
 					}
 				}
-				$game->endPhase();
-				$game->save();
-				return $this->renderJSON(array('end_phase' => 'ok'));
+				$returns = array('end_phase' => 'ok');
+				if ($game->getCurrentPlayerId() == $this->getUser()->getId()) {
+					$game->endPhase();
+					if ($game->getTurnNumber() <= 2) {
+						if ($game->hasUserOpponentPlacedCards()) {
+							$returns['advancing_past_2'] = true;
+							while ($game->getTurnNumber() <= 2) {
+								$game->endPhase();
+							}
+						} else {
+							$returns['advancing_past_2'] = false;
+							while (in_array($game->getCurrentPhase(), array(Game::PHASE_REPLENISH, Game::PHASE_RESOLUTION, Game::PHASE_ACTION))) {
+								$game->endPhase();
+							}
+						}
+					}
+					$game->save();
+				}
+				return $this->renderJSON($returns);
 			} else {
 				$this->getResponse()->setHttpStatus(400);
 				return $this->renderJSON(array('error' => "It's not your turn"));
@@ -208,11 +243,11 @@
 
 		protected function _processAttack(Request $request)
 		{
-			$game = new \application\entities\Game($request['game_id']);
+			$game = Games::getTable()->selectById($request['game_id']);
 			if ($game->getCurrentPlayerId() == $this->getUser()->getId()) {
 				if ($game->getCurrentPhase() == \application\entities\Game::PHASE_ACTION) {
 					if ($game->getCurrentPlayerActions() > 0) {
-						$attack = new \application\entities\Attack($request['attack_id']);
+						$attack = \application\entities\tables\Attacks::getTable()->selectById($request['attack_id']);
 						$card = \application\entities\tables\Cards::getTable()->getCardByUniqueId($request['attacked_card_id']);
 						list($game, $attacking_card) = $attack->perform($card);
 						$game->save();
@@ -235,42 +270,48 @@
 
 		protected function _processPotion(Request $request)
 		{
-			$game = new \application\entities\Game($request['game_id']);
-			if ($game->getCurrentPlayerId() == $this->getUser()->getId()) {
-				if ($game->getCurrentPhase() == \application\entities\Game::PHASE_ACTION) {
-					if ($game->getCurrentPlayerActions() > 0) {
-						$potion_card = \application\entities\tables\Cards::getTable()->getCardByUniqueId($request['card_id']);
-						$card = \application\entities\tables\Cards::getTable()->getCardByUniqueId($request['attacked_card_id']);
-						$potion_card->cast($game, $card);
-						$game->save();
-						$card->save();
-						if ($potion_card->getNumberOfUses() == 0) {
-							$game->removeCard($potion_card);
-						}
-						if ($potion_card->isOneTimePotion() && $potion_card->getNumberOfUses() == 0) {
-							$potion_card->delete();
-						} else {
-							$potion_card->save();
-						}
-					} else {
-						$this->getResponse()->setHttpStatus(400);
-						return $this->renderJSON(array('error' => "You don't have any attacks left"));
-					}
-				} else {
-					$this->getResponse()->setHttpStatus(400);
-					return $this->renderJSON(array('error' => "You cannot attack during this phase"));
-				}
-				return $this->renderJSON(array('potion' => 'ok'));
-			} else {
-				$this->getResponse()->setHttpStatus(400);
-				return $this->renderJSON(array('error' => "It's not your turn"));
+			$game = Games::getTable()->selectById($request['game_id']);
+//			if ($game->getCurrentPlayerId() == $this->getUser()->getId()) {
+//				if ($game->getCurrentPhase() == \application\entities\Game::PHASE_ACTION) {
+//					if ($game->getCurrentPlayerActions() > 0) {
+			$potion_card = \application\entities\tables\Cards::getTable()->getCardByUniqueId($request['card_id']);
+			$card = \application\entities\tables\Cards::getTable()->getCardByUniqueId($request['attacked_card_id']);
+			$potion_card->cast($game, $card);
+			$game->save();
+			$card->save();
+			if ($potion_card->getNumberOfUses() == 0) {
+				$game->removeCard($potion_card);
 			}
+			if ($potion_card->isOneTimePotion() && $potion_card->getNumberOfUses() == 0) {
+				$potion_card->delete();
+			} else {
+				$potion_card->save();
+			}
+			return $this->renderJSON(array('potion' => 'ok'));
+//					} else {
+//						$this->getResponse()->setHttpStatus(400);
+//						return $this->renderJSON(array('error' => "You don't have any attacks left"));
+//					}
+//				} else {
+//					$this->getResponse()->setHttpStatus(400);
+//					return $this->renderJSON(array('error' => "You cannot attack during this phase"));
+//				}
+//			} else {
+//				$this->getResponse()->setHttpStatus(400);
+//				return $this->renderJSON(array('error' => "It's not your turn"));
+//			}
 		}
 
 		protected function _processGameStats(Request $request)
 		{
-			$game = new \application\entities\Game($request['game_id']);
+			$game = Games::getTable()->selectById($request['game_id']);
 			return $this->renderJSON(array('stats' => $game->getStatistics($this->getUser()->getId())));
+		}
+
+		protected function _processSaveSettings(Request $request)
+		{
+			$this->getUser()->setGameMusicEnabled($request['music_enabled']);
+			return $this->renderJSON(array('message' => 'Settings saved!'));
 		}
 
 		/**
@@ -300,6 +341,9 @@
 					case 'game_data':
 						return $this->_processPollGameData($request);
 						break;
+					case 'get_cards':
+						return $this->_processGetCards($request);
+						break;
 					case 'game_stats':
 						return $this->_processGameStats($request);
 						break;
@@ -311,6 +355,7 @@
 				}
 			} catch (\Exception $e) {
 				$this->getResponse()->setHttpStatus(400);
+				return $this->renderJSON(array('error' => $e->getMessage()));
 				return $this->renderJSON(array('error' => 'An error occured'));
 			}
 			return $this->renderJSON(array($request['for'] => 'ok, no data'));
@@ -345,6 +390,9 @@
 						break;
 					case 'potion':
 						return $this->_processPotion($request);
+						break;
+					case 'savesettings':
+						return $this->_processSaveSettings($request);
 						break;
 					default:
 						return $this->renderJSON(array('topic' => $request['topic']));

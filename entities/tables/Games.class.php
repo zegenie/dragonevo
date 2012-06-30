@@ -2,9 +2,10 @@
 
 	namespace application\entities\tables;
 
-	use b2db\Core,
-		b2db\Criteria,
-		b2db\Criterion;
+	use \b2db\Core,
+		\b2db\Criteria,
+		\b2db\Criterion,
+		\b2db\Table;
 
 	/**
 	 * Games table
@@ -18,7 +19,7 @@
 	 * @Table(name="games")
 	 * @Entity(class="\application\entities\Game")
 	 */
-	class Games extends \b2db\Table
+	class Games extends Table
 	{
 
 		public function getGamesByUserId($user_id, $ongoing = true)

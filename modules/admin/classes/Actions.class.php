@@ -312,6 +312,7 @@
 			\application\entities\tables\CreatureCards::getTable()->resetUserCards();
 			\application\entities\tables\PotionItemCards::getTable()->resetUserCards();
 			\application\entities\tables\EquippableItemCards::getTable()->resetUserCards();
+			\application\entities\tables\ModifierEffects::getTable()->removeEffects();
 			
 			$this->forward($this->getRouting()->generate('admin'));
 		}

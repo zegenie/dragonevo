@@ -92,20 +92,20 @@
 			\application\entities\tables\ChatLines::getTable()->say($text, $user_id, $this->getId());
 		}
 
+		public function ping($user_id)
+		{
+			tables\ChatPings::getTable()->ping($this->getId(), $user_id);
+			tables\ChatPings::getTable()->cleanRoomPings($this->getId());
+		}
+
 		public function getNumberOfUsers()
 		{
-			if ($this->_id == 1) {
-				return tables\Users::getTable()->getNumberOfLoggedInUsers();
-			}
-			return 0;
+			return tables\ChatPings::getTable()->getNumberOfUsersByRoomId($this->getId());
 		}
 		
 		public function getUsers()
 		{
-			if ($this->_id == 1) {
-				return tables\Users::getTable()->getLoggedInUsers();
-			}
-			return array();
+			return tables\ChatPings::getTable()->getUsersByRoomId($this->getId());
 		}
 
 	}

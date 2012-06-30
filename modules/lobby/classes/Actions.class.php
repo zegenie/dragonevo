@@ -31,7 +31,9 @@
 		{
 			try {
 				$room = new \application\entities\ChatRoom($request['room_id']);
-				$room->say(stripslashes($request->getRawParameter('text')), $this->getUser()->getId());
+				if (trim($request->getRawParameter('text'))) {
+					$room->say(stripslashes($request->getRawParameter('text')), $this->getUser()->getId());
+				}
 				return $this->renderJSON(array('say' => 'ok'));
 			} catch (\Exception $e) {
 				$this->getResponse()->setHttpStatus(400);

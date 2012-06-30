@@ -274,11 +274,10 @@
 		{
 			if ($this->getNumberOfUses()) {
 				$this->_number_of_uses--;
-				$game->useAction();
 				$event = new GameEvent();
 				$event->setEventType(GameEvent::TYPE_ATTACK);
 				$event->setEventData(array(
-										'player_id' => $game->getCurrentPlayerId(),
+										'player_id' => $game->getUserPlayer()->getId(),
 										'remaining_actions' => $game->getCurrentPlayerActions(),
 										'attacking_card_id' => $this->getUniqueId(),
 										'attacking_card_name' => $this->getName(),
@@ -296,7 +295,7 @@
 					$event = new GameEvent();
 					$event->setEventType(GameEvent::TYPE_RESTORE_HEALTH);
 					$event->setEventData(array(
-											'player_id' => $game->getCurrentPlayerId(),
+											'player_id' => $game->getUserPlayer()->getId(),
 											'attacking_card_id' => $this->getUniqueId(),
 											'attacking_card_name' => $this->getName(),
 											'attacked_card_id' => $card->getUniqueId(),
@@ -316,7 +315,7 @@
 					$event = new GameEvent();
 					$event->setEventType(GameEvent::TYPE_RESTORE_ENERGY);
 					$event->setEventData(array(
-											'player_id' => $game->getCurrentPlayerId(),
+											'player_id' => $game->getUserPlayer()->getId(),
 											'attacking_card_id' => $this->getUniqueId(),
 											'attacking_card_name' => $this->getName(),
 											'attacked_card_id' => $card->getUniqueId(),

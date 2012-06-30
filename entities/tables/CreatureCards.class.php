@@ -77,7 +77,6 @@
 			$crit->addUpdate('creature_card.slot', 0);
 			$crit->addUpdate('creature_card.game_id', 0);
 			$crit->addUpdate('creature_card.is_in_play', false);
-			$crit->addUpdate('creature_card.stunned_turn', 0);
 			$this->doUpdate($crit);
 		}
 

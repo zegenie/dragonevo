@@ -15,6 +15,8 @@
 	class User extends \b2db\Saveable
 	{
 
+		const SETTING_GAME_MUSIC = 'game_music';
+
 		/**
 		 * Unique identifier
 		 *
@@ -147,6 +149,14 @@
 		 * @Column(type="integer", default=0, length=10)
 		 */
 		protected $_level = 1;
+
+		/**
+		 * This users gold
+		 *
+		 * @var integer
+		 * @Column(type="integer", default=0, length=10)
+		 */
+		protected $_gold = 0;
 
 		/**
 		 * This users character name
@@ -590,6 +600,11 @@
 			$this->_xp = $xp;
 		}
 
+		public function addXp($amount)
+		{
+			$this->_xp += $amount;
+		}
+
 		public function getLevel()
 		{
 			return $this->_level;
@@ -630,7 +645,7 @@
 			if ($this->_cards === null) {
 				$this->_cards = array();
 				$cards = array();
-				foreach (array('Creature', 'PotionItem', 'EquippableItem', 'Event') as $card_type) {
+				foreach (array('Creature', 'EquippableItem', 'PotionItem', 'Event') as $card_type) {
 					$class_name = "\application\entities\\tables\\" . $card_type . "Cards";
 					$cards += $class_name::getTable()->getByUserId($this->getID());
 				}
@@ -689,14 +704,16 @@
 		public function generateStarterPack($faction)
 		{
 			$creature_cards = \application\entities\tables\CreatureCards::getTable()->getByFaction($faction);
-			$potion_item_cards = \application\entities\tables\PotionItemCards::getTable()->getAll();
-			$equippable_item_cards = \application\entities\tables\EquippableItemCards::getTable()->getAll();
-			$event_cards = \application\entities\tables\EventCards::getTable()->getAll();
+			$this->_pickCards($creature_cards, 8);
 
-			$this->_pickCards($creature_cards, 5);
+			$potion_item_cards = \application\entities\tables\PotionItemCards::getTable()->getAll();
 			$this->_pickCards($potion_item_cards, 4);
-			$this->_pickCards($equippable_item_cards, 2);
-			$this->_pickCards($event_cards, 1);
+
+			$equippable_item_cards = \application\entities\tables\EquippableItemCards::getTable()->getAll();
+			$this->_pickCards($equippable_item_cards, 10);
+
+//			$event_cards = \application\entities\tables\EventCards::getTable()->getAll();
+//			$this->_pickCards($event_cards, 1);
 			
 			$this->_populateCards();
 			return $this->_cards;
@@ -738,6 +755,46 @@
 		{
 			$this->_populateGames();
 			return $this->_games;
+		}
+
+		public function logout()
+		{
+			\application\entities\tables\ChatPings::getTable()->cleanUserPings($this->getId());
+		}
+
+		protected function _getSetting($key)
+		{
+			return Settings::get($key, $this->getId());
+		}
+
+		protected function _setSetting($key, $value)
+		{
+			return Settings::saveSetting($key, $value, $this->getId());
+		}
+
+		public function isGameMusicEnabled()
+		{
+			return (bool) $this->_getSetting(self::SETTING_GAME_MUSIC);
+		}
+
+		public function setGameMusicEnabled($value)
+		{
+			$this->_setSetting(self::SETTING_GAME_MUSIC, (int) $value);
+		}
+
+		public function getGold()
+		{
+			return $this->_gold;
+		}
+
+		public function setGold($gold)
+		{
+			$this->_gold = $gold;
+		}
+
+		public function addGold($amount)
+		{
+			$this->_gold += $amount;
 		}
 
 	}

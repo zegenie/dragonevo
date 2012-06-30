@@ -134,12 +134,6 @@ class Actions extends \caspar\core\Actions
 	 */
 	public function runCards(Request $request)
 	{
-//		$this->getUser()->generateStarterPack('rutai');
-//		$this->getUser()->generateStarterPack('neutrals');
-//		$this->getUser()->generateStarterPack('empire');
-//		$this->getUser()->generateStarterPack('rutai');
-//		$this->getUser()->generateStarterPack('neutrals');
-//		$this->getUser()->generateStarterPack('empire');
 		$this->cards = $this->getUser()->getCards();
 	}
 
@@ -265,6 +259,7 @@ class Actions extends \caspar\core\Actions
 
 	public function runLogout(Request $request)
 	{
+		$this->getUser()->logout();
 		\caspar\core\Caspar::logout();
 		$this->forward($this->getRouting()->generate('home'));
 	}

@@ -1,5 +1,5 @@
 <?php if ($attack instanceof application\entities\Attack): ?>
-	<div class="attack <?php echo strtolower($attack_types[$attack->getAttackType()]); ?>" data-attack-id="<?php echo $attack->getId(); ?>" data-cost-gold="<?php echo $attack->getCostGold(); ?>" data-cost-ep="<?php echo $attack->getCostMagic(); ?>" <?php if ($attack->isBonusAttack()): ?>data-is-bonus-attack<?php endif; ?> id="attack_<?php echo $attack->getId(); ?>">
+	<div class="attack <?php echo strtolower($attack_types[$attack->getAttackType()]); ?>" data-attack-id="<?php echo $attack->getId(); ?>" data-cost-gold="<?php echo $attack->getCostGold(); ?>" data-cost-ep="<?php echo $attack->getCostMagic(); ?>" <?php if ($attack->isBonusAttack()): ?>data-is-bonus-attack<?php endif; ?> <?php if ($attack->doesAttackAll()): ?>data-does-attack-all<?php endif; ?> id="attack_<?php echo $attack->getId(); ?>">
 		<div class="attack_name"><?php echo $attack->getName(); ?></div>
 		<?php if ($attack->hasCostMagic() || $attack->hasCostGold()): ?>
 			<div class="attack_cost">

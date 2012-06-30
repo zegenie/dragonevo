@@ -114,15 +114,15 @@
 				</div>
 			</fieldset>
 			<fieldset>
-				<legend>Stun</legend>
+				<legend>Effect</legend>
 				<div style="width: 380px; float: left; clear: none;">
 					<div>
-						<label for="attack_<?php echo $attack->getId(); ?>_stun_percentage_min">Stun percentage</label><input id="attack_<?php echo $attack->getId(); ?>_stun_percentage_min" type="text" name="stun_percentage_min" value="<?php echo $attack->getStunPercentageMin(); ?>" style="width: 25px; text-align: center;"> - <input id="attack_<?php echo $attack->getId(); ?>_stun_percentage_max" type="text" name="stun_percentage_max" value="<?php echo $attack->getStunPercentageMax(); ?>" style="width: 25px; text-align: center;"> %<br>
+						<label for="attack_<?php echo $attack->getId(); ?>_effect_percentage_min">Effect percentage</label><input id="attack_<?php echo $attack->getId(); ?>_effect_percentage_min" type="text" name="effect_percentage_min" value="<?php echo $attack->getEffectPercentageMin(); ?>" style="width: 25px; text-align: center;"> - <input id="attack_<?php echo $attack->getId(); ?>_effect_percentage_max" type="text" name="effect_percentage_max" value="<?php echo $attack->getEffectPercentageMax(); ?>" style="width: 25px; text-align: center;"> %<br>
 					</div>
 				</div>
 				<div style="width: 380px; float: left; clear: none;">
 					<div>
-						<label for="attack_<?php echo $attack->getId(); ?>_stun_duration_min">Stun duration</label><input id="attack_<?php echo $attack->getId(); ?>_stun_duration_min" type="text" name="stun_duration_min" value="<?php echo $attack->getStunDurationMin(); ?>" style="width: 25px; text-align: center;"> - <input id="attack_<?php echo $attack->getId(); ?>_stun_duration_max" type="text" name="stun_duration_max" value="<?php echo $attack->getStunDurationMax(); ?>" style="width: 25px; text-align: center;"> rounds<br>
+						<label for="attack_<?php echo $attack->getId(); ?>_effect_duration_min">Effect duration</label><input id="attack_<?php echo $attack->getId(); ?>_effect_duration_min" type="text" name="effect_duration_min" value="<?php echo $attack->getEffectDurationMin(); ?>" style="width: 25px; text-align: center;"> - <input id="attack_<?php echo $attack->getId(); ?>_effect_duration_max" type="text" name="effect_duration_max" value="<?php echo $attack->getEffectDurationMax(); ?>" style="width: 25px; text-align: center;"> rounds<br>
 					</div>
 				</div>
 			</fieldset>

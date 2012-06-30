@@ -26,6 +26,7 @@
 		const TYPE_RESTORE_ENERGY = 'restore_energy';
 		const TYPE_APPLY_EFFECT = 'apply_effect';
 		const TYPE_REMOVE_EFFECT = 'remove_effect';
+		const TYPE_GENERATE_GOLD = 'generate_gold';
 		const TYPE_STEAL_GOLD = 'steal_gold';
 		const TYPE_STEAL_MAGIC = 'steal_magic';
 		const TYPE_GAME_OVER = 'game_over';
@@ -98,6 +99,9 @@
 		{
 			if ($is_new) {
 				$this->_created_at = time();
+				if (is_array($this->_event_data) && !array_key_exists('turn_number', $this->_event_data)) {
+					$this->_event_data['turn_number'] = $this->getGame()->getTurnNumber();
+				}
 			}
 		}
 

@@ -2,7 +2,7 @@
 	<legend>Basic details</legend>
 	<div style="float: right; clear: none; width: 270px;">
 		<ul class="cards">
-			<?php include_template('game/card', compact('card')); ?>
+			<?php include_template('game/card', array('card' => $card, 'ingame' => false)); ?>
 		</ul>
 	</div>
 	<div style="float: left; width: 680px; clear: none;">

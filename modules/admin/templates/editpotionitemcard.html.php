@@ -28,14 +28,7 @@
 				<option value="0"<?php if (!$card->isOneTimePotion()) echo ' selected'; ?>>No</option>
 			</select>
 			&nbsp;<span class="faded_out">If used, a one time potion is destroyed after expiration or when the game ends</span>
-		</div>
-		<div>
-			<label for="card_potion_type">Potion type</label>
-			<select name="item_class" id="card_potion_type" onchange="$('potion_sub_details').select('fieldset').each(function(element) { $(element).hide(); }); $('properties_'+$(this).getValue()).show();">
-				<?php foreach (PotionItemCard::getPotionTypes() as $type => $description): ?>
-					<option value="<?php echo $type; ?>"<?php if ($card->getPotionType() == $type) echo ' selected'; ?>><?php echo $description; ?></option>
-				<?php endforeach; ?>
-			</select>
+			<input type="hidden" name="item_class" value="<?php echo ItemCard::CLASS_POTION_HEALTH; ?>">
 		</div>
 	</fieldset>
 	<br style="clear: both;">

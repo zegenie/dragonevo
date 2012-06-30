@@ -7,9 +7,8 @@
 		<meta name="keywords" content="dragonevo dragonevotcg ccg cardgame card game action">
 		<meta name="author" content="dragonevo.com">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-		<link rel="shortcut icon" href="/images/favicon.ico">
+		<link rel="shortcut icon" href="/images/favicon.png">
 		<title><?php echo strip_tags($csp_response->getTitle()); ?></title>
-		<link rel="shortcut icon" href="<?php print $csp_response->getFaviconURL(); ?>">
 		<?php foreach ($csp_response->getFeeds() as $feed_url => $feed_title): ?>
 			<link rel="alternate" type="application/rss+xml" title="<?php echo str_replace('"', '\'', $feed_title); ?>" href="<?php echo $feed_url; ?>">
 		<?php endforeach; ?>

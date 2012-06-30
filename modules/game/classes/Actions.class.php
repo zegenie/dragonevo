@@ -2,9 +2,14 @@
 
 	namespace application\modules\game;
 
-	use \caspar\core\Request;
-	
-	use \application\entities\Game;
+	use caspar\core\Request,
+		application\entities\Game,
+		application\entities\tables\Games,
+		application\entities\tables\ModifierEffects,
+		application\entities\tables\CreatureCards,
+		application\entities\tables\EquippableItemCards,
+		application\entities\tables\PotionItemCards,
+		application\entities\tables\EventCards;
 
 	/**
 	 * Actions for the game module
@@ -29,7 +34,7 @@
 			$game_id = $request['game_id'];
 			$this->game = null;
 			try {
-				$this->game = new Game($game_id);
+				$this->game = Games::getTable()->selectById($game_id);
 			} catch (\Exception $e) {
 			}
 		}
@@ -63,7 +68,7 @@
 				if ($this->game->isGameOver()) {
 					$this->statistics = $this->game->getStatistics($this->getUser()->getId());
 				} else {
-					$this->statistics = array('hp' => 0, 'cards' => 0);
+					$this->statistics = array('hp' => 0, 'cards' => 0, 'gold' => 0, 'xp' => 0);
 				}
 			}
 			$this->event_id = 0;
@@ -79,16 +84,16 @@
 						if ($selected) {
 							switch ($card_types[$card_id]) {
 								case \application\entities\Card::TYPE_CREATURE:
-									$card = new \application\entities\CreatureCard($card_id);
+									$card = CreatureCards::getTable()->selectById($card_id);
 									break;
 								case \application\entities\Card::TYPE_EVENT:
-									$card = new \application\entities\EventCard($card_id);
+									$card = EventCards::getTable()->selectById($card_id);
 									break;
 								case \application\entities\Card::TYPE_EQUIPPABLE_ITEM:
-									$card = new \application\entities\EquippableItemCard($card_id);
+									$card = EquippableItemCards::getTable()->selectById($card_id);
 									break;
 								case \application\entities\Card::TYPE_POTION_ITEM:
-									$card = new \application\entities\PotionItemCard($card_id);
+									$card = PotionItemCards::getTable()->selectById($card_id);
 									break;
 							}
 							if (!$card->isInGame()) {
@@ -105,6 +110,21 @@
 			} else {
 				return $this->forward($this->getRouting()->generate('board', array('game_id' => $this->game->getId())));
 			}
+		}
+
+		public function runLeaveGame(Request $request)
+		{
+			if ($this->game->isInProgress() && in_array($this->getUser()->getId(), array($this->game->getPlayer()->getId(), $this->game->getOpponent()->getId()))) {
+				$this->game->resolve($this->game->getUserOpponent()->getId());
+				$this->game->save();
+				EventCards::getTable()->resetUserCards($this->game->getId());
+				CreatureCards::getTable()->resetUserCards($this->game->getId());
+				PotionItemCards::getTable()->resetUserCards($this->game->getId());
+				EquippableItemCards::getTable()->resetUserCards($this->game->getId());
+				ModifierEffects::getTable()->removeEffects($this->game->getId());
+			}
+
+			$this->forward($this->getRouting()->generate('lobby'));
 		}
 		
 	}

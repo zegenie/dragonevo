@@ -6,7 +6,7 @@
 				<?php foreach ($cards as $card): ?>
 					<li>
 						<div onclick="Devo.Main.showCardActions('<?php echo $card->getUniqueId(); ?>');" style="cursor: pointer;">
-							<?php include_template('game/card', array('card' => $card, 'mode' => 'medium')); ?>
+							<?php include_template('game/card', array('card' => $card, 'mode' => 'medium', 'ingame' => false)); ?>
 						</div>
 						<div id="card_<?php echo $card->getUniqueId(); ?>_actions" class="card_actions" style="display: none;">
 							<div class="card_actions_description">
@@ -34,23 +34,11 @@
 				<?php endforeach; ?>
 			</ul>
 		<?php else: ?>
-		<div class="no_cards" style="position: absolute; font-size: 2em; font-weight: normal; color: rgba(200, 200, 200, 0.8); top: 100px; width: 500px; text-align: center; left: 50%; margin-left: -250px; z-index: 200;">You don't have any cards yet</div>
+			<div class="no_cards" style="position: absolute; font-size: 2em; font-weight: normal; color: rgba(200, 200, 200, 0.8); top: 100px; width: 500px; text-align: center; left: 50%; margin-left: -250px; z-index: 200;">You don't have any cards yet</div>
 			<ul>
-				<li>
-					<div class="card medium flipped faded"></div>
-				</li>
-				<li>
-					<div class="card medium flipped faded"></div>
-				</li>
-				<li>
-					<div class="card medium flipped faded"></div>
-				</li>
-				<li>
-					<div class="card medium flipped faded"></div>
-				</li>
-				<li>
-					<div class="card medium flipped faded"></div>
-				</li>
+				<?php for ($cc = 0; $cc < 5; $cc++): ?>
+					<li><div class="card medium flipped faded"></div></li>
+				<?php endfor; ?>
 			</ul>
 		<?php endif; ?>
 		<br style="clear: both;">

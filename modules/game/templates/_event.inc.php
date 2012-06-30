@@ -54,6 +54,9 @@
 			case GameEvent::TYPE_GAME_CREATED:
 				echo "The game was created";
 				break;
+			case GameEvent::TYPE_GAME_CREATED:
+				echo "The game has ended";
+				break;
 			case GameEvent::TYPE_INVITATION_ACCEPTED:
 				if ($is_current_player) {
 					echo "You accepted the game invitation";
@@ -100,17 +103,65 @@
 					echo "{$data['attacking_card_name']} steals {$data['amount']['diff']} gold from you!";
 				}
 				break;
+			case GameEvent::TYPE_GENERATE_GOLD:
+				if ($is_current_player) {
+					echo "Your {$data['attacking_card_name']} generates {$data['amount']['diff']} gold from {$data['attack_name']}!";
+				} else {
+					echo "{$data['attacking_card_name']} generates {$data['amount']['diff']} gold from {$data['attack_name']}!";
+				}
+				break;
 			case GameEvent::TYPE_DAMAGE:
 				echo "{$data['attacked_card_name']} loses {$data['hp']['diff']} HP";
-				break;
-			case GameEvent::TYPE_STUN:
-				echo "{$data['attacked_card_name']} is stunned for {$data['duration']} rounds!";
 				break;
 			case application\entities\GameEvent::TYPE_REPLENISH:
 				if ($is_current_player) {
 					echo "Your resources replenishes!";
 				} else {
 					echo "{$data['player_name']} is replenishing his/her resources!";
+				}
+				break;
+			case GameEvent::TYPE_APPLY_EFFECT:
+				switch ($data['effect']) {
+					case application\entities\ModifierEffect::TYPE_AIR:
+						echo "{$data['attacked_card_name']} is affected by air magic for {$data['duration']} turn(s)!";
+						break;
+					case application\entities\ModifierEffect::TYPE_DARK:
+						echo "{$data['attacked_card_name']} is affected by dark magic for {$data['duration']} turn(s)!";
+						break;
+					case application\entities\ModifierEffect::TYPE_FIRE:
+						echo "{$data['attacked_card_name']} has caught on fire for {$data['duration']} turn(s)!";
+						break;
+					case application\entities\ModifierEffect::TYPE_FREEZE:
+						echo "{$data['attacked_card_name']} is frozen for {$data['duration']} turn(s)!";
+						break;
+					case application\entities\ModifierEffect::TYPE_POISON:
+						echo "{$data['attacked_card_name']} has been poisoned for {$data['duration']} turn(s)!";
+						break;
+					case application\entities\ModifierEffect::TYPE_STUN:
+						echo "{$data['attacked_card_name']} has been stunned for {$data['duration']} turn(s)!";
+						break;
+				}
+				break;
+			case GameEvent::TYPE_REMOVE_EFFECT:
+				switch ($data['effect']) {
+					case application\entities\ModifierEffect::TYPE_AIR:
+						echo "{$data['attacked_card_name']} is no longer affected by air magic!";
+						break;
+					case application\entities\ModifierEffect::TYPE_DARK:
+						echo "{$data['attacked_card_name']} is no longer affected by dark magic!";
+						break;
+					case application\entities\ModifierEffect::TYPE_FIRE:
+						echo "{$data['attacked_card_name']} is no longer caught on fire!";
+						break;
+					case application\entities\ModifierEffect::TYPE_FREEZE:
+						echo "{$data['attacked_card_name']} is no longer frozen!";
+						break;
+					case application\entities\ModifierEffect::TYPE_POISON:
+						echo "{$data['attacked_card_name']} is no longer poisoned!";
+						break;
+					case application\entities\ModifierEffect::TYPE_STUN:
+						echo "{$data['attacked_card_name']} is no longer stunned!";
+						break;
 				}
 				break;
 			default:

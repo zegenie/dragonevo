@@ -33,7 +33,7 @@
 			echo ')';
 		}
 		
-		if ($attack->canStun()) echo ', can stun';
+//		if ($attack->canStun()) echo ', can stun';
 		if ($attack->canStealGold() && $attack->canStealMagic()) echo ', can steal gold and magic';
 		elseif ($attack->canStealGold()) echo ', can steal gold';
 		elseif ($attack->canStealMagic()) echo ', can steal magic';

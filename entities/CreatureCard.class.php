@@ -163,14 +163,6 @@
 		protected $_user_dmp = 1;
 
 		/**
-		 * Until which turn a card is stunned
-		 *
-		 * @Column(type="integer", length=10, default=0)
-		 * @var integer
-		 */
-		protected $_stunned_turn = 0;
-
-		/**
 		 * List of this card's attacks
 		 *
 		 * @var array|ModifierEffect
@@ -440,35 +432,6 @@
 			}
 		}
 
-		public function getStunnedTurnNumber()
-		{
-			return $this->_stunned_turn;
-		}
-
-		public function isStunned()
-		{
-			return ($this->getGame() instanceof Game && $this->_stunned_turn && $this->_stunned_turn > $this->getGame()->getTurnNumber());
-		}
-
-		public function stun($turns, $stun_self = false)
-		{
-			// Multiply it by 2 since we add 1 turn every player end turn
-			$turns *= 2;
-			if ($this->_stunned_turn == 0) {
-				$this->_stunned_turn = $this->getGame()->getTurnNumber() + $turns;
-			} else {
-				$this->_stunned_turn += $turns;
-			}
-
-			// Add one to add up to other players turn
-			if (!$stun_self) $this->_stunned_turn++;
-		}
-
-		public function clearStun()
-		{
-			$this->_stunned_turn = 0;
-		}
-
 		public function getPowerupCards()
 		{
 			$powerup_cards = array();
@@ -485,9 +448,68 @@
 			return $powerup_cards;
 		}
 
+		/**
+		 * Return an array of ModifierEffect objects
+		 * 
+		 * @return array|ModifierEffect
+		 */
 		public function getModifierEffects()
 		{
 			return $this->_b2dbLazyLoad('_applied_effects');
+		}
+		
+		public function getValidEffects()
+		{
+			$effects = array();
+			foreach ($this->getModifierEffects() as $effect) {
+				$effects[] = $effect->getEffectType();
+			}
+			
+			return $effects;
+		}
+		
+		public function validateEffects()
+		{
+			$has_effects = false;
+			foreach ($this->getModifierEffects() as $effect) {
+				if (!$effect->isValid()) {
+					$event = new GameEvent();
+					$event->setEventType(GameEvent::TYPE_REMOVE_EFFECT);
+					$event->setEventData(array(
+											'player_id' => $this->getGame()->getCurrentPlayerId(),
+											'attacked_card_id' => $this->getUniqueId(),
+											'attacked_card_name' => $this->getName(),
+											'effect' => $effect->getEffectType()
+											));
+					$this->getGame()->addEvent($event);
+					$effect->delete();
+				} else {
+					$has_effects = true;
+				}
+			}
+			$this->_applied_effects = null;
+			
+			return $has_effects;
+		}
+
+		public function hasEffects()
+		{
+			return (bool) count($this->getValidEffects());
+		}
+		
+		public function applyEffects()
+		{
+			foreach ($this->getModifierEffects() as $effect) {
+				if ($effect->getAttackPointsPercentage()) {
+					$hp = $this->getInGameHP() - floor(($this->getBaseHP() / 100) * $effect->getAttackPointsPercentage());
+					$this->setInGameHP($hp);
+				}
+			}
+		}
+		
+		public function hasEffect($effect)
+		{
+			return in_array($effect, $this->getValidEffects());
 		}
 
 	}

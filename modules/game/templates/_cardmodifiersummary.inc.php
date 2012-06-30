@@ -13,8 +13,8 @@
 		<div class="modification"><?php echo image_tag('/images/attack_'.strtolower($type).'.png'); ?> -<?php echo $card->$decreasesTypeAttackDamagePercentage(); ?>%</div>
 	<?php endif; ?>
 	<?php if ($card->$increasesTypeAttackDmpPercentage()): ?>
-		<div class="modification"><?php echo image_tag('/images/attack_'.strtolower($type).'.png').image_tag('/images/dmp_small.png'); ?> +<?php echo $card->$increasesTypeAttackDmpPercentage(); ?>%</div>
+		<div class="modification"><?php echo image_tag('/images/dmp_small.png').image_tag('/images/attack_'.strtolower($type).'.png'); ?> +<?php echo $card->$increasesTypeAttackDmpPercentage(); ?>%</div>
 	<?php elseif ($card->$decreasesTypeAttackDmpPercentage()): ?>
-		<div class="modification"><?php echo image_tag('/images/attack_'.strtolower($type).'.png').image_tag('/images/dmp_small.png'); ?> -<?php echo $card->$decreasesTypeAttackDmpPercentage(); ?>%</div>
+		<div class="modification"><?php echo image_tag('/images/dmp_small.png').image_tag('/images/attack_'.strtolower($type).'.png'); ?> -<?php echo $card->$decreasesTypeAttackDmpPercentage(); ?>%</div>
 	<?php endif; ?>
 <?php endforeach; ?>

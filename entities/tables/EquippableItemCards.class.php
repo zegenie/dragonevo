@@ -69,6 +69,8 @@
 			$crit->addUpdate('equippable_item_card.slot', 0);
 			$crit->addUpdate('equippable_item_card.game_id', 0);
 			$crit->addUpdate('equippable_item_card.is_in_play', false);
+			$crit->addUpdate('equippable_item_card.powerup_slot_1', false);
+			$crit->addUpdate('equippable_item_card.powerup_slot_2', false);
 			$this->doUpdate($crit);
 		}
 

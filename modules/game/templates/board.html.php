@@ -33,12 +33,14 @@
 				<div id="winning_player_<?php echo $game->getOpponent()->getId(); ?>" class="winning" style="<?php if ($game->getWinningPlayerId() != $game->getOpponent()->getId()) echo 'display: none;'; ?>"><?php echo ($game->getOpponent()->getId() == $csp_user->getId()) ? 'You won!' : $game->getOpponent()->getUsername() . ' won!'; ?></div>
 				<div style="text-align: left;">
 					<h6>Statistics</h6>
-					<div id="game_statistics_indicator" style="<?php if ($game->isGameOver()): ?>display: none;<?php endif; ?>">>
+					<div id="game_statistics_indicator" style="<?php if ($game->isGameOver()): ?>display: none;<?php endif; ?>">
 						<img src="/images/spinning_30.gif" style="margin-right: 5px;">Loading statistics, please wait
 					</div>
 					<div id="game_statistics" style="<?php if (!$game->isGameOver()): ?>display: none;<?php endif; ?>">
 						<strong>Damage inflicted:</strong>&nbsp;<span id="statistics_hp"><?php echo $statistics['hp']; ?></span>HP<br>
-						<strong>Cards killed:</strong>&nbsp;<span id="statistics_cards"><?php echo $statistics['cards']; ?></span>
+						<strong>Cards killed:</strong>&nbsp;<span id="statistics_cards"><?php echo $statistics['cards']; ?></span><br>
+						<strong>XP earned:</strong>&nbsp;<span id="statistics_xp"><?php echo $statistics['xp']; ?></span><br>
+						<strong>Gold payout:</strong>&nbsp;<span id="statistics_gold"><?php echo $statistics['gold']; ?></span>
 					</div>
 					<div class="button-container">
 						<a href="<?php echo make_url('lobby'); ?>" class="button button-standard">End game</a>
@@ -46,6 +48,29 @@
 				</div>
 			</div>
 		</div>
+	</div>
+	<div id="settings-overlay" class="fullpage_backdrop" style="display: none;">
+		<div id="settings_backdrop_content" class="fullpage_backdrop_content">
+			<div class="summary">
+				<h5>Options</h5>
+				<form method="post" onsubmit="DETCG.saveOptions();return false;" id="options_form">
+					<input type="hidden" name="topic" value="savesettings">
+					<dl>
+						<dt><label for="options_background_music">Background music</label></dt>
+						<dd>
+							<input type="radio" value="1" <?php if ($csp_user->isGameMusicEnabled()) echo ' checked'; ?> name="music_enabled" id="options_background_music_enabled"><label for="options_background_music_enabled">Yes</label>&nbsp;
+							<input type="radio" value="0" <?php if (!$csp_user->isGameMusicEnabled()) echo ' checked'; ?> name="music_enabled" id="options_background_music_disabled"><label for="options_background_music_disabled">No</label>
+						</dd>
+					</dl>
+					<br style="clear: both;">
+					<div style="text-align: center;">
+						<a href="#" onclick="Devo.Main.saveSettings();" class="button button-green"><img id="options_waiting" src="images/spinning_16.gif" style="display: none; margin: 3px 5px 0 0; float: left;">Save</a>
+						<a href="#" onclick="$('settings-overlay').fade();" class="button button-silver">Cancel</a>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div style="background-color: #000; width: 100%; height: 100%; position: absolute; top: 0; left: 0; margin: 0; padding: 0; z-index: 999;" class="semi_transparent"> </div>
 	</div>
 	<div id="game-menu">
 		<div id="game-opponent">
@@ -63,19 +88,27 @@
 			<?php endif; ?>
 		</div>
 		<div id="turn-info">
-			<div id="player-<?php echo $game->getPlayer()->getId(); ?>-turn" class="animated" style="<?php if ($game->getCurrentPlayerId() != $game->getPlayer()->getId()) echo 'display: none;'; ?>"><?php echo ($csp_user->getId() == $game->getPlayer()->getId()) ? "It is your turn" : "It is {$game->getPlayer()->getUsername()}'s turn"; ?></div>
-			<div id="player-<?php echo $game->getOpponent()->getId(); ?>-turn" class="animated" style="<?php if ($game->getCurrentPlayerId() != $game->getOpponent()->getId()) echo 'display: none;'; ?>"><?php echo ($csp_user->getId() == $game->getOpponent()->getId()) ? "It is your turn" : "It is {$game->getOpponent()->getUsername()}'s turn"; ?></div>
+			<div id="place_cards" class="animated" style="<?php if ($game->getTurnNumber() > 2) echo 'display: none;'; ?>">Place your cards</div>
+			<div id="player-<?php echo $game->getPlayer()->getId(); ?>-turn" class="animated" style="<?php if ($game->getCurrentPlayerId() != $game->getPlayer()->getId() || $game->getTurnNumber() <= 2) echo 'display: none;'; ?>"><?php echo ($csp_user->getId() == $game->getPlayer()->getId()) ? "It is your turn" : "It is {$game->getPlayer()->getUsername()}'s turn"; ?></div>
+			<div id="player-<?php echo $game->getOpponent()->getId(); ?>-turn" class="animated" style="<?php if ($game->getCurrentPlayerId() != $game->getOpponent()->getId() || $game->getTurnNumber() <= 2) echo 'display: none;'; ?>"><?php echo ($csp_user->getId() == $game->getOpponent()->getId()) ? "It is your turn" : "It is {$game->getOpponent()->getUsername()}'s turn"; ?></div>
 		</div>
 		<div id="last-event" class="animated"></div>
-		<div style="position: absolute; top: 5px; right: 5px;" class="button_group">
-			<a href="javascript:void(0);" id="toggle-hand-button" class="toggle-button button button-orange" onclick="Devo.Game.toggleHand();">Show my hand</a>
-			<a href="javascript:void(0);" id="toggle-events-button" class="toggle-button button button-orange" onclick="Devo.Game.toggleEvents();">Show events</a>
+		<div style="position: absolute; top: 3px; right: 3px; overflow: visible;" class="button-group">
+			<a href="javascript:void(0);" id="toggle-hand-button" class="toggle-button button button-orange" onclick="Devo.Game.toggleHand();">Cards</a>
+			<a href="javascript:void(0);" id="toggle-events-button" class="toggle-button button button-orange" onclick="Devo.Game.toggleEvents();">Events</a>
+			<a href="javascript:void(0);" id="toggle-events-button" class="button button-silver button-icon last" onclick="Devo.Main.Helpers.popup(this);"><img src="/images/settings_small.png"></a>
+			<div class="popup-menu">
+				<ul>
+					<li><a href="javascript:void(0);" onclick="$('settings-overlay').appear();Devo.Main.Helpers.popup();">Game settings</a></li>
+					<li><a href="javascript:void(0);" onclick="Devo.Main.Helpers.Dialog.show('Flee the battle?', 'Quitting the game means you lose, the opponent is awarded battlepoints and XP, and you\'re left with nothing! Not even loot!<br><span class=\'faded_out\'>Actually, the part about loot isn\'t implemented yet, but suddenly it will be and then you\'ll be sorry!</span>', {yes: {href: '<?php echo make_url('leave_game', array('game_id' => $game->getId())); ?>'}, no: {click: function() {Devo.Main.Helpers.Dialog.dismiss();}}});">Leave game</a></li>
+				</ul>
+			</div>
 		</div>
-		<div style="position: absolute; top: 32px; right: 5px;">
-			<div id="phase-3-actions" style="<?php if ($game->getCurrentPlayerId() != $csp_user->getId() || $game->getCurrentPhase() != Game::PHASE_ACTION): ?>display: none;<?php endif; ?>">Actions remaining: <span id="phase-3-actions-remaining"><?php echo ($game->getCurrentPlayerId() == $csp_user->getId() && $game->getCurrentPhase() == Game::PHASE_ACTION) ? $game->getCurrentPlayerActions() : 0; ?></span></div>
-			<a href="javascript:void(0);" id="end-phase-2-button" class="turn-button button button-green<?php if ($game->getCurrentPlayerId() != $csp_user->getId()) echo ' disabled'; ?>" style="<?php if ($game->getCurrentPlayerId() != $csp_user->getId() || $game->getCurrentPhase() != Game::PHASE_MOVE): ?>display: none;<?php endif; ?>" onclick="Devo.Game.endPhase(this);"><img src="/images/spinning_16.gif" style="display: none;">End movement phase</a>
-			<a href="javascript:void(0);" id="end-phase-3-button" class="turn-button button button-green<?php if ($game->getCurrentPlayerId() != $csp_user->getId()) echo ' disabled'; ?>" style="<?php if ($game->getCurrentPlayerId() != $csp_user->getId() || $game->getCurrentPhase() != Game::PHASE_ACTION): ?>display: none;<?php endif; ?>" onclick="Devo.Game.endPhase(this);"><img src="/images/spinning_16.gif" style="display: none;">End actions phase</a>
-			<a href="javascript:void(0);" id="end-phase-4-button" class="turn-button button button-green<?php if ($game->getCurrentPlayerId() != $csp_user->getId()) echo ' disabled'; ?>" style="<?php if ($game->getCurrentPlayerId() == $csp_user->getId() && $game->getCurrentPhase() != Game::PHASE_RESOLUTION): ?>display: none;<?php endif; ?>" onclick="Devo.Game.endPhase(this);"><img src="/images/spinning_16.gif" style="display: none;">End turn</a>
+		<div style="position: absolute; top: 34px; right: 3px;">
+			<div id="phase-3-actions" style="<?php if ($game->getTurnNumber() <= 2 || ($game->getCurrentPlayerId() != $csp_user->getId() || $game->getCurrentPhase() != Game::PHASE_ACTION)): ?>display: none;<?php endif; ?>">Actions remaining: <span id="phase-3-actions-remaining"><?php echo ($game->getCurrentPlayerId() == $csp_user->getId() && $game->getCurrentPhase() == Game::PHASE_ACTION) ? $game->getCurrentPlayerActions() : 0; ?></span></div>
+			<a href="javascript:void(0);" id="end-phase-2-button" class="turn-button button button-green<?php if ($game->getTurnNumber() > 2 && $game->getCurrentPlayerId() != $csp_user->getId()) echo ' disabled'; ?>" style="<?php if (!$game->canUserMove($csp_user->getId())): ?>display: none;<?php endif; ?>" onclick="Devo.Game.endPhase(this);"><img src="/images/spinning_16.gif" style="display: none;"><span class="place-cards-content"<?php if ($game->getTurnNumber() > 2): ?> style="display: none;"<?php endif; ?>>Finished placing cards</span><span class="end-phase-content"<?php if ($game->getTurnNumber() <= 2): ?> style="display: none;"<?php endif; ?>>End movement</span></a>
+			<a href="javascript:void(0);" id="end-phase-3-button" class="turn-button button button-green<?php if ($game->getCurrentPlayerId() != $csp_user->getId()) echo ' disabled'; ?>" style="<?php if ($game->getTurnNumber() <= 2 || $game->getCurrentPlayerId() != $csp_user->getId() || $game->getCurrentPhase() != Game::PHASE_ACTION): ?>display: none;<?php endif; ?>" onclick="Devo.Game.endPhase(this);"><img src="/images/spinning_16.gif" style="display: none;">End actions</a>
+			<a href="javascript:void(0);" id="end-phase-4-button" class="turn-button button button-green<?php if ($game->getCurrentPlayerId() != $csp_user->getId()) echo ' disabled'; ?>" style="<?php if ($game->getTurnNumber() <= 2 || ($game->getCurrentPlayerId() == $csp_user->getId() && $game->getCurrentPhase() != Game::PHASE_RESOLUTION)): ?>display: none;<?php endif; ?>" onclick="Devo.Game.endPhase(this);"><img src="/images/spinning_16.gif" style="display: none;">End turn</a>
 			<div id="game-countdown" style="display: none;">
 				<div class="countdown_content"></div>
 			</div>
@@ -86,14 +119,22 @@
 			<ul id="opponent-slots" class="card-slots">
 				<?php for ($cc = 5; $cc >= 1; $cc--): ?>
 					<li id="opponent-slot-<?php echo $cc; ?>"
-						class="card-slot opponent"
+						class="card-slot creature-slot opponent slot-<?php echo $cc; ?>"
 						data-slot-no="<?php echo $cc; ?>"
-						data-card-id="<?php echo $game->getUserOpponentCardSlotId($cc); ?>"
-						data-powerup-slot1-card-id="<?php echo $game->getUserOpponentCardSlotPowerupCard1Id($cc); ?>"
-						data-powerup-slot2-card-id="<?php echo $game->getUserOpponentCardSlotPowerupCard2Id($cc); ?>">
-							<?php include_template('game/card', array('card' => $game->getUserOpponentCardSlot($cc), 'mode' => 'medium')); ?>
-							<?php include_template('game/card', array('card' => $game->getUserOpponentCardSlotPowerupCard1($cc), 'mode' => 'medium')); ?>
-							<?php include_template('game/card', array('card' => $game->getUserOpponentCardSlotPowerupCard2($cc), 'mode' => 'medium')); ?>
+						data-card-id="<?php echo $game->getUserOpponentCardSlotId($cc); ?>">
+						<?php include_template('game/card', array('card' => $game->getUserOpponentCardSlot($cc), 'mode' => 'medium', 'ingame' => true)); ?>
+						<div id="opponent-slot-<?php echo $cc; ?>-item-slot-1"
+							class="card-slot item-slot opponent slot-<?php echo $cc; ?>"
+							data-slot-no="<?php echo $cc; ?>"
+							data-card-id="<?php echo $game->getUserOpponentCardSlotPowerupCard1Id($cc); ?>">
+								<?php include_template('game/card', array('card' => $game->getUserOpponentCardSlotPowerupCard1($cc), 'mode' => 'medium', 'ingame' => true)); ?>
+						</div>
+						<div id="opponent-slot-<?php echo $cc; ?>-item-slot-2"
+							class="card-slot item-slot opponent slot-<?php echo $cc; ?>"
+							data-slot-no="<?php echo $cc; ?>"
+							data-card-id="<?php echo $game->getUserOpponentCardSlotPowerupCard2Id($cc); ?>">
+								<?php include_template('game/card', array('card' => $game->getUserOpponentCardSlotPowerupCard2($cc), 'mode' => 'medium', 'ingame' => true)); ?>
+						</div>
 					</li>
 				<?php endfor; ?>
 			</ul>
@@ -109,14 +150,22 @@
 			<ul id="player-slots" class="card-slots">
 				<?php for ($cc = 1; $cc <= 5; $cc++): ?>
 					<li id="player-slot-<?php echo $cc; ?>"
-						class="card-slot player"
+						class="card-slot creature-slot player slot-<?php echo $cc; ?>"
 						data-slot-no="<?php echo $cc; ?>"
-						data-card-id="<?php echo $game->getUserPlayerCardSlotId($cc); ?>"
-						data-powerup-slot1-card-id="<?php echo $game->getUserPlayerCardSlotPowerupCard1Id($cc); ?>"
-						data-powerup-slot2-card-id="<?php echo $game->getUserPlayerCardSlotPowerupCard2Id($cc); ?>">
-							<?php include_template('game/card', array('card' => $game->getUserPlayerCardSlot($cc), 'mode' => 'medium')); ?>
-							<?php include_template('game/card', array('card' => $game->getUserPlayerCardSlotPowerupCard1($cc), 'mode' => 'medium')); ?>
-							<?php include_template('game/card', array('card' => $game->getUserPlayerCardSlotPowerupCard2($cc), 'mode' => 'medium')); ?>
+						data-card-id="<?php echo $game->getUserPlayerCardSlotId($cc); ?>">
+						<?php include_template('game/card', array('card' => $game->getUserPlayerCardSlot($cc), 'mode' => 'medium', 'ingame' => true)); ?>
+						<div id="player-slot-<?php echo $cc; ?>-item-slot-1"
+							class="card-slot item-slot player slot-<?php echo $cc; ?>"
+							data-slot-no="<?php echo $cc; ?>"
+							data-card-id="<?php echo $game->getUserPlayerCardSlotPowerupCard1Id($cc); ?>">
+								<?php include_template('game/card', array('card' => $game->getUserPlayerCardSlotPowerupCard1($cc), 'mode' => 'medium', 'ingame' => true)); ?>
+						</div>
+						<div id="player-slot-<?php echo $cc; ?>-item-slot-2"
+							class="card-slot item-slot player slot-<?php echo $cc; ?>"
+							data-slot-no="<?php echo $cc; ?>"
+							data-card-id="<?php echo $game->getUserPlayerCardSlotPowerupCard2Id($cc); ?>">
+								<?php include_template('game/card', array('card' => $game->getUserPlayerCardSlotPowerupCard2($cc), 'mode' => 'medium', 'ingame' => true)); ?>
+						</div>
 					</li>
 				<?php endfor; ?>
 			</ul>
@@ -125,12 +174,16 @@
 	<div id="player_stuff" onclick="Devo.Game.toggleHand();">
 		<?php include_component('game/playerhand', compact('game')); ?>
 	</div>
+	<div id="player_potions">
+		<h5>Potions</h5>
+		<?php include_component('game/playerpotions', compact('game')); ?>
+	</div>
 	<form id="chat_rooms_joined" action="<?php echo make_url('ask'); ?>" method="post">
 	</form>
 	<div id="game_chat" onmouseover="window.setTimeout(function() { $('chat_room_<?php echo $game->getChatRoom()->getId(); ?>_input').focus(); })" onmouseout="window.setTimeout(function() { $('chat_room_<?php echo $game->getChatRoom()->getId(); ?>_lines').scrollTop = $('chat_room_<?php echo $game->getChatRoom()->getId(); ?>_lines').scrollHeight; }, 1500);">
 		<?php include_component('lobby/chatroom', array('room' => $game->getChatRoom())); ?>
 	</div>
-	<div id="game_events" class="animated fadeOut">
+	<div id="game_events" class="animated fadeOut" onclick="Devo.Game.toggleEvents();">
 		<div id="game_event_contents">
 			<?php foreach ($game->getEvents() as $event_id => $event): ?>
 				<?php include_template('game/event', compact('event')); ?>
@@ -142,8 +195,12 @@
 			Devo.Game.initialize({
 				game_id: <?php echo $game->getId(); ?>,
 				latest_event_id: <?php echo $event_id; ?>,
-				movable: <?php echo ($game->getCurrentPlayerId() == $csp_user->getId() && $game->getCurrentPhase() == Game::PHASE_MOVE) ? 'true' : 'false'; ?>,
+				current_turn: <?php echo $game->getTurnNumber(); ?>,
+				current_phase: <?php echo $game->getCurrentPhase(); ?>,
+				current_player_id: <?php echo $game->getCurrentPlayerId(); ?>,
+				movable: <?php echo ($game->canUserMove($csp_user->getId())) ? 'true' : 'false'; ?>,
 				actions: <?php echo ($game->getCurrentPlayerId() == $csp_user->getId() && $game->getCurrentPhase() == Game::PHASE_ACTION) ? 'true' : 'false'; ?>,
+				music_enabled: <?php echo ($csp_user->isGameMusicEnabled()) ? 'true' : 'false'; ?>,
 				actions_remaining: <?php echo ($game->getCurrentPlayerId() == $csp_user->getId() && $game->getCurrentPhase() == Game::PHASE_ACTION) ? $game->getCurrentPlayerActions() : 0; ?>
 				});
 			});

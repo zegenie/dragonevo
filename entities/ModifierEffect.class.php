@@ -16,13 +16,12 @@
 	class ModifierEffect extends \b2db\Saveable
 	{
 
-		const TYPE_AIR = 1;
-		const TYPE_DARK = 2;
-		const TYPE_EARTH = 3;
-		const TYPE_FIRE = 4;
-		const TYPE_FREEZE = 5;
-		const TYPE_POISON = 6;
-		const TYPE_STUN = 7;
+		const TYPE_AIR = 'air';
+		const TYPE_DARK = 'dark';
+		const TYPE_FIRE = 'fire';
+		const TYPE_FREEZE = 'freeze';
+		const TYPE_POISON = 'poison';
+		const TYPE_STUN = 'stun';
 
 		/**
 		 * Unique identifier
@@ -66,8 +65,8 @@
 		/**
 		 * Attack type
 		 *
-		 * @Column(type="integer", length=5)
-		 * @var integer
+		 * @Column(type="string", length=20)
+		 * @var string
 		 */
 		protected $_effect_type;
 
@@ -1183,7 +1182,7 @@
 
 		public function isValid()
 		{
-			return ($this->getGame() instanceof Game && $this->_duration_turn && $this->_duration_turn > $this->getGame()->getTurnNumber());
+			return ($this->getGame() instanceof Game && $this->_duration_turn && $this->_duration_turn >= $this->getGame()->getTurnNumber());
 		}
 
 		protected function _applyRandomValue($random_value)
@@ -1203,21 +1202,14 @@
 		{
 			switch ($this->_effect_type) {
 				case self::TYPE_AIR:
+				case self::TYPE_FIRE:
+				case self::TYPE_FREEZE:
 					$this->_attack_points_percentage = $percentage;
 					break;
 				case self::TYPE_DARK:
 				case self::TYPE_POISON:
 					$this->_attack_points_percentage = $percentage;
 					$this->_applyRandomValue(rand(10, 50));
-					break;
-				case self::TYPE_EARTH:
-					break;
-				case self::TYPE_FIRE:
-					break;
-				case self::TYPE_FREEZE:
-					break;
-				case self::TYPE_STUN:
-					break;
 					break;
 			}
 		}
@@ -1226,14 +1218,12 @@
 		{
 			// Multiply it by 2 since we add 1 turn every player end turn
 			$turns *= 2;
+			if (!$applies_to_self) $turns--;
 			if ($this->_duration_turn == 0) {
 				$this->_duration_turn = $this->getGame()->getTurnNumber() + $turns;
 			} else {
 				$this->_duration_turn += $turns;
 			}
-
-			// Add one to add up to other players turn
-			if (!$applies_to_self) $this->_duration_turn++;
 
 			$this->_generateEffectDetails($percentage);
 		}

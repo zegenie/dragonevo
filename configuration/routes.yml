@@ -151,6 +151,11 @@ board:
   module: game
   action: board
 
+leave_game:
+  url: /leave/game/:game_id
+  module: game
+  action: leavegame
+
 pick_cards:
   url: /cards/pick/:game_id/*
   module: game

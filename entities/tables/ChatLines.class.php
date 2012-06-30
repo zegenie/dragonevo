@@ -15,7 +15,7 @@
 	 * @package dragonevo
 	 * @subpackage tables
 	 *
-	 * @Table(name="settings")
+	 * @Table(name="chat_lines")
 	 */
 	class ChatLines extends \b2db\Table
 	{

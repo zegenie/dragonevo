@@ -4,7 +4,9 @@
 
 	use b2db\Core,
 		b2db\Criteria,
-		b2db\Criterion;
+		b2db\Criterion,
+		application\entities\Game,
+		application\entities\GameEvent;
 
 	/**
 	 * Game invites table
@@ -21,11 +23,25 @@
 	class GameEvents extends \b2db\Table
 	{
 
-		public function getLatestEventsByGameId($game_id, $since_event_id)
+		public function getLatestEventsByGame(Game $game, $since_event_id)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere('game_events.game_id', $game_id);
+			$crit->addWhere('game_events.game_id', $game->getId());
 			$crit->addWhere('game_events.id', $since_event_id, Criteria::DB_GREATER_THAN);
+			if ($game->getTurnNumber() <= 2) {
+				$crit->addWhere('game_events.event_type', GameEvent::TYPE_CARD_MOVED_ONTO_SLOT, Criteria::DB_NOT_EQUALS);
+			}
+
+			return $this->select($crit);
+		}
+
+		public function getOpponentCardEventsByGame(Game $game, $before_event_id)
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('game_events.game_id', $game->getId());
+			$crit->addWhere('game_events.player_id', $game->getUserOpponent()->getId());
+			$crit->addWhere('game_events.id', $before_event_id, Criteria::DB_LESS_THAN);
+			$crit->addWhere('game_events.event_type', GameEvent::TYPE_CARD_MOVED_ONTO_SLOT);
 
 			return $this->select($crit);
 		}

@@ -1,11 +1,10 @@
 <div class="chat_room">
 	<header>
-		<div class="users_header">User(s):</div>
 		<subject><?php echo $room->getTopic(); ?></subject>
-		<span><span id="chat_room_<?php echo $room->getId(); ?>_num_users"><?php echo $room->getNumberOfUsers(); ?></span> user(s) in this room</span>
+		<div class="users_header"><span id="chat_room_<?php echo $room->getId(); ?>_num_users"><?php echo $room->getNumberOfUsers(); ?></span> user(s):</div>
 	</header>
 	<div class="chat_room_loading" id="chat_room_<?php echo $room->getId(); ?>_loading"><img src="/images/spinning_30.gif"></div>
-	<div class="chat_room_users" id="chat_room_<?php echo $room->getId(); ?>_users"><div id="chat_room_<?php echo $room->getId(); ?>_users_loading">Loading ...</div></div>
+	<div class="chat_room_users" id="chat_room_<?php echo $room->getId(); ?>_users"><div id="chat_room_<?php echo $room->getId(); ?>_users_loading" data-user-id="0">Loading ...</div></div>
 	<div class="chat_room_lines" id="chat_room_<?php echo $room->getId(); ?>_lines"></div>
 </div>
 <div id="chat_room_<?php echo $room->getId(); ?>_form_container" class="chat_room_form_container">
