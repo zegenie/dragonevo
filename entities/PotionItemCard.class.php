@@ -198,6 +198,16 @@
 			$this->_removes_air = $removes;
 		}
 
+		public function doesRestoreHealth()
+		{
+			return (bool) $this->_restores_health_percentage;
+		}
+		
+		public function doesRestoreEnergy()
+		{
+			return (bool) $this->_restores_energy_percentage;
+		}
+		
 		public function doesRemoveAir()
 		{
 			return $this->_removes_air;
@@ -272,9 +282,10 @@
 
 		public function cast(Game $game, CreatureCard $card)
 		{
-			if ($this->getNumberOfUses()) {
+			if ($this->getNumberOfUses() && $card->isInGame() && $card->isInPlay()) {
 				$this->_number_of_uses--;
 				$event = new GameEvent();
+				$game->addAffectedCard($card);
 				$event->setEventType(GameEvent::TYPE_ATTACK);
 				$event->setEventData(array(
 										'player_id' => $game->getUserPlayer()->getId(),
@@ -325,6 +336,20 @@
 											));
 					$game->addEvent($event);
 				}
+				
+				foreach(array(ModifierEffect::TYPE_AIR => 'Air', 
+							ModifierEffect::TYPE_DARK => 'Dark', 
+							ModifierEffect::TYPE_FIRE => 'Fire', 
+							ModifierEffect::TYPE_FREEZE => 'Freeze', 
+							ModifierEffect::TYPE_POISON => 'Poison',
+							ModifierEffect::TYPE_STUN => 'Stun'
+					) as $effect => $type) {
+					$removesEffect = 'doesRemove'.$type;
+					if ($this->$removesEffect()) {
+						$card->removeEffects($effect);
+					}
+				}
+				
 			}
 		}
 

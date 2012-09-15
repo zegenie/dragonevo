@@ -52,20 +52,22 @@
 			if ($res = $this->doSelect($crit)) {
 				while ($row = $res->getNextRow()) {
 					$posted = $row->get('chat_lines.posted');
-					array_unshift($lines, array('line_id' => $row->get('chat_lines.id'), 'user_id' => $row->get('users.id'), 'user_username' => $row->get('users.username'), 'user_level' => $row->get('users.level'), 'text' => htmlspecialchars($row->get('chat_lines.text'), ENT_NOQUOTES, 'utf-8'), 'posted' => $posted, 'posted_formatted_hours' => date('H:i', $posted), 'posted_formatted_date' => date('d/m/Y', $posted)));
+					$user_id = $row->get('chat_lines.user_id');
+					array_unshift($lines, array('line_id' => $row->get('chat_lines.id'), 'user_id' => $user_id, 'user_username' => ($user_id) ? $row->get('users.username') : 'System', 'user_level' => ($user_id) ? $row->get('users.level') : 0, 'text' => htmlspecialchars($row->get('chat_lines.text'), ENT_NOQUOTES, 'utf-8'), 'posted' => $posted, 'posted_formatted_hours' => date('H:i', $posted), 'posted_formatted_date' => date('d/m/Y', $posted)));
 				}
 			}
 
 			return $lines;
 		}
 
-		public function say($text, $user_id, $room_id)
+		public function say($text, $user_id, $room_id, $time = null)
 		{
+			$time = ($time !== null) ? $time : time();
 			$crit = $this->getCriteria();
 			$crit->addInsert('chat_lines.room_id', $room_id);
 			$crit->addInsert('chat_lines.user_id', $user_id);
 			$crit->addInsert('chat_lines.text', $text);
-			$crit->addInsert('chat_lines.posted', time());
+			$crit->addInsert('chat_lines.posted', $time);
 			$res = $this->doInsert($crit);
 		}
 		

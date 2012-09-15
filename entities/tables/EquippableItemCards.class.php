@@ -32,11 +32,19 @@
 			return $this->count($crit);
 		}
 
+		public function getNumberOfUserCards()
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('equippable_item_cards.card_state', \application\entities\Card::STATE_OWNED);
+			return $this->count($crit);
+		}
+
 		public function getByUserId($user_id)
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere('equippable_item_cards.user_id', $user_id);
 			$crit->addWhere('equippable_item_cards.card_state', \application\entities\Card::STATE_OWNED);
+			$crit->addOrderBy('equippable_item_cards.original_card_id', Criteria::SORT_ASC);
 			return $this->select($crit);
 		}
 
@@ -46,13 +54,25 @@
 			$crit->addWhere('equippable_item_cards.user_id', $user_id);
 			$crit->addWhere('equippable_item_cards.game_id', $game_id);
 			$crit->addWhere('equippable_item_cards.card_state', \application\entities\Card::STATE_OWNED);
+			$crit->addOrderBy('equippable_item_cards.original_card_id', Criteria::SORT_ASC);
 			return $this->select($crit);
 		}
 
-		public function removeUserCards()
+		public function getDescendantCards($card_id)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere('equippable_item_cards.user_id', 0, Criteria::DB_NOT_EQUALS);
+			$crit->addWhere('equippable_item_cards.original_card_id', $card_id);
+			return $this->select($crit);
+		}
+
+		public function removeUserCards($user_id = null)
+		{
+			$crit = $this->getCriteria();
+			if ($user_id === null) {
+				$crit->addWhere('equippable_item_cards.user_id', 0, Criteria::DB_NOT_EQUALS);
+			} else {
+				$crit->addWhere('equippable_item_cards.user_id', $user_id);
+			}
 			if ($res = $this->doSelect($crit)) {
 				while ($row = $res->getNextRow()) {
 					$card_id = $row->get('equippable_item_cards.id');
@@ -61,10 +81,14 @@
 			}
 		}
 
-		public function resetUserCards($game_id = null)
+		public function resetUserCards($game_id = null, $user_id = null)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere('equippable_item_cards.user_id', 0, Criteria::DB_NOT_EQUALS);
+			if ($user_id !== null) {
+				$crit->addWhere('equippable_item_cards.user_id', $user_id);
+			} else {
+				$crit->addWhere('equippable_item_cards.user_id', 0, Criteria::DB_NOT_EQUALS);
+			}
 			if ($game_id !== null) $crit->addWhere('equippable_item_cards.game_id', $game_id);
 			$crit->addUpdate('equippable_item_card.slot', 0);
 			$crit->addUpdate('equippable_item_card.game_id', 0);

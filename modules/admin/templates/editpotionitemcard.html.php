@@ -34,15 +34,19 @@
 	<br style="clear: both;">
 	<div id="potion_sub_details">
 		<fieldset>
-			<legend>Health restoration details</legend>
+			<legend>Restoration details</legend>
 			<div>
 				<label for="card_restores_health_percentage">Restore HP</label>
 				Restores <input type="text" name="restores_health_percentage" class="points" id="card_restores_health_percentage" value="<?php echo $card->getRestoresHealthPercentage(); ?>">% of the character's max HP
 			</div>
+			<div>
+				<label for="card_restores_energy_percentage">Restore EP</label>
+				Restores <input type="text" name="restores_energy_percentage" class="points" id="card_restores_energy_percentage" value="<?php echo $card->getRestoresEnergyPercentage(); ?>">% of the character's max EP
+			</div>
 		</fieldset>
 		<fieldset>
 			<legend>Effect removal</legend>
-			<?php foreach (array('air', 'dark', 'earth', 'freeze', 'fire', 'poison', 'stun') as $element): ?>
+			<?php foreach (array('air', 'dark', 'freeze', 'fire', 'poison', 'stun') as $element): ?>
 				<div>
 					<?php $doesMethod = 'doesRemove'.ucfirst($element); ?>
 					<label for="card_removes_<?php echo $element; ?>">Removes <?php echo $element; ?> effect</label>

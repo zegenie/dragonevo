@@ -3,7 +3,8 @@
 	namespace application\modules\admin;
 
 	use application\entities\EventCard,
-		application\entities\table\EventCards;
+		application\entities\table\EventCards,
+		application\entities\tables\Users;
 
 	use caspar\core\Request;
 
@@ -25,9 +26,16 @@
 		 */
 		public function runIndex(Request $request)
 		{
-			$this->itemcards = \application\entities\tables\EquippableItemCards::getTable()->getNumberOfCards();
-			$this->eventcards = \application\entities\tables\EventCards::getTable()->getNumberOfCards();
-			$this->creaturecards = \application\entities\tables\CreatureCards::getTable()->getNumberOfCards();
+			$this->registered_users = array('total' => Users::getTable()->getNumberOfRegisteredUsers(),
+											'last_week' => Users::getTable()->getNumberOfRegisteredUsersLastWeek(),
+											'last_24' => Users::getTable()->getNumberOfRegisteredUsersLast24Hours());
+			$this->loggedin_users = array('total' => Users::getTable()->getNumberOfLoggedInUsers(),
+										'last_week' => Users::getTable()->getNumberOfLoggedInUsersLastWeek(),
+										'last_24' => Users::getTable()->getNumberOfLoggedInUsersLast24Hours());
+			
+			$this->itemcards = \application\entities\tables\EquippableItemCards::getTable()->getNumberOfUserCards();
+			$this->eventcards = \application\entities\tables\EventCards::getTable()->getNumberOfUserCards();
+			$this->creaturecards = \application\entities\tables\CreatureCards::getTable()->getNumberOfUserCards();
 		}
 
 		/**
@@ -149,6 +157,10 @@
 					if ($request->isPost()) {
 						$this->card->mergeFormData($request);
 						$this->card->save();
+						foreach (\application\entities\tables\EventCards::getTable()->getDescendantCards($this->card->getId()) as $card) {
+							$card->mergeFormData($request);
+							$card->save();
+						}
 						$this->forward($this->getRouting()->generate('edit_card', array('card_id' => $this->card->getB2DBID(), 'card_type' => 'event')));
 					}
 				}
@@ -178,6 +190,10 @@
 					if ($request->isPost()) {
 						$this->card->mergeFormData($request);
 						$this->card->save();
+						foreach (\application\entities\tables\CreatureCards::getTable()->getDescendantCards($this->card->getId()) as $card) {
+							$card->mergeFormData($request);
+							$card->save();
+						}
 						$this->forward($this->getRouting()->generate('edit_card', array('card_id' => $this->card->getB2DBID(), 'card_type' => 'creature')));
 					}
 				}
@@ -207,6 +223,10 @@
 					if ($request->isPost()) {
 						$this->card->mergeFormData($request);
 						$this->card->save();
+						foreach (\application\entities\tables\EquippableItemCards::getTable()->getDescendantCards($this->card->getId()) as $card) {
+							$card->mergeFormData($request);
+							$card->save();
+						}
 						$this->forward($this->getRouting()->generate('edit_card', array('card_id' => $this->card->getB2DBID(), 'card_type' => 'equippable_item')));
 					}
 				}
@@ -236,6 +256,10 @@
 					if ($request->isPost()) {
 						$this->card->mergeFormData($request);
 						$this->card->save();
+						foreach (\application\entities\tables\PotionItemCards::getTable()->getDescendantCards($this->card->getId()) as $card) {
+							$card->mergeFormData($request);
+							$card->save();
+						}
 						$this->forward($this->getRouting()->generate('edit_card', array('card_id' => $this->card->getB2DBID(), 'card_type' => 'potion_item')));
 					}
 				}
@@ -258,6 +282,62 @@
 				$creature[$faction] = \application\entities\tables\CreatureCards::getTable()->getByFaction($faction);
 			}
 			$this->cards = compact('equippable_item', 'potion_item', 'event', 'creature');
+		}
+
+		public function runSkills(Request $request)
+		{
+			$this->skills_human = \application\entities\tables\Skills::getTable()->getSkillsByRace(\application\entities\User::RACE_HUMAN);
+			$this->skills_lizard = \application\entities\tables\Skills::getTable()->getSkillsByRace(\application\entities\User::RACE_LIZARD);
+			$this->skills_beast = \application\entities\tables\Skills::getTable()->getSkillsByRace(\application\entities\User::RACE_BEAST);
+			$this->skills_elf = \application\entities\tables\Skills::getTable()->getSkillsByRace(\application\entities\User::RACE_ELF);
+		}
+
+		public function runEditSkill(Request $request)
+		{
+			$skill_id = $request['skill_id'];
+
+			try {
+				if ($skill_id) {
+					$this->skill = new \application\entities\Skill($skill_id);
+				} else {
+					$this->skill = new \application\entities\Skill();
+					if ($request['race']) {
+						switch ($request['race']) {
+							case \application\entities\User::RACE_HUMAN:
+								$this->skill->setRaceHuman();
+								break;
+							case \application\entities\User::RACE_LIZARD:
+								$this->skill->setRaceLizard();
+								break;
+							case \application\entities\User::RACE_BEAST:
+								$this->skill->setRaceBeast();
+								break;
+							case \application\entities\User::RACE_ELF:
+								$this->skill->setRaceElf();
+								break;
+						}
+					}
+					if ($request['parent_skill_id']) $this->skill->setParentSkill($request['parent_skill_id']);
+				}
+			} catch (\Exception $e) {
+				return $this->return404('This is not a valid skill');
+			}
+
+			try {
+				if (!$this->skill instanceof \application\entities\Skill) {
+					return $this->return404('This is not a valid skill');
+				} else {
+					if ($request->isPost()) {
+						$this->skill->mergeFormData($request);
+						$this->skill->save();
+						$this->forward($this->getRouting()->generate('edit_skill', array('skill_id' => $this->skill->getB2DBID())));
+					} else {
+						$this->subskills = \application\entities\tables\Skills::getTable()->getSubSkills($this->skill->getB2DBID());
+					}
+				}
+			} catch (\Exception $e) {
+				$this->error = $e->getMessage();
+			}
 		}
 
 		public function runNews(Request $request)
@@ -284,6 +364,12 @@
 			try {
 				$attack = new \application\entities\Attack($request['attack_id']);
 				$attack->mergeFormData($request);
+				foreach (\application\entities\tables\Attacks::getTable()->getDescendantAttacks($attack->getId()) as $att) {
+					$card_id = $att->getCardID();
+					$att->mergeFormData($request);
+					$att->setCardId($card_id);
+					$att->save();
+				}
 				$attack->save();
 			} catch (\Exception $e) {
 				$this->getResponse()->setHttpStatus(400);
@@ -315,6 +401,100 @@
 			\application\entities\tables\ModifierEffects::getTable()->removeEffects();
 			
 			$this->forward($this->getRouting()->generate('admin'));
+		}
+
+		public function runGames(Request $request)
+		{
+			$this->games = \application\entities\tables\Games::getTable()->getAllByState($request['mode']);
+			$this->mode = $request['mode'];
+		}
+
+		public function runUsers(Request $request)
+		{
+			$this->users = \application\entities\tables\Users::getTable()->getAll();
+		}
+
+		protected function _processResetUserCards(Request $request)
+		{
+			if ($request['user_id'] && (int) $request['user_id'] > 0) {
+				$user_id = (int) $request['user_id'];
+				\application\entities\tables\EventCards::getTable()->resetUserCards(null, $user_id);
+				\application\entities\tables\CreatureCards::getTable()->resetUserCards(null, $user_id);
+				\application\entities\tables\PotionItemCards::getTable()->resetUserCards(null, $user_id);
+				\application\entities\tables\EquippableItemCards::getTable()->resetUserCards(null, $user_id);
+				return $this->renderJSON(array('reset_cards' => 'ok', 'message' => 'User cards has been reset'));
+			} else {
+				return $this->renderJSON(array('reset_cards' => 'failed', 'error' => 'That is not a valid user id'));
+			}
+		}
+		
+		protected function _processRemoveUserCards(Request $request)
+		{
+			if ($request['user_id'] && (int) $request['user_id'] > 0) {
+				$user_id = (int) $request['user_id'];
+				\application\entities\tables\EventCards::getTable()->removeUserCards($user_id);
+				\application\entities\tables\CreatureCards::getTable()->removeUserCards($user_id);
+				\application\entities\tables\PotionItemCards::getTable()->removeUserCards($user_id);
+				\application\entities\tables\EquippableItemCards::getTable()->removeUserCards($user_id);
+				return $this->renderJSON(array('reset_cards' => 'ok', 'message' => 'User cards has been reset'));
+			} else {
+				return $this->renderJSON(array('reset_cards' => 'failed', 'error' => 'That is not a valid user id'));
+			}
+		}
+		
+		protected function _processUserNewStarterPack(Request $request)
+		{
+			if ($request['user_id'] && (int) $request['user_id'] > 0) {
+				$user_id = (int) $request['user_id'];
+				$user = new \application\entities\User($user_id);
+				$user->generateStarterPack($request['faction']);
+				return $this->renderJSON(array('reset_cards' => 'ok', 'message' => "User has got new starter pack"));
+			} else {
+				return $this->renderJSON(array('reset_cards' => 'failed', 'error' => 'That is not a valid user id'));
+			}
+		}
+		
+		protected function _processUserNewPotionPack(Request $request)
+		{
+			if ($request['user_id'] && (int) $request['user_id'] > 0) {
+				$user_id = (int) $request['user_id'];
+				$user = new \application\entities\User($user_id);
+				$user->generatePotionCards(5);
+				return $this->renderJSON(array('reset_cards' => 'ok', 'message' => "User has got 5 new potions"));
+			} else {
+				return $this->renderJSON(array('reset_cards' => 'failed', 'error' => 'That is not a valid user id'));
+			}
+		}
+		
+		/**
+		 * Say action
+		 *
+		 * @param Request $request
+		 */
+		public function runSay(Request $request)
+		{
+			try {
+				switch ($request['topic']) {
+					case 'reset_user_cards':
+						return $this->_processResetUserCards($request);
+						break;
+					case 'remove_user_cards':
+						return $this->_processRemoveUserCards($request);
+						break;
+					case 'user_new_starter_pack':
+						return $this->_processUserNewStarterPack($request);
+						break;
+					case 'user_new_potion_pack':
+						return $this->_processUserNewPotionPack($request);
+						break;
+					default:
+						return $this->renderJSON(array('topic' => $request['topic']));
+				}
+			} catch (\Exception $e) {
+				$this->getResponse()->setHttpStatus(400);
+				return $this->renderJSON(array('error' => 'An error occured'));
+			}
+			return $this->renderJSON(array($request['topic'] => 'ok, no data'));
 		}
 
 	}

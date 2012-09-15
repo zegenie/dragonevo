@@ -1,7 +1,18 @@
 <?php if ($card instanceof application\entities\PotionItemCard): ?>
 	<div class="attack potion" data-attack-id="attack_<?php echo $card->getUniqueId(); ?>" data-remaining-uses="<?php echo $card->getNumberOfUses(); ?>" id="attack_<?php echo $card->getUniqueId(); ?>">
 		<div class="attack_name">Use potion</div>
-		<div class="attack_impact <?php echo ($card->getRestoresHealthPercentage()) ? 'health' : 'energy'; ?>">Restores <?php echo ($card->getRestoresHealthPercentage()) ? "{$card->getRestoresHealthPercentage()}% HP" : "{$card->getRestoresEnergyPercentage()}% EP"; ?></div>
+		<?php if ($card->doesRestoreHealth()): ?>
+			<div class="attack_impact health">Restores <?php echo "{$card->getRestoresHealthPercentage()}% HP"; ?></div>
+		<?php elseif ($card->doesRestoreEnergy()): ?>
+			<div class="attack_impact energy">Restores <?php echo "{$card->getRestoresEnergyPercentage()}% EP"; ?></div>
+		<?php else: ?>
+			<?php foreach(array('Air', 'Dark', 'Fire', 'Freeze', 'Poison', 'Stun') as $type): ?>
+				<?php $removesEffect = 'doesRemove'.$type; ?>
+				<?php if ($card->$removesEffect()): ?>
+					<div class="attack_impact remove-effect">Removes <?php echo image_tag('/images/attack_'.strtolower($type).'.png') . '&nbsp;' . $type; ?> effect</div>
+				<?php endif; ?>
+			<?php endforeach; ?>
+		<?php endif; ?>
 		<div class="tooltip attack_details">
 			<div class="attack_name">Use potion</div>
 			<div class="attack_description">

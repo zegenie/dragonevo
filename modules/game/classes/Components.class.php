@@ -14,6 +14,7 @@
 		
 		public function componentPlayerPotions()
 		{
+			$this->cards = \application\entities\tables\PotionItemCards::getTable()->getByUserId($this->getUser()->getId());
 		}
 
 		public function componentCardAttack()

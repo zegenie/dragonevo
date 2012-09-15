@@ -23,11 +23,13 @@ var Devo = {
             Dialog: {},
             Message: {}
         },
-		Login: {}
+		Login: {},
+		Profile: {}
     },
 	Chat: {},
 	Admin: {
-		Cards: {}
+		Cards: {},
+		Users: {}
 	},
 	Play: {},
 	Game: {
@@ -393,6 +395,39 @@ Devo.Main.Login.register = function(url)
 	});
 }
 
+Devo.Main.Profile.inviteUser = function() {
+	if (!$('invite_email_button').hasClassName('disabled')) {
+		Devo.Main.Helpers.ajax(Devo.options['say_url'], {
+			additional_params: '&topic=invite_user&invite_email=' + $('invite_email_input').getValue(),
+			loading: {
+				callback: function() {
+					$('invite_email_button').addClassName('disabled');
+				}
+			},
+			complete: {
+				callback: function() {
+					$('invite_email_button').removeClassName('disabled');
+					$('invite_email').hide();
+				}
+			}
+		});
+	}
+}
+
+Devo.Main.Profile.pickRace = function(race) {
+	$$('.race-picker').each(function(element) {
+		if (element.id == 'race_'+race+'_div') {
+			element.show();
+			element.down('a.button').hide();
+			element.setStyle({marginBottom: '50px', marginRight: '0', width: '840px'});
+			$('race_input').setValue(race);
+			$('character_continue_button').enable();
+		} else {
+			element.fade();
+		}
+	});
+};
+
 Devo.Main.saveSettings = function() {
 	var settings = Form.serialize('options_form');
 	Devo.Main.Helpers.ajax(Devo.options['say_url'], {
@@ -405,6 +440,11 @@ Devo.Main.saveSettings = function() {
 					Devo.Game._initializeMusic();
 				} else if ($('options_background_music_disabled').checked) {
 					Devo.Game._uninitializeMusic();
+				}
+				if ($('options_system_chat_messages_disabled').checked && !$('game_chat').hasClassName('no_system_chat')) {
+					$('game_chat').addClassName('no_system_chat');
+				} else if ($('options_system_chat_messages_enabled').checked) {
+					$('game_chat').removeClassName('no_system_chat');
 				}
 			}
 		}
@@ -498,14 +538,16 @@ Devo.Core.Pollers.Callbacks.chatLinesPoller = function() {
 										var line_id = line['line_id'];
 										if (!$('chat_line_'+line_id)) {
 											$('chat_room_'+room_id+'_since').setValue(line_id);
-											var chat_line = '<div id="chat_line_'+line_id+'" class="chat_line"><div class="chat_nickname">';
-											if (line['user_id'] != Devo.options['user_id']) {
+											var chat_line = '<div id="chat_line_'+line_id+'" class="chat_line';
+											if (line['user_id'] == 0) chat_line += ' system';
+											chat_line += '"><div class="chat_nickname">';
+											if (line['user_id'] != Devo.options['user_id'] && line['user_id'] > 0) {
 												chat_line += '<div class="tooltip lighter">Username: '+line['user_username']+'<br>Level: '+line['user_level']+'<br><div class="buttons"><button class="button button-standard" onclick="Devo.Play.invite('+line['user_id']+', this);"><img src="/images/spinning_16.gif" style="display: none;">Invite to game</button></div></div>';
 											}
 											chat_line += line['user_username']+'&nbsp;<span class="chat_timestamp">('+line['posted_formatted_hours']+'<span class="date"> - '+line['posted_formatted_date']+'</span>)</div><div class="chat_line_content">'+Devo.Chat.emotify(line['text'])+'</div></div>';
 											$('chat_room_'+room_id+'_lines').insert(chat_line);
 											$('chat_room_'+room_id+'_lines').scrollTop = $('chat_line_'+line_id).offsetTop;
-											if (!blinking && !Devo.Core._infocus) {
+											if (!blinking && !Devo.Core._infocus && line['user_id'] > 0) {
 												clearInterval(Devo.Core._titleBlinkInterval);
 												Devo.options.alternate_title = line['user_username'] + ' says ...';
 												Devo.Core._titleBlinkInterval = setInterval(Devo.Core._blinkTitle, 2000);
@@ -529,6 +571,7 @@ Devo.Core.Pollers.Callbacks.chatLinesPoller = function() {
 									$('chat_room_'+room_id+'_loading').hide();
 								}
 								$('chat_room_'+room_id+'_num_users').update(json.chat_lines[d]['users']['count']);
+								$('chat_room_'+room_id+'_num_ingame_users').update(json.chat_lines[d]['users']['ingame_count']);
 							}
 						}
 					}
@@ -567,12 +610,18 @@ Devo.Core.Pollers.Callbacks.chatUsersPoller = function() {
 										var user = room['users'][u];
 										var user_id = user['user_id'];
 										if (!$('chat_room_'+room_id+'_user_'+user_id)) {
-											var user_line = '<div id="chat_room_'+room_id+'_user_'+user_id+'" class="chat_nickname">';
+											var user_line = '<div id="chat_room_'+room_id+'_user_'+user_id+'" class="chat_nickname';
+											if (user['is_admin']) user_line += ' is_admin';
+											user_line += '">';
 											if (user_id != Devo.options['user_id']) {
 												user_line += '<div class="tooltip lighter">Username: '+user['username']+'<br>Level: '+user['level']+'<br><div class="buttons"><button class="button button-standard" onclick="Devo.Play.invite('+user_id+', this);"><img src="/images/spinning_16.gif" style="display: none;">Invite to game</button></div></div>';
 											}
 											user_line += user['username']+'</div></div>';
-											$('chat_room_'+room_id+'_users').insert(user_line);
+											if (user['is_admin']) {
+												$('chat_room_'+room_id+'_users').insert({top: user_line});
+											} else {
+												$('chat_room_'+room_id+'_users').insert(user_line);
+											}
 											$('chat_room_'+room_id+'_user_'+user_id).dataset.userId = user_id;
 										}
 									}
@@ -589,6 +638,7 @@ Devo.Core.Pollers.Callbacks.chatUsersPoller = function() {
 							if (json.chat_users.hasOwnProperty(d)) {
 								var room_id = d;
 								$('chat_room_'+room_id+'_num_users').update(json.chat_users[d]['count']);
+								$('chat_room_'+room_id+'_num_ingame_users').update(json.chat_users[d]['ingame_count']);
 							}
 						}
 					}
@@ -713,6 +763,54 @@ Devo.Main.initializeLobby = function() {
 	Devo.Core._initializeGameListPoller();
 }
 
+Devo.Admin.Users.resetCards = function(user_id) {
+	var form = $('users_form');
+	var url = form.action;
+	Devo.Main.Helpers.ajax(url, {
+		additional_params: '&topic=reset_user_cards&user_id=' + user_id,
+		loading: {indicator: 'user_'+user_id+'_indicator'},
+		success: {
+			callback: function() { Devo.Main.Helpers.popup(); }
+		}
+	});
+};
+
+Devo.Admin.Users.removeCards = function(user_id) {
+	var form = $('users_form');
+	var url = form.action;
+	Devo.Main.Helpers.ajax(url, {
+		additional_params: '&topic=remove_user_cards&user_id=' + user_id,
+		loading: {indicator: 'user_'+user_id+'_indicator'},
+		success: {
+			callback: function() { Devo.Main.Helpers.popup(); }
+		}
+	});
+};
+
+Devo.Admin.Users.generatePotionPack = function(user_id) {
+	var form = $('users_form');
+	var url = form.action;
+	Devo.Main.Helpers.ajax(url, {
+		additional_params: '&topic=user_new_potion_pack&user_id=' + user_id,
+		loading: {indicator: 'user_'+user_id+'_indicator'},
+		success: {
+			callback: function() { Devo.Main.Helpers.popup(); }
+		}
+	});
+};
+
+Devo.Admin.Users.generateStarterPack = function(user_id, faction) {
+	var form = $('users_form');
+	var url = form.action;
+	Devo.Main.Helpers.ajax(url, {
+		additional_params: '&topic=user_new_starter_pack&user_id=' + user_id + '&faction=' + faction,
+		loading: {indicator: 'user_'+user_id+'_indicator'},
+		success: {
+			callback: function() { Devo.Main.Helpers.popup(); }
+		}
+	});
+};
+
 Devo.Admin.Cards.saveAttack = function(form) {
 	form = $(form);
 	var attack_id = form.down('input[name=attack_id]').getValue();
@@ -745,12 +843,12 @@ Devo.Chat.say = function(form) {
 				callback: function() {
 					say_button.disable();
 					say_button.addClassName('disabled');
+					form.down('input[type=text]').value = '';
 				}
 			},
 			success: {
 				callback: function() {
 					Devo.Core.Pollers.Callbacks.chatLinesPoller();
-					form.down('input[type=text]').value = '';
 					say_button.enable();
 					say_button.removeClassName('disabled');
 				}
@@ -802,20 +900,26 @@ Devo.Core.Pollers.Callbacks.eventPlaybackPoller = function() {
 	if (!Devo.Core.Pollers.Locks.eventplaybackpoller && Devo.Game.Events.size() > 0) {
 		Devo.Core.Pollers.Locks.eventplaybackpoller = true;
 		var event = Devo.Game.Events.shift();
+		Devo.Game._current_event = event;
 		if (!$('event_' + event.id + '_container') && event.type != 'player_change' && (event.current_turn > 2 || Devo.Game._current_turn > 2)) {
-			$('last-event').update(event.event_content);
+			$('game_event_contents').insert(event.event_content);
+			$('last-event').update($('event_' + event.id + '_container').innerHTML);
+			$('game_events').scrollTop = $('game_events').scrollHeight;
 			window.setTimeout(function() {
 				$('last-event').removeClassName('fadeOut');
 				$('last-event').addClassName('fadeIn');
 				window.setTimeout(function() {
 					$('last-event').removeClassName('fadeIn');
 					$('last-event').addClassName('fadeOut');
-				}, 3000);
+				}, 5000);
 			}, 100);
 		}
 		switch (event.type) {
 			case 'player_change':
 				Devo.Game.processPlayerChange(event.data);
+				break;
+			case 'thinking':
+				Devo.Game.processThinking(event.data);
 				break;
 			case 'phase_change':
 				Devo.Game.processPhaseChange(event.data, event.id);
@@ -834,6 +938,12 @@ Devo.Core.Pollers.Callbacks.eventPlaybackPoller = function() {
 				break;
 			case 'damage':
 				Devo.Game.processDamage(event.data);
+				break;
+			case 'player_online':
+				Devo.Game.processUserOnline(event.data);
+				break;
+			case 'player_offline':
+				Devo.Game.processUserOffline(event.data);
 				break;
 			case 'restore_health':
 				Devo.Game.processRestoreHealth(event.data);
@@ -864,10 +974,6 @@ Devo.Core.Pollers.Callbacks.eventPlaybackPoller = function() {
 				break;
 			default:
 				Devo.Core.Pollers.Locks.eventplaybackpoller = false;
-		}
-		if (!$('event_' + event.id + '_container')) {
-			$('game_event_contents').insert(event.event_content);
-			$('game_events').scrollTop = $('game_events').scrollHeight;
 		}
 	} else if (Devo.Game.Events.size() == 0) {
 		Devo.Core.Pollers.eventplaybackpoller = null;
@@ -950,16 +1056,20 @@ Devo.Game._uninitializeDragDrop = function() {
 	});
 };
 
+Devo.Game._initializeCardActions = function(card) {
+	if (card.hasClassName('creature')) card.observe('click', Devo.Game.toggleActionCard);
+	card.down('.attacks').childElements().each(function(attack) {
+		if (!$(attack).hasClassName('disabled')) {
+			$(attack).observe('click', Devo.Game.initiateAttack);
+		}
+	});
+};
+
 Devo.Game._initializeActions = function() {
 	var cards = document.querySelectorAll('.player .card.creature.placed');
 	[].forEach.call(cards, function(card) {
 		if (!$(card).hasClassName('effect-stun')) {
-			if ($(card).hasClassName('creature')) $(card).observe('click', Devo.Game.toggleActionCard);
-			$(card).down('.attacks').childElements().each(function(attack) {
-				if (!$(attack).hasClassName('disabled')) {
-					$(attack).observe('click', Devo.Game.initiateAttack);
-				}
-			});
+			Devo.Game._initializeCardActions($(card));
 		}
 	});
 	$('player-slots').addClassName('actionable');
@@ -969,6 +1079,8 @@ Devo.Game._initializeActions = function() {
 Devo.Game._initializePotions = function() {
 	var cards = document.querySelectorAll('.card.potion_item');
 	[].forEach.call(cards, function(card) {
+		var p_card = $(card).previous();
+		if (p_card && p_card.dataset.originalCardId != $(card).dataset.originalCardId) p_card.addClassName('split');
 		$(card).down('.attacks').childElements().each(function(attack) {
 			$(attack).observe('click', Devo.Game.initiateAttack);
 		});
@@ -1028,6 +1140,25 @@ Devo.Game.Effects.cardFade = function(card) {
 Devo.Game.Effects.useGold = function(cost) {
 	var gg = $('game-gold-amount');
 	var gold = parseInt(gg.innerHTML);
+	$('game-gold').dataset.amount = cost.to;
+
+	if (gold != cost.to) {
+		gg.update(gold+'<div class="negative fadeOutUp diff animated">'+cost.diff+'</div>');
+		window.setTimeout(function() {
+			gg.update(cost.to);
+			$('replenish_gold_summary').update(cost.to);
+			$$('.card.player').each(function(c) {
+				Devo.Game.updateCardAttackAvailability(c);
+			});
+		}, 1000);
+	}
+}
+
+Devo.Game.Effects.stolenGold = function(cost) {
+	var gg = $('game-gold-amount');
+	var gold = parseInt(gg.innerHTML);
+	
+	cost.to = parseInt($('game-gold').dataset.amount) - parseInt(cost.diff);
 	$('game-gold').dataset.amount = cost.to;
 
 	if (gold != cost.to) {
@@ -1155,6 +1286,7 @@ Devo.Game.processCardRemoved = function(data) {
 	if (card) {
 		var is_placed = (card.hasClassName('placed') || !card.hasClassName('player'));
 		var fadeclass = (card.hasClassName('player')) ? 'fadeOutDown' : 'fadeOutUp';
+		var initial_timeout = (card.hasClassName('placed')) ? 1000 : 1;
 
 		if (!is_placed) {
 			var player_potions = $('player_potions');
@@ -1165,7 +1297,7 @@ Devo.Game.processCardRemoved = function(data) {
 			$(slot).stopObserving('click', Devo.Game.performAttack);
 			slot.dataset.cardId = 0;
 		}
-		card.addClassName('animated flip');
+		if (is_placed) card.addClassName('animated flip');
 		window.setTimeout(function() {
 			card.removeClassName('flip');
 			card.addClassName(fadeclass);
@@ -1178,7 +1310,7 @@ Devo.Game.processCardRemoved = function(data) {
 				card.remove();
 				Devo.Core.Pollers.Locks.eventplaybackpoller = false;
 			}, 1000);
-		}, 1000);
+		}, initial_timeout);
 	} else {
 		Devo.Core.Pollers.Locks.eventplaybackpoller = false;
 	}
@@ -1187,19 +1319,24 @@ Devo.Game.processCardRemoved = function(data) {
 Devo.Game.processDamage = function(data) {
 	var card = $('card_' + data.attacking_card_id);
 	var attacked_card = $('card_' + data.attacked_card_id);
+	var initial_timeout = (data.damage_type == 'repeat' && data.damage_type != 'effect') ? 1 : 1000;
 
-	card.addClassName('animated bounce');
-	if (data.bonus_cards) {
-		data.bonus_cards.each(function(bc) {
-			$('card_' + bc).addClassName('bonus_active bonus_attack');
-		});
-	}
-	window.setTimeout(function() {
-		card.removeClassName('animated bounce');
+	if (data.damage_type != 'repeat' && data.damage_type != 'effect') {
+		card.addClassName('animated bounce');
 		if (data.bonus_cards) {
 			data.bonus_cards.each(function(bc) {
-				$('card_' + bc).removeClassName('bonus_active bonus_attack');
+				$('card_' + bc).addClassName('bonus_active bonus_attack');
 			});
+		}
+	}
+	window.setTimeout(function() {
+		if (data.damage_type != 'repeat' && data.damage_type != 'effect') {
+			card.removeClassName('animated bounce');
+			if (data.bonus_cards) {
+				data.bonus_cards.each(function(bc) {
+					$('card_' + bc).removeClassName('bonus_active bonus_attack');
+				});
+			}
 		}
 		attacked_card.addClassName('animated flash');
 		if (data.defence_bonus_cards) {
@@ -1217,9 +1354,9 @@ Devo.Game.processDamage = function(data) {
 			Devo.Game.Effects.damage(attacked_card, data.hp);
 			window.setTimeout(function() {
 				Devo.Core.Pollers.Locks.eventplaybackpoller = false;
-			}, 1000);
+			}, initial_timeout);
 		}, 1000);
-	}, 1000);
+	}, initial_timeout);
 };
 
 Devo.Game.processRestoreHealth = function(data) {
@@ -1267,18 +1404,43 @@ Devo.Game.processRestoreEnergy = function(data) {
 };
 
 Devo.Game.processApplyEffect = function(data) {
-	$('card_' + data.attacked_card_id).addClassName('effect-'+data.effect);
+	if ($('card_' + data.attacked_card_id)) {
+		$('card_' + data.attacked_card_id).addClassName('effect-'+data.effect);
+	}
 	Devo.Core.Pollers.Locks.eventplaybackpoller = false;
 };
 
+Devo.Game.processUserOffline = function(data) {
+	$('player-'+data.changed_player_id+'-name').addClassName('offline');
+	Devo.Core.Pollers.Locks.eventplaybackpoller = false;
+};
+
+Devo.Game.processUserOnline = function(data) {
+	$('player-'+data.changed_player_id+'-name').removeClassName('offline');
+	Devo.Core.Pollers.Locks.eventplaybackpoller = false;
+};
+
+Devo.Game.processThinking = function(data) {
+	window.setTimeout(function() {
+		Devo.Core.Pollers.Locks.eventplaybackpoller = false;
+	}, parseInt(data.duration));
+};
+
 Devo.Game.processRemoveEffect = function(data) {
-	$('card_' + data.attacked_card_id).removeClassName('effect-'+data.effect);
+	var card = $('card_' + data.attacked_card_id);
+	if (card) {
+		var is_stunned = card.hasClassName('effect-stun');
+		card.removeClassName('effect-'+data.effect);
+		if (is_stunned && card.hasClassName('player') && !card.hasClassName('effect-stun')) {
+			Devo.Game._initializeCardActions(card);
+		}
+	}
 	Devo.Core.Pollers.Locks.eventplaybackpoller = false;
 };
 
 Devo.Game.processStealGold = function(data) {
 	if (data.player_id != Devo.Game.getUserId()) {
-		Devo.Game.Effects.useGold(data.amount);
+		Devo.Game.Effects.stolenGold(data.amount);
 	} else {
 		Devo.Game.Effects.getGold(data.amount);
 	}
@@ -1364,6 +1526,9 @@ Devo.Game.processReplenish = function(data) {
 Devo.Game.processGameOver = function(data) {
 	$('gameover-overlay').setStyle({opacity: 0});
 	$('gameover-overlay').show();
+	$('gameover-overlay').select('.winning').each(function(element) {
+		$(element).hide();
+	});
 	window.setTimeout(function() {
 		$('gameover-overlay').addClassName('animated fadeIn');
 		$('winning_player_' + data.winning_player_id).show();
@@ -1399,7 +1564,12 @@ Devo.Game.processPlayerChange = function(data) {
 			$('end-phase-2-button').down('.end-phase-content').show();
 			window.setTimeout(function() {
 				$('place_cards').hide();
+				$('end-phase-2-button').hide();
 			}, 1000);
+			if (data.player_id != Devo.Game.getUserId()) {
+				$('end-phase-4-button').addClassName('disabled');
+				$('end-phase-4-button').show();
+			}
 		}
 		var initial_timeout = (data.current_turn == 3) ? 2000 : 1000;
 		$('turn-info').childElements().each(function(element) {
@@ -1452,6 +1622,9 @@ Devo.Game.processPlayerChange = function(data) {
 };
 
 Devo.Game.processCardMovedOntoSlot = function(data) {
+	if (data.current_turn <= 2) {
+		Devo.Core.Pollers.Locks.eventplaybackpoller = false;
+	}
 	var card = $('card_'+data.card_id);
 	var slot_no = data.slot;
 	var id = (data.player_id == Devo.Game.getUserId()) ? 'player-slot-'+slot_no : 'opponent-slot-'+slot_no;
@@ -1492,13 +1665,15 @@ Devo.Game.processCardMovedOffSlot = function(data) {
 	}
 };
 
-Devo.Game.getCards = function(event_id) {
+Devo.Game.getCards = function() {
 	Devo.Main.Helpers.ajax(Devo.options['ask_url'], {
-		additional_params: '&game_id='+Devo.Game._id+'&for=get_cards&latest_event_id='+event_id,
+		additional_params: '&game_id='+Devo.Game._id+'&for=get_cards',
 		success: {
 			callback: function(json) {
 				if (json.game.events.size() > 0) {
-					Devo.Game.processGameEvents(json.game.events, false);
+					json.game.events.each(function(event) {
+						Devo.Game.Events.push(event);
+					});
 				}
 			}
 		}
@@ -1509,15 +1684,15 @@ Devo.Game.processPhaseChange = function(data, event_id) {
 	Devo.Game._current_turn = data.current_turn;
 	Devo.Game._initialized_phase_change = false;
 	if (data.new_phase == 4 && Devo.Game._current_turn == 2) {
-		Devo.Game.getCards(event_id);
+		Devo.Game.getCards();
 	}
-	if (data.player_id == Devo.Game.getUserId()) {
-		if (data.new_phase == 2 && Devo.Game._current_turn <= 2 && Devo.Game._movable == false) {
-			$('end-phase-2-button').removeClassName('disabled');
-			Devo.Game.endPhase($('end-phase-2-button'));
-			Devo.Core.Pollers.Locks.eventplaybackpoller = false;
-			return;
-		}
+	if (data.player_id == Devo.Game.getUserId() && Devo.Game._current_turn > 2) {
+//		if (data.new_phase == 2 && Devo.Game._current_turn <= 2 && Devo.Game._movable == false) {
+//			$('end-phase-2-button').removeClassName('disabled');
+//			Devo.Game.endPhase($('end-phase-2-button'));
+//			Devo.Core.Pollers.Locks.eventplaybackpoller = false;
+//			return;
+//		}
 		var new_phase_button = $('end-phase-'+data.new_phase+'-button');
 		if (data.old_phase != 4) {
 			var old_phase_button = $('end-phase-'+data.old_phase+'-button');
@@ -1706,8 +1881,26 @@ Devo.Game.card_dragend = function(e) {
 		}
 		var prev_slot = pthis.up();
 		prev_slot.dataset.cardId = 0;
-		var card = pthis.remove();
 		var dropped = $(Devo.Game.dropped);
+		var e_card = dropped.down('.card.equippable_item');
+		if (e_card) {
+			if (this.dataset.slotNo) {
+				e_card.dataset.slotNo = this.dataset.slotNo;
+			} else {
+				e_card.dataset.slotNo = 0;
+			}
+			prev_slot.dataset.cardId = e_card.dataset.cardId;
+			var o_card = e_card.remove();
+		}
+		var card = pthis.remove();
+		if (o_card) {
+			if (prev_slot.id == 'player_hand') {
+				prev_slot.insert({bottom: o_card});
+				o_card.removeClassName('medium');
+			} else {
+				prev_slot.insert({top: o_card});
+			}
+		}
 		dropped.insert({top: card});
 		this.dataset.slotNo = dropped.dataset.slotNo;
 		if (Devo.Game.dropped != 'player_hand') {
@@ -1760,7 +1953,7 @@ Devo.Game.cardslot_dragover = function(e) {
 		} else {
 			var parent_slot = slot.up('.card-slot');
 			var slot_card = parent_slot.down('.card.creature');
-			if (slot_card && !slot.down('.card.item') && (!parent_slot.down('.card.item') || parent_slot.select('.card.item').size() < 2)) {
+			if (slot_card) {
 				if ((slot_card.hasClassName('class-civilian') && card.dataset.equippableByCivilian == 'true') ||
 				(slot_card.hasClassName('class-magic') && card.dataset.equippableByMagic == 'true') ||
 				(slot_card.hasClassName('class-military') && card.dataset.equippableByMilitary == 'true') ||
@@ -1863,7 +2056,13 @@ Devo.Game.performAttack = function(event) {
 		}
 
 		Devo.Main.Helpers.ajax(Devo.options['say_url'], {
-			additional_params: '&game_id='+Devo.Game._id+extraparams+'&attacked_card_id='+attacked_card.dataset.cardId
+			additional_params: '&game_id='+Devo.Game._id+extraparams+'&attacked_card_id='+attacked_card.dataset.cardId,
+			failure: {
+				callback: function(json) {
+					Devo.Game.Effects.getGold({from: Devo.Game.getGoldAmount(), diff: parseInt(attack.dataset.costGold), to: Devo.Game.getGoldAmount() + parseInt(attack.dataset.costGold)});
+					Devo.Game.Effects.getEP(card, {from: parseInt(card.dataset.ep), diff: parseInt(attack.dataset.costEp), to: parseInt(card.dataset.ep) + parseInt(attack.dataset.costEp)});
+				}
+			}
 		});
 	} else {
 		Devo.Game.updateCardAttackAvailability(card);
@@ -1905,7 +2104,7 @@ Devo.Game.unhighlightTargets = function() {
 			});
 		});
 		$(Devo.Game._currentattack).removeClassName('attacking');
-		if ($(Devo.Game._currentattack).hasClassName('potion')) $('player_stuff').removeClassName('dragging');
+		if ($(Devo.Game._currentattack).hasClassName('potion')) $('player_potions').removeClassName('active');
 		Devo.Game._currentattack = null;
 	}
 };
@@ -2048,6 +2247,9 @@ Devo.Game.endPhase = function(button) {
 				var pi1 = $('player-slot-'+cc+'-item-slot-1');
 				var pi2 = $('player-slot-'+cc+'-item-slot-2');
 				params += '&slots['+cc+'][card_id]='+p.dataset.cardId+'&slots['+cc+'][powerupcard1_id]='+pi1.dataset.cardId+'&slots['+cc+'][powerupcard2_id]='+pi2.dataset.cardId;
+			}
+			if (Devo.Game._current_turn <= 2) {
+				$('end-phase-2-button').down('.place-cards-content').update('Waiting for opponent');
 			}
 			$('player_stuff').removeClassName('visible');
 		} else if (Devo.Game._actions) {

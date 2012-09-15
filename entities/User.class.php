@@ -16,6 +16,17 @@
 	{
 
 		const SETTING_GAME_MUSIC = 'game_music';
+		const SETTING_SYSTEM_CHAT_MESSAGES = 'system_chat_messages';
+		
+		const AI_HUMAN = 0;
+		const AI_EASY = 1;
+		const AI_NORMAL = 2;
+		const AI_HARD = 3;
+
+		const RACE_HUMAN = 1;
+		const RACE_LIZARD = 2;
+		const RACE_BEAST = 3;
+		const RACE_ELF = 4;
 
 		/**
 		 * Unique identifier
@@ -165,6 +176,22 @@
 		 * @Column(type="string", default=null, length=250)
 		 */
 		protected $_charactername;
+		
+		/**
+		 * This users character race
+		 *
+		 * @var integer
+		 * @Column(type="integer", default=0, length=5)
+		 */
+		protected $_race;
+
+		/**
+		 * This user's ai level
+		 * 
+		 * @Column(type="integer", default=0, length=10)
+		 * @var integer
+		 */
+		protected $_ai_level = self::AI_HUMAN;
 		
 		/**
 		 * This user's cards
@@ -615,6 +642,16 @@
 			$this->_level = $level;
 		}
 
+		public function getRace()
+		{
+			return $this->_race;
+		}
+
+		public function setRace($race)
+		{
+			$this->_race = $race;
+		}
+
 		public function getCharactername()
 		{
 			return $this->_charactername;
@@ -627,7 +664,7 @@
 
 		public function hasCharacter()
 		{
-			return (bool) $this->_charactername;
+			return (bool) ($this->_charactername && $this->_race);
 		}
 
 		public function setIsAdmin($isadmin = true)
@@ -667,53 +704,32 @@
 
 		protected function _pickCards($cards, $num = 5)
 		{
-			if (!count($cards)) return array();
-			$pickablecards = array();
-			foreach ($cards as $card) {
-				if ($card->getLikelihood() == 0) continue;
-				for($cc = 1;$cc <= $card->getLikelihood();$cc++) {
-					$pickablecards[] = $card->getId();
-				}
-			}
+			\application\entities\tables\Cards::pickCards($cards, $this, $num);
+		}
+		
+		public function generateCreatureCards($faction, $num = 8)
+		{
+			$creature_cards = \application\entities\tables\CreatureCards::getTable()->getByFaction($faction);
+			$this->_pickCards($creature_cards, $num);
+		}
+		
+		public function generatePotionCards($num = 4)
+		{
+			$potion_item_cards = \application\entities\tables\PotionItemCards::getTable()->getAll();
+			$this->_pickCards($potion_item_cards, $num);
+		}
 
-			$return_cards = array();
-			$cc = 1;
-			while ($cc <= $num) {
-				if (empty($pickablecards)) break;
-
-				$id = array_rand($pickablecards);
-				$card_id = $pickablecards[$id];
-				if (array_key_exists($card_id, $cards)) {
-					$card = $cards[$card_id];
-					$picked_card = clone $card;
-					$picked_card->giveTo($this);
-					$picked_card = $picked_card->morph();
-					$picked_card->save();
-					$picked_card->setOriginalCard($card);
-					$picked_card->generateUniqueDetails();
-					$picked_card->save();
-					$return_cards[$picked_card->getId()] = $picked_card;
-					unset($pickablecards[$id]);
-					$cc++;
-				}
-			}
-
-			return $return_cards;
+		public function generateItemCards($num = 10)
+		{
+			$equippable_item_cards = \application\entities\tables\EquippableItemCards::getTable()->getAll();
+			$this->_pickCards($equippable_item_cards, $num);
 		}
 
 		public function generateStarterPack($faction)
 		{
-			$creature_cards = \application\entities\tables\CreatureCards::getTable()->getByFaction($faction);
-			$this->_pickCards($creature_cards, 8);
-
-			$potion_item_cards = \application\entities\tables\PotionItemCards::getTable()->getAll();
-			$this->_pickCards($potion_item_cards, 4);
-
-			$equippable_item_cards = \application\entities\tables\EquippableItemCards::getTable()->getAll();
-			$this->_pickCards($equippable_item_cards, 10);
-
-//			$event_cards = \application\entities\tables\EventCards::getTable()->getAll();
-//			$this->_pickCards($event_cards, 1);
+			$this->generateCreatureCards($faction);
+			$this->generatePotionCards();
+			$this->generateItemCards();
 			
 			$this->_populateCards();
 			return $this->_cards;
@@ -721,7 +737,12 @@
 
 		public function getNextLevelXp() 
 		{
-			return ($this->getLevel() + 1) * 100;
+			return (($this->getLevel()) * 200) + (15 * ($this->getLevel() - 1));
+		}
+		
+		public function canLevelUp()
+		{
+			return ($this->getXp() >= $this->getNextLevelXp());
 		}
 		
 		public function getInvites()
@@ -782,6 +803,16 @@
 			$this->_setSetting(self::SETTING_GAME_MUSIC, (int) $value);
 		}
 
+		public function isSystemChatMessagesEnabled()
+		{
+			return (bool) $this->_getSetting(self::SETTING_SYSTEM_CHAT_MESSAGES);
+		}
+
+		public function setSystemChatMessagesEnabled($value)
+		{
+			$this->_setSetting(self::SETTING_SYSTEM_CHAT_MESSAGES, (int) $value);
+		}
+
 		public function getGold()
 		{
 			return $this->_gold;
@@ -795,6 +826,262 @@
 		public function addGold($amount)
 		{
 			$this->_gold += $amount;
+		}
+		
+		protected function _aiHasUnplacedCards(Game $game, $type)
+		{
+			foreach ($game->getUserPlayerCards() as $card_type => $cards) {
+				if ($card_type == $type) {
+					foreach ($cards as $card) {
+						if (!$card->getSlot()) return true;
+					}
+				}
+			}
+			
+			return false;
+		}
+		
+		protected function _aiHasPlacedCards(Game $game, $type)
+		{
+			foreach ($game->getUserPlayerCards() as $card_type => $cards) {
+				if ($card_type == $type) {
+					foreach ($cards as $card) {
+						if ($card->getSlot()) return true;
+					}
+				}
+			}
+			
+			return false;
+		}
+		
+		public function _aiSortCardsNormal($card_1, $card_2)
+		{
+			if (!$card_1 instanceof Card) return -1;
+			if (!$card_2 instanceof Card) return 1;
+			$c1_val = 0;
+			$c2_val = 0;
+			if ($card_1->getHP() > $card_2->getHP()) {
+				$c1_val += 2;
+			} elseif ($card_1->getHP() < $card_2->getHP()) {
+				$c2_val += 2;
+			}
+			if ($card_1->getEP() > $card_2->getEP()) {
+				$c1_val++;
+			} elseif ($card_1->getEP() < $card_2->getEP()) {
+				$c2_val++;
+			}
+			if ($c1_val == $c2_val) return 0;
+			return ($c1_val < $c2_val) ? -1 : 1;
+		}
+		
+		public function _aiSortCardsHard($card_1, $card_2)
+		{
+			if (!$card_1 instanceof Card) return -1;
+			if (!$card_2 instanceof Card) return 1;
+			$c1_val = 0;
+			$c2_val = 0;
+			foreach ($card_1->getAttacks() as $attack) {
+				$val = 0;
+				$val += $attack->getAttackPointsMax();
+				$val += $attack->getRepeatAttackPointsMax() * $attack->getRepeatRoundsMax();
+				if ($val > $c1_val) $val = $c1_val;
+			}
+			foreach ($card_2->getAttacks() as $attack) {
+				$val = 0;
+				$val += $attack->getAttackPointsMax();
+				$val += $attack->getRepeatAttackPointsMax() * $attack->getRepeatRoundsMax();
+				if ($val > $c2_val) $val = $c2_val;
+			}
+			if ($c1_val == $c2_val) return 0;
+			return ($c1_val < $c2_val) ? -1 : 1;
+		}
+		
+		protected function _aiPlaceCards(Game $game)
+		{
+			if ($game->hasUserPlayerCards()) {
+				if ($this->_aiHasUnplacedCards($game, 'creature')) {
+					
+					$cards = $game->getUserPlayerCards();
+					$creature_cards = $cards['creature'];
+					if ($this->_ai_level > self::AI_EASY) {
+						foreach ($creature_cards as $card) {
+							$card->getAttacks();
+						}
+						if ($this->_ai_level == self::AI_NORMAL) {
+							usort($creature_cards, array($this, '_aiSortCardsNormal'));
+						} else {
+							usort($creature_cards, array($this, '_aiSortCardsNormal'));
+						}
+					}
+					foreach (range(1, 5) as $slot) {
+						if ($game->getUserPlayerCardSlot($slot)) continue;
+						if (!$this->_aiHasUnplacedCards($game, 'creature')) continue;
+						
+						if ($this->_ai_level == self::AI_EASY) {
+							do {
+								$card = $creature_cards[array_rand($cards['creature'])];
+							} while ($card->getSlot());
+						} else {
+							do {
+								if (!count($creature_cards)) break;
+								$card = array_shift($creature_cards);
+							} while ($card->getSlot());
+						}
+						
+						if (rand(1, 10) > 5) $game->aiThinking($this->_ai_level);
+
+						$game->setPlayerCardSlot($slot, $card);
+						$card->setInGameHP($card->getBaseHP());
+						$card->setInGameEP($card->getBaseEP());
+						$game->addAffectedCard($card);
+						
+						if ($this->_aiHasUnplacedCards($game, 'equippable_item')) {
+							$slot_1 = false;
+							foreach ($cards['equippable_item'] as $i_card) {
+								if ($i_card->getSlot()) continue;
+								if (!$i_card->isEquippableByCard($card)) continue;
+								
+								if (!$slot_1) {
+									$game->setPlayerCardSlotPowerup1($slot, $i_card);
+								} else {
+									$game->setPlayerCardSlotPowerup2($slot, $i_card);
+									break;
+								}
+								$game->addAffectedCard($i_card);
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		protected function _aiAttack(Game $game)
+		{
+			$cards = $game->getCards();
+			$creature_cards = $cards['creature'];
+			if ($this->_ai_level == self::AI_EASY) {
+				shuffle($creature_cards);
+			} else {
+				foreach ($creature_cards as $card) {
+					$card->getAttacks();
+				}
+				if ($this->_ai_level == self::AI_NORMAL) {
+					usort($creature_cards, array($this, '_aiSortCardsNormal'));
+				} else {
+					usort($creature_cards, array($this, '_aiSortCardsNormal'));
+				}
+			}
+			for ($cc = 1; $cc <= 2; $cc++) {
+				if (!$game->getCurrentPlayerActions()) break;
+				foreach ($creature_cards as $card) {
+					if (!$game->getCurrentPlayerActions()) break;
+					if (!$card->isInPlay()) continue;
+					if (!$card->getSlot()) continue;
+					if ($card->hasEffect(ModifierEffect::TYPE_STUN)) continue;
+
+					if (rand(1, 10) > 5) $game->aiThinking($this->_ai_level);
+
+					$attacks = $card->getAttacks();
+					if ($this->_ai_level == self::AI_EASY) {
+						shuffle($attacks);
+					} else {
+						$sortable_function = function($attack_1, $attack_2) {
+							if (!$attack_1 instanceof Attack) return -1;
+							if (!$attack_2 instanceof Attack) return 1;
+							$c1_val = 0;
+							$c2_val = 0;
+							$c1_val += $attack_1->getAttackPointsMax();
+							$c1_val += $attack_1->getRepeatAttackPointsMax() * $attack_1->getRepeatRoundsMax();
+							$c2_val += $attack_2->getAttackPointsMax();
+							$c2_val += $attack_2->getRepeatAttackPointsMax() * $attack_2->getRepeatRoundsMax();
+							if ($c1_val == $c2_val) return 0;
+							return ($c1_val < $c2_val) ? -1 : 1;
+						};
+						usort($attacks, $sortable_function);
+					}
+					foreach ($attacks as $attack) {
+						if (!$game->getCurrentPlayerActions()) break;
+						if ($attack->canAfford()) {
+							if (rand(1, 10) > 5) $game->aiThinking($this->_ai_level);
+							$slots = range(1, 5);
+							if ($this->_ai_level == self::AI_EASY) {
+								shuffle($slots);
+								foreach ($slots as $slot) {
+									$p_card = $game->getPlayerCardSlot($slot);
+									if ($p_card instanceof CreatureCard) {
+										$attack->perform($p_card);
+										$game->addAffectedCard($p_card);
+										$game->addAffectedCard($card);
+										break;
+									}
+								}
+							} else {
+								$cards = array();
+								foreach ($slots as $slot) {
+									$p_card = $game->getPlayerCardSlot($slot);
+									if ($p_card instanceof CreatureCard) {
+										$cards[] = $p_card;
+									}
+								}
+								if (!count($cards)) break;
+								$opp_sortable_function = function($card_1, $card_2) {
+									$c1_val = 0;
+									$c2_val = 0;
+									if ($card_1->getHP() > $card_2->getHP()) {
+										$c1_val += 2;
+									} elseif ($card_1->getHP() < $card_2->getHP()) {
+										$c2_val += 2;
+									}
+									if ($card_1->getEP() > $card_2->getEP()) {
+										$c1_val++;
+									} elseif ($card_1->getEP() < $card_2->getEP()) {
+										$c2_val++;
+									}
+								};
+								uasort($cards, $opp_sortable_function);
+								if ($p_card instanceof CreatureCard) {
+									$attack->perform($p_card);
+									$game->addAffectedCard($p_card);
+									$game->addAffectedCard($card);
+								}
+								break;
+							}
+							break;
+						}
+					}
+
+					if (!$game->getCurrentPlayerActions()) break;
+				}
+			}
+		}
+
+		public function aiPerformTurn(Game $game)
+		{
+			// End replenishment
+			$game->endPhase();
+
+			// Move
+			$this->_aiPlaceCards($game);
+			$game->endPhase();
+			
+			// Actions
+			if ($game->getTurnNumber() > 2) {
+				$this->_aiAttack($game);
+			}
+			$game->endPhase();
+
+			// End turn
+			$game->endPhase();
+		}
+		
+		public function setAiLevel($level)
+		{
+			$this->_ai_level = $level;
+		}
+		
+		public function isAI()
+		{
+			return ($this->_ai_level > 0);
 		}
 
 	}

@@ -19,6 +19,28 @@
 			$crit->addWhere('users.password', $password);
 			return $this->selectOne($crit);
 		}
+		
+		public function getByUsername($username)
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('users.username', $username);
+			return $this->selectOne($crit);
+		}
+		
+		public function validateCode($code)
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('users.password', "%{$code}", \b2db\Criteria::DB_LIKE);
+			return (bool) $this->count($crit);
+		}
+
+		public function validateUsername($username)
+		{
+			if (!trim($username)) return false;
+			$crit = $this->getCriteria();
+			$crit->addWhere('users.username', $username);
+			return !(bool) $this->count($crit);
+		}
 
 		public function getLoggedInUsers()
 		{
@@ -66,6 +88,14 @@
 			$crit = $this->getCriteria();
 			$crit->addWhere('users.lastseen', time() - 86400, \b2db\Criteria::DB_GREATER_THAN_EQUAL);
 			return $this->doCount($crit);
+		}
+		
+		public function getAll()
+		{
+			$crit = $this->getCriteria();
+			$crit->addOrderBy('users.isadmin', \b2db\Criteria::SORT_DESC);
+			$crit->addOrderBy('users.username', \b2db\Criteria::SORT_ASC);
+			return $this->select($crit);
 		}
 
 	}

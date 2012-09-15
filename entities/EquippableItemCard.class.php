@@ -196,6 +196,27 @@
 		{
 			return $this->_equippable_by_regular_lvl_cards;
 		}
+		
+		public function isEquippableByCard(CreatureCard $card)
+		{
+			switch ($card->getCardType()) {
+				case CreatureCard::CLASS_CIVILIAN:
+					return $this->isEquippableByCivilianCards();
+					break;
+				case CreatureCard::CLASS_MAGIC:
+					return $this->isEquippableByMagicCards();
+					break;
+				case CreatureCard::CLASS_MILITARY:
+					return $this->isEquippableByMilitaryCards();
+					break;
+				case CreatureCard::CLASS_PHYSICAL:
+					return $this->isEquippableByPhysicalCards();
+					break;
+				case CreatureCard::CLASS_RANGED:
+					return $this->isEquippableByRangedCards();
+					break;
+			}
+		}
 
 		public function setEquippableByRegularLvlCards($equippable_by_regular_lvl_cards)
 		{

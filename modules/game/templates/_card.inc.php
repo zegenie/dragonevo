@@ -18,7 +18,7 @@
 					break;
 			}
 
-		?> <?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE) echo $card->getFaction() . ' class-' . $card->getCreatureClassKey(); ?><?php if (isset($mode)) echo " $mode"; ?><?php if($card->isOwned() && $card->getUser()->getId() == $csp_user->getId()) echo ' player'; ?><?php if (isset($selected) && $selected && $ingame) echo " selected"; ?><?php if ($card->getSlot() != 0 && $card->isInPlay() && $ingame) echo ' placed'; ?><?php if ($card->getSlot() != 0 && !$card->isInPlay() && $card->isOwned() && $ingame && $card->getUser()->getId() != $csp_user->getId() && ((!isset($mode) || $mode != 'flipped'))) echo ' flipped'; ?><?php
+		?> <?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE) echo $card->getFaction() . ' class-' . $card->getCreatureClassKey(); ?><?php if (isset($mode)) echo " $mode"; ?><?php if($card->isOwned() && $card->getUserId() == $csp_user->getId()) echo ' player'; ?><?php if (isset($selected) && $selected && $ingame) echo " selected"; ?><?php if ($card->getSlot() != 0 && $card->isInPlay() && $ingame) echo ' placed'; ?><?php if ($card->getSlot() != 0 && !$card->isInPlay() && $card->isOwned() && $ingame && $card->getUserId() != $csp_user->getId() && ((!isset($mode) || $mode != 'flipped'))) echo ' flipped'; ?><?php
 		
 			if ($card->getCardType() == application\entities\Card::TYPE_CREATURE && $ingame) {
 				foreach ($card->getValidEffects() as $effect) { echo ' effect-'.$effect; }
@@ -27,6 +27,7 @@
 		?>"
 		 id="card_<?php echo $card_id; ?>"
 		 data-card-id="<?php echo $card_id; ?>"
+		 data-original-card-id="<?php echo $card->getOriginalCardId(); ?>"
 		 data-slot-no="<?php echo $card->getSlot(); ?>"
 		 <?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE): ?>
 			 data-ep="<?php echo $card->getEP(); ?>"
@@ -41,7 +42,14 @@
 	>
 		<?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE && $card->getGPTPlayerModifier()): ?>
 			<div class="gold_increase">
+				<div class="tooltip from-above">Effect on your gold</div>
 				<span><?php echo ($card->getGPTDecreasePlayer()) ? '-' : '+'; ?></span><?php echo $card->getGPTPlayerModifier(); ?>
+			</div>
+		<?php endif; ?>
+		<?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE && $card->getGPTOpponentModifier()): ?>
+			<div class="gold_increase opponent">
+				<div class="tooltip from-above">Effect on opponents gold</div>
+				<span><?php echo ($card->getGPTDecreaseOpponent()) ? '-' : '+'; ?></span><?php echo $card->getGPTOpponentModifier(); ?>
 			</div>
 		<?php endif; ?>
 		<div class="name" id="card_<?php echo $card_id; ?>_name" title="<?php echo ucfirst($card->getName()); ?>"><?php echo strtoupper($card->getName()); ?></div>
@@ -59,8 +67,8 @@
 			</div>
 		<?php endif; ?>
 		<?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE): ?>
-			<div class="hp"><?php echo $card->getHP(); ?></div>
-			<div class="ep magic"><?php echo $card->getEP(); ?></div>
+			<div class="hp" title="Max HP: <?php echo $card->getBaseHP(); ?>"><?php echo $card->getHP(); ?></div>
+			<div class="ep magic" title="Max EP: <?php echo $card->getBaseEP(); ?>"><?php echo $card->getEP(); ?></div>
 			<div class="dmp"><div class="box"><?php echo ($card->isOwned()) ? (($card->getUserDMP()) ? $card->getUserDMP() : '-') : $card->getBaseDMP(); ?></div></div>
 		<?php endif; ?>
 		<div class="stunned_overlay"><span>Stunned!</span></div>

@@ -25,10 +25,10 @@ logout:
   module: main
   action: logout
 
-register:
-  url: /register
+join:
+  url: /join/:code
   module: main
-  action: doregister
+  action: join
 
 unavailable:
   url: /unavailable
@@ -75,6 +75,38 @@ admin_news:
   module: admin
   action: news
 
+admin_skills:
+  url: /admin/skills
+  module: admin
+  action: skills
+
+edit_skill:
+  url: /admin/skill/:skill_id
+  module: admin
+  action: editskill
+
+new_skill:
+  url: /admin/new/skill/*
+  module: admin
+  action: editskill
+
+admin_users:
+  url: /admin/users
+  module: admin
+  action: users
+
+admin_games_finished:
+  url: /admin/games/finished
+  module: admin
+  action: games
+  parameters: {mode: 2}
+
+admin_games_ongoing:
+  url: /admin/games/ongoing
+  module: admin
+  action: games
+  parameters: {mode: 1}
+
 create_news:
   url: /admin/news/edit
   module: admin
@@ -100,6 +132,11 @@ news:
   url: /news/:year/:month/:day/:title/:id
   module: main
   action: news
+
+admin_say:
+  url: /admin/say
+  module: admin
+  action: say
 
 new_card:
   url: /admin/:card_type/card
@@ -155,6 +192,11 @@ leave_game:
   url: /leave/game/:game_id
   module: game
   action: leavegame
+
+training:
+  url: game/training/:level/:faction
+  module: game
+  action: training
 
 pick_cards:
   url: /cards/pick/:game_id/*

@@ -12,6 +12,13 @@
 	class Attacks extends \b2db\Table
 	{
 		
+		public function getDescendantAttacks($attack_id)
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('attacks.original_attack_id', $attack_id);
+			return $this->select($crit);
+		}
+
 		public function removeByCardId($card_id)
 		{
 			$crit = $this->getCriteria();

@@ -43,7 +43,7 @@
 				$crit->addSelectionColumn('game_invites.id', 'id');
 
 				$invites = array_flip($invite_ids);
-				if ($res = $this->select($crit)) {
+				if ($res = $this->doSelect($crit)) {
 					while ($row = $res->getNextRow()) {
 						$id = $row->get('id');
 						if (array_key_exists($id, $invites)) {

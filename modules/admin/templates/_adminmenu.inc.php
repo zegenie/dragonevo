@@ -22,11 +22,12 @@
 	</ul>
 	<h1 style="margin-top: 25px;">Manage users</h1>
 	<ul>
-		<li><a href="#">Edit users</a></li>
+		<li><a href="<?php echo make_url('admin_users'); ?>">Edit users</a></li>
+		<li><a href="<?php echo make_url('admin_skills'); ?>">Edit available skills</a></li>
 	</ul>
 	<h1 style="margin-top: 25px;">Manage games</h1>
 	<ul>
-		<li><a href="#">Show active games</a></li>
-		<li><a href="#">Find finished games</a></li>
+		<li><a href="<?php echo make_url('admin_games_ongoing'); ?>">Show active games</a></li>
+		<li><a href="<?php echo make_url('admin_games_finished'); ?>">Show finished games</a></li>
 	</ul>
 </div>

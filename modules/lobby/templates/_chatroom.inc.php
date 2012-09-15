@@ -1,7 +1,9 @@
 <div class="chat_room">
 	<header>
-		<subject><?php echo $room->getTopic(); ?></subject>
-		<div class="users_header"><span id="chat_room_<?php echo $room->getId(); ?>_num_users"><?php echo $room->getNumberOfUsers(); ?></span> user(s):</div>
+		<?php if ($room->getId() > 1): ?>
+			<subject><?php echo $room->getTopic(); ?></subject>
+		<?php endif; ?>
+		<div class="users_header"><span id="chat_room_<?php echo $room->getId(); ?>_num_users">-</span> user(s) here, <span id="chat_room_<?php echo $room->getId(); ?>_num_ingame_users">-</span> in games:</div>
 	</header>
 	<div class="chat_room_loading" id="chat_room_<?php echo $room->getId(); ?>_loading"><img src="/images/spinning_30.gif"></div>
 	<div class="chat_room_users" id="chat_room_<?php echo $room->getId(); ?>_users"><div id="chat_room_<?php echo $room->getId(); ?>_users_loading" data-user-id="0">Loading ...</div></div>

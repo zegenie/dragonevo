@@ -66,6 +66,16 @@
 		protected $_game_id;
 
 		/**
+		 * If owned, the original card id
+		 *
+		 * @Column(type="integer", length=10)
+		 * @Relates(class="\application\entities\CreatureCard")
+		 *
+		 * @var \application\entities\CreatureCard
+		 */
+		protected $_original_card_id;
+
+		/**
 		 * If in a game, the slot the card is on
 		 *
 		 * @Column(type="integer", length=10)
@@ -512,6 +522,11 @@
 			return $this->_b2dbLazyload('_user_id');
 		}
 
+		public function getUserId()
+		{
+			return ($this->_user_id instanceof User) ? $this->_user_id->getId() : (int) $this->_user_id;
+		}
+
 		public function setGameId($game_id)
 		{
 			$this->_game_id = $game_id;
@@ -531,6 +546,11 @@
 		{
 			return $this->_b2dbLazyload('_game_id');
 		}
+		
+		public function getGameId()
+		{
+			return ($this->_game_id instanceof Game) ? $this->_game_id->getId() : $this->_game_id;
+		}
 
 		public function setSlot($slot)
 		{
@@ -544,7 +564,7 @@
 
 		public function isInGame()
 		{
-			return (bool) $this->getGame() instanceof Game;
+			return (bool) ($this->getGame() instanceof Game);
 		}
 
 		public function getOriginalCard()

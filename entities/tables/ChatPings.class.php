@@ -28,29 +28,48 @@
 			parent::_addInteger('chat_pings.room_id', 10);
 		}
 
-		public function ping($room_id, $user_id)
+		public function ping(\application\entities\ChatRoom $room, \application\entities\User $user)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere('chat_pings.room_id', $room_id);
-			$crit->addWhere('chat_pings.user_id', $user_id);
+			$crit->addWhere('chat_pings.room_id', $room->getId());
+			$crit->addWhere('chat_pings.user_id', $user->getId());
 			if ($row = $this->doSelectOne($crit)) {
 				$crit->addUpdate('chat_pings.pinged', time());
 				$this->doUpdate($crit);
 			} else {
 				$crit = $this->getCriteria();
-				$crit->addInsert('chat_pings.room_id', $room_id);
-				$crit->addInsert('chat_pings.user_id', $user_id);
+				$crit->addInsert('chat_pings.room_id', $room->getId());
+				$crit->addInsert('chat_pings.user_id', $user->getId());
 				$crit->addInsert('chat_pings.pinged', time());
 				$this->doInsert($crit);
+				$room->say("{$user->getUsername()} joined.", 0);
 			}
 		}
 
-		public function cleanRoomPings($room_id)
+		public function cleanRoomPings()
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere('chat_pings.room_id', $room_id);
-			$crit->addWhere('chat_pings.pinged', time() - 60 * 5, Criteria::DB_LESS_THAN_EQUAL);
-			$this->doDelete($crit);
+			$crit->addWhere('chat_pings.pinged', time() - 30, Criteria::DB_LESS_THAN_EQUAL);
+			$res = $this->doSelect($crit);
+			
+			if ($res) {
+				while ($row = $res->getNextRow()) {
+					$id = $row->get('chat_pings.id');
+					$room_id = $row['chat_pings.room_id'];
+					$user_id = $row['chat_pings.user_id'];
+					$user = Users::getTable()->selectById($user_id);
+					$room = ChatRooms::getTable()->selectById($room_id);
+					if ($room_id > 0) {
+						$game = Games::getTable()->getGameByRoomId($room_id);
+						if ($game instanceof \application\entities\Game && $game->isUserOnline($user_id)) {
+							$game->setUserOffline($user_id);
+							$game->save();
+						}
+					}
+					$room->say("{$user->getUsername()} left the chat", 0, $row['chat_pings.pinged'] + 2);
+					$this->doDeleteById($id);
+				}
+			}
 		}
 
 		public function cleanUserPings($user_id)
@@ -64,6 +83,13 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere('chat_pings.room_id', $room_id);
+			return $this->doCount($crit);
+		}
+
+		public function getNumberOfUsersInGames()
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('chat_pings.room_id', 1, Criteria::DB_NOT_EQUALS);
 			return $this->doCount($crit);
 		}
 

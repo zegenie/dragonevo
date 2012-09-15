@@ -17,11 +17,14 @@
 
 		const TYPE_GAME_CREATED = 'game_created';
 		const TYPE_PLAYER_CHANGE = 'player_change';
+		const TYPE_PLAYER_ONLINE = 'player_online';
+		const TYPE_PLAYER_OFFLINE = 'player_offline';
 		const TYPE_INVITATION_ACCEPTED = 'invitation_accepted';
 		const TYPE_PHASE_CHANGE = 'phase_change';
 		const TYPE_REPLENISH = 'replenish';
 		const TYPE_ATTACK = 'attack';
 		const TYPE_DAMAGE = 'damage';
+		const TYPE_THINKING = 'thinking';
 		const TYPE_RESTORE_HEALTH = 'restore_health';
 		const TYPE_RESTORE_ENERGY = 'restore_energy';
 		const TYPE_APPLY_EFFECT = 'apply_effect';
@@ -67,6 +70,12 @@
 		 * @Column(type="integer", length=10)
 		 * @var integer
 		 */
+		protected $_turn_number = 0;
+
+		/**
+		 * @Column(type="integer", length=10)
+		 * @var integer
+		 */
 		protected $_created_at = 0;
 
 		/**
@@ -101,6 +110,7 @@
 				$this->_created_at = time();
 				if (is_array($this->_event_data) && !array_key_exists('turn_number', $this->_event_data)) {
 					$this->_event_data['turn_number'] = $this->getGame()->getTurnNumber();
+					$this->_turn_number = $this->_event_data['turn_number'];
 				}
 			}
 		}

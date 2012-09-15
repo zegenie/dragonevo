@@ -284,6 +284,16 @@
 		protected $_generate_hp_amount;
 
 		/**
+		 * If cloned, the original attack
+		 *
+		 * @Column(type="integer", length=10)
+		 * @Relates(class="\application\entities\Attack")
+		 *
+		 * @var \application\entities\Attack
+		 */
+		protected $_original_attack_id;
+
+		/**
 		 * Whether the attack targets single card or all cards
 		 *
 		 * @Column(type="boolean", default=false)
@@ -396,7 +406,7 @@
 
 		public function hasAttackPoints()
 		{
-			return ($this->_attack_points_min > 0);
+			return ($this->_attack_points_max > 0);
 		}
 
 		public function getAttackPointsRestored()
@@ -427,6 +437,26 @@
 		public function getRepeatAttackPointsMax()
 		{
 			return (int) $this->_repeat_attack_points_max;
+		}
+
+		public function getOriginalAttack()
+		{
+			return $this->_b2dbLazyload('_original_attack_id');
+		}
+
+		public function getOriginalAttackId()
+		{
+			return ($this->_original_attack_id instanceof Attack) ? $this->_original_attack_id->getId() : $this->_original_attack_id;
+		}
+
+		public function setOriginalAttackId($original_attack_id)
+		{
+			$this->_original_attack_id = $original_attack_id;
+		}
+
+		public function setOriginalAttack(Attack $original_attack_id)
+		{
+			$this->_original_attack_id = $original_attack_id;
 		}
 
 		public function isAvailable()
@@ -466,7 +496,7 @@
 
 		public function isRepeatable()
 		{
-			return ($this->_repeat_rounds_min > 0);
+			return ($this->_repeat_rounds_max > 0);
 		}
 		
 		public function hasRepeatRoundsRange()
@@ -592,7 +622,7 @@
 
 		public function hasEffectDurationRange()
 		{
-			return (bool) $this->_effect_duration_min != $this->_effect_duration_max;
+			return (bool) ($this->_effect_duration_min != $this->_effect_duration_max);
 		}
 
 		public function getEffectDurationMin()
@@ -654,10 +684,18 @@
 		{
 			$this->_critical_hit_percentage = $critical_hit_percentage;
 		}
+		
+		public function canAfford()
+		{
+			if ($this->getCard()->getInGameEP() < $this->getCostMagic()) return false;
+			if ($this->getCard()->getGame()->getUserPlayerGold() < $this->getCostGold()) return false;
+			
+			return true;
+		}
 
 		public function canStealGold()
 		{
-			return (bool) $this->_steal_gold_chance > 0;
+			return (bool) ($this->_steal_gold_chance > 0);
 		}
 
 		public function getStealGoldChance()
@@ -682,7 +720,7 @@
 
 		public function canStealMagic()
 		{
-			return (bool) $this->_steal_magic_chance > 0;
+			return (bool) ($this->_steal_magic_chance > 0);
 		}
 
 		public function getStealMagicChance()
@@ -818,6 +856,7 @@
 			$this->_attack_type = $request['attack_type'];
 			$this->_cost_gold = $request['cost_gold'];
 			$this->_cost_magic = $request['cost_magic'];
+			$this->_attack_all = $request['attack_all'];
 			$this->_attack_points_min = $request['hp_min'];
 			$this->_attack_points_max = $request['hp_max'];
 			$this->_repeat_rounds_min = $request['rep_min'];
@@ -867,7 +906,7 @@
 
 		public function hasOwnPenaltyRounds()
 		{
-			return ($this->_penalty_rounds_min > 0);
+			return ($this->_penalty_rounds_max > 0);
 		}
 
 		protected function _generateGold(Game $game)
@@ -1125,6 +1164,7 @@
 
 				$attacked_from_hp = $card->getInGameHP();
 				$card->removeHP($dmg);
+				$this->getCard()->getGame()->addAffectedCard($card);
 
 				$event = new GameEvent();
 				$event->setEventType(GameEvent::TYPE_DAMAGE);
@@ -1135,6 +1175,7 @@
 										'attacked_card_id' => $card->getUniqueId(),
 										'attacked_card_name' => $card->getName(),
 										'attack_name' => $this->getName(),
+										'damage_type' => $type,
 										'hp' => array('from' => $attacked_from_hp, 'to' => $card->getInGameHP(), 'diff' => $dmg),
 										'bonus_cards' => $bonus_cards,
 										'defence_bonus_cards' => $defence_bonus_cards
@@ -1205,7 +1246,7 @@
 			switch ($card->getSlot()) {
 				case 1:
 				case 5:
-					if (rand(0, 50) <= rand(0, 50)) {
+					if (rand(0, 25) <= rand(0, 50)) {
 						$cards[] = ($card->getSlot() == 1) ? 2 : 4;
 						if (rand(0, 50) <= rand(0, 50)) {
 							$cards[] = 3;
@@ -1214,7 +1255,7 @@
 					break;
 				case 2:
 				case 4:
-					if (rand(0, 50) <= rand(0, 50)) {
+					if (rand(0, 25) <= rand(0, 50)) {
 						$cards[] = ($card->getSlot() == 2) ? 1 : 5;
 						if (rand(0, 50) <= rand(0, 50)) {
 							$cards[] = 3;
@@ -1222,7 +1263,7 @@
 					}
 					break;
 				case 3:
-					if (rand(0, 50) <= rand(0, 50)) {
+					if (rand(0, 25) <= rand(0, 50)) {
 						$cards[] = 2;
 						if (rand(0, 50) <= rand(0, 50)) {
 							$cards[] = 4;
@@ -1230,7 +1271,7 @@
 					}
 					break;
 			}
-			if (rand(0, 50) <= rand(0, 50)) {
+			if (rand(0, 60) <= rand(0, 50)) {
 				$powerup_cards = $this->getCard()->getPowerupCards();
 				foreach ($cards as $slot) {
 					$c = $game->getUserOpponentCardSlot($slot);
@@ -1271,7 +1312,7 @@
 			$percentage = rand($this->getEffectPercentageMin(), $this->getEffectPercentageMax());
 			if ($percentage > 0) {
 				$duration = rand($this->getEffectDurationMin(), $this->getEffectDurationMax());
-				$this->_applyEffect($card, $game, ModifierEffect::TYPE_DARK, $duration, $percentage);
+				$this->_applyEffect($card, $game, ModifierEffect::TYPE_POISON, $duration, $percentage);
 			}
 		}
 
@@ -1362,11 +1403,11 @@
 			if ($this->hasAttackPoints()) {
 				$this->_generateAttack($card, $this_powerup_cards, $opponent_powerup_cards);
 			
-				if ($card->getInGameHP() > 0 && $this->isRepeatable()) {
+				if ($card->getHP() > 0 && $this->isRepeatable()) {
 					$repeat_rounds = rand($this->getRepeatRoundsMin(), $this->getRepeatRoundsMax());
 					for ($cc = 1; $cc <= $repeat_rounds; $cc++) {
 						$this->_generateAttack($card, $this_powerup_cards, $opponent_powerup_cards, 'repeat');
-						if ($card->getInGameHP() == 0) break;
+						if ($card->getHP() == 0) break;
 					}
 				}
 			}
@@ -1375,9 +1416,7 @@
 				$this->_stealMagic($game);
 			}
 
-			if ($card->getHP() == 0) {
-				$game->removeCard($card);
-			} else {
+			if ($card->getHP() > 0) {
 				if ($this->hasEffect()) {
 					switch ($this->getAttackType()) {
 						case self::TYPE_AIR:
@@ -1424,8 +1463,12 @@
 					$this->_generateGold($game);
 				}
 			}
-
-			return array($game, $this->getCard());
+			
+			if ($card->getHP() <= 0) {
+				$game->removeCard($card);
+			}
+			
+			$game->addAffectedCard($this->getCard());
 		}
 
 	}

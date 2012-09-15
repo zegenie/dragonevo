@@ -17,5 +17,10 @@
 		{
 			
 		}
+
+		public function componentSkill()
+		{
+			$this->subskills = \application\entities\tables\Skills::getTable()->getSkillsByRace($this->race, $this->skill->getId());
+		}
 		
 	}

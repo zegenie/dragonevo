@@ -28,6 +28,8 @@
 			$crit = $this->getCriteria();
 			$crit->addWhere('game_events.game_id', $game->getId());
 			$crit->addWhere('game_events.id', $since_event_id, Criteria::DB_GREATER_THAN);
+			$crit->addOrderBy('game_events.created_at', Criteria::SORT_ASC);
+			$crit->addOrderBy('game_events.id', Criteria::SORT_ASC);
 			if ($game->getTurnNumber() <= 2) {
 				$crit->addWhere('game_events.event_type', GameEvent::TYPE_CARD_MOVED_ONTO_SLOT, Criteria::DB_NOT_EQUALS);
 			}
@@ -35,12 +37,12 @@
 			return $this->select($crit);
 		}
 
-		public function getOpponentCardEventsByGame(Game $game, $before_event_id)
+		public function getOpponentCardEventsByGame(Game $game)
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere('game_events.game_id', $game->getId());
-			$crit->addWhere('game_events.player_id', $game->getUserOpponent()->getId());
-			$crit->addWhere('game_events.id', $before_event_id, Criteria::DB_LESS_THAN);
+			$crit->addWhere('game_events.player_id', $game->getUserOpponentId());
+			$crit->addWhere('game_events.turn_number', 3, Criteria::DB_LESS_THAN);
 			$crit->addWhere('game_events.event_type', GameEvent::TYPE_CARD_MOVED_ONTO_SLOT);
 
 			return $this->select($crit);

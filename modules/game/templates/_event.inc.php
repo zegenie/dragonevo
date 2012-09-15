@@ -12,6 +12,21 @@
 		$data = json_decode($event->getEventData(), true);
 		$is_current_player = ($data['player_id'] == $csp_user->getId());
 		switch ($event->getEventType()) {
+			case GameEvent::TYPE_RESTORE_HEALTH:
+				echo "{$data['attacked_card_name']} restores {$data['hp']['diff']} HP from {$data['attacking_card_name']}";
+				break;
+			case GameEvent::TYPE_RESTORE_ENERGY:
+				echo "{$data['attacked_card_name']} restores {$data['ep']['diff']} EP from {$data['attacking_card_name']}";
+				break;
+			case GameEvent::TYPE_PLAYER_OFFLINE:
+				echo "{$data['changed_player_name']} went offline";
+				break;
+			case GameEvent::TYPE_PLAYER_ONLINE:
+				echo "{$data['changed_player_name']} is now online";
+				break;
+			case GameEvent::TYPE_THINKING:
+				echo "{$data['player_name']} is thinking ...";
+				break;
 			case GameEvent::TYPE_PLAYER_CHANGE:
 				if ($is_current_player) {
 					echo "It is now your turn";
@@ -39,7 +54,7 @@
 						if ($is_current_player) {
 							echo "You are now finishing your turn";
 						} else {
-							echo "{$data['player_name']} is now finishing his/her turn";
+							echo "{$data['player_name']} is now finishing their turn";
 						}
 						break;
 					case application\entities\Game::PHASE_RESOLUTION:
@@ -82,6 +97,9 @@
 					echo "{$data['player_name']} moved {$data['card_name']} off slot {$data['slot']}";
 				}
 				break;
+			case GameEvent::TYPE_CARD_REMOVED:
+				echo "{$data['card_name']} is eliminated!";
+				break;
 			case GameEvent::TYPE_ATTACK:
 				if ($is_current_player) {
 					echo "Your {$data['attacking_card_name']} attacks {$data['attacked_card_name']}";
@@ -111,13 +129,17 @@
 				}
 				break;
 			case GameEvent::TYPE_DAMAGE:
-				echo "{$data['attacked_card_name']} loses {$data['hp']['diff']} HP";
+				if ($data['damage_type'] == 'effect') {
+					echo "{$data['attack_name']} causes {$data['attacked_card_name']} to lose {$data['hp']['diff']} HP";
+				} else {
+					echo "{$data['attacked_card_name']} loses {$data['hp']['diff']} HP";
+				}
 				break;
 			case application\entities\GameEvent::TYPE_REPLENISH:
 				if ($is_current_player) {
 					echo "Your resources replenishes!";
 				} else {
-					echo "{$data['player_name']} is replenishing his/her resources!";
+					echo "{$data['player_name']} is replenishing their resources!";
 				}
 				break;
 			case GameEvent::TYPE_APPLY_EFFECT:

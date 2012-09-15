@@ -68,6 +68,7 @@
 				}
 				$cattack = clone $attack;
 				$cattack->setCard($this);
+				$cattack->setOriginalAttack($attack);
 				$cattack->save();
 				$attacks++;
 				if ($attacks == 3) break;

@@ -87,15 +87,15 @@
 			}
 		}
 
-		public function say($text, $user_id)
+		public function say($text, $user_id, $time = null)
 		{
-			\application\entities\tables\ChatLines::getTable()->say($text, $user_id, $this->getId());
+			\application\entities\tables\ChatLines::getTable()->say($text, $user_id, $this->getId(), $time);
 		}
 
-		public function ping($user_id)
+		public function ping(User $user)
 		{
-			tables\ChatPings::getTable()->ping($this->getId(), $user_id);
-			tables\ChatPings::getTable()->cleanRoomPings($this->getId());
+			tables\ChatPings::getTable()->ping($this, $user);
+			tables\ChatPings::getTable()->cleanRoomPings();
 		}
 
 		public function getNumberOfUsers()

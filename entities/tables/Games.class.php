@@ -48,13 +48,33 @@
 			return $this->select($crit);
 		}
 
+		public function getNumberOfGamesByUserId($user_id)
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('games.state', \application\entities\Game::STATE_COMPLETED);
+			$ctn = $crit->returnCriterion('games.opponent_id', $user_id);
+			$ctn->addOr('games.player_id', $user_id);
+			$crit->addWhere($ctn);
+
+			return $this->count($crit);
+		}
+
+		public function getNumberOfGamesWonByUserId($user_id)
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('games.winning_player_id', $user_id);
+
+			return $this->count($crit);
+		}
+
 		public function cleanOldQuickmatchGames($user_id)
 		{
+			$past = time() - 60;
 			$crit = $this->getCriteria();
 			$crit->addWhere('games.player_id', $user_id, Criteria::DB_NOT_EQUALS);
 			$crit->addWhere('games.opponent_id', 0);
 			$crit->addWhere('games.invitation_sent', false);
-			$crit->addWhere('games.created_at', time() - 300, Criteria::DB_LESS_THAN);
+			$crit->addWhere('games.created_at', $past, Criteria::DB_LESS_THAN);
 			$crit->addJoin(Users::getTable(), 'users.id', 'games.player_id');
 			$crit->addSelectionColumn('users.lastseen', 'lastseen');
 			$crit->addSelectionColumn('games.created_at', 'created_at');
@@ -65,7 +85,8 @@
 			$games = array();
 			if ($res) {
 				while ($row = $res->getNextRow()) {
-					if ($row->get('lastseen') < $row->get('created_at')) {
+					$created_at = $row->get('created_at');
+					if ($row->get('lastseen') < $created_at || $created_at < $past) {
 						$games[$row->get('id')] = true;
 					}
 				}
@@ -91,6 +112,14 @@
 			return $this->selectOne($crit);
 		}
 
+		public function getGameByRoomId($room_id)
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('games.chatroom_id', $room_id);
+
+			return $this->selectOne($crit);
+		}
+
 		public function getQuickmatchGameForUser($user_id)
 		{
 			$crit = $this->getCriteria();
@@ -98,7 +127,14 @@
 			$crit->addWhere('games.quickmatch_state', 1);
 			$crit->setLimit(1);
 
-			return $this->selectOne($crit);
+			$game = $this->selectOne($crit);
+			
+			if ($game instanceof \application\entities\Game) {
+				$game->setCreatedAt(time());
+				$game->save();
+			}
+			
+			return $game;
 		}
 
 		public function getNumberOfCurrentGames()
@@ -125,6 +161,14 @@
 			$crit->addWhere('games.ended_at', time() - 604800, \b2db\Criteria::DB_GREATER_THAN_EQUAL);
 
 			return $this->count($crit);
+		}
+
+		public function getAllByState($state)
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('games.state', $state);
+			$crit->addOrderBy('games.created_at', \b2db\Criteria::SORT_DESC);
+			return $this->select($crit);
 		}
 
 	}

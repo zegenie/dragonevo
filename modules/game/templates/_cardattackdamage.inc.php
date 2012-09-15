@@ -18,30 +18,26 @@
 		+ <?php echo $attack->getRepeatAttackPointsMin(); ?>
 	<?php endif; ?>
 	<?php if ($attack->hasRepeatRoundsRange()): ?>
-		for <?php echo $attack->getRepeatRoundsMin() . '-' . $attack->getRepeatRoundsMax(); ?> round(s)
+		<?php echo $attack->getRepeatRoundsMin() . '-' . $attack->getRepeatRoundsMax(); ?> time(s)
 	<?php else: ?>
-		for <?php echo $attack->getRepeatRoundsMin(); ?> round(s)
+		<?php echo $attack->getRepeatRoundsMin(); ?> time(s)
 	<?php endif; ?>
 <?php endif; ?>
 <br>
-<?php /*if ($attack->canStun()): ?>
-	<?php if ($attack->hasStunPercentageRange()): ?>
-		+ <?php echo $attack->getStunPercentageMin() . '-' . $attack->getStunPercentageMax(); ?>% chance of stunning the opponent
-	<?php else: ?>
-		+ <?php echo $attack->getStunPercentageMin(); ?>% chance of stunning the opponent
-	<?php endif; ?>
-	<?php if ($attack->hasStunDurationRange()): ?>
-		for <?php echo $attack->getStunDurationMin() . '-' . $attack->getStunDurationMax(); ?> round(s)
-	<?php else: ?>
-		for <?php echo $attack->getStunDurationMin(); ?> round(s)
-	<?php endif; ?>
-	<br>
-<?php endif;*/ ?>
 <?php if ($attack->isUnblockable()): ?>
 	<div class="attack_unblockable">This attack cannot be blocked!</div>
 <?php endif; ?>
-<?php if ($attack->canStealGold()): ?>
-	<div class="attack_steal_gold"><?php echo $attack->getStealGoldChance(); ?>% chance of stealing up to <?php echo $attack->getStealGoldAmount(); ?>% gold</div>
+<?php if ($attack->getPenaltyDmg()): ?>
+	<div class="attack_steal_gold">Damages self <?php echo $attack->getPenaltyDmg(); ?>HP!</div>
+<?php endif; ?>
+<?php if ($attack->hasOwnPenaltyRounds()): ?>
+	<div class="attack_unblockable">
+		<?php if ($attack->hasPenaltyRoundsRange()): ?>
+			Stuns self for <?php echo $attack->getPenaltyRoundsMin() . '-' . $attack->getPenaltyRoundsMax(); ?> round(s)
+		<?php else: ?>
+			Stuns self for <?php echo $attack->getPenaltyRoundsMin(); ?> round(s)
+		<?php endif; ?>
+	</div>
 <?php endif; ?>
 <?php if ($attack->hasEffect()): ?>
 	<?php
@@ -78,15 +74,9 @@
 
 	?>
 <?php endif; ?>
-<?php if ($attack->hasOwnPenaltyRounds()): ?>
-	<div class="attack_unblockable">
-		<?php if ($attack->hasPenaltyRoundsRange()): ?>
-			Stuns self for <?php echo $attack->getPenaltyRoundsMin() . '-' . $attack->getPenaltyRoundsMax(); ?> round(s)
-		<?php else: ?>
-			Stuns self for <?php echo $attack->getPenaltyRoundsMin(); ?> round(s)
-		<?php endif; ?>
-	</div>
-<?php endif; ?>
 <?php if ($attack->canStealMagic()): ?>
 	<div class="attack_steal_magic"><?php echo $attack->getStealMagicChance(); ?>% chance of stealing up to <?php echo $attack->getStealMagicAmount(); ?>% EP</div>
+<?php endif; ?>
+<?php if ($attack->canStealGold()): ?>
+	<div class="attack_steal_gold"><?php echo $attack->getStealGoldChance(); ?>% chance of stealing up to <?php echo $attack->getStealGoldAmount(); ?>% gold</div>
 <?php endif; ?>

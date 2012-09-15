@@ -2,11 +2,12 @@
 <div class="content full">
 	<h1>Pick cards for your game</h1>
 	<p>
-		Before you can start the game <strong>vs. <?php echo $game->getUserOpponent()->getUsername(); ?></strong>, you need to pick cards to play with. Select cards from the list below, and press the big "Play" button when you're ready.
+		Before you can start the game <strong>vs. <?php echo ($game->getOpponentId()) ? $game->getUserOpponent()->getUsername() : 'Training AI'; ?></strong>, you need to pick cards to play with. Select cards from the list below, and press the big "Play" button when you're ready.
 	</p>
 	<?php if (count($cards)): ?>
 		<form action="<?php echo make_url('pick_cards', array('game_id' => $game->getId())); ?>" method="post">
 			<?php foreach ($cards as $card): ?>
+				<?php if ($card->getGameId()) continue; ?>
 				<input type="hidden" name="cards[<?php echo $card->getId(); ?>]" value="<?php echo (int) ($card->isInGame() && $card->getGame()->getId() == $game->getId()); ?>" id="picked_card_<?php echo $card->getUniqueId(); ?>">
 				<input type="hidden" name="card_types[<?php echo $card->getId(); ?>]" value="<?php echo $card->getCardType(); ?>">
 			<?php endforeach; ?>
@@ -16,6 +17,7 @@
 			<div class="shelf cardpicker">
 				<ul>
 					<?php foreach ($cards as $card): ?>
+						<?php if ($card->getCardType() == \application\entities\Card::TYPE_POTION_ITEM || $card->getGameId()) continue; ?>
 						<li>
 							<div onclick="Devo.Play.pickCardToggle('<?php echo $card->getUniqueId(); ?>');" style="cursor: pointer; position: relative;">
 								<?php include_template('game/card', array('card' => $card, 'mode' => 'medium', 'ingame' => false, 'selected' => ($card->isInGame() && $card->getGame()->getId() == $game->getId()))); ?>

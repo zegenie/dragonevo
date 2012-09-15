@@ -137,16 +137,6 @@
 		protected $_attacks;
 
 		/**
-		 * If owned, the original card id
-		 *
-		 * @Column(type="integer", length=10)
-		 * @Relates(class="\application\entities\CreatureCard")
-		 *
-		 * @var \application\entities\CreatureCard
-		 */
-		protected $_original_card_id;
-
-		/**
 		 * User card level
 		 *
 		 * @Column(type="integer", length=10, default=1)
@@ -423,19 +413,10 @@
 			$this->_user_card_level = $user_card_level;
 		}
 
-		public function setIsInPlay($is_in_play = true)
-		{
-			parent::setIsInPlay($is_in_play);
-			if ($is_in_play) {
-				$this->_in_game_health = $this->_base_health;
-				$this->_in_game_ep = $this->_base_ep;
-			}
-		}
-
 		public function getPowerupCards()
 		{
 			$powerup_cards = array();
-			if ($this->getGame()->getPlayer()->getId() == $this->getUser()->getId()) {
+			if ($this->getGame()->getPlayer()->getId() == $this->getUserId()) {
 				$card_1 = $this->getGame()->getPlayerCardSlotPowerup1($this->getSlot());
 				$card_2 = $this->getGame()->getPlayerCardSlotPowerup2($this->getSlot());
 			} else {
@@ -468,21 +449,36 @@
 			return $effects;
 		}
 		
+		public function removeEffects($type)
+		{
+			foreach ($this->getModifierEffects() as $effect) {
+				if ($effect->getEffectType() == $type) {
+					$this->removeEffect($effect);
+					$this->_applied_effects = null;
+				}
+			}
+		}
+		
+		public function removeEffect($effect)
+		{
+			$event = new GameEvent();
+			$event->setEventType(GameEvent::TYPE_REMOVE_EFFECT);
+			$event->setEventData(array(
+									'player_id' => $this->getGame()->getCurrentPlayerId(),
+									'attacked_card_id' => $this->getUniqueId(),
+									'attacked_card_name' => $this->getName(),
+									'effect' => $effect->getEffectType()
+									));
+			$this->getGame()->addEvent($event);
+			$effect->delete();
+		}
+		
 		public function validateEffects()
 		{
 			$has_effects = false;
 			foreach ($this->getModifierEffects() as $effect) {
 				if (!$effect->isValid()) {
-					$event = new GameEvent();
-					$event->setEventType(GameEvent::TYPE_REMOVE_EFFECT);
-					$event->setEventData(array(
-											'player_id' => $this->getGame()->getCurrentPlayerId(),
-											'attacked_card_id' => $this->getUniqueId(),
-											'attacked_card_name' => $this->getName(),
-											'effect' => $effect->getEffectType()
-											));
-					$this->getGame()->addEvent($event);
-					$effect->delete();
+					$this->removeEffect($effect);
 				} else {
 					$has_effects = true;
 				}
@@ -501,8 +497,64 @@
 		{
 			foreach ($this->getModifierEffects() as $effect) {
 				if ($effect->getAttackPointsPercentage()) {
-					$hp = $this->getInGameHP() - floor(($this->getBaseHP() / 100) * $effect->getAttackPointsPercentage());
+					$dmg = floor(($this->getBaseHP() / 100) * $effect->getAttackPointsPercentage());
+					$defence_bonus_cards = array();
+					switch ($effect->getEffectType()) {
+						case ModifierEffect::TYPE_AIR:
+							$effect_name = 'Air magic';
+							foreach ($this->getPowerupCards() as $pc) {
+								if ($pc instanceof EquippableItemCard && $pc->isInPlay() && $pc->getAirAttackDmpPercentageModifier()) {
+									$dmg -= floor(($dmg / 100) * rand(0, $pc->getAirAttackDmpPercentageModifier()));
+									$defence_bonus_cards[] = $pc->getUniqueId();
+								}
+							}
+							break;
+						case ModifierEffect::TYPE_FIRE:
+							$effect_name = 'Fire';
+							foreach ($this->getPowerupCards() as $pc) {
+								if ($pc instanceof EquippableItemCard && $pc->isInPlay() && $pc->getFireAttackDmpPercentageModifier()) {
+									$dmg -= floor(($dmg / 100) * rand(0, $pc->getFireAttackDmpPercentageModifier()));
+									$defence_bonus_cards[] = $pc->getUniqueId();
+								}
+							}
+							break;
+						case ModifierEffect::TYPE_FREEZE:
+							$effect_name = 'Freezing';
+							foreach ($this->getPowerupCards() as $pc) {
+								if ($pc instanceof EquippableItemCard && $pc->isInPlay() && $pc->getFreezeAttackDmpPercentageModifier()) {
+									$dmg -= floor(($dmg / 100) * rand(0, $pc->getFreezeAttackDmpPercentageModifier()));
+									$defence_bonus_cards[] = $pc->getUniqueId();
+								}
+							}
+							break;
+						case ModifierEffect::TYPE_POISON:
+							$effect_name = 'Poison';
+							foreach ($this->getPowerupCards() as $pc) {
+								if ($pc instanceof EquippableItemCard && $pc->isInPlay() && $pc->getPoisonAttackDmpPercentageModifier()) {
+									$dmg -= floor(($dmg / 100) * rand(0, $pc->getPoisonAttackDmpPercentageModifier()));
+									$defence_bonus_cards[] = $pc->getUniqueId();
+								}
+							}
+							break;
+					}
+					$hp = $this->getInGameHP() - $dmg;
+					$attacked_from_hp = $this->getInGameHP();
 					$this->setInGameHP($hp);
+					$event = new GameEvent();
+					$event->setEventType(GameEvent::TYPE_DAMAGE);
+					$event->setEventData(array(
+											'player_id' => $this->getGame()->getCurrentPlayerId(),
+											'attacking_card_id' => $this->getUniqueId(),
+											'attacking_card_name' => $this->getName(),
+											'attacked_card_id' => $this->getUniqueId(),
+											'attacked_card_name' => $this->getName(),
+											'attack_name' => $effect_name,
+											'damage_type' => 'effect',
+											'hp' => array('from' => $attacked_from_hp, 'to' => $this->getInGameHP(), 'diff' => $dmg),
+											'bonus_cards' => array(),
+											'defence_bonus_cards' => $defence_bonus_cards
+											));
+					$this->getGame()->addEvent($event);
 				}
 			}
 		}

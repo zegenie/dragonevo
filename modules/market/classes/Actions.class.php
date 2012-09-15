@@ -18,11 +18,24 @@
 		public function runIndex(Request $request)
 		{
 //			$user = new \application\entities\User();
-//			$user->setUsername('thondal');
-//			$user->setPassword('password');
-//			$user->setIsAdmin();
+//			$user->setUsername('ai_easy');
+//			$user->setPassword('ai_easy_gd;rgH7!f');
+//			$user->setIsAdmin(false);
+//			$user->setAiLevel(\application\entities\User::AI_EASY);
 //			$user->save();
-//			\application\entities\tables\EventCards::getTable()->create();
+//			$user = new \application\entities\User();
+//			$user->setUsername('ai_normal');
+//			$user->setPassword('ai_normal_gd;rgH7!f');
+//			$user->setIsAdmin(false);
+//			$user->setAiLevel(\application\entities\User::AI_NORMAL);
+//			$user->save();
+//			$user = new \application\entities\User();
+//			$user->setUsername('ai_hard');
+//			$user->setPassword('ai_hard_gd;rgH7!f');
+//			$user->setIsAdmin(false);
+//			$user->setAiLevel(\application\entities\User::AI_HARD);
+//			$user->save();
+			\application\entities\tables\Skills::getTable()->create();
 //			\application\entities\tables\EquippableItemCards::getTable()->create();
 //			\application\entities\tables\PotionItemCards::getTable()->create();
 //			\application\entities\tables\CreatureCards::getTable()->create();

@@ -35,8 +35,7 @@
 			$this->game = null;
 			try {
 				$this->game = Games::getTable()->selectById($game_id);
-			} catch (\Exception $e) {
-			}
+			} catch (\Exception $e) {}
 		}
 
 		/**
@@ -62,8 +61,10 @@
 		public function runBoard(Request $request)
 		{
 			if ($this->game instanceof Game) {
-				if (!$this->game->isGameOver() && !$this->game->hasCards()) {
-					return $this->forward($this->getRouting()->generate('pick_cards', array('game_id' => $this->game->getId())));
+				if (in_array($this->getUser()->getId(), array($this->game->getPlayer()->getId(), $this->game->getOpponent()->getId()))) {
+					if (!$this->game->isGameOver() && !$this->game->hasCards()) {
+						return $this->forward($this->getRouting()->generate('pick_cards', array('game_id' => $this->game->getId())));
+					}
 				}
 				if ($this->game->isGameOver()) {
 					$this->statistics = $this->game->getStatistics($this->getUser()->getId());
@@ -91,13 +92,13 @@
 									break;
 								case \application\entities\Card::TYPE_EQUIPPABLE_ITEM:
 									$card = EquippableItemCards::getTable()->selectById($card_id);
-									break;
-								case \application\entities\Card::TYPE_POTION_ITEM:
-									$card = PotionItemCards::getTable()->selectById($card_id);
+									$card->setPowerupSlot1(false);
+									$card->setPowerupSlot2(false);
 									break;
 							}
 							if (!$card->isInGame()) {
 								$card->setGame($this->game);
+								$card->setSlot(0);
 								$card->save();
 							}
 						}
@@ -112,16 +113,49 @@
 			}
 		}
 
+		public function runTraining(Request $request)
+		{
+			switch ($request['level']) {
+				case 1:
+					$ai_player = \application\entities\tables\Users::getTable()->getByUsername('ai_easy');
+					break;
+				case 2:
+					$ai_player = \application\entities\tables\Users::getTable()->getByUsername('ai_normal');
+					break;
+				default:
+					$ai_player = \application\entities\tables\Users::getTable()->getByUsername('ai_hard');
+			}
+			$game = new Game();
+			$game->setPlayer($this->getUser());
+			$game->setOpponent($ai_player);
+			$game->completeQuickmatch();
+			$game->save();
+			
+			$creature_cards = \application\entities\tables\CreatureCards::getTable()->getByFaction($request['faction']);
+			$c_cards = \application\entities\tables\Cards::pickCards($creature_cards, $ai_player->getId(), rand(3, 7));
+			foreach ($c_cards as $card_id => $card) {
+				$card->setGame($game);
+				$card->save();
+			}
+			$equippable_item_cards = \application\entities\tables\EquippableItemCards::getTable()->getAll();
+			$e_cards = \application\entities\tables\Cards::pickCards($equippable_item_cards, $ai_player->getId(), rand(5, 10));
+			foreach ($e_cards as $card_id => $card) {
+				$card->setGame($game);
+				$card->save();
+			}
+			$this->forward($this->getRouting()->generate('board', array('game_id' => $game->getId())));
+		}
+		
 		public function runLeaveGame(Request $request)
 		{
-			if ($this->game->isInProgress() && in_array($this->getUser()->getId(), array($this->game->getPlayer()->getId(), $this->game->getOpponent()->getId()))) {
-				$this->game->resolve($this->game->getUserOpponent()->getId());
+			if ($this->game->isInProgress() && in_array($this->getUser()->getId(), array($this->game->getPlayer()->getId(), $this->game->getOpponentId()))) {
+				if (!$this->game->getOpponentId()) {
+					$this->game->resolve($this->game->getOpponentId());
+				} else {
+					$this->game->resolve($this->game->getUserOpponent()->getId());
+				}
 				$this->game->save();
-				EventCards::getTable()->resetUserCards($this->game->getId());
-				CreatureCards::getTable()->resetUserCards($this->game->getId());
-				PotionItemCards::getTable()->resetUserCards($this->game->getId());
-				EquippableItemCards::getTable()->resetUserCards($this->game->getId());
-				ModifierEffects::getTable()->removeEffects($this->game->getId());
+				$this->game->resetUserCards();
 			}
 
 			$this->forward($this->getRouting()->generate('lobby'));
