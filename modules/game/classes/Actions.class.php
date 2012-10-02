@@ -27,6 +27,7 @@
 
 		public function preExecute(Request $request, $action)
 		{
+			$this->getResponse()->setFullscreen();
 			if (!$this->getUser()->isAuthenticated()) {
 				return $this->forward403();
 			}
@@ -77,6 +78,7 @@
 
 		public function runPickCards(Request $request)
 		{
+			$this->getResponse()->setFullscreen();
 			if (!$this->game->isGameOver()) {
 				if ($request->isPost()) {
 					$cards = $request->getParameter('cards', array());
@@ -129,9 +131,12 @@
 			$game->setPlayer($this->getUser());
 			$game->setOpponent($ai_player);
 			$game->completeQuickmatch();
+			$game->setCurrentPlayer($this->getUser());
 			$game->save();
 			
-			$creature_cards = \application\entities\tables\CreatureCards::getTable()->getByFaction($request['faction']);
+			$factions = array('resistance', 'neutrals', 'rutai');
+			$faction = $factions[array_rand($factions)];
+			$creature_cards = \application\entities\tables\CreatureCards::getTable()->getByFaction($faction);
 			$c_cards = \application\entities\tables\Cards::pickCards($creature_cards, $ai_player->getId(), rand(3, 7));
 			foreach ($c_cards as $card_id => $card) {
 				$card->setGame($game);

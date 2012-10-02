@@ -1,4 +1,5 @@
 <?php $csp_response->setTitle(__('Dragon Evo - The Card Game')); ?>
+<?php /*
 <div class="content full faq">
 	<h1>Frequently asked questions</h1>
 	<h3 style="margin-top: 30px;">About the game</h3>
@@ -36,4 +37,4 @@
 	<p>
 		<strong>The game will be free to play.</strong> You can buy card packs and cards separately, but there will also be a way to earn these in-game. There will also be additional features available for paid accounts, but we haven't settled these features yet.
 	</p>
-</div>
+</div> */ ?>

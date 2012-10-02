@@ -10,21 +10,15 @@
 				<li><strong><?php echo link_tag(make_url('admin'), 'Admin CP'); ?></strong></li>
 			<?php endif; ?>
 			<li>&nbsp;</li>
-			<li>
-				<a href="<?php echo make_url('profile'); ?>">Profile summary</a>
-			</li>
+			<li><a href="<?php echo make_url('profile'); ?>">Profile summary</a></li>
+			<li><a href="<?php echo make_url('skills'); ?>">My skills</a></li>
 			<?php if ($csp_user->hasCards()): ?>
-				<li>
-					<a href="<?php echo make_url('cards'); ?>">My cards</a>
-				</li>
+				<li><a href="<?php echo make_url('cards'); ?>">My cards</a></li>
 			<?php endif; ?>
-			<li>
-				<a href="javascript:void(0);" onclick="$('invite_email').toggle();">Invite a friend</a>
-			</li>
+			<li>&nbsp;</li>
+			<li><a href="javascript:void(0);" onclick="$('invite_email').toggle();">Invite a friend</a></li>
 		<?php else: ?>
-			<li>
-				<a href="<?php echo make_url('profile'); ?>">Character setup</a>
-			</li>
+			<li><a href="<?php echo make_url('profile'); ?>">Character setup</a></li>
 		<?php endif; ?>
 		<li id="invite_email" style="display: none;">
 			<form method="post" onsubmit="Devo.Main.Profile.inviteUser();return false;">

@@ -10,6 +10,11 @@ profile:
   module: main
   action: profile
 
+skills:
+  url: /profile/skills
+  module: main
+  action: skills
+
 cards:
   url: /cards
   module: main
@@ -24,6 +29,11 @@ logout:
   url: /logout
   module: main
   action: logout
+
+play:
+  url: /play
+  module: main
+  action: play
 
 join:
   url: /join/:code
@@ -194,7 +204,7 @@ leave_game:
   action: leavegame
 
 training:
-  url: game/training/:level/:faction
+  url: game/training/:level
   module: game
   action: training
 

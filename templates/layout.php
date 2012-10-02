@@ -39,10 +39,13 @@
 				<span id="dragonevo_successmessage_content"></span>
 			</div>
 		</div>
-		<div id="fullpage_backdrop" class="fullpage_backdrop" style="display: none;">
-			<div style="position: absolute; top: 45%; left: 40%; z-index: 100001; color: #FFF; font-size: 15px; font-weight: bold;" id="fullpage_backdrop_indicator">
-				<?php echo image_tag('/images/spinning_32.gif'); ?><br>
-				<?php echo __('Please wait ...'); ?>
+		<div id="fullpage_backdrop" class="fullpage_backdrop" style="<?php if (!$csp_response->isFullscreen()): ?>display: none;<?php endif; ?>">
+			<div id="loading">
+				<div class="msg">
+					Loading ...<br>
+					<span class="slogan">Please be patient</span>
+				</div>
+				<img src="/images/spinning_32.gif">
 			</div>
 			<div id="fullpage_backdrop_content" class="fullpage_backdrop_content"> </div>
 		</div>
@@ -63,31 +66,7 @@
 			</div>
 			<div style="background-color: #000; width: 100%; height: 100%; position: absolute; top: 0; left: 0; margin: 0; padding: 0; z-index: 999;" class="semi_transparent"> </div>
 		</div>
-		<?php if ($csp_routing->getCurrentRouteModule() != 'game' || $csp_routing->getCurrentRouteName() == 'pick_cards'): ?>
-			<?php /*if ($csp_response->getPage() != 'home'): ?>
-				<div id="header-strip">
-					<div class="header-content">
-						<ul>
-							<?php if ($csp_user->isAuthenticated()): ?>
-								<li class="<?php if ($csp_response->getPage() == 'profile') echo 'selected'; ?>"><?php echo link_tag(make_url('profile'), 'Profile'); ?></li>
-								<?php if ($csp_user->isAdmin()): ?>
-									<li class="<?php if (in_array($csp_response->getPage(), array('admin'))) echo 'selected'; ?>"><?php echo link_tag(make_url('admin'), 'Admin'); ?></li>
-								<?php endif; ?>
-								<li class="<?php if ($csp_response->getPage() == 'lobby') echo 'selected'; ?>"><?php echo link_tag(make_url('lobby'), 'Lobby'); ?></li>
-								<li class="<?php if ($csp_response->getPage() == 'market') echo 'selected'; ?>"><?php echo link_tag(make_url('market'), 'Market'); ?></li>
-								<li class="<?php if ($csp_response->getPage() == 'help') echo 'selected'; ?>"><a href="javascript:void(0);" onclick="Devo.Main.Helpers.Message.success('Help is being created', 'Please be patient as we finish it');">Help</a></li>
-								<li class="logout"><?php echo link_tag(make_url('logout'), 'Logout', array('class' => 'button button-silver')); ?></li>
-							<?php else: ?>
-								<li><a href="javascript:void(0);" onclick="Devo.Main.Helpers.Backdrop.show('<?php echo make_url('get_backdrop_partial', array('key' => 'login')); ?>')">Login</a></li>
-							<?php endif; ?>
-						</ul>
-						<a class="header-logo" href="<?php echo make_url('home'); ?>">
-							Dragon Evo<br>
-							The Card Game
-						</a>
-					</div>
-				</div>
-			<?php endif; */?>
+		<?php if (!$csp_response->isFullscreen()): ?>
 			<div class="main-content">
 				<div class="banner-container">
 					<?php if ($csp_routing->getCurrentRouteName() == 'home'): ?>
@@ -99,7 +78,7 @@
 						DRAGON EVO<br>
 						<span class="slogan">the online action card game</span>
 					</a>
-					<?php /* <a class="play-now" href="#">Play now!</a> */ ?>
+					<?php /* <a class="play-now" href="<?php echo make_url('play'); ?>">Play now!</a> */ ?>
 				</div>
 				<ul class="main-menu">
 					<li><a href="<?php echo make_url('home'); ?>" class="<?php if ($csp_response->getPage() == 'home') echo ' selected'; ?>">Home</a></li>
@@ -129,10 +108,13 @@
 				</footer>
 			</div>
 		<?php else: ?>
-			<?php echo $content; ?>
+			<div id="fullscreen-container">
+				<?php echo $content; ?>
+			</div>
 		<?php endif; ?>
 		<?php if ($csp_user->isAuthenticated()): ?>
 			<script type="text/javascript">
+//				console.log(document.getElementsByTagName('body')[0]);
 				document.observe('dom:loaded', function() {
 					Devo.Core.initialize({location: '<?php echo $csp_routing->getCurrentRouteName(); ?>', title: '<?php echo $csp_response->getTitle(); ?>', ask_url: '<?php echo make_url('ask'); ?>', say_url: '<?php echo make_url('say'); ?>', user_id: <?php echo $csp_user->getId(); ?>});
 				});

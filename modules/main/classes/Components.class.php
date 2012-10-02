@@ -38,4 +38,9 @@
 			$this->preview = (isset($this->preview)) ? $this->preview : false;
 		}
 
+		public function componentSkill()
+		{
+			$this->trained = $this->getUser()->hasTrainedSkill($this->skill);
+		}
+
 	}

@@ -217,6 +217,14 @@
 		protected $_game_invites;
 
 		/**
+		 * Skills trained
+		 *
+		 * @Relates(class="\application\entities\Skill", collection=true, foreign_column="user_id")
+		 * @var array|\application\entities\Skill
+		 */
+		protected $_skills;
+
+		/**
 		 * Games the user is playing
 		 *
 		 * @var array|\application\entities\Game
@@ -273,6 +281,18 @@
 				$lchar = $char;
 			}
 			return $pass;
+		}
+
+		public static function getRaceNameByRace($race)
+		{
+			static $races = array(
+				self::RACE_HUMAN => 'Human',
+				self::RACE_LIZARD => 'Lacerta',
+				self::RACE_BEAST => 'Yakashdi',
+				self::RACE_ELF => 'Kalvarth'
+			);
+
+			return isset($races[$race]) ? $races[$race] : '';
 		}
 
 		/**
@@ -647,6 +667,11 @@
 			return $this->_race;
 		}
 
+		public function getRaceName()
+		{
+			return self::getRaceNameByRace($this->_race);
+		}
+
 		public function setRace($race)
 		{
 			$this->_race = $race;
@@ -737,12 +762,17 @@
 
 		public function getNextLevelXp() 
 		{
-			return (($this->getLevel()) * 200) + (15 * ($this->getLevel() - 1));
+			return (($this->getLevel()) * 215) + (35 * ($this->getLevel() - 1));
 		}
-		
+
 		public function canLevelUp()
 		{
 			return ($this->getXp() >= $this->getNextLevelXp());
+		}
+
+		public function levelUp()
+		{
+			$this->_level++;
 		}
 		
 		public function getInvites()
@@ -1082,6 +1112,29 @@
 		public function isAI()
 		{
 			return ($this->_ai_level > 0);
+		}
+
+		public function getSkills()
+		{
+			return $this->_b2dbLazyload('_skills');
+		}
+
+		public function hasTrainedSkill(Skill $skill)
+		{
+			foreach ($this->getSkills() as $trained_skill) {
+				if ($trained_skill->getOriginalSkillId() == $skill->getId()) return true;
+			}
+
+			return false;
+		}
+
+		public function trainSkill(Skill $skill)
+		{
+			$trained_skill = clone $skill;
+			$trained_skill->setUser($this);
+			$trained_skill->setOriginalSkill($skill);
+			$trained_skill->save();
+			$this->_skills = null;
 		}
 
 	}

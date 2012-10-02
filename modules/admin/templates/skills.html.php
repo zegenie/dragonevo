@@ -20,11 +20,11 @@
 						$skills = $skills_lizard;
 						break;
 					case \application\entities\User::RACE_BEAST:
-						echo 'Beast';
+						echo 'Yakashdi';
 						$skills = $skills_beast;
 						break;
 					case \application\entities\User::RACE_ELF:
-						echo 'Elves';
+						echo 'Kalvarth';
 						$skills = $skills_elf;
 						break;
 				}

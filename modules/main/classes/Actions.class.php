@@ -36,6 +36,12 @@ class Actions extends \caspar\core\Actions
 		$this->getResponse()->setHttpStatus(404);
 	}
 	
+	public function runSkills(Request $request)
+	{
+		$this->available_skills = \application\entities\tables\Skills::getTable()->getSkillsByRace($this->getUser()->getRace());
+		$this->user_skills = $this->getUser()->getSkills();
+	}
+
 	/**
 	 * Profile overview
 	 *
@@ -102,9 +108,9 @@ class Actions extends \caspar\core\Actions
 	 *
 	 * @param Request $request
 	 */
-	public function runLobby(Request $request)
+	public function runPlay(Request $request)
 	{
-
+		$this->getResponse()->setFullscreen();
 	}
 
 	/**
@@ -134,7 +140,7 @@ class Actions extends \caspar\core\Actions
 	 */
 	public function runFaq(Request $request)
 	{
-
+		$this->getResponse()->setFullscreen();
 	}
 
 	/**

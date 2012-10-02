@@ -24,6 +24,7 @@
 		 */
 		public function runIndex(Request $request)
 		{
+			$this->getResponse()->setFullscreen();
 			$this->games = $this->getUser()->getGames();
 		}
 

@@ -317,7 +317,13 @@
 								break;
 						}
 					}
-					if ($request['parent_skill_id']) $this->skill->setParentSkill($request['parent_skill_id']);
+					if ($request['parent_skill_id']) {
+						$this->skill->setParentSkill($request['parent_skill_id']);
+						if ($this->skill->getParentSkill()->getRaceHuman()) $this->skill->setRaceHuman(true);
+						if ($this->skill->getParentSkill()->getRaceLizard()) $this->skill->setRaceLizard(true);
+						if ($this->skill->getParentSkill()->getRaceBeast()) $this->skill->setRaceBeast(true);
+						if ($this->skill->getParentSkill()->getRaceElf()) $this->skill->setRaceElf(true);
+					}
 				}
 			} catch (\Exception $e) {
 				return $this->return404('This is not a valid skill');

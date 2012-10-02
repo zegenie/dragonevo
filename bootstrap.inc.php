@@ -4,3 +4,5 @@
 	defined('DEVO_CARD_UPLOAD_PATH') || define('DEVO_CARD_UPLOAD_PATH', CASPAR_RESOURCES_PATH . 'images' . DS . 'cards' . DS);
 
 	date_default_timezone_set('Etc/GMT-2');
+
+	\caspar\core\Caspar::autoloadNamespace('application\\lib', CASPAR_APPLICATION_PATH . 'lib');

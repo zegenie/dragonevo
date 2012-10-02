@@ -38,7 +38,7 @@
 				<input type="text" name="description" class="long" id="skill_description" value="<?php echo $skill->getDescription(); ?>" placeholder="Enter a skill description here">
 			</div>
 			<div>
-				<label for="skill_race_human">Available to humans</label>
+				<label for="skill_race_human">Available to Humans</label>
 				<input type="checkbox" name="race_human" id="skill_race_human" value="1" <?php if ($skill->getRaceHuman()) echo 'checked'; ?>>
 			</div>
 			<div>
@@ -46,11 +46,11 @@
 				<input type="checkbox" name="race_lizard" id="skill_race_lizard" value="1" <?php if ($skill->getRaceLizard()) echo 'checked'; ?>>
 			</div>
 			<div>
-				<label for="skill_race_beast">Available to beasts</label>
+				<label for="skill_race_beast">Available to Yakashdi</label>
 				<input type="checkbox" name="race_beast" id="skill_race_beast" value="1" <?php if ($skill->getRaceBeast()) echo 'checked'; ?>>
 			</div>
 			<div>
-				<label for="skill_race_elf">Available to elves</label>
+				<label for="skill_race_elf">Available to Kalvarth</label>
 				<input type="checkbox" name="race_elf" id="skill_race_elf" value="1" <?php if ($skill->getRaceElf()) echo 'checked'; ?>>
 			</div>
 		</div>
@@ -94,19 +94,21 @@
 	</div>
 	<br style="clear: both;">
 	<fieldset>
-		<legend>Sub skills</legend>
+		<legend>Skill path</legend>
 		<?php if (!$skill->getB2DBID()): ?>
-			<div class="faded_out" style="padding: 10px;">You need to save this skill before you can add sub skills</div>
+			<div class="faded_out" style="padding: 10px;">You need to save this skill before you can add the next skill in this skill path</div>
 		<?php else: ?>
 			<ul class="skill_subskills" id="admin_skill_subskills">
 				<?php if (count($subskills)): ?>
 					<?php foreach ($subskills as $subskill): ?>
-						<h6 style="margin: 0 0 5px 0; padding: 0;"><a href="<?php echo make_url('edit_skill', array('skill_id' => $subskill->getId())); ?>" class="button button-standard" style="font-size: 0.9em; margin-right: 5px;">Edit</a><?php echo $subskill->getName(); ?> <span style="font-weight: normal;">(<?php echo implode(', ', $parent_skill->getAppliesTo()); ?>)</span></h6>
+						<h6 style="margin: 0 0 5px 0; padding: 0;"><a href="<?php echo make_url('edit_skill', array('skill_id' => $subskill->getId())); ?>" class="button button-standard" style="font-size: 0.9em; margin-right: 5px;">Edit</a><?php echo $subskill->getName(); ?> <span style="font-weight: normal;">(<?php echo implode(', ', $subskill->getAppliesTo()); ?>)</span></h6>
 					<?php endforeach; ?>
 				<?php endif; ?>
 			</ul>
-			<div class="faded_out" style="<?php if (count($subskills)): ?>display: none; <?php endif; ?> padding: 15px 0;" id="skill_no_subskills">This skill doesn't have any sub skills (yet)</div>
+			<div class="faded_out" style="<?php if (count($subskills)): ?>display: none; <?php endif; ?> padding: 15px 0;" id="skill_no_subskills">This skill doesn't have any "upgrade" skills (yet)</div>
+			<?php if (!count($subskills)): ?>
+				<a href="<?php echo make_url('new_skill', array('parent_skill_id' => $skill->getId())); ?>" class="button button-standard" style="margin-left: 10px;">Create skill upgrade</a>
+			<?php endif; ?>
 		<?php endif; ?>
-		<a href="<?php echo make_url('new_skill', array('parent_skill_id' => $skill->getId())); ?>" class="button button-standard" style="margin-left: 10px;">Create new sub skill</a>
 	</fieldset>
 </form>

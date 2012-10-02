@@ -15,26 +15,14 @@
 			switch ($race) {
 				case \application\entities\User::RACE_HUMAN:
 					$crit->addWhere('skills.race_human', true);
-					$crit->addWhere('skills.race_lizard', false);
-					$crit->addWhere('skills.race_beast', false);
-					$crit->addWhere('skills.race_elf', false);
 					break;
 				case \application\entities\User::RACE_LIZARD:
-					$crit->addWhere('skills.race_human', false);
 					$crit->addWhere('skills.race_lizard', true);
-					$crit->addWhere('skills.race_beast', false);
-					$crit->addWhere('skills.race_elf', false);
 					break;
 				case \application\entities\User::RACE_BEAST:
-					$crit->addWhere('skills.race_human', false);
-					$crit->addWhere('skills.race_lizard', false);
 					$crit->addWhere('skills.race_beast', true);
-					$crit->addWhere('skills.race_elf', false);
 					break;
 				case \application\entities\User::RACE_ELF:
-					$crit->addWhere('skills.race_human', false);
-					$crit->addWhere('skills.race_lizard', false);
-					$crit->addWhere('skills.race_beast', false);
 					$crit->addWhere('skills.race_elf', true);
 					break;
 			}
@@ -43,6 +31,7 @@
 			} else {
 				$crit->addWhere('skills.parent_skill_id', 0);
 			}
+			$crit->addWhere('skills.user_id', 0);
 
 			return $this->select($crit);
 		}
@@ -51,6 +40,7 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere('skills.parent_skill_id', $parent_skill_id);
+			$crit->addWhere('skills.user_id', 0);
 
 			return $this->count($crit);
 		}
@@ -59,13 +49,16 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere('skills.parent_skill_id', $parent_skill_id);
+			$crit->addWhere('skills.user_id', 0);
 
 			return $this->select($crit);
 		}
 
 		public function getAll()
 		{
-			return $this->selectAll();
+			$crit = $this->getCriteria();
+			$crit->addWhere('skills.user_id', 0);
+			return $this->select($crit);
 		}
 
 	}

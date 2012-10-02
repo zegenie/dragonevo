@@ -61,6 +61,16 @@
 		protected $_parent_skill_id;
 
 		/**
+		 * If a trained skill, the original skill
+		 *
+		 * @Column(type="integer", length=10)
+		 * @Relates(class="\application\entities\Skill")
+		 *
+		 * @var \application\entities\Skill
+		 */
+		protected $_original_skill_id;
+
+		/**
 		 * Required user level to learn this skill
 		 *
 		 * @Column(type="integer", length=10)
@@ -100,6 +110,14 @@
 		 * @var boolean
 		 */
 		protected $_race_elf;
+
+		/**
+		 * Sub-skills
+		 *
+		 * @Relates(class="\application\entities\Skill", collection=true, foreign_column="parent_skill_id")
+		 * @var array|\application\entities\Skill
+		 */
+		protected $_subskills;
 
 		/**
 		 * @Column(type="integer", length=10, default=0)
@@ -1166,6 +1184,22 @@
 			$this->_parent_skill_id = $parent_skill;
 		}
 
+		public function getOriginalSkill()
+		{
+			return $this->_b2dbLazyload('_original_skill_id');
+		}
+
+		public function getOriginalSkillId()
+		{
+			$original_skill = $this->getOriginalSkill();
+			return ($original_skill instanceof Skill) ? $original_skill->getId() : '';
+		}
+
+		public function setOriginalSkill($original_skill)
+		{
+			$this->_original_skill_id = $original_skill;
+		}
+
 		public function getRequiredLevel()
 		{
 			return $this->_required_level;
@@ -1219,12 +1253,25 @@
 		public function getAppliesTo()
 		{
 			$applies_to = array();
-			if ($this->_race_human) $applies_to[] = 'Human';
-			if ($this->_race_lizard) $applies_to[] = 'Lacerta';
-			if ($this->_race_beast) $applies_to[] = 'Beast';
-			if ($this->_race_elf) $applies_to[] = 'Elves';
+			if ($this->_race_human) $applies_to[] = User::getRaceNameByRace(User::RACE_HUMAN);
+			if ($this->_race_lizard) $applies_to[] = User::getRaceNameByRace(User::RACE_LIZARD);
+			if ($this->_race_beast) $applies_to[] = User::getRaceNameByRace(User::RACE_BEAST);
+			if ($this->_race_elf) $applies_to[] = User::getRaceNameByRace(User::RACE_ELF);
 
 			return $applies_to;
+		}
+
+		public function getSubSkills()
+		{
+			if (!is_array($this->_subskills)) {
+				$this->_subskills = \application\entities\tables\Skills::getTable()->getSubSkills($this->getB2DBID());
+			}
+			return $this->_subskills;
+		}
+
+		public function isTrainable()
+		{
+			return (!$this->getParentSkill() || Caspar::getUser()->hasTrainedSkill($this->getParentSkill()));
 		}
 
 		public function mergeFormData(\caspar\core\Request $form_data)

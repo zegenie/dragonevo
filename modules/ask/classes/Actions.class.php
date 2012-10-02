@@ -89,7 +89,7 @@
 					$room->ping($this->getUser());
 					$users = array();
 					foreach ($room->getUsers() as $user) {
-						$users[$user->getId()] = array('username' => $user->getUsername(), 'user_id' => $user->getId(), 'is_admin' => $user->isAdmin(), 'level' => $user->getLevel());
+						$users[$user->getId()] = array('username' => $user->getUsername(), 'charactername' => $user->getCharactername(), 'race' => $user->getRaceName(), 'user_id' => $user->getId(), 'is_admin' => $user->isAdmin(), 'level' => $user->getLevel());
 					}
 					$chat_users[$room_id] = array(
 						'users' => $users,
@@ -345,6 +345,7 @@
 					$opponent->aiPerformTurn($this->game);
 					\caspar\core\Caspar::setUser($me);
 				}
+				if ($this->game->getCurrentPhase() == Game::PHASE_REPLENISH) $this->game->endPhase();
 				$this->game->save();
 				$this->game->saveAffectedCards();
 				return $this->renderJSON($returns);
@@ -426,6 +427,20 @@
 			$this->getUser()->setGameMusicEnabled($request['music_enabled']);
 			$this->getUser()->setSystemChatMessagesEnabled($request['system_chat_messages_enabled']);
 			return $this->renderJSON(array('message' => 'Settings saved!'));
+		}
+
+		protected function _processTrainSkill(Request $request)
+		{
+			$skill_id = $request['selected_skill'];
+			$skill = \application\entities\tables\Skills::getTable()->selectById((int) $skill_id);
+			if ($this->getUser()->hasTrainedSkill($skill) || !$skill->isTrainable()) {
+				return $this->renderJSON(array('message' => 'This skill is not available for training'));
+			}
+
+			$this->getUser()->trainSkill($skill);
+			$this->getUser()->levelUp();
+			$this->getUser()->save();
+			return $this->renderJSON(array('message' => 'Skill training completed!', 'skill_trained' => (int) $skill_id, 'levelup_available' => $this->getUser()->canLevelUp()));
 		}
 
 		/**
@@ -510,6 +525,9 @@
 						break;
 					case 'invite_user':
 						return $this->_processInviteUser($request);
+						break;
+					case 'train_skill':
+						return $this->_processTrainSkill($request);
 						break;
 					default:
 						return $this->renderJSON(array('topic' => $request['topic']));
