@@ -23,6 +23,7 @@
 		const TYPE_PHASE_CHANGE = 'phase_change';
 		const TYPE_REPLENISH = 'replenish';
 		const TYPE_ATTACK = 'attack';
+		const TYPE_END_ATTACK = 'end_attack';
 		const TYPE_DAMAGE = 'damage';
 		const TYPE_THINKING = 'thinking';
 		const TYPE_RESTORE_HEALTH = 'restore_health';

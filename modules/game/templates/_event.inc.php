@@ -107,6 +107,9 @@
 					echo "Your {$data['attacked_card_name']} is attacked by {$data['attacking_card_name']}";
 				}
 				break;
+			case GameEvent::TYPE_ATTACK:
+				echo "{$data['attacking_card_name']}'s attack on {$data['attacked_card_name']} ends";
+				break;
 			case GameEvent::TYPE_STEAL_MAGIC:
 				if ($is_current_player) {
 					echo "Your {$data['attacking_card_name']} steals {$data['amount']['diff']} EP from {$data['attacked_card_name']}!";

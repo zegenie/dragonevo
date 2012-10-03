@@ -12,8 +12,8 @@
 <div id="chat_room_<?php echo $room->getId(); ?>_form_container" class="chat_room_form_container">
 	<form class="chat_input" action="<?php echo make_url('room_say', array('room_id' => $room->getId())); ?>" onsubmit="Devo.Chat.say(this);return false;" id="chat_room_<?php echo $room->getId(); ?>_form" style="position: relative; margin-top: 5px;">
 		<input type="text" name="text" autocomplete="off" id="chat_room_<?php echo $room->getId(); ?>_input">
+		<input type="submit" value="Say" style="float: right;" id="chat_room_<?php echo $room->getId(); ?>_say_button" class="button button-standard">
 		<img src="/images/spinning_16.gif" style="display: none;" id="chat_room_<?php echo $room->getId(); ?>_indicator">
-		<input type="submit" value="Say" style="width: 65px; float: right;" class="button button-standard">
 	</form>
 </div>
 <script>

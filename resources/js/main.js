@@ -846,13 +846,29 @@ Devo.Core.initialize = function(options) {
 }
 
 Devo.Main._lobbyResizeWatcher = function() {
-	var lc = $('lobby_chat');
-	var lc_users = $('chat_room_1_users');
-	var lc_lines = $('chat_room_1_lines');
-	var lc_width = $('fullscreen-container').getWidth() - 30;
-	lc.setStyle({width: lc_width + 'px'});
-	var lcu_width = lc_width - lc_users.getWidth();
-	lc_lines.setStyle({width: lcu_width + 'px'});
+	var lobby_chat = $('lobby_chat');
+	var chat_users = $('chat_room_1_users');
+	var chat_lines = $('chat_room_1_lines');
+	var chat_form = $('chat_room_1_form_container');
+	var chat_button = $('chat_room_1_say_button');
+	var chat_input = $('chat_room_1_input');
+	var vp_height = document.viewport.getHeight();
+	var vp_width = document.viewport.getWidth();
+	var lobby_chat_width = vp_width - 260;
+	var lobby_chat_height = vp_height - 60;
+	lobby_chat.setStyle({width: lobby_chat_width + 'px', height: lobby_chat_height + 'px'});
+	var chat_form_layout = chat_form.getLayout();
+	var chat_users_layout = chat_users.getLayout();
+	var chat_button_layout = chat_button.getLayout();
+	var chat_users_width = chat_users_layout.get('width') + chat_users_layout.get('padding-left') + chat_users_layout.get('padding-right');
+
+	var chat_lines_width = lobby_chat_width - chat_users_width - 20;
+	var chat_lines_height = lobby_chat_height - 20 - chat_form_layout.get('height');
+	var chat_input_width = chat_lines_width - chat_button_layout.get('width') - chat_button_layout.get('padding-left') - chat_button_layout.get('padding-right') - 30;
+	chat_lines.setStyle({width: chat_lines_width + 'px', height: chat_lines_height + 'px'});
+	chat_form.setStyle({width: chat_lines_width + 'px'});
+	chat_users.setStyle({height: (chat_lines_height + 5) + 'px'});
+	chat_input.setStyle({width: chat_input_width + 'px'});
 };
 
 Devo.Main.initializeLobby = function() {
@@ -860,6 +876,10 @@ Devo.Main.initializeLobby = function() {
 	Devo.Core._initializeGameListPoller();
 	Event.observe(window, 'resize', Devo.Main._lobbyResizeWatcher);
 	Devo.Main._lobbyResizeWatcher();
+	$('profile_menu_strip').childElements().each(function(element) {
+		element.removeClassName('selected');
+	});
+	$('lobby_chat_toggler').addClassName('selected');
 }
 
 Devo.Admin.Users.resetCards = function(user_id) {
@@ -1034,6 +1054,9 @@ Devo.Core.Pollers.Callbacks.eventPlaybackPoller = function() {
 				break;
 			case 'attack':
 				Devo.Game.processAttack(event.data);
+				break;
+			case 'end_attack':
+				Devo.Game.processEndAttack(event.data);
 				break;
 			case 'damage':
 				Devo.Game.processDamage(event.data);
@@ -1245,7 +1268,6 @@ Devo.Game.Effects.useGold = function(cost) {
 		gg.update(gold+'<div class="negative fadeOutUp diff animated">'+cost.diff+'</div>');
 		window.setTimeout(function() {
 			gg.update(cost.to);
-			$('replenish_gold_summary').update(cost.to);
 			$$('.card.player').each(function(c) {
 				Devo.Game.updateCardAttackAvailability(c);
 			});
@@ -1264,7 +1286,6 @@ Devo.Game.Effects.stolenGold = function(cost) {
 		gg.update(gold+'<div class="negative fadeOutUp diff animated">'+cost.diff+'</div>');
 		window.setTimeout(function() {
 			gg.update(cost.to);
-			$('replenish_gold_summary').update(cost.to);
 			$$('.card.player').each(function(c) {
 				Devo.Game.updateCardAttackAvailability(c);
 			});
@@ -1281,7 +1302,6 @@ Devo.Game.Effects.getGold = function(cost) {
 		gg.update(gold+'<div class="fadeInDown diff animated">'+cost.diff+'</div>');
 		window.setTimeout(function() {
 			gg.update(cost.to);
-			$('replenish_gold_summary').update(cost.to);
 			$$('.card.player').each(function(c) {
 				Devo.Game.updateCardAttackAvailability(c);
 			});
@@ -1419,14 +1439,19 @@ Devo.Game.processDamage = function(data) {
 	var play_area = $('play-area');
 	var card = $('card_' + data.attacking_card_id);
 	var attacked_card = $('card_' + data.attacked_card_id);
-	var card_slot = card.up('.card-slot');
-	var attacked_card_slot = attacked_card.up('.card-slot');
-	var initial_timeout = (data.damage_type == 'repeat' && data.damage_type != 'effect') ? 1 : 1000;
+	var initial_timeout = (data.damage_type == 'repeat' && data.damage_type != 'effect') ? 1 : 1500;
+	var is_in_play_area = (play_area.select('#'+data.attacked_card_id).size() > 0);
 
-	play_area.insert(card.remove());
-	card.removeClassName('medium');
-	play_area.insert(attacked_card.remove());
-	attacked_card.removeClassName('medium');
+	if (!is_in_play_area && play_area.select('.card.player').size() > 0) {
+		var cards_to_remove = play_area.select('.card.player');
+		var card_to_return = cards_to_remove[0];
+		if (card_to_return.id != card.id) {
+			Devo.Game._returnCardFromPlayArea(card_to_return);
+		}
+	}
+	if (!is_in_play_area) {
+		Devo.Game._addCardToPlayArea(attacked_card);
+	}
 	if (data.damage_type != 'repeat' && data.damage_type != 'effect') {
 		card.addClassName('animated flash');
 		if (data.bonus_cards) {
@@ -1460,12 +1485,6 @@ Devo.Game.processDamage = function(data) {
 			Devo.Game.Effects.damage(attacked_card, data.hp);
 			window.setTimeout(function() {
 				Devo.Core.Pollers.Locks.eventplaybackpoller = false;
-				var c = card.remove();
-				c.addClassName('medium');
-				card_slot.insert(c);
-				var ac = attacked_card.remove();
-				ac.addClassName('medium');
-				attacked_card_slot.insert(ac);
 			}, initial_timeout);
 		}, 1000);
 	}, initial_timeout);
@@ -1590,7 +1609,8 @@ Devo.Game.processStealEP = function(data) {
 
 Devo.Game.processAttack = function(data) {
 	var card = $('card_' + data.attacking_card_id);
-
+	Devo.Game._addCardToPlayArea(card);
+	
 	if (data.player_id == Devo.Game.getUserId()) {
 		Devo.Game._actions_remaining = data.remaining_actions;
 		$('phase-3-actions-remaining').update(data.remaining_actions);
@@ -1601,6 +1621,41 @@ Devo.Game.processAttack = function(data) {
 	}
 	if (data.cost && data.cost.ep) Devo.Game.Effects.useEP(card, data.cost.ep);
 	if (data.cost && data.cost.hp) Devo.Game.Effects.damage(card, data.cost.hp);
+	Devo.Core.Pollers.Locks.eventplaybackpoller = false;
+}
+
+Devo.Game._addCardToPlayArea = function(card) {
+	var card_slot = (card.hasClassName('player')) ? $('player-slot-'+card.dataset.slotNo) : $('opponent-slot-'+card.dataset.slotNo);
+	var play_area = $('play-area');
+	
+	var c = card.remove();
+	c.removeClassName('medium');
+	play_area.insert(c);
+	
+	card_slot.select('.item-slot').each(function(p_slot) {
+		if (p_slot.dataset.cardId && $('card_'+p_slot.dataset.cardId)) {
+			play_area.insert($('card_'+p_slot.dataset.cardId).remove());
+		}
+	});
+}
+
+Devo.Game._returnCardFromPlayArea = function(card) {
+	var card_slot = (card.hasClassName('player')) ? $('player-slot-'+card.dataset.slotNo) : $('opponent-slot-'+card.dataset.slotNo);
+	var c = card.remove();
+	c.addClassName('medium');
+	card_slot.insert(c);
+
+	card_slot.select('.item-slot').each(function(p_slot) {
+		if (p_slot.dataset.cardId && $('card_'+p_slot.dataset.cardId)) {
+			p_slot.insert($('card_'+p_slot.dataset.cardId).remove());
+		}
+	});
+}
+
+Devo.Game.processEndAttack = function(data) {
+	$('play-area').select('.card.creature').each(function(card) {
+		Devo.Game._returnCardFromPlayArea(card);
+	});
 	Devo.Core.Pollers.Locks.eventplaybackpoller = false;
 }
 
@@ -1851,12 +1906,8 @@ Devo.Game.processPhaseChange = function(data, event_id) {
 					switch (data.new_phase) {
 						case 2:
 							if (data.current_turn > 2) {
-//								var p1_overlay = $('phase-1-overlay');
-//								p1_overlay.addClassName('animated fadeOut');
 								Devo.Game._uninitializeActions();
 								window.setTimeout(function() {
-//									p1_overlay.hide();
-//									p1_overlay.removeClassName('fadeOut');
 									Devo.Game._movable = true;
 									Devo.Game._initializeDragDrop();
 									Devo.Core.Pollers.Locks.eventplaybackpoller = false;
@@ -1906,7 +1957,6 @@ Devo.Game.enableTurn = function() {
 	p4_button.addClassName('animated fadeOut');
 	if (Devo.Game._current_turn > 2) {
 		var p1_button = $('end-phase-1-button');
-//		var p1_overlay = $('phase-1-overlay');
 	}
 	window.setTimeout(function() {
 		p4_button.hide();
@@ -1915,12 +1965,7 @@ Devo.Game.enableTurn = function() {
 			$(p1_button).down('img').hide();
 			p1_button.removeClassName('disabled');
 			p1_button.show();
-//			p1_overlay.setStyle({opacity: 0});
-//			p1_overlay.show();
-//			p1_overlay.addClassName('animated fadeIn');
 			window.setTimeout(function() {
-//				p1_overlay.writeAttribute('style', '');
-//				p1_overlay.removeClassName('fadeIn');
 				$$('#player-slots .card').each(function(card) {
 					if (!$(card).hasClassName('placed')) $(card).addClassName('placed');
 				});

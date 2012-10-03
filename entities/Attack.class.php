@@ -1469,6 +1469,19 @@
 			}
 			
 			$game->addAffectedCard($this->getCard());
+
+			$event = new GameEvent();
+			$event->setEventType(GameEvent::TYPE_END_ATTACK);
+			$event->setEventData(array(
+									'player_id' => $game->getCurrentPlayerId(),
+									'remaining_actions' => $game->getCurrentPlayerActions(),
+									'attacking_card_id' => $this->getCard()->getUniqueId(),
+									'attacking_card_name' => $this->getCard()->getName(),
+									'attacked_card_id' => $card->getUniqueId(),
+									'attacked_card_name' => $card->getName()
+									));
+			$game->addEvent($event);
+
 		}
 
 	}

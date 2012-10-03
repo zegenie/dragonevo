@@ -11,22 +11,10 @@
 		//$csp_response->addJavascript('/js/jquery-1.7.2.min.js');
 
 	?>
+	<?php include_template('main/profilemenu'); ?>
 	<div id="board-container">
-		<div id="phase-1-overlay" class="fullpage_backdrop" style="<?php if ($game->getCurrentPlayerId() != $csp_user->getId() || $game->getCurrentPhase() != Game::PHASE_REPLENISH): ?>display: none;<?php endif; ?>">
-			<div id="fullpage_backdrop_content" class="fullpage_backdrop_content">
-				<div class="summary">
-					<h5>Gold</h5>
-					<div class="game-gold">
-						<img src="/images/gold.png">
-						<div class="gold" id="replenish_gold_summary"><?php echo $game->getUserPlayerGold(); ?></div>
-					</div>
-					<div class="button-container"<?php if (!$game->isUserInGame()): ?> style="display: none;"<?php endif; ?>>
-						<a href="javascript:void(0);" id="end-phase-1-button" class="turn-button button button-green<?php if ($game->getCurrentPlayerId() != $csp_user->getId()) echo ' disabled'; ?>" onclick="Devo.Game.endPhase(this);"><img src="/images/spinning_16.gif" style="display: none;">End replenishment phase</a>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div id="gameover-overlay" class="fullpage_backdrop" style="<?php if (!$game->isGameOver()): ?>display: none;<?php endif; ?>">
+		<div id="phase-1-overlay" class="fullpage_backdrop dark" style="display: none;"><a href="javascript:void(0);" id="end-phase-1-button" class="turn-button button button-green<?php if ($game->getCurrentPlayerId() != $csp_user->getId()) echo ' disabled'; ?>" onclick="Devo.Game.endPhase(this);"><img src="/images/spinning_16.gif" style="display: none;">End replenishment phase</a></div>
+		<div id="gameover-overlay" class="fullpage_backdrop dark" style="<?php if (!$game->isGameOver()): ?>display: none;<?php endif; ?>">
 			<div class="fullpage_backdrop_content">
 				<div class="swirl-dialog summary">
 					<img src="/images/swirl_top_right.png" class="swirl top-right">
@@ -56,7 +44,7 @@
 				</div>
 			</div>
 		</div>
-		<div id="settings-overlay" class="fullpage_backdrop" style="display: none;">
+		<div id="settings-overlay" class="fullpage_backdrop dark" style="display: none;">
 			<div id="settings_backdrop_content" class="fullpage_backdrop_content">
 				<div class="swirl-dialog summary">
 					<img src="/images/swirl_top_right.png" class="swirl top-right">

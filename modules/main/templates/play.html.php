@@ -22,6 +22,7 @@
 		<a href="<?php echo make_url('lobby'); ?>" class="button button-green"><div class="tooltip">Join the action in the lobby, where all the other players hang out</div>Enter the lobby</a>
 		<button class="button button-silver singleplayer" onclick="$('play-menu-main').toggle();$('play-menu-single').toggle();"><div class="tooltip">Play through the story, or repeat previous quests</div>Single player</button>
 		<button class="button button-silver training" onclick="$('play-menu-main').toggle();$('play-menu-train').toggle();"><div class="tooltip">Practice your skills and techniques against an AI opponent</div>Training</button>
+		<a href="<?php echo make_url('home'); ?>" class="button button-silver exit"><div class="tooltip">Leave the game<br><br>Sad face :(</div>Exit</a>
 	</div>
 	<div id="play-menu-play" style="display: none;">
 		<button class="button button-standard quickmatch" id="quickmatch_button" onclick="Devo.Play.quickmatch();"><div class="tooltip">Battle it out against a randomly chosen opponent!</div>Play quickmatch</button>

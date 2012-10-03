@@ -1,7 +1,10 @@
 <div class="profile_menu">
-	<img src="/images/avatars/<?php echo $csp_user->getAvatar(); ?>" class="avatar mine">
+	<div style="background: url('/images/avatars/<?php echo $csp_user->getAvatar(); ?>') no-repeat top left;" class="avatar mine"></div>
 	<div class="strip">
-		
+		<ul id="profile_menu_strip">
+			<li id="lobby_chat_toggler">Lobby</li>
+			
+		</ul>
 	</div>
 	<?php /* if ($csp_user->hasCharacter()): ?>
 		<h1><a href="<?php echo make_url('profile'); ?>"><?php echo $csp_user->getCharacterName(); ?></a></h1>

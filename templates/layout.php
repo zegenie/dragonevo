@@ -42,8 +42,7 @@
 		<div id="fullpage_backdrop" class="fullpage_backdrop" style="<?php if (!$csp_response->isFullscreen()): ?>display: none;<?php endif; ?>">
 			<div id="loading">
 				<div class="msg">
-					Loading ...<br>
-					<span class="slogan">Please be patient</span>
+					Loading ...
 				</div>
 				<img src="/images/spinning_32.gif">
 			</div>
@@ -78,7 +77,7 @@
 						DRAGON EVO<br>
 						<span class="slogan">the online action card game</span>
 					</a>
-					<?php /* <a class="play-now" href="<?php echo make_url('play'); ?>">Play now!</a> */ ?>
+					<a class="button button-standard play-now" style="font-family: 'Gentium Basic'; border-radius: 10px; font-size: 2em; font-weight: normal; padding: 20px 10px !important;" href="<?php echo make_url('play'); ?>">Play now!</a>
 				</div>
 				<ul class="main-menu">
 					<li><a href="<?php echo make_url('home'); ?>" class="<?php if ($csp_response->getPage() == 'home') echo ' selected'; ?>">Home</a></li>

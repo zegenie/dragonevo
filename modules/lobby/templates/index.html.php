@@ -18,6 +18,12 @@
 	</div>
 </div>
 <div class="content">
+	<div id="devo-logo">
+		<a class="devo-box" href="<?php echo make_url('home'); ?>">
+			DRAGON EVO<br>
+			<span class="slogan">the online action card game</span>
+		</a>
+	</div>
 	<?php include_template('lobby/gameinvites'); ?>
 	<?php include_template('main/profilemenu'); ?>
 	<?php /* <div class="lobby_game_actions">
@@ -34,7 +40,7 @@
 		</form>
 	</div> */ ?>
 	<form id="chat_rooms_joined" action="<?php echo make_url('ask'); ?>" method="post"></form>
-	<div class="lobby_chat" id="lobby_chat">
+	<div class="lobby_chat swirl-dialog" id="lobby_chat">
 		<?php include_component('lobby/chatroom'); ?>
 	</div>
 	<br style="clear: both;">
