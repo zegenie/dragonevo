@@ -1,5 +1,7 @@
 <?php $csp_response->setTitle(__('Dragon Evo - The Card Game')); ?>
-<div class="content full">
+<div class="content">
+	<?php include_template('main/profilemenu', array('game' => $game)); ?>
+	<form id="chat_rooms_joined" action="<?php echo make_url('ask'); ?>" method="post"></form>
 	<h1>Pick cards for your game</h1>
 	<p>
 		Before you can start the game <strong>vs. <?php echo ($game->getOpponentId()) ? $game->getUserOpponent()->getUsername() : 'Training AI'; ?></strong>, you need to pick cards to play with. Select cards from the list below, and press the big "Play" button when you're ready.
@@ -48,6 +50,6 @@
 </div>
 <script>
 	Devo.Core.Events.listen('devo:core:initialized', function(options) {
-		$('fullpage_backdrop').hide();
+		Devo.Main.initializeLobby({noselect: true});
 	});
 </script>

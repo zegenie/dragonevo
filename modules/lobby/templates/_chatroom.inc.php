@@ -1,4 +1,4 @@
-<div class="chat_room">
+<div class="chat_room" id="chat_room_<?php echo $room->getId(); ?>_container">
 	<?php if ($room->getId() > 1): ?>
 		<header>
 			<subject><?php echo $room->getTopic(); ?></subject>

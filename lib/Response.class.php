@@ -5,6 +5,8 @@
 	class Response extends \caspar\core\Response
 	{
 		
+		protected $_version = '0.1.5.115';
+
 		protected $_fullscreen = false;
 
 		public function setFullscreen($fullscreen = true)
@@ -15,6 +17,11 @@
 		public function isFullscreen()
 		{
 			return $this->_fullscreen;
+		}
+
+		public function getVersion()
+		{
+			return $this->_version;
 		}
 
 	}

@@ -17,6 +17,7 @@
 		public function preExecute(Request $request, $action)
 		{
 			$this->forward403Unless($this->getUser()->isAdmin());
+			$this->getResponse()->setFullscreen(false);
 		}
 
 		/**

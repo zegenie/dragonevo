@@ -39,7 +39,7 @@
 				<span id="dragonevo_successmessage_content"></span>
 			</div>
 		</div>
-		<div id="fullpage_backdrop" class="fullpage_backdrop" style="<?php if (!$csp_response->isFullscreen()): ?>display: none;<?php endif; ?>">
+		<div id="fullpage_backdrop" class="fullpage_backdrop dark" style="<?php if (!$csp_response->isFullscreen()): ?>display: none;<?php endif; ?>">
 			<div id="loading">
 				<div class="msg">
 					Loading ...
@@ -48,7 +48,7 @@
 			</div>
 			<div id="fullpage_backdrop_content" class="fullpage_backdrop_content"> </div>
 		</div>
-		<div id="dialog_backdrop" style="display: none; background-color: transparent; width: 100%; height: 100%; position: fixed; top: 0; left: 0; margin: 0; padding: 0; text-align: center; z-index: 100000;">
+		<div id="dialog_backdrop" style="display: none; background-color: transparent; width: 100%; height: 100%; position: fixed; top: 0; left: 0; margin: 0; padding: 0; text-align: center;">
 			<div id="dialog_backdrop_content" class="fullpage_backdrop_content">
 				<div class="rounded_box shadowed_box white cut_top cut_bottom bigger">
 					<div style="width: 900px; text-align: left; margin: 0 auto; font-size: 13px;">
@@ -77,7 +77,7 @@
 						DRAGON EVO<br>
 						<span class="slogan">the online action card game</span>
 					</a>
-					<a class="button button-standard play-now" style="font-family: 'Gentium Basic'; border-radius: 10px; font-size: 2em; font-weight: normal; padding: 20px 10px !important;" href="<?php echo make_url('play'); ?>">Play now!</a>
+					<a class="button button-standard play-now" style="font-family: 'Gentium Basic'; border-radius: 10px; font-size: 2em; font-weight: normal; padding: 20px 10px !important;" href="<?php echo ($csp_user->isAuthenticated()) ? make_url('play') : make_url('login'); ?>">Play now!</a>
 				</div>
 				<ul class="main-menu">
 					<li><a href="<?php echo make_url('home'); ?>" class="<?php if ($csp_response->getPage() == 'home') echo ' selected'; ?>">Home</a></li>
@@ -96,12 +96,13 @@
 						<div class="border-overlay"></div>
 					</div>
 					<div class="footer-info">
-						All text and artwork &copy; 2011-<?php echo date('Y'); ?> The Dragon Evo team / <a href="mailto:support@dragonevo.com">support@dragonevo.com</a>
-						<?php if ($csp_user->isAdmin()): ?>
-							/ <strong><?php echo link_tag(make_url('admin'), 'Admin CP'); ?></strong>
-						<?php endif; ?>
+						<a href="<?php echo make_url('changelog'); ?>">Version alpha-<?php echo $csp_response->getVersion(); ?></a> - All text and artwork &copy; 2011-<?php echo date('Y'); ?> <a href="mailto:support@dragonevo.com">Magical Pictures / zegenie studios</a>
 						<?php if ($csp_user->isAuthenticated()): ?>
-							/ <?php echo link_tag(make_url('logout'), 'Log out'); ?>
+							<br>
+							<?php if ($csp_user->isAdmin()): ?>
+								<strong><?php echo link_tag(make_url('admin'), 'Admin CP'); ?></strong> / 
+							<?php endif; ?>
+							<?php echo link_tag(make_url('logout'), 'Log out'); ?>
 						<?php endif; ?>
 					</div>
 				</footer>

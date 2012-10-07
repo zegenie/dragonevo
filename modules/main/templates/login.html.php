@@ -40,4 +40,8 @@
 			</form>
 		<?php endif; ?>
 	</div>
+	<?php if (!$csp_user->isAuthenticated()): ?>
+		<a href="<?php echo make_url('join'); ?>">Not registered?</a><br>
+		<a href="<?php echo make_url('forgot'); ?>">Forgot your password?</a>
+	<?php endif; ?>
 </div>

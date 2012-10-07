@@ -36,6 +36,16 @@ play:
   action: play
 
 join:
+  url: /join
+  module: main
+  action: join
+
+forgot:
+  url: /forgot
+  module: main
+  action: forgot
+
+join-alpha:
   url: /join/:code
   module: main
   action: join
@@ -49,6 +59,11 @@ faq:
   url: /faq
   module: main
   action: faq
+
+changelog:
+  url: /changelog
+  module: main
+  action: changelog
 
 media:
   url: /media

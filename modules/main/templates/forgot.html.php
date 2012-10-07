@@ -10,26 +10,13 @@
 			<p style="padding-left: 30px;">
 				Click to <a href="<?php echo make_url('logout'); ?>">log out</a>.
 			</p>
-		<?php elseif ($registered): ?>
-			<h4>You have been registered!</h4>
-			<p>
-				An email has been sent with your login details.
-			</p>
-			<p style="padding-left: 30px;">
-				Click to <a href="<?php echo make_url('login'); ?>">log in</a>.
-			</p>
-		<?php elseif (!$valid_code): ?>
-			<h4>This is not a valid invitation</h4>
-			<p style="padding-left: 30px;">
-				You need a valid invitation to create an account.
-			</p>
 		<?php else: ?>
-			<h1>Join the early access</h1>
+			<h1>Forgot your password?</h1>
 			<p>
-				Create an account to log in here.
+				Enter your username or email address here.
 			</p>
 			<p>
-				A valid email address is required to sign up. We will never use your email address without your permission, and we will never ever give it away for free or for money.
+				We'll send you an email with instructions on how to generate a new password
 			</p>
 			<?php if (isset($error) && $error): ?>
 				<p class="error" style="margin-bottom: 10px;">

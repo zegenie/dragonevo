@@ -38,6 +38,7 @@ class Actions extends \caspar\core\Actions
 	
 	public function runSkills(Request $request)
 	{
+		$this->forward403unless($this->getUser()->isAuthenticated());
 		$this->available_skills = \application\entities\tables\Skills::getTable()->getSkillsByRace($this->getUser()->getRace());
 		$this->user_skills = $this->getUser()->getSkills();
 	}
@@ -110,6 +111,7 @@ class Actions extends \caspar\core\Actions
 	 */
 	public function runPlay(Request $request)
 	{
+		$this->forward403unless($this->getUser()->isAuthenticated());
 		$this->getResponse()->setFullscreen();
 	}
 
@@ -120,6 +122,7 @@ class Actions extends \caspar\core\Actions
 	 */
 	public function runCards(Request $request)
 	{
+		$this->forward403unless($this->getUser()->isAuthenticated());
 		$this->cards = $this->getUser()->getCards();
 	}
 
@@ -140,7 +143,15 @@ class Actions extends \caspar\core\Actions
 	 */
 	public function runFaq(Request $request)
 	{
-		$this->getResponse()->setFullscreen();
+	}
+
+	/**
+	 * Changelog page
+	 *
+	 * @param Request $request
+	 */
+	public function runChangelog(Request $request)
+	{
 	}
 
 	/**
@@ -220,9 +231,9 @@ class Actions extends \caspar\core\Actions
 
 	public function runJoin(Request $request)
 	{
-		$valid_code = \application\entities\tables\Users::getTable()->validateCode($request['code']);
+		$valid_code = true; // \application\entities\tables\Users::getTable()->validateCode($request['code']);
 		$this->valid_code = $valid_code;
-		$this->code = $request['code'];
+//		$this->code = $request['code'];
 		$this->registered = false;
 		if ($valid_code && $request->isPost()) {
 			if (\application\entities\tables\Users::getTable()->validateUsername($request['desired_username'])) {
