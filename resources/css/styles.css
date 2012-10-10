@@ -2931,6 +2931,7 @@ li.card-slot {
 #event-slot {
 	background-color: rgba(0, 0, 255, 0.1);
 	position: absolute;
+	opacity: 0;
 }
 .game-gold {
 	position: absolute;
