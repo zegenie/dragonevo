@@ -20,7 +20,9 @@
 						<a href="javascript:void(0);" id="user_<?php echo $user->getId(); ?>_button" class="button button-silver button-icon first last" onclick="Devo.Main.Helpers.popup(this);"><img src="/images/settings_small.png"></a>
 						<div class="popup-menu">
 							<ul>
-								<li><a href="javascript:void(0);" onclick="Devo.Admin.Users.resetCards(<?php echo $user->getId(); ?>);">Reset all user cards</a></li>
+								<li><a href="javascript:void(0);" onclick="Devo.Admin.Users.resetSkills(<?php echo $user->getId(); ?>);">Reset all user's trained skills and level</a></li>
+								<li><a href="javascript:void(0);" onclick="Devo.Admin.Users.forgotPassword(<?php echo $user->getId(); ?>, '<?php echo make_url('forgot'); ?>', '<?php echo $user->getUsername(); ?>');">Send "forgot password?" email</a></li>
+								<li><a href="javascript:void(0);" onclick="Devo.Admin.Users.resetCards(<?php echo $user->getId(); ?>);">Release all user cards from games</a></li>
 								<li><a href="javascript:void(0);" onclick="Devo.Admin.Users.removeCards(<?php echo $user->getId(); ?>);">Remove all user cards</a></li>
 								<?php foreach ($faction_names as $faction => $f_name): ?>
 									<li><a href="javascript:void(0);" onclick="Devo.Admin.Users.generateStarterPack(<?php echo $user->getId(); ?>, '<?php echo $faction; ?>');">Generate new <?php echo $f_name; ?> starter pack</a></li>

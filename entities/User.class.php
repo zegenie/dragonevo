@@ -178,6 +178,14 @@
 		protected $_charactername;
 		
 		/**
+		 * This users avatar image
+		 *
+		 * @var string
+		 * @Column(type="string", default="default.png", length=250)
+		 */
+		protected $_avatar;
+
+		/**
 		 * This users character race
 		 *
 		 * @var integer
@@ -230,6 +238,14 @@
 		 * @var array|\application\entities\Game
 		 */
 		protected $_games;
+
+		/**
+		 * This users password restore key
+		 *
+		 * @var string
+		 * @Column(type="string", default=null, length=20)
+		 */
+		protected $_password_key;
 
 		/**
 		 * Take a raw password and convert it to the hashed format
@@ -393,6 +409,7 @@
 		public function changePassword($newpassword)
 		{
 			$this->_password = self::hashPassword($newpassword);
+			$this->_password_key = '';
 		}
 
 		/**
@@ -790,9 +807,14 @@
 			return $this->_b2dbLazyload('_game_invites');
 		}
 
+		public function setAvatar($avatar)
+		{
+			$this->_avatar = $avatar;
+		}
+
 		public function getAvatar()
 		{
-			return 'default.png';
+			return $this->_avatar;
 		}
 
 		protected function _populateGames()
@@ -1135,6 +1157,14 @@
 			$trained_skill->setOriginalSkill($skill);
 			$trained_skill->save();
 			$this->_skills = null;
+		}
+
+		public function getOrGeneratePasswordRestoreKey()
+		{
+			if ($this->_password_key == '') {
+				$this->_password_key = uniqid();
+			}
+			return $this->_password_key;
 		}
 
 	}

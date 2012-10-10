@@ -1,19 +1,17 @@
-<?php $csp_response->setTitle(__('Dragon Evo - The Card Game')); ?>
-<div class="content">
-	<?php include_template('main/profilemenu', array('game' => $game)); ?>
-	<form id="chat_rooms_joined" action="<?php echo make_url('ask'); ?>" method="post"></form>
+<div class="pickcards" id="pickcards-container">
 	<h1>Pick cards for your game</h1>
 	<p>
 		Before you can start the game <strong>vs. <?php echo ($game->getOpponentId()) ? $game->getUserOpponent()->getUsername() : 'Training AI'; ?></strong>, you need to pick cards to play with. Select cards from the list below, and press the big "Play" button when you're ready.
 	</p>
 	<?php if (count($cards)): ?>
-		<form action="<?php echo make_url('pick_cards', array('game_id' => $game->getId())); ?>" method="post">
+		<form action="<?php echo make_url('pick_cards', array('game_id' => $game->getId())); ?>" method="post" onsubmit="Devo.Game.pickCards();return false;" id="card-picker-form">
 			<?php foreach ($cards as $card): ?>
 				<?php if ($card->getGameId()) continue; ?>
 				<input type="hidden" name="cards[<?php echo $card->getId(); ?>]" value="<?php echo (int) ($card->isInGame() && $card->getGame()->getId() == $game->getId()); ?>" id="picked_card_<?php echo $card->getUniqueId(); ?>">
 				<input type="hidden" name="card_types[<?php echo $card->getId(); ?>]" value="<?php echo $card->getCardType(); ?>">
 			<?php endforeach; ?>
 			<div style="text-align: right; padding: 10px 0 20px;">
+				<button class="button button-silver card-picker" onclick="Devo.Game.flee();return false;">Leave game</button>
 				<input type="submit" value="Play game" class="button button-green play-button card-picker" disabled>
 			</div>
 			<div class="shelf cardpicker">
@@ -27,9 +25,9 @@
 						</li>
 					<?php endforeach; ?>
 				</ul>
-				<br style="clear: both;">
 			</div>
 			<div style="text-align: right; padding: 20px 0 10px;">
+				<button class="button button-silver card-picker" onclick="Devo.Game.flee();return false;">Leave game</button>
 				<input type="submit" value="Play game" class="button button-green play-button card-picker" disabled>
 			</div>
 		</form>
@@ -44,12 +42,6 @@
 					<li><div class="card medium flipped faded"></div></li>
 				<?php endfor; ?>
 			</ul>
-			<br style="clear: both;">
 		</div>
 	<?php endif; ?>
 </div>
-<script>
-	Devo.Core.Events.listen('devo:core:initialized', function(options) {
-		Devo.Main.initializeLobby({noselect: true});
-	});
-</script>

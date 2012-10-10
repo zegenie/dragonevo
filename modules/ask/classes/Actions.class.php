@@ -39,9 +39,11 @@
 			try {
 				if ($request['game_id']) {
 					$this->game = Games::getTable()->selectById($request['game_id']);
-					if ($this->game->isUserOffline($this->getUser()->getId())) {
-						$this->game->setUserOnline($this->getUser()->getId());
-						$this->game->save();
+					if ($this->game instanceof Game) {
+						if ($this->game->isUserOffline($this->getUser()->getId())) {
+							$this->game->setUserOnline($this->getUser()->getId());
+							$this->game->save();
+						}
 					}
 				}
 			} catch (\Exception $e) { }
@@ -89,7 +91,7 @@
 					$room->ping($this->getUser());
 					$users = array();
 					foreach ($room->getUsers() as $user) {
-						$users[$user->getId()] = array('username' => $user->getUsername(), 'charactername' => $user->getCharactername(), 'race' => $user->getRaceName(), 'user_id' => $user->getId(), 'is_admin' => $user->isAdmin(), 'level' => $user->getLevel());
+						$users[$user->getId()] = array('username' => $user->getUsername(), 'avatar' => $user->getAvatar(), 'charactername' => $user->getCharactername(), 'race' => $user->getRaceName(), 'user_id' => $user->getId(), 'is_admin' => $user->isAdmin(), 'level' => $user->getLevel());
 					}
 					$chat_users[$room_id] = array(
 						'users' => $users,
@@ -163,7 +165,7 @@
 		{
 			$game = $this->_findQuickmatch($request);
 			if ($game instanceof \application\entities\Game) {
-				return $this->renderJSON(array('forward' => $this->getRouting()->generate('board', array('game_id' => $game->getId()))));
+				return $this->renderJSON(array('game_id' => $game->getId()));
 			} else {
 				return $this->renderJSON(array('game' => 'not found'));
 			}
@@ -200,7 +202,7 @@
 			$invite->accept();
 			$game_id = $invite->getGameId();
 			$invite->delete();
-			return $this->renderJSON(array('forward' => $this->getRouting()->generate('board', array('game_id' => $game_id))));
+			return $this->renderJSON(array('game_id' => $game_id));
 		}
 
 		protected function _processRejectGameInvite(Request $request)
@@ -223,12 +225,14 @@
 		protected function _processPollGameData(Request $request)
 		{
 			$game_data = array();
-			$game = Games::getTable()->selectById($request['game_id']);
-			$game_data['current_player_id'] = $game->getCurrentPlayerId();
-			$gameevents = \application\entities\tables\GameEvents::getTable()->getLatestEventsByGame($game, $request['latest_event_id']);
 			$events = array();
-			foreach ($gameevents as $event) {
-				$events[] = array('id' => $event->getId(), 'type' => $event->getEventType(), 'data' => json_decode($event->getEventData()), 'event_content' => $this->getTemplateHTML('game/event', compact('event')));
+			$game = Games::getTable()->selectById($request['game_id']);
+			if ($game instanceof Game) {
+				$game_data['current_player_id'] = $game->getCurrentPlayerId();
+				$gameevents = \application\entities\tables\GameEvents::getTable()->getLatestEventsByGame($game, $request['latest_event_id']);
+				foreach ($gameevents as $event) {
+					$events[] = array('id' => $event->getId(), 'type' => $event->getEventType(), 'data' => json_decode($event->getEventData()), 'event_content' => $this->getTemplateHTML('game/event', compact('event')));
+				}
 			}
 			return $this->renderJSON(array('game' => array('data' => $game_data, 'events' => $events)));
 		}
@@ -429,6 +433,18 @@
 			return $this->renderJSON(array('message' => 'Settings saved!'));
 		}
 
+		protected function _processOpponentAvatar(Request $request)
+		{
+			$avatar_url = '/images/avatars/'.$this->game->getUserOpponent()->getAvatar();
+//			$avatar_url = '/images/avatars/avatar_1.png';
+			return $this->renderJSON(array('avatar_url' => $avatar_url));
+		}
+
+		protected function _processGameTopMenu(Request $request)
+		{
+			return $this->renderJSON(array('menu' => $this->getComponentHTML('game/gametopmenu', array('game' => $this->game))));
+		}
+
 		protected function _processTrainSkill(Request $request)
 		{
 			$skill_id = $request['selected_skill'];
@@ -443,6 +459,117 @@
 			return $this->renderJSON(array('message' => 'Skill training completed!', 'skill_trained' => (int) $skill_id, 'levelup_available' => $this->getUser()->canLevelUp()));
 		}
 
+		protected function _processLeaveGame(Request $request)
+		{
+			if ($this->game instanceof Game) {
+				if ($this->game->isInProgress() && in_array($this->getUser()->getId(), array($this->game->getPlayer()->getId(), $this->game->getOpponentId()))) {
+					if (!$this->game->getOpponentId()) {
+						$this->game->resolve($this->game->getOpponentId());
+					} else {
+						$this->game->resolve($this->game->getUserOpponent()->getId());
+					}
+					$this->game->save();
+					$this->game->resetUserCards();
+				}
+			}
+
+			return $this->renderJSON(array('leave_game' => 'ok'));
+		}
+
+		protected function _processTraining(Request $request)
+		{
+			switch ($request['level']) {
+				case 1:
+					$ai_player = \application\entities\tables\Users::getTable()->getByUsername('ai_easy');
+					break;
+				case 2:
+					$ai_player = \application\entities\tables\Users::getTable()->getByUsername('ai_normal');
+					break;
+				default:
+					$ai_player = \application\entities\tables\Users::getTable()->getByUsername('ai_hard');
+			}
+			$game = new Game();
+			$game->setPlayer($this->getUser());
+			$game->setOpponent($ai_player);
+			$game->completeQuickmatch();
+			$game->setCurrentPlayer($this->getUser());
+			$game->save();
+
+			$factions = array('resistance', 'neutrals', 'rutai');
+			$faction = $factions[array_rand($factions)];
+			$creature_cards = \application\entities\tables\CreatureCards::getTable()->getByFaction($faction);
+			$c_cards = \application\entities\tables\Cards::pickCards($creature_cards, $ai_player->getId(), rand(3, 7));
+			foreach ($c_cards as $card_id => $card) {
+				$card->setGame($game);
+				$card->save();
+			}
+			$equippable_item_cards = \application\entities\tables\EquippableItemCards::getTable()->getAll();
+			$e_cards = \application\entities\tables\Cards::pickCards($equippable_item_cards, $ai_player->getId(), rand(5, 10));
+			foreach ($e_cards as $card_id => $card) {
+				$card->setGame($game);
+				$card->save();
+			}
+			return $this->renderJSON(array('game_id' => $game->getId()));
+		}
+
+		protected function _processGameInterface(Request $request)
+		{
+			$interface_part = $request['part'];
+			$interface_content = '';
+			if ($request['game_id']) {
+				$game = Games::getTable()->selectById($request['game_id']);
+			}
+			switch ($interface_part) {
+				case 'lobby':
+					$interface_content = $this->getComponentHTML('lobby/lobbycontent');
+					break;
+				case 'chat_room':
+					$room = \application\entities\tables\ChatRooms::getTable()->selectById($request['room_id']);
+					$interface_content = $this->getComponentHTML('lobby/chatroom', array('room' => $room));
+					break;
+				case 'profile':
+					$interface_content = $this->getComponentHTML('main/profilecontent');
+					break;
+				case 'profile_cards':
+					$interface_content = $this->getComponentHTML('main/profilecardscontent');
+					break;
+				case 'profile_skills':
+					$interface_content = $this->getComponentHTML('main/profileskillscontent');
+					break;
+				case 'cardpicker':
+					if ($game->isGameOver() || $game->hasCards()) {
+						return $this->renderJSON(array('is_started' => 1));
+					} else {
+						$interface_content = $this->getComponentHTML('game/pickcardscontent', array('game' => $game));
+					}
+					break;
+				case 'board':
+					if (in_array($this->getUser()->getId(), array($this->game->getPlayer()->getId(), $this->game->getOpponent()->getId()))) {
+						if (!$this->game->isGameOver() && !$this->game->hasCards()) {
+							return $this->renderJSON(array('state' => 'no_cards'));
+						}
+					}
+					$interface_content = $this->getComponentHTML('game/boardcontent', array('game' => $game));
+					$event_id = max(array_keys($game->getEvents()));
+					$user = $this->getUser();
+					$options = array(
+						'game_id' => $game->getId(),
+						'room_id' => ($game->getUserOpponent()->isAi()) ? 0 : $game->getChatroom()->getId(),
+						'latest_event_id' => $event_id,
+						'current_turn' => $game->getTurnNumber(),
+						'current_phase' => $game->getCurrentPhase(),
+						'current_player_id' => $game->getCurrentPlayerId(),
+						'movable' => ($game->canUserMove($user->getId())) ? 'true' : 'false',
+						'actions' => ($game->getCurrentPlayerId() == $user->getId() && $game->getCurrentPhase() == Game::PHASE_ACTION) ? 'true' : 'false',
+						'music_enabled' => ($user->isGameMusicEnabled()) ? 'true' : 'false',
+						'actions_remaining' => ($game->getCurrentPlayerId() == $user->getId() && $game->getCurrentPhase() == Game::PHASE_ACTION) ? $game->getCurrentPlayerActions() : 0
+					);
+					break;
+			}
+
+			return $this->renderJSON(compact('interface_content', 'options'));
+		}
+
 		/**
 		 * Ask action
 		 *  
@@ -452,6 +579,15 @@
 		{
 			try {
 				switch ($request['for']) {
+					case 'game_interface':
+						return $this->_processGameInterface($request);
+						break;
+					case 'game_topmenu':
+						return $this->_processGameTopMenu($request);
+						break;
+					case 'opponent_avatar':
+						return $this->_processOpponentAvatar($request);
+						break;
 					case 'game_invites':
 						return $this->_processGameInvites($request);
 						break;
@@ -499,6 +635,12 @@
 		{
 			try {
 				switch ($request['topic']) {
+					case 'training':
+						return $this->_processTraining($request);
+						break;
+					case 'leave':
+						return $this->_processLeaveGame($request);
+						break;
 					case 'invite':
 						return $this->_processInvite($request);
 						break;

@@ -42,7 +42,8 @@
 		<div id="fullpage_backdrop" class="fullpage_backdrop dark" style="<?php if (!$csp_response->isFullscreen()): ?>display: none;<?php endif; ?>">
 			<div id="loading">
 				<div class="msg">
-					Loading ...
+					Loading ...<br>
+					<span class="slogan" id="loading-details">Please be patient</span>
 				</div>
 				<img src="/images/spinning_32.gif">
 			</div>
@@ -82,10 +83,9 @@
 				<ul class="main-menu">
 					<li><a href="<?php echo make_url('home'); ?>" class="<?php if ($csp_response->getPage() == 'home') echo ' selected'; ?>">Home</a></li>
 					<li><a href="<?php echo make_url('media'); ?>" class="<?php if ($csp_response->getPage() == 'media') echo ' selected'; ?>">Media</a></li>
-					<?php if ($csp_user->isAuthenticated()): ?>
-						<li><a href="<?php echo make_url('lobby'); ?>" class="<?php if ($csp_response->getPage() == 'lobby') echo ' selected'; ?>">Lobby</a></li>
+					<?php /* if ($csp_user->isAuthenticated()): ?>
 						<li><a href="<?php echo make_url('profile'); ?>" class="<?php if ($csp_response->getPage() == 'profile') echo ' selected'; ?>">Profile</a></li>
-					<?php endif; ?>
+					<?php endif; */ ?>
 					<li><a href="<?php echo make_url('faq'); ?>" class="<?php if ($csp_response->getPage() == 'faq') echo ' selected'; ?>">FAQ</a></li>
 				</ul>
 				<?php echo $content; ?>
@@ -96,7 +96,7 @@
 						<div class="border-overlay"></div>
 					</div>
 					<div class="footer-info">
-						<a href="<?php echo make_url('changelog'); ?>">Version alpha-<?php echo $csp_response->getVersion(); ?></a> - All text and artwork &copy; 2011-<?php echo date('Y'); ?> <a href="mailto:support@dragonevo.com">Magical Pictures / zegenie studios</a>
+						<a href="<?php echo make_url('changelog'); ?>">Version <?php echo $csp_response->getVersion(); ?> (alpha)</a> - All text and artwork &copy; 2011-<?php echo date('Y'); ?> <a href="mailto:support@dragonevo.com">Magical Pictures / zegenie studios</a>
 						<?php if ($csp_user->isAuthenticated()): ?>
 							<br>
 							<?php if ($csp_user->isAdmin()): ?>

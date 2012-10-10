@@ -443,12 +443,26 @@
 				\application\entities\tables\CreatureCards::getTable()->removeUserCards($user_id);
 				\application\entities\tables\PotionItemCards::getTable()->removeUserCards($user_id);
 				\application\entities\tables\EquippableItemCards::getTable()->removeUserCards($user_id);
-				return $this->renderJSON(array('reset_cards' => 'ok', 'message' => 'User cards has been reset'));
+				return $this->renderJSON(array('reset_cards' => 'ok', 'message' => 'User cards has been removed'));
 			} else {
 				return $this->renderJSON(array('reset_cards' => 'failed', 'error' => 'That is not a valid user id'));
 			}
 		}
-		
+
+		protected function _processResetUserSkills(Request $request)
+		{
+			if ($request['user_id'] && (int) $request['user_id'] > 0) {
+				$user_id = (int) $request['user_id'];
+				$user = new \application\entities\User($user_id);
+				$user->setLevel(1);
+				$user->save();
+				\application\entities\tables\Skills::getTable()->removeSkillsByUserId($user_id);
+				return $this->renderJSON(array('reset_cards' => 'ok', 'message' => 'User skills and level has been reset'));
+			} else {
+				return $this->renderJSON(array('reset_cards' => 'failed', 'error' => 'That is not a valid user id'));
+			}
+		}
+
 		protected function _processUserNewStarterPack(Request $request)
 		{
 			if ($request['user_id'] && (int) $request['user_id'] > 0) {
@@ -484,6 +498,9 @@
 				switch ($request['topic']) {
 					case 'reset_user_cards':
 						return $this->_processResetUserCards($request);
+						break;
+					case 'reset_user_skills':
+						return $this->_processResetUserSkills($request);
 						break;
 					case 'remove_user_cards':
 						return $this->_processRemoveUserCards($request);

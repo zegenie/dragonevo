@@ -45,6 +45,14 @@
 			return $this->count($crit);
 		}
 
+		public function removeSkillsByUserId($user_id)
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('skills.user_id', $user_id);
+
+			return $this->doDelete($crit);
+		}
+
 		public function getSubSkills($parent_skill_id)
 		{
 			$crit = $this->getCriteria();

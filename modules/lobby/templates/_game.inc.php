@@ -11,11 +11,9 @@
 			<span id="game_<?php echo $game->getId(); ?>_invitation_rejected"<?php if (!$game->isInvitationRejected()): ?> style="display: none;"<?php endif; ?>><?php echo $game->getOpponent()->getUsername(); ?> rejected the invitation</span>
 		</div>
 	</div>
-	<a class="button button-standard button-play<?php if (!$game->isInvitationConfirmed()) echo ' disabled'; ?>" href="<?php echo make_url('board', array('game_id' => $game->getId())); ?>" onclick="return !($(this).hasClassName('disabled'));">Play</a>
-	<?php if (!$game->isInvitationConfirmed()): ?>
-		<button class="button button-standard button-cancel" onclick="Devo.Play.cancelGame(<?php echo $game->getId(); ?>);return false;"><img src="/images/spinning_16.gif" style="display: none;">Cancel</button>
-		<button class="button button-standard button-ok" onclick="Devo.Play.cancelGame(<?php echo $game->getId(); ?>);return false;"><img src="/images/spinning_16.gif" style="display: none;">OK</button>
-	<?php endif; ?>
+	<button class="button button-standard button-play<?php if (!$game->isInvitationConfirmed()) echo ' disabled'; ?>" onclick="if (!$(this).hasClassName('disabled')) { Devo.Game.initializeGame(<?php echo $game->getId(); ?>);}return false;">Play</button>
+	<button class="button button-standard button-cancel" onclick="Devo.Play.cancelGame(<?php echo $game->getId(); ?>);return false;" style="<?php if ($game->isInvitationConfirmed()) echo 'display: none;'; ?>"><img src="/images/spinning_16.gif" style="display: none;">Cancel</button>
+	<button class="button button-standard button-ok" onclick="Devo.Play.cancelGame(<?php echo $game->getId(); ?>);return false;" style="<?php if ($game->isInvitationConfirmed()) echo 'display: none;'; ?>"><img src="/images/spinning_16.gif" style="display: none;">OK</button>
 	<div class="versus_player">
 		<?php if ($game->getOpponent()->isAI()) echo 'Training '; ?>versus<br>
 		<?php echo $game->getUserOpponent()->getCharactername(); ?>

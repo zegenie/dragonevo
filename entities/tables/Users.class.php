@@ -98,4 +98,15 @@
 			return $this->select($crit);
 		}
 
+		public function findByInfo($userinfo)
+		{
+			$crit = $this->getCriteria();
+			if (filter_var($userinfo, FILTER_VALIDATE_EMAIL) == $userinfo) {
+				$crit->addWhere('users.email', $userinfo);
+			} else {
+				$crit->addWhere('users.username', $userinfo);
+			}
+			return $this->select($crit);
+		}
+
 	}

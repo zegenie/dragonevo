@@ -12,5 +12,9 @@
 		{
 			$this->room = (isset($this->room)) ? $this->room : new \application\entities\ChatRoom(1);
 		}
-		
+
+		public function componentLobbyContent()
+		{
+		}
+
 	}

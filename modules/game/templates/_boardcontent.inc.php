@@ -8,11 +8,9 @@
 
 		$csp_response->setTitle("Game board ~ game vs. {$game->getUserOpponent()->getUsername()}");
 		$csp_response->addStylesheet('/css/animate.css');
-		//$csp_response->addJavascript('/js/jquery-1.7.2.min.js');
 
 	?>
 	<div id="board-container">
-		<?php include_template('main/profilemenu', array('game' => $game)); ?>
 		<div id="phase-1-overlay" class="fullpage_backdrop dark" style="display: none;"><a href="javascript:void(0);" id="end-phase-1-button" class="turn-button button button-green<?php if ($game->getCurrentPlayerId() != $csp_user->getId()) echo ' disabled'; ?>" onclick="Devo.Game.endPhase(this);"><img src="/images/spinning_16.gif" style="display: none;">End replenishment phase</a></div>
 		<div id="gameover-overlay" class="fullpage_backdrop dark" style="<?php if (!$game->isGameOver()): ?>display: none;<?php endif; ?>">
 			<div class="fullpage_backdrop_content">
@@ -38,7 +36,7 @@
 							</div>
 						</div>
 						<div class="button-container">
-							<a href="<?php echo make_url('lobby'); ?>" class="button button-standard">Go to lobby</a>
+							<button class="button button-silver" onclick="Devo.Game.destroyGame();">Go to the lobby</a>
 						</div>
 					</div>
 				</div>
@@ -140,11 +138,6 @@
 			<h5>Potions</h5>
 			<?php if ($game->isUserInGame()) include_component('game/playerpotions', compact('game')); ?>
 		</div>
-		<form id="chat_rooms_joined" action="<?php echo make_url('ask'); ?>" method="post">
-		</form>
-		<div id="game_chat" class="<?php if (!$csp_user->isSystemChatMessagesEnabled()) echo ' no_system_chat'; ?>" onmouseover="window.setTimeout(function() { $('chat_room_<?php echo $game->getChatRoom()->getId(); ?>_input').focus(); })" onmouseout="window.setTimeout(function() { $('chat_room_<?php echo $game->getChatRoom()->getId(); ?>_lines').scrollTop = $('chat_room_<?php echo $game->getChatRoom()->getId(); ?>_lines').scrollHeight; }, 1500);">
-			<?php include_component('lobby/chatroom', array('room' => $game->getChatRoom())); ?>
-		</div>
 		<div id="game_events" class="animated fadeOut" onclick="Devo.Game.toggleEvents();">
 			<div id="game_event_contents">
 				<?php foreach ($game->getEvents() as $event_id => $event): ?>
@@ -153,22 +146,6 @@
 			</div>
 		</div>
 	</div>
-	<script>
-		Devo.Core.Events.listen('devo:core:initialized', function(options) {
-			Devo.Game.initialize({
-				game_id: <?php echo $game->getId(); ?>,
-				latest_event_id: <?php echo $event_id; ?>,
-				current_turn: <?php echo $game->getTurnNumber(); ?>,
-				current_phase: <?php echo $game->getCurrentPhase(); ?>,
-				current_player_id: <?php echo $game->getCurrentPlayerId(); ?>,
-				movable: <?php echo ($game->canUserMove($csp_user->getId())) ? 'true' : 'false'; ?>,
-				actions: <?php echo ($game->getCurrentPlayerId() == $csp_user->getId() && $game->getCurrentPhase() == Game::PHASE_ACTION) ? 'true' : 'false'; ?>,
-				music_enabled: <?php echo ($csp_user->isGameMusicEnabled()) ? 'true' : 'false'; ?>,
-				actions_remaining: <?php echo ($game->getCurrentPlayerId() == $csp_user->getId() && $game->getCurrentPhase() == Game::PHASE_ACTION) ? $game->getCurrentPlayerActions() : 0; ?>
-			});
-			Devo.Main.initializeLobby({noselect: true});
-		});
-	</script>
 <?php else: ?>
 	<?php
 

@@ -1,7 +1,33 @@
 <?php $csp_response->setTitle(__('Dragon Evo - The Card Game changelog')); ?>
 <div class="content full changelog">
 	<h1>Changelog</h1>
-	<h3>Latest version: 0.1.5.115</h3>
+	<h3>Latest version: <?php echo $csp_response->getVersion(); ?> (alpha)</h3>
+	<h6>0.2.2</h6>
+	<ul>
+		<li>Removed game chat from top auto-dropdown</li>
+		<li>Game chat is now available as a separate menu bar tab when in-game, similar to lobby</li>
+	</ul>
+	<h6>0.2.1.8</h6>
+	<ul>
+		<li>Fixed a couple of issues with a persistent loading screen</li>
+	</ul>
+	<h6>0.2.1.0</h6>
+	<ul>
+		<li>Added avatar selection during profile setup</li>
+		<li>Implemented avatar display in lobby chat</li>
+		<li>Implemented proper avatar display in game opponent view</li>
+	</ul>
+	<h6>0.2.0.13</h6>
+	<ul>
+		<li>Fixed a bug where the music did not stop playing when ending a game</li>
+		<li>Fixed a bug with game invitations not working properly</li>
+	</ul>
+	<h6>0.2.0</h6>
+	<ul>
+		<li>Rewrote entire game UI</li>
+		<li>Tons of bugfixes and improvements</li>
+		<li>Speedup!</li>
+	</ul>
 	<h6>0.1.5.115</h6>
 	<ul>
 		<li>Fixed login issues with or without www.</li>

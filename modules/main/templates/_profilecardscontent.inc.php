@@ -1,6 +1,14 @@
 <?php $csp_response->setTitle(__('Dragon Evo - The Card Game')); ?>
-<div class="content full">
-	<div class="shelf">
+<?php include_template('main/profileleftmenu'); ?>
+<div class="content left" id="profile-cards-container">
+	<h2 style="margin-bottom: 10px;">
+		My card collection<br>
+		<span id="top-shelf-menu-container" style="display: none; font-weight: normal; font-size: 0.7em;"><a href="javascript:void(0);" onclick="Devo.Main.loadProfile();">&laquo; Back to profile</a></span>
+	</h2>
+	<p>
+		These are your cards, collected throughout the game, including your starter pack cards.
+	</p>
+	<div class="shelf" id="cards-shelf">
 		<?php if (count($cards)): ?>
 			<ul>
 				<?php foreach ($cards as $card): ?>

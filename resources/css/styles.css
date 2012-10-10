@@ -1049,14 +1049,40 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 .button-group .button:last-child { border-top-right-radius: 3px; border-bottom-right-radius: 3px; }
 .button-group .button { float: left; }
 
-.character_setup { color: #F1F1F1; font-size: 1.2em; padding: 10px; }
+.character_setup { color: #F1F1F1; }
 .character_setup strong { font-weight: bold; font-style: italic; }
 .character_setup p { padding: 10px 5px; }
 .character_setup .account_info { font-size: 0.8em; }
 .character_setup label { float: left; padding: 4px 4px 4px 0; }
-#character_name_input { padding: 4px; width: 300px; }
-.character_setup input[type="submit"] { padding: 3px; font-weight: bold; }
-.character_setup input.pick_faction { padding: 10px 15px !important; font-weight: normal; color: #FFF !important; text-shadow: 1px 1px 1px #666666 !important; font-size: 0.8em; left: 50%; width: 160px; margin-left: -95px; top: 295px; position: absolute; z-index: 10; }
+#profile-character-setup label { font-size: 1.3em; font-weight: bold; display: inline-block; float: none; color: #CBB66F; }
+#character_name_input { padding: 9px; font-size: 1.1em; width: 300px; }
+#character-name-container, #race-card-picker { margin: 10px; }
+#character-avatar-container { padding: 10px; }
+#character-avatar-container.completed label, #character-avatar-container.completed .avatar_preview.unselected, #character-avatar-container.completed .button { display: none !important; }
+.avatar_preview {
+	border: 2px solid rgba(255, 255, 255, 0.9);
+	display: inline-block;
+	border-radius: 25px;
+	cursor: pointer;
+	box-shadow: 0 0 5px rgba(101, 193, 218, 0.2), 0 0 7px rgba(101, 193, 218, 0.8), 0 0 13px rgba(101, 193, 218, 0.6);
+	width: 72px;
+	height: 72px;
+	margin-right: 5px;
+	background-repeat: no-repeat;
+	background-position: top left;
+	background-size: cover;
+	opacity: 1;
+	-webkit-transition: opacity 0.5s ease-in-out;
+	-moz-transition: opacity 0.5s ease-in-out;
+	-ms-transition: opacity 0.5s ease-in-out;
+	-o-transition: opacity 0.5s ease-in-out;
+	transition: opacity 0.5s ease-in-out;
+}
+.avatar_preview.unselected {
+	opacity: 0.3;
+}
+.character_setup input[type="submit"] { font-size: 1.2em; margin: 10px auto; font-weight: normal; display: block; padding: 10px 20px !important; }
+.character_setup input.pick_faction { padding: 10px 15px !important; font-weight: normal; color: #FFF !important; text-shadow: 1px 1px 1px #666666 !important; font-size: 1em; left: 50%; width: 160px; margin-left: -95px; top: 295px; position: absolute; z-index: 10; }
 .character_setup .card {
 	z-index: 1;
 	margin: 0 auto; opacity: 0.5;
@@ -1078,14 +1104,119 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 	-o-transition: opacity 0.7s ease;
 	transition: opacity 0.7s ease;
 }
+.character_setup .cards li.card { margin-right: -195px; }
+.character_setup.cardpicker .cards {
+	font-size: 1.2em;
+	position: relative;
+	height: 400px;
+	margin: 10px 0 0 7px;
+}
+.character_setup.cardpicker .cards li.card:first-child {
+	left: 100px;
+	-webkit-transform: rotate(-4deg);
+	-moz-transform: rotate(-4deg);
+	-ms-transform: rotate(-4deg);
+	-o-transform: rotate(-4deg);
+	transform: rotate(-4deg);
+}
+.character_setup.cardpicker .cards li.card:first-child + li.card {
+	left: 200px;
+	-webkit-transform: rotate(-2deg);
+	-moz-transform: rotate(-2deg);
+	-ms-transform: rotate(-2deg);
+	-o-transform: rotate(-2deg);
+	transform: rotate(-2deg);
+	top: -5px;
+}
+.character_setup.cardpicker .cards li.card:first-child + li.card + li.card {
+	left: 300px;
+	-webkit-transform: rotate(2deg);
+	-moz-transform: rotate(2deg);
+	-ms-transform: rotate(2deg);
+	-o-transform: rotate(2deg);
+	transform: rotate(2deg);
+	top: -5px;
+}
+.character_setup.cardpicker .cards li.card:last-child {
+	left: 400px;
+	-webkit-transform: rotate(4deg);
+	-moz-transform: rotate(4deg);
+	-ms-transform: rotate(4deg);
+	-o-transform: rotate(4deg);
+	transform: rotate(4deg);
+}
+.character_setup.cardpicker .cards li.card {
+	position: absolute;
+	cursor: pointer;
+	margin: 10px 0 10px 0;
+	z-index: 1;
+	opacity: 1;
+	-webkit-transition: -webkit-transform 0.4s ease, left 0.4s ease;
+	-moz-transition: -moz-transform 0.4s ease, left 0.4s ease;
+	-ms-transition: -ms-transform 0.4s ease, left 0.4s ease;
+	-o-transition: -o-transform 0.4s ease, left 0.4s ease;
+	transition: transform 0.4s ease, left 0.4s ease;
+}
+.character_setup.cardpicker .cards li.card.unselected, .character_setup.cardpicker .cards li.card:first-child + li.card + li.card.unselected, .character_setup.cardpicker .cards li.card:first-child + li.card.unselected {
+	left: 250px;
+	margin-left: 0px;
+}
+.character_setup.cardpicker .cards li.card.selected, .character_setup.cardpicker .cards li.card:first-child + li.card + li.card.selected, .character_setup.cardpicker .cards li.card:first-child + li.card.selected {
+	z-index: 10;
+	left: 250px;
+	-webkit-transform: rotate(0deg);
+	-moz-transform: rotate(0deg);
+	-ms-transform: rotate(0deg);
+	-o-transform: rotate(0deg);
+	transform: rotate(0deg);
+	margin-left: 0px;
+}
+.character_setup.cardpicker .cards li.card:hover, .character_setup.cardpicker .cards li.card:first-child + li.card + li.card:hover, .character_setup.cardpicker .cards li.card:first-child + li.card:hover {
+	z-index: 10;
+	-webkit-transform: rotate(0deg);
+	-moz-transform: rotate(0deg);
+	-ms-transform: rotate(0deg);
+	-o-transform: rotate(0deg);
+	transform: rotate(0deg);
+	-webkit-transition: -webkit-transform 0.4s ease, left 0.4s ease;
+	-moz-transition: -moz-transform 0.4s ease, left 0.4s ease;
+	-ms-transition: -ms-transform 0.4s ease, left 0.4s ease;
+	-o-transition: -o-transform 0.4s ease, left 0.4s ease;
+	transition: transform 0.4s ease, left 0.4s ease;
+}
+.character_setup.cardpicker .cards li.card.unselected:hover, .character_setup.cardpicker .cards li.card:first-child + li.card + li.card.unselected:hover, .character_setup.cardpicker .cards li.card:first-child + li.card.unselected:hover {
+	z-index: 1;
+}
 
-.profile { font-size: 1.1em; position: relative; }
+.character_setup .card_help {
+	font-size: 1em;
+	font-family: 'Amaranth';
+	font-weight: normal;
+	color: rgba(255, 255, 255, 0.9);
+	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+	vertical-align: middle;
+	width: 550px;
+	text-align: center;
+	margin: 5px auto;
+	background-color: rgba(0, 0, 0, 0.6);
+	padding: 5px;
+	border-radius: 7px;
+}
+
+.swirl-dialog.profile_setup { font-size: 1em; background: rgba(162, 213, 236, 0.2); width: 800px; margin: 50px auto; position: relative; color: rgba(255, 255, 255, 0.9); text-align: left; }
+.swirl-dialog.profile_setup.starter-pack { width: 950px; }
+.swirl-dialog.profile_setup p { font-size: 1.2em; padding: 10px; }
+.profile { font-size: 1em; position: relative; text-align: left; float: left; }
+.profile .swirl-dialog { width: 800px; margin: 50px auto 0 auto; }
 #user_level strong { font-weight: bold; font-style: italic; }
 #user_level { position: absolute; right: 15px; top: 0; font-size: 0.9em; text-align: center; }
 #user_level strong { text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 5px rgba(101, 193, 218, 1), 0 0 7px rgba(101, 193, 218, 0.8), 0 0 13px rgba(101, 193, 218, 0.6); }
 #user_level .level { font-size: 2.6em; font-weight: bold; }
 #user_level .xp { font-size: 1.9em; font-weight: normal; }
 .profile .statistics { list-style: none; padding: 0; margin: 0; }
+#profile-container { margin-top: 20px; }
+#left-menu-container { position: relative; width: 280px; }
+#left-menu-container .menu-left { position: fixed; top: 40px; width: 250px; left: 40px; }
 
 .skill {
 	border: 1px solid rgba(162, 213, 236, 0.2);
@@ -1154,6 +1285,14 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 #levelup_button { font-size: 1.1em !important; font-weight: normal; padding: 8px 15px !important; }
 #skill_list { margin-top: 20px; }
 
+#pickcards-container {
+	width: 985px;
+	margin: 10px auto;
+	color: #FFF;
+}
+#cards-shelf {
+	
+}
 .shelf { 
 	background-image: url('/images/shelve_dark.png');
 	background-position: top left;
@@ -1161,10 +1300,11 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 	box-shadow: inset 0 0 10px rgba(0, 0, 0, 1);
 	border-radius: 10px;
 	position: relative;
-	margin-bottom: 200px;
+	margin-bottom: 20px;
+	overflow: visible;
 }
-.shelf ul { list-style: none; padding: 10px 35px; position: relative; }
-.shelf li { margin: 17px 9px 48px 10px; float: none; display: inline-block; }
+.shelf ul { list-style: none; padding: 0 35px; position: relative; }
+.shelf li { margin: 30px 9px 35px 10px; float: none; display: inline-block; }
 .shelf .card { cursor: pointer; height: 100%; background-size: contain; width: 100%; box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.8); }
 .shelf .card.selected, .shelf.cardpicker .card.selected, .shelf.cardpicker .card.selected:hover, .cardpicker .card.selected, .cardpicker .card.selected:hover {
 	opacity: 1;
@@ -2433,88 +2573,6 @@ li.card {
 /*.defence { color: darkolivegreen; }
 .attack { color: #AC2808; }*/
 .gold { color: #CBB66F; }
-.character_setup .cards li.card { margin-right: -195px; }
-.character_setup.cardpicker .cards {
-	position: relative;
-	height: 400px;
-}
-.character_setup.cardpicker .cards li.card:first-child { 
-	left: 200px;
-	-webkit-transform: rotate(-4deg);
-	-moz-transform: rotate(-4deg);
-	-ms-transform: rotate(-4deg);
-	-o-transform: rotate(-4deg);
-	transform: rotate(-4deg);
-}
-.character_setup.cardpicker .cards li.card:first-child + li.card {
-	left: 300px;
-	-webkit-transform: rotate(-2deg);
-	-moz-transform: rotate(-2deg);
-	-ms-transform: rotate(-2deg);
-	-o-transform: rotate(-2deg);
-	transform: rotate(-2deg);
-	top: -5px;
-}
-.character_setup.cardpicker .cards li.card:first-child + li.card + li.card {
-	left: 400px;
-	-webkit-transform: rotate(2deg);
-	-moz-transform: rotate(2deg);
-	-ms-transform: rotate(2deg);
-	-o-transform: rotate(2deg);
-	transform: rotate(2deg);
-	top: -5px;
-}
-.character_setup.cardpicker .cards li.card:last-child {
-	left: 500px;
-	-webkit-transform: rotate(4deg);
-	-moz-transform: rotate(4deg);
-	-ms-transform: rotate(4deg);
-	-o-transform: rotate(4deg);
-	transform: rotate(4deg);
-}
-.character_setup.cardpicker .cards li.card { 
-	position: absolute;
-	cursor: pointer;
-	margin: 10px 0 10px 0;
-	z-index: 1;
-	opacity: 1;
-	-webkit-transition: -webkit-transform 0.4s ease, left 0.4s ease;
-	-moz-transition: -moz-transform 0.4s ease, left 0.4s ease;
-	-ms-transition: -ms-transform 0.4s ease, left 0.4s ease;
-	-o-transition: -o-transform 0.4s ease, left 0.4s ease;
-	transition: transform 0.4s ease, left 0.4s ease;
-}
-.character_setup.cardpicker .cards li.card.unselected, .character_setup.cardpicker .cards li.card:first-child + li.card + li.card.unselected, .character_setup.cardpicker .cards li.card:first-child + li.card.unselected {
-	left: 350px;
-	margin-left: 0px;
-}
-.character_setup.cardpicker .cards li.card.selected, .character_setup.cardpicker .cards li.card:first-child + li.card + li.card.selected, .character_setup.cardpicker .cards li.card:first-child + li.card.selected {
-	z-index: 10;
-	left: 350px;
-	-webkit-transform: rotate(0deg);
-	-moz-transform: rotate(0deg);
-	-ms-transform: rotate(0deg);
-	-o-transform: rotate(0deg);
-	transform: rotate(0deg);
-	margin-left: 0px;
-}
-.character_setup.cardpicker .cards li.card:hover, .character_setup.cardpicker .cards li.card:first-child + li.card + li.card:hover, .character_setup.cardpicker .cards li.card:first-child + li.card:hover {
-	z-index: 10;
-	-webkit-transform: rotate(0deg);
-	-moz-transform: rotate(0deg);
-	-ms-transform: rotate(0deg);
-	-o-transform: rotate(0deg);
-	transform: rotate(0deg);
-	-webkit-transition: -webkit-transform 0.4s ease, left 0.4s ease;
-	-moz-transition: -moz-transform 0.4s ease, left 0.4s ease;
-	-ms-transition: -ms-transform 0.4s ease, left 0.4s ease;
-	-o-transition: -o-transform 0.4s ease, left 0.4s ease;
-	transition: transform 0.4s ease, left 0.4s ease;
-}
-.character_setup.cardpicker .cards li.card.unselected:hover, .character_setup.cardpicker .cards li.card:first-child + li.card + li.card.unselected:hover, .character_setup.cardpicker .cards li.card:first-child + li.card.unselected:hover {
-	z-index: 1;
-}
-
 fieldset { border-top: 1px dotted rgba(72, 48, 28, 0.8); padding: 5px 15px; margin-top: 15px; clear: both; }
 fieldset div { clear: both; min-height: 30px; }
 fieldset > fieldset { margin-top: 25px; }
@@ -2584,7 +2642,7 @@ input:-moz-placeholder { color:#AAA; }
 	border-bottom: 1px solid rgba(11, 8, 4, 0.7);
 }
 
-.in-play #game-table{
+.in-play #game-table {
 	margin-top: -20px;
 	border-bottom-width: 20px;
 	-webkit-transform: rotateX(30deg);
@@ -3167,82 +3225,12 @@ li.card-slot {
 	opacity: 0;
 }
 #player_stuff .card { margin-left: 15px; clear: none; float: none; display: inline-block; }
-#game_chat {
-	position: absolute;
-	top: 0;
-	left: 50%;
-	margin-left: -365px;
-	width: 740px;
-	height: 78px;
-	padding-top: 0;
-	z-index: 100001;
-	border-radius: 0 0 7px 7px;
-	background-color: transparent;
-	overflow: hidden;
-	-webkit-transition: height 0.7s ease-in-out, background-color 0.7s ease-in-out;
-	-moz-transition: height 0.7s ease-in-out, background-color 0.7s ease-in-out;
-	-ms-transition: height 0.7s ease-in-out, background-color 0.7s ease-in-out;
-	-o-transition: height 0.7s ease-in-out, background-color 0.7s ease-in-out;
-	transition: height 0.7s ease-in-out, background-color 0.7s ease-in-out;
-}
-#game_chat:hover {
-	overflow: visible;
-	height: 535px;
-	background-color: rgba(0, 0, 0, 0.5);
-	-webkit-transition: height 0.7s ease-in-out, background-color 0.7s ease-in-out;
-	-moz-transition: height 0.7s ease-in-out, background-color 0.7s ease-in-out;
-	-ms-transition: height 0.7s ease-in-out, background-color 0.7s ease-in-out;
-	-o-transition: height 0.7s ease-in-out, background-color 0.7s ease-in-out;
-	transition: height 0.7s ease-in-out, background-color 0.7s ease-in-out;
-}
-#game_chat .chat_room_users, #game_chat .users_header {
+.chat_room_users.game-chat, .users_header.game-chat, .chat_room_container.no_system_chat .chat_line.system {
 	display: none;
 }
-#game_chat .chat_room, #game_chat .chat_room_lines { 
-	height: 75px;
-	width: 740px;
-	position: absolute;
-	top: 0;
-	overflow: hidden;
-	box-shadow: none;
-	-webkit-transition: height 0.7s ease-in-out, box-shadow 0.7s ease-in-out;
-	-moz-transition: height 0.7s ease-in-out, box-shadow 0.7s ease-in-out;
-	-ms-transition: height 0.7s ease-in-out, box-shadow 0.7s ease-in-out;
-	-o-transition: height 0.7s ease-in-out, box-shadow 0.7s ease-in-out;
-	transition: height 0.7s ease-in-out, box-shadow 0.7s ease-in-out;
-}
-#game_chat .chat_room_form_container { opacity: 0; }
-#game_chat:hover .chat_room, #game_chat:hover .chat_room_lines {
-	position: relative;
-	top: auto;
-	height: 500px;
-	-webkit-transition: height 0.7s ease-in-out;
-	-moz-transition: height 0.7s ease-in-out;
-	-ms-transition: height 0.7s ease-in-out;
-	-o-transition: height 0.7s ease-in-out;
-	transition: height 0.7s ease-in-out;
-}
-#game_chat:hover .chat_room_form_container {
-	opacity: 1;
-	-webkit-transition: opacity 0.7s ease-in-out 0.8s;
-	-moz-transition: opacity 0.7s ease-in-out 0.8s;
-	-ms-transition: opacity 0.7s ease-in-out 0.8s;
-	-o-transition: opacity 0.7s ease-in-out 0.8s;
-	transition: opacity 0.7s ease-in-out 0.8s;
-}
-#game_chat header { display:none; width: 485px; padding: 10px; }
-#game_chat header subject, #game_chat header span { display: none; }
-#game_chat.no_system_chat .chat_line.system { display: none; }
 .chat_line.system, .chat_line.system .chat_nickname, .chat_line.system .chat_line_content { color: #CCC; }
 .chat_line.system .chat_line_content { font-size: 0.85em; }
-#game_chat .chat_line .chat_nickname { padding: 2px; }
-#game_chat .chat_line:hover .chat_timestamp .date { display: none; }
-#game_chat .chat_line .chat_line_content { clear: right; font-size: 0.9em; min-height: 15px; }
 .chat_line_content img { margin-top: -1px; margin-bottom: -4px; }
-#game_chat .chat_room_form_container input[type=text] { width: 630px; }
-#game_chat .chat_room_form_container input[type=submit] { margin-right: 5px; }
-#game_chat .chat_room_form_container img { left: 617px; }
-#game_chat .chat_nickname:hover .tooltip { display: none; }
 #game_events div {
 	padding: 2px 0 3px 20px;
 	color: #FFF;
@@ -3428,6 +3416,9 @@ li.card-slot {
 	width: 150px;
 	height: 150px;
 	margin-right: 5px;
+	background-repeat: no-repeat;
+	background-position: top left;
+	background-size: cover;
 	-webkit-transition: box-shadow 2s ease-in-out, -webkit-box-shadow 2s ease-in-out, -webkit-transform 2s ease-in-out;
 	-moz-transition: box-shadow 2s ease-in-out, -moz-box-shadow 2s ease-in-out, -moz-transform 2s ease-in-out;
 	-ms-transition: box-shadow 2s ease-in-out, -ms-box-shadow 2s ease-in-out, -ms-transform 2s ease-in-out;
@@ -3518,11 +3509,22 @@ li.card-slot {
 	text-shadow: 0 0 5px rgba(101, 193, 218, 0.2), 0 0 7px rgba(101, 193, 218, 0.8), 0 0 13px rgba(101, 193, 218, 0.6);
 	color: #FFF;
 }
+#play-version a {
+	color: #FFF;
+	border: none;
+	border-bottom: 1px dotted rgba(255, 255, 255, 0);
+}
+#play-version a:hover {
+	color: #FFF;
+	border: none;
+	border-bottom: 1px dotted rgba(255, 255, 255, 0.8);
+}
 #play-menu .avatar {
 	position: relative;
 	left: auto;
 	top: auto;
-	margin-bottom: 15px;
+	width: 150px;
+	margin: 0 auto 15px auto;
 }
 #play-menu .devo-box {
 	position: relative;
@@ -3632,11 +3634,13 @@ li.card-slot {
 	position: relative;
 	margin: 0;
 	padding: 0 0 5px 0;
+	height: 40px;
+	clear: both;
 }
 .my_games li.rejected .versus_player {
 	color: #777;
 }
-.my_games li .button { float: right; margin: 10px 0 0 0; }
+.my_games li .button { float: right; margin: 8px 0 0 0; }
 .my_games li.rejected .button, .my_games li .button.button-ok { display: none; }
 .my_games li.rejected .button.button-ok { display: block; }
 .my_games li .versus_player, #game-opponent {
@@ -3644,10 +3648,16 @@ li.card-slot {
 	font-weight: bold;
 	line-height: 1;
 	font-family: 'Amaranth';
-	width: 190px;
+	width: 180px;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	overflow: hidden;
+}
+.my_games li .versus_player {
+	position: absolute;
+}
+.my_games li .versus_player:first-line {
+	line-height: 0.7;
 }
 .my_games li .versus_player:first-line, #game-opponent .versus_versus {
 	font-size: 0.65em;
@@ -3689,7 +3699,7 @@ li.card-slot {
 	top: 5px;
 	padding: 0;
 }
-#lobby_chat {
+.chat_room_container.swirl-dialog {
 	float: none;
 	margin: 0;
 	position: fixed;
@@ -3701,17 +3711,19 @@ li.card-slot {
 	background: rgba(162, 213, 236, 0.3);
 	box-sizing: content-box;
 }
-#lobby_chat .chat_room_lines {
+.chat_room_container .chat_room_lines {
 	padding-top: 20px;
 	box-shadow: none;
 }
-#lobby_chat_toggler.ingame {
+#profile_menu_strip li {
 	cursor: pointer;
+	color: #000;
+	text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.8);
 }
-#lobby_chat_toggler.ingame .notify.visible {
+#profile_menu_strip li .notify.visible {
 	display: inline;
 }
-#lobby_chat_toggler.ingame .notify, #lobby_chat_toggler.selected .notify.visible {
+#profile_menu_strip li .notify, #profile_menu_strip li.selected .notify.visible {
 	display: none;
 }
 #ingame_chat_toggler.ingame {
@@ -3799,7 +3811,7 @@ li.card-slot {
 .profile_menu .strip ul li.selected {
 	background: rgba(162, 213, 236, 0.85);
 }
-#lobby_chat .chat_room_form_container {
+#chat_1_container .chat_room_form_container {
 	height: 30px;
 	padding-top: 5px;
 }
@@ -3833,7 +3845,8 @@ li.card-slot {
 	right: 0;
 	top: 0;
 	font-size: 0.9em;
-	width: 185px;
+	width: 200px;
+	color: rgba(240, 240, 255, 0.9);
 }
 .chat_room header subject {
 	font-size: 1.1em;
@@ -3881,24 +3894,58 @@ li.card-slot {
 }
 .chat_room_users {
 	float: right;
-	padding: 15px 5px 0 5px;
+	padding: 20px 5px 0 5px;
 	height: 465px;
-	width: 180px;
+	width: 195px;
 	box-shadow: none;
 	overflow: visible;
 }
 .chat_room_users .chat_nickname {
-	width: 180px;
+	width: 195px;
 	padding: 1px 0;
 	font-size: 0.9em;
 	font-weight: normal;
+	position: relative;
 }
-.chat_room_users .chat_nickname:hover .tooltip {
-/*	left: -100px !important;*/
-	left: auto;
-	right: 0;
+.chat_room_users .chat_nickname .chat_avatar {
+	float: left;
+	width: 16px;
+	border: 1px solid rgba(255, 255, 255, 0.9);
+	border-radius: 9px;
+	box-shadow: 0 0 2px rgba(101, 193, 218, 0.2), 0 0 4px rgba(101, 193, 218, 0.8);
+	height: 16px;
+	background-repeat: no-repeat;
+	background-position: top left;
+	background-size: cover;
+	margin: -3px 5px 3px 0;
+}
+.chat_room_users .userinfo {
+	display: block;
+	width: 200px;
+	height: 90px;
+	z-index: 10;
+	position: absolute;
+	background-color: rgba(255, 255, 255, 0.8);
+	border: 1px solid rgba(100, 100, 100, 0.6);
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+	border-radius: 5px;
+	padding: 10px;
+	color: rgba(0, 0, 0, 0.8);
+	left: -20px;
+	font-size: 1.1em;
+	font-weight: normal;
+	top: 18px;
+	cursor: default;
+}
+.chat_room_users .userinfo:first-line {
+	font-size: 1.2em;
+	font-weight: bold;
+}
+.chat_nickname.own {
+	cursor: default;
 }
 .chat_nickname {
+	cursor: pointer;
 	font-size: 0.8em;
 	font-weight: bold;
 	color: #AAA;
@@ -3906,6 +3953,11 @@ li.card-slot {
 	position: relative;
 	float: left;
 	clear: left;
+}
+.chat_nickname .userinfo .buttons {
+	position: absolute;
+	right: 5px;
+	bottom: 5px;
 }
 .chat_nickname.is_admin {
 	color: #F8C939;
@@ -3928,24 +3980,6 @@ li.card-slot {
 }
 .chat_room_lines .chat_line .chat_line_content {
 	clear: both;
-}
-.chat_nickname:hover .tooltip:before, .chat_nickname:hover .tooltip:after {
-	border: none;
-}
-.chat_nickname .tooltip {
-	bottom: 5px;
-}
-.chat_nickname .tooltip .buttons {
-	text-align: right;
-	padding: 5px;
-}
-.chat_nickname:hover .tooltip {
-	bottom: 10px;
-	left: 2px;
-	font-size: 14px;
-	text-shadow: none;
-	font-weight: normal;
-	padding: 15px;
 }
 
 @-webkit-keyframes loading {

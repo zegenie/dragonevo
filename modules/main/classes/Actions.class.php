@@ -11,6 +11,20 @@ use \caspar\core\Request,
 class Actions extends \caspar\core\Actions
 {
 
+	protected $_mailer = null;
+
+	protected function _getMailer()
+	{
+		if ($this->_mailer === null) {
+			require_once CASPAR_LIB_PATH . 'swift/lib/swift_required.php';
+			$transport = \Swift_SmtpTransport::newInstance('smtp.domeneshop.no', 587)
+				->setUsername('dragonevo1')
+				->setPassword('sDf47nQ5');
+			$this->_mailer = \Swift_Mailer::newInstance($transport);
+		}
+		return $this->_mailer;
+	}
+
 	/**
 	 * Index page
 	 *
@@ -39,6 +53,7 @@ class Actions extends \caspar\core\Actions
 	public function runSkills(Request $request)
 	{
 		$this->forward403unless($this->getUser()->isAuthenticated());
+		$this->getResponse()->setFullscreen();
 		$this->available_skills = \application\entities\tables\Skills::getTable()->getSkillsByRace($this->getUser()->getRace());
 		$this->user_skills = $this->getUser()->getSkills();
 	}
@@ -51,57 +66,39 @@ class Actions extends \caspar\core\Actions
 	public function runProfile(Request $request)
 	{
 		$this->forward403unless($this->getUser()->isAuthenticated());
-		$greetings = array('Hello', 'Hey there', 'Hola', 'Bonjour', 'Ohoy', 'Heya', 'Hey', 'Welcome', 'There you are');
-		$this->intro = $greetings[array_rand($greetings)];
-		$user = $this->getUser();
-
-		$this->message = \caspar\core\Caspar::getMessageAndClear('profile_message');
-		$this->error = \caspar\core\Caspar::getMessageAndClear('profile_error');
-		$this->games_played = 0;
-		$this->banner_message = Caspar::getMessageAndClear('profile_banner_message');
 		if ($request->isPost()) {
+			$user = $this->getUser();
 			if ($request->getParameter('character_setup')) {
 				switch ($request->getParameter('step')) {
 					case 1:
 						if (strlen(trim($request->getParameter('character_name'))) == 0) {
-							$charactername_error = true;
+							$this->getResponse()->setHttpStatus(400);
+							return $this->renderJSON(array('error' => 'You need to pick a character name'));
 						} elseif (!$request->getParameter('race') || $request->getParameter('race') > 4) {
-							$race_error = true;
+							$this->getResponse()->setHttpStatus(400);
+							return $this->renderJSON(array('error' => 'This is not a valid race'));
+						} elseif (!$request->getParameter('avatar') || $request->getParameter('avatar') > 13) {
+							$this->getResponse()->setHttpStatus(400);
+							return $this->renderJSON(array('error' => 'This is not a valid avatar'));
 						} else {
 							$user->setCharacterName($request->getParameter('character_name'));
 							$user->setRace($request->getParameter('race'));
+							$user->setAvatar("avatar_".$request->getParameter('avatar').".png");
 							$user->save();
-							$this->forward($this->getRouting()->generate('profile'));
+							return $this->renderJSON(array('character_setup' => 'step_1_ok'));
 						}
 						break;
 					case 2:
 						if (!$user->hasCards()) {
 							$this->getUser()->generateStarterPack($request->getParameter('faction'));
 						}
-						Caspar::setMessage('profile_banner_message', 'starter_pack_generated');
-						$this->forward($this->getRouting()->generate('profile'));
+						return $this->renderJSON(array('character_setup' => 'step_2_ok'));
 						break;
 				}
-			} elseif ($request->getParameter('change_password')) {
-				if (md5($request->getParameter('current_password')) == DEVO::getUser()->getPassword()) {
-					if (strlen(trim($request->getParameter('new_password_1'))) > 5 && $request->getParameter('new_password_1') == $request->getParameter('new_password_2')) {
-						DEVO::getUser()->setPassword($request->getParameter('new_password_1'));
-						DEVO::getUser()->save();
-						setcookie("devo_password", DEVO::getUser()->getPassword());
-						$password_changed = true;
-					} else {
-						$pwd_error = 'Please type a new password twice, minimum 5 characters long';
-					}
-				} else {
-					$pwd_error = 'Please type your current password';
-				}
 			}
-		} else {
-			$this->games = $this->getUser()->getGames();
-			$this->games_played = \application\entities\tables\Games::getTable()->getNumberOfGamesByUserId($this->getUser()->getId());
-			$this->games_won = \application\entities\tables\Games::getTable()->getNumberOfGamesWonByUserId($this->getUser()->getId());
-			$this->pct_won = ($this->games_played > 0) ? round(($this->games_won / $this->games_played) * 100, 1) : 0;
 		}
+		$this->getResponse()->setHttpStatus(400);
+		return $this->renderJSON(array('error' => 'Invalid request'));
 	}
 
 	/**
@@ -229,11 +226,74 @@ class Actions extends \caspar\core\Actions
 		return $this->renderJSON(array('error' => $this->getI18n()->__('Invalid template or parameter')));
 	}
 
+	public function runForgot(Request $request)
+	{
+		if ($request->isPost()) {
+			$userinfo = trim($request['userinfo']);
+			$users = ($userinfo) ? \application\entities\tables\Users::getTable()->findByInfo($userinfo) : array();
+			if (count($users) == 1) {
+				$user = array_shift($users);
+				$code = $user->getOrGeneratePasswordRestoreKey();
+				$user->save();
+				$mailer = $this->_getMailer();
+				$message = \Swift_Message::newInstance('Dragon Evo: The Card Game account restoration');
+				$message->setFrom('support@dragonevo.com', 'The Dragon Evo team');
+				$message->setTo($user->getEmail());
+				$plain_content = str_replace(array('%username%', '%code%'), array($user->getUsername(), $code), file_get_contents(CASPAR_MODULES_PATH . 'main' . DS . 'templates' . DS . 'account_restore.txt'));
+				$message->setBody($plain_content, 'text/plain');
+				$retval = $mailer->send($message);
+				$this->sent_details = true;
+				if ($request->isAjaxCall()) {
+					return $this->renderJSON(array('message' => 'Password reset email sent'));
+				}
+			} else {
+				$this->error = 'Could not find a user with these details';
+				if ($request->isAjaxCall()) {
+					$this->getResponse()->setHttpStatus(400);
+					return $this->renderJSON(array('error' => $this->error));
+				}
+			}
+		}
+	}
+
+	public function runRestore(Request $request)
+	{
+		$this->username = trim($request['username']);
+		$this->code = trim($request['code']);
+		$user = \application\entities\tables\Users::getTable()->getByUsername($this->username);
+		$valid_code = false;
+		try {
+			if (!$user instanceof application\entities\User) {
+				if ($this->code == $user->getOrGeneratePasswordRestoreKey()) {
+					$valid_code = true;
+				}
+				if ($request->isPost() && $valid_code) {
+					if (trim($request['desired_password_1']) && strlen(trim($request['desired_password_1'])) >= 8 && $request['desired_password_1'] == $request['desired_password_2']) {
+						$user->setPassword($request['desired_password_1']);
+						$user->save();
+						$mailer = $this->_getMailer();
+						$message = \Swift_Message::newInstance('Dragon Evo: The Card Game new password saved');
+						$message->setFrom('support@dragonevo.com', 'The Dragon Evo team');
+						$message->setTo($user->getEmail());
+						$plain_content = str_replace('%username%', $user->getUsername(), file_get_contents(CASPAR_MODULES_PATH . 'main' . DS . 'templates' . DS . 'account_restored.txt'));
+						$message->setBody($plain_content, 'text/plain');
+						$retval = $mailer->send($message);
+						$this->password_saved = true;
+					} else {
+						throw new \Exception('Please enter a password (with at least 8 characters) twice');
+					}
+				}
+			}
+		} catch (\Exception $e) {
+			$this->error = 'Could not find a user with these details';
+		}
+		$this->valid_code = $valid_code;
+	}
+
 	public function runJoin(Request $request)
 	{
 		$valid_code = true; // \application\entities\tables\Users::getTable()->validateCode($request['code']);
 		$this->valid_code = $valid_code;
-//		$this->code = $request['code'];
 		$this->registered = false;
 		if ($valid_code && $request->isPost()) {
 			if (\application\entities\tables\Users::getTable()->validateUsername($request['desired_username'])) {
@@ -245,16 +305,12 @@ class Actions extends \caspar\core\Actions
 						$user->setEmail($request['email']);
 						$user->setIsAdmin(false);
 						$user->save();
-						require_once CASPAR_APPLICATION_PATH . 'swift/lib/swift_required.php';
+						$mailer = $this->_getMailer();
 						$message = \Swift_Message::newInstance('Dragon Evo: The Card Game account created');
 						$message->setFrom('support@dragonevo.com', 'The Dragon Evo team');
 						$message->setTo($request->getParameter('email'));
 						$plain_content = str_replace(array('%username%', '%password%'), array($user->getUsername(), $request['desired_password_1']), file_get_contents(CASPAR_MODULES_PATH . 'main' . DS . 'templates' . DS . 'account_created.txt'));
 						$message->setBody($plain_content, 'text/plain');
-						$transport = \Swift_SmtpTransport::newInstance('smtp.domeneshop.no', 587)
-							->setUsername('dragonevo1')
-							->setPassword('sDf47nQ5');
-						$mailer = \Swift_Mailer::newInstance($transport);
 						$retval = $mailer->send($message);
 						$this->registered = true;
 					} else {
@@ -283,7 +339,7 @@ class Actions extends \caspar\core\Actions
 					if (!\caspar\core\Caspar::getUser()->isAuthenticated()) {
 						throw new \Exception('Unknown username and / or password');
 					}
-					$this->forward($this->getRouting()->generate('home'));
+					$this->forward($this->getRouting()->generate('play'));
 				}
 				else {
 					throw new \Exception('Please enter a username and password');

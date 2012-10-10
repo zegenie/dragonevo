@@ -25,7 +25,11 @@
 		public function runIndex(Request $request)
 		{
 			$this->getResponse()->setFullscreen();
-			$this->games = $this->getUser()->getGames();
+		}
+
+		public function runGetLobbyContent(Request $request)
+		{
+			return $this->renderJSON(array('content' => $this->renderComponent('lobby/lobbycontent')));
 		}
 
 		public function runSay(Request $request)

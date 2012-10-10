@@ -45,6 +45,11 @@ forgot:
   module: main
   action: forgot
 
+restore:
+  url: /restore/:username/:code
+  module: main
+  action: restore
+
 join-alpha:
   url: /join/:code
   module: main

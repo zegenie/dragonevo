@@ -43,4 +43,30 @@
 			$this->trained = $this->getUser()->hasTrainedSkill($this->skill);
 		}
 
+		public function componentMyGames()
+		{
+			$this->games = $this->getUser()->getGames();			
+		}
+
+		public function componentProfileContent()
+		{
+			$greetings = array('Hello', 'Hey there', 'Hola', 'Bonjour', 'Ohoy', 'Heya', 'Hey', 'Welcome', 'There you are');
+			$this->intro = $greetings[array_rand($greetings)];
+			$this->games = $this->getUser()->getGames();
+			$this->games_played = \application\entities\tables\Games::getTable()->getNumberOfGamesByUserId($this->getUser()->getId());
+			$this->games_won = \application\entities\tables\Games::getTable()->getNumberOfGamesWonByUserId($this->getUser()->getId());
+			$this->pct_won = ($this->games_played > 0) ? round(($this->games_won / $this->games_played) * 100, 1) : 0;
+		}
+
+		public function componentProfileCardsContent()
+		{
+			$this->cards = $this->getUser()->getCards();
+		}
+
+		public function componentProfileSkillsContent()
+		{
+			$this->available_skills = \application\entities\tables\Skills::getTable()->getSkillsByRace($this->getUser()->getRace());
+			$this->user_skills = $this->getUser()->getSkills();
+		}
+
 	}
