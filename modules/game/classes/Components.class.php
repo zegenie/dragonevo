@@ -25,7 +25,19 @@
 
 		public function componentPickCardsContent()
 		{
-			$this->cards = $this->getUser()->getCards();
+			$this->factions = \application\entities\Card::getFactions();
+			$cards = $this->getUser()->getCards();
+			if ($this->game->isScenario()) {
+				$part = $this->game->getPart();
+				foreach ($cards as $card_id => $card) {
+					if (!$card instanceof \application\entities\CreatureCard) continue;
+					if ($card->getFaction() == \application\entities\Card::FACTION_NEUTRALS && !$part->doesApplyToNeutrals()) unset($cards[$card_id]);
+					if ($card->getFaction() == \application\entities\Card::FACTION_RUTAI && !$part->doesApplyToRutai()) unset($cards[$card_id]);
+					if ($card->getFaction() == \application\entities\Card::FACTION_RESISTANCE && !$part->doesApplyToResistance()) unset($cards[$card_id]);
+				}
+			}
+
+			$this->cards = $cards;
 		}
 
 		public function componentPlayerPotions()

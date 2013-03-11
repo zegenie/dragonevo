@@ -32,15 +32,10 @@
 					break;
 			}
 			
-			if (!isset($card)) {
-				var_dump($unique_id);
-				die();
-			}
-
 			return $card;
 		}
 		
-		public static function pickCards($cards, $player_id, $num = 5)
+		public static function pickCards($cards, $player, $num = 5)
 		{
 			if (!count($cards)) return array();
 			$pickablecards = array();
@@ -60,13 +55,7 @@
 				$card_id = $pickablecards[$id];
 				if (array_key_exists($card_id, $cards)) {
 					$card = $cards[$card_id];
-					$picked_card = clone $card;
-					$picked_card->giveTo($player_id);
-					$picked_card = $picked_card->morph();
-					$picked_card->save();
-					$picked_card->setOriginalCard($card);
-					$picked_card->generateUniqueDetails();
-					$picked_card->save();
+					$picked_card = $player->giveCard($card);
 					$return_cards[$picked_card->getId()] = $picked_card;
 					unset($pickablecards[$id]);
 					$cc++;

@@ -22,6 +22,7 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere('potion_item_cards.card_state', \application\entities\Card::STATE_TEMPLATE);
+			$crit->addOrderBy('potion_item_cards.cost', Criteria::SORT_DESC);
 			return $this->select($crit);
 		}
 		
@@ -46,16 +47,11 @@
 		{
 			$crit = $this->getCriteria();
 			if ($user_id === null) {
-				$crit->addWhere('potion_item_cards.user_id', 0, Criteria::DB_NOT_EQUALS);
+				$crit->addWhere('potion_item_cards.card_state', \application\entities\Card::STATE_OWNED);
 			} else {
 				$crit->addWhere('potion_item_cards.user_id', $user_id);
 			}
-			if ($res = $this->doSelect($crit)) {
-				while ($row = $res->getNextRow()) {
-					$card_id = $row->get('potion_item_cards.id');
-					$this->doDeleteById($card_id);
-				}
-			}
+			$this->doDelete($crit);
 		}
 
 		public function resetUserCards($game_id = null, $user_id = null)
@@ -71,6 +67,17 @@
 			$crit->addUpdate('potion_item_card.game_id', 0);
 			$crit->addUpdate('potion_item_card.is_in_play', false);
 			$this->doUpdate($crit);
+		}
+
+		public function resetAICards()
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('potion_item_cards.game_id', 0);
+			$ctn = $crit->returnCriterion('potion_item_cards.user_id', 21);
+			$ctn->addOr('potion_item_cards.user_id', 22);
+			$ctn->addOr('potion_item_cards.user_id', 23);
+			$crit->addWhere($ctn);
+			$this->doDelete($crit);
 		}
 
 	}

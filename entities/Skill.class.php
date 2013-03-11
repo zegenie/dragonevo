@@ -80,6 +80,15 @@
 		protected $_required_level;
 
 		/**
+		 * XP cost to learn this skill
+		 *
+		 * @Column(type="integer", length=10)
+		 *
+		 * @var integer
+		 */
+		protected $_xp_cost;
+
+		/**
 		 * Whether or not the skill is available for human races
 		 *
 		 * @Column(type="boolean", deafult=false)
@@ -1179,6 +1188,11 @@
 			return ($parent_skill instanceof Skill) ? $parent_skill->getId() : '';
 		}
 
+        public function hasParentSkill()
+        {
+            return ($this->getParentSkill() instanceof Skill);
+        }
+
 		public function setParentSkill($parent_skill)
 		{
 			$this->_parent_skill_id = $parent_skill;
@@ -1208,6 +1222,16 @@
 		public function setRequiredLevel($required_level)
 		{
 			$this->_required_level = $required_level;
+		}
+
+		public function getXpCost()
+		{
+			return $this->_xp_cost;
+		}
+
+		public function setXpCost($xp_cost)
+		{
+			$this->_xp_cost = $xp_cost;
 		}
 
 		public function getRaceHuman()
@@ -1288,6 +1312,7 @@
 			$this->_name = $form_data['name'];
 			$this->_description = $form_data['description'];
 			$this->_required_level = $form_data['required_level'];
+			$this->_xp_cost = $form_data['xp_cost'];
 			$this->_parent_skill_id = $form_data['parent_skill_id'];
 			$this->_race_human = (bool) $form_data['race_human'];
 			$this->_race_lizard = (bool) $form_data['race_lizard'];

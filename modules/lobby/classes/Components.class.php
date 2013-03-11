@@ -15,6 +15,8 @@
 
 		public function componentLobbyContent()
 		{
+			\application\entities\tables\ChatPings::getTable()->cleanRoomPings();
+			$this->num_users = \application\entities\tables\ChatPings::getTable()->getNumberOfUsersByRoomId(1);
 		}
 
 	}

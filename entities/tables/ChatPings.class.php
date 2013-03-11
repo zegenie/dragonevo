@@ -42,7 +42,7 @@
 				$crit->addInsert('chat_pings.user_id', $user->getId());
 				$crit->addInsert('chat_pings.pinged', time());
 				$this->doInsert($crit);
-				$room->say("{$user->getUsername()} joined.", 0);
+				$room->say("{$user->getCharactername()} joined.", 0);
 			}
 		}
 
@@ -66,8 +66,10 @@
 							$game->save();
 						}
 					}
-					$room->say("{$user->getUsername()} left the chat", 0, $row['chat_pings.pinged'] + 2);
-					$this->doDeleteById($id);
+					if ($room_id > 1 || $row['chat_pings.pinged'] <= (time() - 18000)) {
+						$room->say("{$user->getCharactername()} left the chat", 0, $row['chat_pings.pinged'] + 2);
+						$this->doDeleteById($id);
+					}
 				}
 			}
 		}

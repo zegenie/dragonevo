@@ -60,6 +60,7 @@
 
 		public function componentProfileCardsContent()
 		{
+			$this->factions = \application\entities\Card::getFactions();
 			$this->cards = $this->getUser()->getCards();
 		}
 

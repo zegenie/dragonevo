@@ -70,31 +70,22 @@
 		 */
 		protected $_equippable_by_power_lvl_cards = false;
 
-		/**
-		 * Whether this card is using powerup slot 1
-		 *
-		 * @Column(type="boolean", default=false)
-		 * @var boolean
-		 */
-		protected $_powerup_slot_1 = false;
-
-		/**
-		 * Whether this card is using powerup slot 2
-		 *
-		 * @Column(type="boolean", default=false)
-		 * @var boolean
-		 */
-		protected $_powerup_slot_2 = false;
-
 		public static function getEquippableItemClasses()
 		{
 			return array(
-				self::CLASS_ARMOR => 'Armor',
-				self::CLASS_BOW => 'Bow',
-				self::CLASS_SHIELD => 'Shield',
-				self::CLASS_SPEAR => 'Spear',
-				self::CLASS_SWORD => 'Sword'
+				ItemCard::CLASS_ARMOR => 'Armor',
+				ItemCard::CLASS_ARROW => 'Arrow',
+				ItemCard::CLASS_BOW => 'Bow',
+				ItemCard::CLASS_SHIELD => 'Shield',
+				ItemCard::CLASS_SPEAR => 'Spear',
+				ItemCard::CLASS_STAFF => 'Staff',
+				ItemCard::CLASS_SWORD => 'Sword'
 			);
+		}
+
+		public function isDefensive()
+		{
+			return in_array($this->getItemClass(), array(self::CLASS_ARMOR, self::CLASS_SHIELD));
 		}
 
 		public function getEquippableByCivilianCards()
@@ -258,36 +249,6 @@
 					$this->$class_property = false;
 				}
 			}
-		}
-
-		public function getPowerupSlot1()
-		{
-			return $this->_powerup_slot_1;
-		}
-
-		public function isPowerupSlot1()
-		{
-			return $this->getPowerupSlot1();
-		}
-
-		public function setPowerupSlot1($powerup_slot_1 = true)
-		{
-			$this->_powerup_slot_1 = $powerup_slot_1;
-		}
-
-		public function getPowerupSlot2()
-		{
-			return $this->_powerup_slot_2;
-		}
-
-		public function isPowerupSlot2()
-		{
-			return $this->getPowerupSlot2();
-		}
-
-		public function setPowerupSlot2($powerup_slot_2 = true)
-		{
-			$this->_powerup_slot_2 = $powerup_slot_2;
 		}
 
 	}

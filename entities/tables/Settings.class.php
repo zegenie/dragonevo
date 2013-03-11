@@ -46,7 +46,7 @@
 			if ($res instanceof \b2db\Row)
 			{
 				$theID = $res->get('settings.id');
-				$crit2 = new Criteria();
+				$crit2 = $this->getCriteria();
 				$crit2->addWhere('settings.name', $name);
 				$crit2->addWhere('settings.user_id', $uid);
 				$crit2->addWhere('settings.id', $theID, Criteria::DB_NOT_EQUALS);

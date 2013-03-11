@@ -282,20 +282,10 @@
 
 		public function cast(Game $game, CreatureCard $card)
 		{
-			if ($this->getNumberOfUses() && $card->isInGame() && $card->isInPlay()) {
+			if ($this->getNumberOfUses() && $card->isInPlay()) {
 				$this->_number_of_uses--;
 				$event = new GameEvent();
 				$game->addAffectedCard($card);
-				$event->setEventType(GameEvent::TYPE_ATTACK);
-				$event->setEventData(array(
-										'player_id' => $game->getUserPlayer()->getId(),
-										'remaining_actions' => $game->getCurrentPlayerActions(),
-										'attacking_card_id' => $this->getUniqueId(),
-										'attacking_card_name' => $this->getName(),
-										'attacked_card_id' => $card->getUniqueId(),
-										'attacked_card_name' => $card->getName()
-										));
-				$game->addEvent($event);
 
 				if ($this->getRestoresHealthPercentage()) {
 					$old_hp = $card->getInGameHP();

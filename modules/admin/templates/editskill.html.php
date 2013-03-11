@@ -46,12 +46,25 @@
 				<input type="checkbox" name="race_lizard" id="skill_race_lizard" value="1" <?php if ($skill->getRaceLizard()) echo 'checked'; ?>>
 			</div>
 			<div>
-				<label for="skill_race_beast">Available to Yakashdi</label>
+				<label for="skill_race_beast">Available to Faewryn</label>
 				<input type="checkbox" name="race_beast" id="skill_race_beast" value="1" <?php if ($skill->getRaceBeast()) echo 'checked'; ?>>
 			</div>
 			<div>
-				<label for="skill_race_elf">Available to Kalvarth</label>
+				<label for="skill_race_elf">Available to Skurn</label>
 				<input type="checkbox" name="race_elf" id="skill_race_elf" value="1" <?php if ($skill->getRaceElf()) echo 'checked'; ?>>
+			</div>
+		</div>
+	</fieldset>
+	<fieldset>
+		<legend>Requirements and costs</legend>
+		<div style="float: left; width: 480px; clear: none;">
+			<div>
+				<label for="skill_required_level">Required level</label>
+				<input type="text" name="required_level" id="skill_required_level" value="<?php echo $skill->getRequiredLevel(); ?>" class="points">
+			</div>
+			<div>
+				<label for="skill_xp_cost">XP cost</label>
+				<input type="text" name="xp_cost" id="skill_xp_cost" value="<?php echo $skill->getXpCost(); ?>" class="points">
 			</div>
 		</div>
 	</fieldset>

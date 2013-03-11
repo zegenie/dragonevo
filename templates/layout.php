@@ -49,14 +49,15 @@
 			</div>
 			<div id="fullpage_backdrop_content" class="fullpage_backdrop_content"> </div>
 		</div>
-		<div id="dialog_backdrop" style="display: none; background-color: transparent; width: 100%; height: 100%; position: fixed; top: 0; left: 0; margin: 0; padding: 0; text-align: center;">
+		<div id="dialog_backdrop" style="display: none;">
 			<div id="dialog_backdrop_content" class="fullpage_backdrop_content">
-				<div class="rounded_box shadowed_box white cut_top cut_bottom bigger">
-					<div style="width: 900px; text-align: left; margin: 0 auto; font-size: 13px;">
-						<?php echo image_tag('/images/dialog_question.png', array('style' => 'float: left;')); ?>
-						<h3 id="dialog_title"></h3>
-						<p id="dialog_content"></p>
-					</div>
+				<div class="swirl-dialog">
+					<img src="/images/swirl_top_right.png" class="swirl top-right">
+					<img src="/images/swirl_bottom_right.png" class="swirl bottom-right">
+					<img src="/images/swirl_bottom_left.png" class="swirl bottom-left">
+					<img src="/images/swirl_top_left.png" class="swirl top-left">
+					<h3 id="dialog_title"></h3>
+					<p id="dialog_content"></p>
 					<div style="text-align: center; padding: 10px;">
 						<?php echo image_tag('/images/spinning_20.gif', array('style' => 'float: right; display: none;', 'id' => 'dialog_indicator')); ?>
 						<a href="javascript:void(0)" id="dialog_yes" class="button button-green"><?php echo __('Yes'); ?></a>
@@ -83,13 +84,11 @@
 				<ul class="main-menu">
 					<li><a href="<?php echo make_url('home'); ?>" class="<?php if ($csp_response->getPage() == 'home') echo ' selected'; ?>">Home</a></li>
 					<li><a href="<?php echo make_url('media'); ?>" class="<?php if ($csp_response->getPage() == 'media') echo ' selected'; ?>">Media</a></li>
-					<?php /* if ($csp_user->isAuthenticated()): ?>
-						<li><a href="<?php echo make_url('profile'); ?>" class="<?php if ($csp_response->getPage() == 'profile') echo ' selected'; ?>">Profile</a></li>
-					<?php endif; */ ?>
+					<li><a href="http://wiki.dragonevo.com/wiki/GameGuide">Game guide</a></li>
+					<li><a href="http://forum.dragonevo.com">Forum</a></li>
 					<li><a href="<?php echo make_url('faq'); ?>" class="<?php if ($csp_response->getPage() == 'faq') echo ' selected'; ?>">FAQ</a></li>
 				</ul>
 				<?php echo $content; ?>
-				<?php \caspar\core\Debugger::display(); ?>
 				<br style="clear: both;">
 				<footer>
 					<div class="border-container">
@@ -108,6 +107,48 @@
 				</footer>
 			</div>
 		<?php else: ?>
+			<div id="upgrade-overlay" style="display: none;">
+				<div id="upgrade-message">
+					Dragon Evo:TCG has been made temporarily unavailable while it is being upgraded.<br>
+					Please wait a couple of seconds, reload this window, and we should be ready to go.
+					<br>
+					We're sorry about the inconvenience.<br>
+					<br>
+					Either <a href="javascript:void(0);" onclick="window:location.reload();">reload the game</a> or - to read more about the changes in the upgraded version - check out the <a href="javascript:void(0);" onclick="window:location.reload();">changelog</a>!
+				</div>
+			</div>
+			<div id="changelog-overlay" style="display: none;">
+				<div id="changelog-message">
+					<h1>Welcome back!</h1>
+					Dragon Evo:TCG has been upgraded since you were last around.<br>
+					Are you curious about what cool stuff we've added recently? Have a look below:
+					<div class="changelog">
+						<?php include_template('main/changelog'); ?>
+					</div>
+					<div class="changelog-button">
+						<button class="button button-standard" onclick="Devo.Main.setVersion();">Great, let's play!</button>
+					</div>
+				</div>
+			</div>
+			<div class="tutorial-message" id="tutorial-message" style="display: none;">
+				<div id="tutorial-message-container"></div>
+				<br>
+				<div class="tutorial-buttons">
+					<button class="button button-standard button-next" id="tutorial-next-button"></button>
+					<button class="button button-silver button-disable" onclick="Devo.Tutorial.disable();">Skip this tutorial</button>
+				</div>
+				<br style="clear: both;">
+				<div class="tutorial-status"><span id="tutorial-current-step"></span> of <span id="tutorial-total-steps"></span></div>
+			</div>
+			<div id="desync-overlay" style="display: none;">
+				<div id="desync-message">
+					The game is indicating that it is no longer in sync.<br>
+					You should reload this window, or you will experience errors.
+					<br>
+					<br>
+					Please report the following error:
+				</div>
+			</div>
 			<div id="fullscreen-container">
 				<?php echo $content; ?>
 			</div>
@@ -116,9 +157,10 @@
 			<script type="text/javascript">
 //				console.log(document.getElementsByTagName('body')[0]);
 				document.observe('dom:loaded', function() {
-					Devo.Core.initialize({location: '<?php echo $csp_routing->getCurrentRouteName(); ?>', title: '<?php echo $csp_response->getTitle(); ?>', ask_url: '<?php echo make_url('ask'); ?>', say_url: '<?php echo make_url('say'); ?>', user_id: <?php echo $csp_user->getId(); ?>});
+					Devo.Core.initialize({location: '<?php echo $csp_routing->getCurrentRouteName(); ?>', title: '<?php echo $csp_response->getTitle(); ?>', ask_url: '<?php echo make_url('ask'); ?>?version=<?php echo str_replace('.', '_', $csp_response->getVersion()); ?>', say_url: '<?php echo make_url('say'); ?>?version=<?php echo str_replace('.', '_', $csp_response->getVersion()); ?>', user_id: <?php echo $csp_user->getId(); ?>, candrag: <?php echo ($csp_user->isDragDropEnabled()) ? 'true' : 'false'; ?>});
 				});
 			</script>
 		<?php endif; ?>
+		<?php \caspar\core\Debugger::display(); ?>
 	</body>
 </html>

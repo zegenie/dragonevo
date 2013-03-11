@@ -11,15 +11,17 @@
 					<li><strong><?php echo link_tag(make_url('admin'), 'Admin CP', array('target' => '_new')); ?></strong></li>
 				<?php endif; ?>
 				<li>&nbsp;</li>
-				<li><a href="javascript:void(0);" onclick="Devo.Main.loadProfile();">Profile summary</a></li>
-				<li><a href="javascript:void(0);" onclick="Devo.Main.loadProfileSkills();">My skills</a></li>
+				<li><a href="#!profile">Profile summary</a></li>
+				<li><a href="#!profile/skills">My skills</a></li>
 				<?php if ($csp_user->hasCards()): ?>
-					<li><a href="javascript:void(0);" onclick="Devo.Main.loadProfileCards();">My cards</a></li>
+					<li><a href="#!profile/cards">My cards</a></li>
+					<li><a href="#!market">Get more cards!</a></li>
 				<?php endif; ?>
 				<li>&nbsp;</li>
+				<li><a href="javascript:void(0);" onclick="$('settings-overlay').toggle();">Settings</a></li>
 				<li><a href="javascript:void(0);" onclick="$('invite_email').toggle();">Invite a friend</a></li>
 			<?php else: ?>
-				<li><a href="javascript:void(0);" onclick="Devo.Main.loadProfile();">Character setup</a></li>
+				<li><a href="#!profile">Character setup</a></li>
 			<?php endif; ?>
 			<li id="invite_email" style="display: none;">
 				<form method="post" onsubmit="Devo.Main.Profile.inviteUser();return false;">

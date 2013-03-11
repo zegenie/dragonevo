@@ -26,6 +26,7 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere('games.player_id', $user_id);
+			$crit->addWhere('games.part_id', 0);
 			if ($ongoing !== null) {
 				if ($ongoing) {
 					$crit->addWhere('games.state', \application\entities\Game::STATE_COMPLETED, Criteria::DB_NOT_EQUALS);
@@ -52,6 +53,7 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere('games.state', \application\entities\Game::STATE_COMPLETED);
+			$crit->addWhere('games.part_id', 0);
 			$ctn = $crit->returnCriterion('games.opponent_id', $user_id);
 			$ctn->addOr('games.player_id', $user_id);
 			$crit->addWhere($ctn);
@@ -62,6 +64,7 @@
 		public function getNumberOfGamesWonByUserId($user_id)
 		{
 			$crit = $this->getCriteria();
+			$crit->addWhere('games.part_id', 0);
 			$crit->addWhere('games.winning_player_id', $user_id);
 
 			return $this->count($crit);
@@ -129,11 +132,19 @@
 
 			$game = $this->selectOne($crit);
 			
-			if ($game instanceof \application\entities\Game) {
-				$game->setCreatedAt(time());
-				$game->save();
-			}
-			
+			return $game;
+		}
+
+		public function getCurrentPartAttemptForUser($user_id, $part_id)
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('games.player_id', $user_id);
+			$crit->addWhere('games.part_id', $part_id);
+			$crit->addWhere('games.state', \application\entities\Game::STATE_ONGOING);
+			$crit->setLimit(1);
+
+			$game = $this->selectOne($crit);
+
 			return $game;
 		}
 

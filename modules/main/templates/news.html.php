@@ -1,5 +1,7 @@
 <?php $csp_response->setTitle(__('Dragon Evo - The Card Game')); ?>
-<?php include_component('main/latestnews'); ?>
+<div class="content left">
+	<?php include_component('main/latestnews'); ?>
+</div>
 <div class="content right news">
 	<?php if ($news instanceof application\entities\News): ?>
 		<h3><?php echo $news->getTitle(); ?></h3>

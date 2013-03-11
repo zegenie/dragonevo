@@ -74,15 +74,15 @@
 			</div>
 		</div>
 	</fieldset>
-	<fieldset>
+	<fieldset style="display: none;">
 		<legend>Available item card slots</legend>
 		<?php foreach (range(1,2) as $cc): ?>
 			<?php $isCardSlotAvailable = "isSlot{$cc}Available"; ?>
 			<div>
 				<label for="card_slot_<?php echo $cc; ?>_available">Slot <?php echo $cc; ?></label>
 				<select name="slot_<?php echo $cc; ?>_available" id="card_slot_<?php echo $cc; ?>_available">
-					<option value="1"<?php if ($card->$isCardSlotAvailable()) echo ' selected'; ?>>Yes</option>
-					<option value="0"<?php if (!$card->$isCardSlotAvailable()) echo ' selected'; ?>>No</option>
+					<option value="1" selected>Yes</option>
+					<option value="0">No</option>
 				</select>
 			</div>
 		<?php endforeach; ?>

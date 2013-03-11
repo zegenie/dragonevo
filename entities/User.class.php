@@ -16,6 +16,8 @@
 	{
 
 		const SETTING_GAME_MUSIC = 'game_music';
+		const SETTING_DRAG_DROP = 'drag_drop';
+		const SETTING_LOW_GRAPHICS = 'low_graphics';
 		const SETTING_SYSTEM_CHAT_MESSAGES = 'system_chat_messages';
 		
 		const AI_HUMAN = 0;
@@ -105,6 +107,14 @@
 		 * @var integer
 		 */
 		protected $_lastseen = 0;
+
+		/**
+		 * Recent version this user played
+		 *
+		 * @Column(type="string", length=10)
+		 * @var string
+		 */
+		protected $_lastversion = '';
 
 		/**
 		 * The timezone this user is in
@@ -247,6 +257,8 @@
 		 */
 		protected $_password_key;
 
+		protected $_has_cards_in_faction = array();
+
 		/**
 		 * Take a raw password and convert it to the hashed format
 		 * 
@@ -262,6 +274,8 @@
 
 		public static function loginCheck($username, $password, $rehash = true)
 		{
+			$password = trim($password);
+			$username = trim($username);
 			if ($rehash && $password) {
 				$password = self::hashPassword($password);
 			}
@@ -304,8 +318,8 @@
 			static $races = array(
 				self::RACE_HUMAN => 'Human',
 				self::RACE_LIZARD => 'Lacerta',
-				self::RACE_BEAST => 'Yakashdi',
-				self::RACE_ELF => 'Kalvarth'
+				self::RACE_BEAST => 'Faewryn',
+				self::RACE_ELF => 'Skurn'
 			);
 
 			return isset($races[$race]) ? $races[$race] : '';
@@ -738,10 +752,28 @@
 			return (bool) count($this->_cards);
 		}
 
+		/**
+		 * Return all user cards
+		 *
+		 * @return array|Card
+		 */
 		public function getCards()
 		{
 			$this->_populateCards();
 			return $this->_cards;
+		}
+
+		public function giveCard(Card $card)
+		{
+			$picked_card = clone $card;
+			$picked_card->giveTo($this->getId());
+			$picked_card = $picked_card->morph();
+			$picked_card->save();
+			$picked_card->setOriginalCard($card);
+			$picked_card->generateUniqueDetails();
+			$picked_card->save();
+
+			return $picked_card;
 		}
 
 		protected function _pickCards($cards, $num = 5)
@@ -779,7 +811,7 @@
 
 		public function getNextLevelXp() 
 		{
-			return (($this->getLevel()) * 215) + (35 * ($this->getLevel() - 1));
+			return (($this->getLevel()) * 1500) + (350 * ($this->getLevel() - 1));
 		}
 
 		public function canLevelUp()
@@ -789,6 +821,7 @@
 
 		public function levelUp()
 		{
+			$this->_xp -= $this->getNextLevelXp();
 			$this->_level++;
 		}
 		
@@ -845,6 +878,11 @@
 			return Settings::saveSetting($key, $value, $this->getId());
 		}
 
+		protected function _unsetSetting($key)
+		{
+			return Settings::deleteSetting($key, $this->getId());
+		}
+
 		public function isGameMusicEnabled()
 		{
 			return (bool) $this->_getSetting(self::SETTING_GAME_MUSIC);
@@ -853,6 +891,36 @@
 		public function setGameMusicEnabled($value)
 		{
 			$this->_setSetting(self::SETTING_GAME_MUSIC, (int) $value);
+		}
+
+		public function disableTutorial($key)
+		{
+			$this->_setSetting('disable_tutorial_'.$key, true);
+		}
+
+		public function enableTutorial($key)
+		{
+			$this->_unsetSetting('disable_tutorial_'.$key);
+		}
+
+		public function isLowGraphicsEnabled()
+		{
+			return (bool) $this->_getSetting(self::SETTING_LOW_GRAPHICS);
+		}
+
+		public function setLowGraphicsEnabled($value)
+		{
+			$this->_setSetting(self::SETTING_LOW_GRAPHICS, (int) $value);
+		}
+
+		public function isDragDropEnabled()
+		{
+			return (bool) $this->_getSetting(self::SETTING_DRAG_DROP);
+		}
+
+		public function setDragDropEnabled($value)
+		{
+			$this->_setSetting(self::SETTING_DRAG_DROP, (int) $value);
 		}
 
 		public function isSystemChatMessagesEnabled()
@@ -965,7 +1033,7 @@
 							usort($creature_cards, array($this, '_aiSortCardsNormal'));
 						}
 					}
-					foreach (range(1, 5) as $slot) {
+					foreach (array(3, 2, 4, 1, 5) as $slot) {
 						if ($game->getUserPlayerCardSlot($slot)) continue;
 						if (!$this->_aiHasUnplacedCards($game, 'creature')) continue;
 						
@@ -982,24 +1050,26 @@
 						
 						if (rand(1, 10) > 5) $game->aiThinking($this->_ai_level);
 
-						$game->setPlayerCardSlot($slot, $card);
-						$card->setInGameHP($card->getBaseHP());
-						$card->setInGameEP($card->getBaseEP());
-						$game->addAffectedCard($card);
-						
-						if ($this->_aiHasUnplacedCards($game, 'equippable_item')) {
-							$slot_1 = false;
-							foreach ($cards['equippable_item'] as $i_card) {
-								if ($i_card->getSlot()) continue;
-								if (!$i_card->isEquippableByCard($card)) continue;
-								
-								if (!$slot_1) {
-									$game->setPlayerCardSlotPowerup1($slot, $i_card);
-								} else {
-									$game->setPlayerCardSlotPowerup2($slot, $i_card);
-									break;
+						if ($card->isInGame()) {
+							$game->setPlayerCardSlot($slot, $card);
+							$card->setInGameHP($card->getBaseHP());
+							$card->setInGameEP($card->getBaseEP());
+							$game->addAffectedCard($card);
+
+							if ($this->_aiHasUnplacedCards($game, 'equippable_item')) {
+								$slot_1 = false;
+								foreach ($cards['equippable_item'] as $i_card) {
+									if ($i_card->getSlot()) continue;
+									if (!$i_card->isEquippableByCard($card)) continue;
+
+									if (!$slot_1) {
+										$game->setPlayerCardSlotPowerup1($slot, $i_card);
+									} else {
+										$game->setPlayerCardSlotPowerup2($slot, $i_card);
+										break;
+									}
+									$game->addAffectedCard($i_card);
 								}
-								$game->addAffectedCard($i_card);
 							}
 						}
 					}
@@ -1136,10 +1206,25 @@
 			return ($this->_ai_level > 0);
 		}
 
-		public function getSkills()
+        /**
+         * @return array|Skill
+         */
+        public function getSkills()
 		{
 			return $this->_b2dbLazyload('_skills');
 		}
+
+        public function getAttackSkills()
+        {
+            $skills = $this->getSkills();
+            foreach ($skills as $skill) {
+                if (!$skill->hasParentSkill()) continue;
+				$p_id = $skill->getParentSkillId();
+                if (array_key_exists($p_id, $skills)) unset($skills[$p_id]);
+            }
+
+			return $skills;
+        }
 
 		public function hasTrainedSkill(Skill $skill)
 		{
@@ -1150,11 +1235,23 @@
 			return false;
 		}
 
+		public function getTrainedSkill(Skill $skill)
+		{
+			foreach ($this->getSkills() as $trained_skill) {
+				if ($trained_skill->getOriginalSkillId() == $skill->getId()) return $trained_skill;
+			}
+
+			return null;
+		}
+
 		public function trainSkill(Skill $skill)
 		{
 			$trained_skill = clone $skill;
 			$trained_skill->setUser($this);
 			$trained_skill->setOriginalSkill($skill);
+			if ($trained_skill->hasParentSkill()) {
+				$trained_skill->setParentSkill($this->getTrainedSkill($trained_skill->getParentSkill()));
+			}
 			$trained_skill->save();
 			$this->_skills = null;
 		}
@@ -1165,6 +1262,55 @@
 				$this->_password_key = uniqid();
 			}
 			return $this->_password_key;
+		}
+
+		public function getLastVersion()
+		{
+			return $this->_lastversion;
+		}
+
+		public function setLastVersion($lastversion)
+		{
+			$this->_lastversion = $lastversion;
+		}
+
+		protected function _isTutorialDisabled($key)
+		{
+			return (bool) $this->_getSetting('disable_tutorial_'.$key);
+		}
+
+		public function isLobbyTutorialEnabled()
+		{
+			return !$this->_isTutorialDisabled('lobby');
+		}
+
+		public function isPickCardsTutorialEnabled()
+		{
+			return !$this->_isTutorialDisabled('pickcards');
+		}
+
+		public function isBoardTutorialEnabled()
+		{
+			return !$this->_isTutorialDisabled('board');
+		}
+
+		public function isAdventureTutorialEnabled()
+		{
+			return !$this->_isTutorialDisabled('adventure');
+		}
+
+		public function hasCardsInFaction($faction)
+		{
+			if (!array_key_exists($faction, $this->_has_cards_in_faction)) {
+				$this->_has_cards_in_faction[$faction] = false;
+				foreach($this->getCards() as $card) {
+					if ($card instanceof CreatureCard && $card->getFaction() == $faction) {
+						$this->_has_cards_in_faction[$faction] = true;
+					}
+				}
+			}
+
+			return $this->_has_cards_in_faction[$faction];
 		}
 
 	}

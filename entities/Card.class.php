@@ -56,14 +56,11 @@
 		protected $_user_id;
 
 		/**
-		 * If in a game, the game_id of the game
+		 * If in a game, the game_card of the game
 		 *
-		 * @Column(type="integer", length=10)
-		 * @Relates(class="\application\entities\Game")
-		 *
-		 * @var \application\entities\Game
+		 * @var \application\entities\GameCard
 		 */
-		protected $_game_id;
+		protected $_game_card;
 
 		/**
 		 * If owned, the original card id
@@ -78,8 +75,6 @@
 		/**
 		 * If in a game, the slot the card is on
 		 *
-		 * @Column(type="integer", length=10)
-		 *
 		 * @var integer
 		 */
 		protected $_slot;
@@ -87,10 +82,37 @@
 		/**
 		 * Whether the card is a in play or not
 		 *
-		 * @Column(type="boolean", default=false)
 		 * @var boolean
 		 */
 		protected $_is_in_play = false;
+
+		/**
+		 * Whether this card is using powerup slot 1
+		 *
+		 * @var boolean
+		 */
+		protected $_powerup_slot_1 = false;
+
+		/**
+		 * Whether this card is using powerup slot 2
+		 *
+		 * @var boolean
+		 */
+		protected $_powerup_slot_2 = false;
+
+		/**
+		 * Current in-game health
+		 *
+		 * @var integer
+		 */
+		protected $_in_game_health = 1;
+
+		/**
+		 * Current in-game health
+		 *
+		 * @var integer
+		 */
+		protected $_in_game_ep = 1;
 
 		/**
 		 * Card name
@@ -229,6 +251,19 @@
 			);
 		}
 
+		protected function _postSave($is_new)
+		{
+			if ($this->_game_card instanceof GameCard) {
+				$this->_game_card->setSlot($this->_slot);
+				$this->_game_card->setInGameEP($this->_in_game_ep);
+				$this->_game_card->setInGameHP($this->_in_game_health);
+				$this->_game_card->setIsInPlay($this->_is_in_play);
+				$this->_game_card->setPowerupSlot1($this->_powerup_slot_1);
+				$this->_game_card->setPowerupSlot2($this->_powerup_slot_2);
+				$this->_game_card->save();
+			}
+		}
+
 		public function getId()
 		{
 			return $this->_id;
@@ -317,21 +352,6 @@
 		public function setIsSpecialCard($is_special_card = true)
 		{
 			$this->_is_special_card = (bool) $is_special_card;
-		}
-
-		public function getIsInPlay()
-		{
-			return (bool) $this->_is_in_play;
-		}
-
-		public function isInPlay()
-		{
-			return $this->getIsInPlay();
-		}
-
-		public function setIsInPlay($is_in_play = true)
-		{
-			$this->_is_in_play = (bool) $is_in_play;
 		}
 
 		public function resolve()
@@ -516,7 +536,12 @@
 		{
 			$this->_user_id = $user;
 		}
-		
+
+		/**
+		 * Return the user associated with this card
+		 *
+		 * @return User
+		 */
 		public function getUser()
 		{
 			return $this->_b2dbLazyload('_user_id');
@@ -527,16 +552,6 @@
 			return ($this->_user_id instanceof User) ? $this->_user_id->getId() : (int) $this->_user_id;
 		}
 
-		public function setGameId($game_id)
-		{
-			$this->_game_id = $game_id;
-		}
-
-		public function setGame($game)
-		{
-			$this->_game_id = $game;
-		}
-
 		/**
 		 * Returns the currently assigned game
 		 *
@@ -544,27 +559,12 @@
 		 */
 		public function getGame()
 		{
-			return $this->_b2dbLazyload('_game_id');
+			return $this->getGameCard()->getGame();
 		}
 		
 		public function getGameId()
 		{
-			return ($this->_game_id instanceof Game) ? $this->_game_id->getId() : $this->_game_id;
-		}
-
-		public function setSlot($slot)
-		{
-			$this->_slot = $slot;
-		}
-
-		public function getSlot()
-		{
-			return $this->_slot;
-		}
-
-		public function isInGame()
-		{
-			return (bool) ($this->getGame() instanceof Game);
+			return ($this->_game_card instanceof GameCard) ? $this->_game_card->getGame()->getId() : 0;
 		}
 
 		public function getOriginalCard()
@@ -591,6 +591,128 @@
 		{
 			$this->_card_state = self::STATE_OWNED;
 			$this->_user_id = $user;
+		}
+
+		/**
+		 * The connected game card
+		 *
+		 * @return GameCard
+		 */
+		public function getGameCard()
+		{
+			return $this->_game_card;
+		}
+
+		public function setGameCard(GameCard $game_card)
+		{
+			$this->_game_card = $game_card;
+		}
+
+		public function removeGameCard()
+		{
+			$this->_game_card = null;
+		}
+
+		public function getPowerupSlot1()
+		{
+			return $this->_powerup_slot_1;
+		}
+
+		public function isPowerupSlot1()
+		{
+			return $this->getPowerupSlot1();
+		}
+
+		public function setPowerupSlot1($powerup_slot_1 = true)
+		{
+			$this->_powerup_slot_1 = $powerup_slot_1;
+		}
+
+		public function getPowerupSlot2()
+		{
+			return $this->_powerup_slot_2;
+		}
+
+		public function isPowerupSlot2()
+		{
+			return $this->getPowerupSlot2();
+		}
+
+		public function setPowerupSlot2($powerup_slot_2 = true)
+		{
+			$this->_powerup_slot_2 = $powerup_slot_2;
+		}
+
+		public function isInGame()
+		{
+			return ($this->_game_card instanceof GameCard);
+		}
+
+		public function getIsInPlay()
+		{
+			return (bool) $this->_is_in_play;
+		}
+
+		public function isInPlay()
+		{
+			return $this->getIsInPlay();
+		}
+
+		public function setIsInPlay($is_in_play = true)
+		{
+			$this->_is_in_play = (bool) $is_in_play;
+		}
+
+		public function setSlot($slot)
+		{
+			$this->_slot = $slot;
+		}
+
+		public function getSlot()
+		{
+			return $this->_slot;
+		}
+
+		public function getInGameHealth()
+		{
+			return (int) $this->_in_game_health;
+		}
+
+		public function getInGameHP()
+		{
+			return $this->getInGameHealth();
+		}
+
+		public function setInGameHealth($in_game_health)
+		{
+			$this->_in_game_health = (int) $in_game_health;
+		}
+
+		public function setInGameHP($hp)
+		{
+			$this->setInGameHealth($hp);
+		}
+
+		public function removeHP($dmg)
+		{
+			$this->_in_game_health -= $dmg;
+			if ($this->_in_game_health < 0) $this->_in_game_health = 0;
+		}
+
+		public function getInGameEP()
+		{
+			return (int) $this->_in_game_ep;
+		}
+
+		public function setInGameEP($in_game_ep)
+		{
+			$this->_in_game_ep = (int) $in_game_ep;
+		}
+
+		public function removeEP($dmg)
+		{
+			$this->_in_game_ep -= $dmg;
+			if ($this->_in_game_ep < 0) $this->_in_game_ep = 0;
 		}
 
 	}

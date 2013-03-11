@@ -46,10 +46,10 @@
 										echo 'Lacerta';
 										break;
 									case \application\entities\User::RACE_BEAST:
-										echo 'Yakashdi';
+										echo 'Faewryn';
 										break;
 									case \application\entities\User::RACE_ELF:
-										echo 'Kalvarth';
+										echo 'Skurn';
 										break;
 								}
 
@@ -77,12 +77,12 @@
 												break;
 											case \application\entities\User::RACE_BEAST:
 												?>
-												Tall, hairy, troll-like creatures comes from the north areas far beyond the land of Erendor. The Yakashdi of Erendor &ndash; while said to be smaller than their northern ancestors &ndash; rage 2 two 3 heads higher than the average human.
+												Tall, hairy, troll-like creatures comes from the north areas far beyond the land of Erendor. The Faewryn of Erendor &ndash; while said to be smaller than their northern ancestors &ndash; rage 2 two 3 heads higher than the average human.
 												<?php
 												break;
 											case \application\entities\User::RACE_ELF:
 												?>
-												Very little is known about the ancient Kalvarth race, their origins, how they live or how they reproduce. While similar in appearance to humans, they are all very slender, agile and good looking, with long silvery hair and long limbs.
+												Very little is known about the ancient Skurn race, their origins, how they live or how they reproduce. While similar in appearance to humans, they are all very slender, agile and good looking, with long silvery hair and long limbs.
 												<?php
 												break;
 										}
@@ -105,12 +105,12 @@
 												break;
 											case \application\entities\User::RACE_BEAST:
 												?>
-												Despite their intimidating looks, the Yakashdi are a peaceful people. They're dedicated to farming and form close bonds with nature. Yakashdi people tend to spend decades on learning a skill to the utmost perfection. All Yakashdi are physically intimidating making them capable of doing much harm in melee combat. Their close bonds with nature also increases their nature magic abilities.
+												Despite their intimidating looks, the Faewryn are a peaceful people. They're dedicated to farming and form close bonds with nature. Faewryn people tend to spend decades on learning a skill to the utmost perfection. All Faewryn are physically intimidating making them capable of doing much harm in melee combat. Their close bonds with nature also increases their nature magic abilities.
 												<?php
 												break;
 											case \application\entities\User::RACE_ELF:
 												?>
-												After dying, their spiritual form often remain in the shape of their physical being, but almost ethereal. In this form they take less damage and have a limited interaction with the physical world, but they have a strong connection to all magic types. Kalvarth magic do more damage and they take a lot less damage from melee attacks. They do however take more damage from ranged attacks and fire &ndash; and they deal less melee damage to others.
+												After dying, their spiritual form often remain in the shape of their physical being, but almost ethereal. In this form they take less damage and have a limited interaction with the physical world, but they have a strong connection to all magic types. Skurn magic do more damage and they take a lot less damage from melee attacks. They do however take more damage from ranged attacks and fire &ndash; and they deal less melee damage to others.
 												<?php
 												break;
 										}

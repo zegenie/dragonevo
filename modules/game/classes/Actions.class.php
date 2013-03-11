@@ -84,29 +84,41 @@
 					$card_types = $request->getParameter('card_types', array());
 					foreach ($cards as $card_id => $selected) {
 						if ($selected) {
-							switch ($card_types[$card_id]) {
-								case \application\entities\Card::TYPE_CREATURE:
-									$card = CreatureCards::getTable()->selectById($card_id);
-									break;
-								case \application\entities\Card::TYPE_EVENT:
-									$card = EventCards::getTable()->selectById($card_id);
-									break;
-								case \application\entities\Card::TYPE_EQUIPPABLE_ITEM:
-									$card = EquippableItemCards::getTable()->selectById($card_id);
-									$card->setPowerupSlot1(false);
-									$card->setPowerupSlot2(false);
-									break;
-							}
-							if (!$card->isInGame()) {
-								$card->setGame($this->game);
-								$card->setSlot(0);
-								$card->save();
-							}
+							$this->game->addCard($card_id, $this->getUser()->getId());
 						}
 					}
 				}
 				if (!$this->game->hasCards()) {
 					return $this->renderJSON(array('game_id' => $this->game->getId()));
+				}
+				if ($this->game->isScenario()) {
+					$level = 0;
+					$cc = 0;
+					foreach ($this->game->getPlayerCards() as $card) {
+						if ($card instanceof \application\entities\CreatureCard) {
+							$level += $card->getUserCardLevel();
+							$cc++;
+						}
+					}
+					$min_level = ($level > 0) ? ceil($level / $cc) : 1;
+					$min_level = ($min_level >= 3) ? $level - 2 : $min_level;
+					$max_level = $min_level + 2;
+					$ai_player = $this->game->getOpponent();
+					foreach ($this->game->getPart()->getCardOpponents() as $opponent) {
+						$o_card = $ai_player->giveCard($opponent->getCard());
+						$this->game->addCard($o_card, $ai_player);
+						
+						if ($o_card instanceof \application\entities\CreatureCard) {
+							$level = ($opponent->getCardLevel() > 0) ? $opponent->getCardLevel() : rand($min_level, $max_level);
+							if ($level > 1) {
+								for ($cc = 1;$cc <= $level;$cc++) {
+									$o_card->levelUp('both');
+								}
+							}
+						}
+						
+						$o_card->save();
+					}
 				}
 			}
 

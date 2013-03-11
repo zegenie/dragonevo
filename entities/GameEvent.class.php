@@ -32,6 +32,7 @@
 		const TYPE_REMOVE_EFFECT = 'remove_effect';
 		const TYPE_GENERATE_GOLD = 'generate_gold';
 		const TYPE_STEAL_GOLD = 'steal_gold';
+		const TYPE_STEAL_GOLD_FAILED = 'steal_gold_failed';
 		const TYPE_STEAL_MAGIC = 'steal_magic';
 		const TYPE_GAME_OVER = 'game_over';
 		const TYPE_CARD_REMOVED = 'card_removed';
@@ -136,6 +137,20 @@
 			$this->_game_id = $game;
 		}
 
+		/**
+		 *
+		 * @return Game
+		 */
+		public function getGame()
+		{
+			return $this->_b2dbLazyload('_game_id');
+		}
+
+		public function getGameId()
+		{
+			return ($this->_game_id instanceof Game) ? $this->_game_id->getId() : $this->_game_id;
+		}
+
 		public function setPlayerId($player_id)
 		{
 			$this->_player_id = $player_id;
@@ -149,20 +164,6 @@
 		public function getPlayer()
 		{
 			return $this->_b2dbLazyload('_player_id');
-		}
-
-		/**
-		 *
-		 * @return Game
-		 */
-		public function getGame()
-		{
-			return $this->_b2dbLazyload('_game_id');
-		}
-		
-		public function getGameId()
-		{
-			return ($this->_game_id instanceof Game) ? $this->_game_id->getId() : $this->_game_id;
 		}
 
 		public function getEventType()

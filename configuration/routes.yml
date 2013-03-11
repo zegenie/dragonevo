@@ -65,6 +65,16 @@ faq:
   module: main
   action: faq
 
+howtoplay:
+  url: /help/howtoplay
+  module: main
+  action: howtoplay
+
+gameguide:
+  url: /help
+  module: main
+  action: gameguide
+
 changelog:
   url: /changelog
   module: main
@@ -119,6 +129,26 @@ new_skill:
   url: /admin/new/skill/*
   module: admin
   action: editskill
+
+admin_tellables:
+  url: /admin/tellable/:tellable_type
+  module: admin
+  action: tellables
+
+edit_tellable:
+  url: /admin/tellable/:tellable_type/:tellable_id
+  module: admin
+  action: edittellable
+
+delete_tellable:
+  url: /admin/delete/tellable/:tellable_type/:tellable_id
+  module: admin
+  action: deletetellable
+
+new_tellable:
+  url: /admin/new/tellable/:tellable_type/*
+  module: admin
+  action: edittellable
 
 admin_users:
   url: /admin/users

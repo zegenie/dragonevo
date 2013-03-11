@@ -2,6 +2,9 @@
 <div class="content full faq">
 	<h1>Frequently asked questions</h1>
 	<h3 style="margin-top: 30px;">About the game</h3>
+	<div style="width: 265px; float: right; margin: 0; padding: 0 20px 20px 20px;">
+		<?php include_template('game/card', array('card' => $cards['rutai'], 'ingame' => false)); ?>
+	</div>
 	<h6>What is Dragon Evo:TCG?</h6>
 	<p>
 		Dragon Evo:TCG is an online card game with elements of RPG and tradition CCGs. The game is set in the Dragon Evo fantasy universe, where you must choose one of the rivaling factions on the continent of Erendor. Choose your path wisely - bring peace and balance to the land or complete domination.
@@ -14,6 +17,10 @@
 	<p>
 		The term "Facebook game" is not descriptive for the type of game we're making. As almost all games labelled "Facebook games", the game itself will be playable in your web browser - but there is no integration with the Facebook API. We will add the ability to log in / register with your Facebook account to simplify the signup process, but that will be just one of several options to log in and register. Our target audience are CCG and action card game fans who want a great online CCG experience.
 	</p>
+	<br style="clear: both;">
+	<div style="width: 265px; float: left; margin: 0; padding: 10px 20px 20px 0;">
+		<?php include_template('game/card', array('card' => $cards['resistance'], 'ingame' => false)); ?>
+	</div>
 	<h6>What are the main RPG elements in Dragon Evo:TCG?</h6>
 	<p>
 		We're still working out the fine details, but the major RPG elements will allow you to upgrade cards and attacks, train abilities and combine cards for more powerful effects. You will also be able to create a game character, level up your character and gain abilities throughout the game.
@@ -28,6 +35,10 @@
 		The game does not currently have a fixed release schedule. We're still working on settling the main gameplay and the main characters, but the ruleset is about 90% complete.<br>
 		The game itself is currently under active development.
 	</p>
+	<br style="clear: both;">
+	<div style="width: 165px; float: right; margin: 0; padding: 0 20px 20px 20px;">
+		<?php include_template('game/card', array('card' => $cards['neutrals'], 'ingame' => false, 'mode' => 'medium')); ?>
+	</div>
 	<h6>How can I join the early access testers?</h6>
 	<p>
 		If you want to be part of the early access group, drop us an email at <a href="mailto:testers@dragonevo.com">testers@dragonevo.com</a>. We will let you know when the early access period begins.

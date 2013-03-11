@@ -22,6 +22,7 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere('equippable_item_cards.card_state', \application\entities\Card::STATE_TEMPLATE);
+			$crit->addOrderBy('equippable_item_cards.cost', Criteria::SORT_DESC);
 			return $this->select($crit);
 		}
 		
@@ -69,16 +70,11 @@
 		{
 			$crit = $this->getCriteria();
 			if ($user_id === null) {
-				$crit->addWhere('equippable_item_cards.user_id', 0, Criteria::DB_NOT_EQUALS);
+				$crit->addWhere('equippable_item_cards.card_state', \application\entities\Card::STATE_OWNED);
 			} else {
 				$crit->addWhere('equippable_item_cards.user_id', $user_id);
 			}
-			if ($res = $this->doSelect($crit)) {
-				while ($row = $res->getNextRow()) {
-					$card_id = $row->get('equippable_item_cards.id');
-					$this->doDeleteById($card_id);
-				}
-			}
+			$this->doDelete($crit);
 		}
 
 		public function resetUserCards($game_id = null, $user_id = null)
@@ -96,6 +92,17 @@
 			$crit->addUpdate('equippable_item_card.powerup_slot_1', false);
 			$crit->addUpdate('equippable_item_card.powerup_slot_2', false);
 			$this->doUpdate($crit);
+		}
+
+		public function resetAICards()
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('equippable_item_cards.game_id', 0);
+			$ctn = $crit->returnCriterion('equippable_item_cards.user_id', 21);
+			$ctn->addOr('equippable_item_cards.user_id', 22);
+			$ctn->addOr('equippable_item_cards.user_id', 23);
+			$crit->addWhere($ctn);
+			$this->doDelete($crit);
 		}
 
 	}

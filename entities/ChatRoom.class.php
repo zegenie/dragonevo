@@ -87,8 +87,24 @@
 			}
 		}
 
+		protected function _generateTaunt($text)
+		{
+			$taunts = array(
+				'%user%! Your father smelled of elderberries!',
+				"Buckle up, %user%!, because you're going for a ride!",
+				"There is no escape, don't make me destroy you, %user%!",
+				"My my my, %user%, aren't we touchy today!",
+				);
+			$text = str_replace('%user%', $text, $taunt);
+
+			return '/me &#9760; ' . $text;
+		}
+
 		public function say($text, $user_id, $time = null)
 		{
+//			if (substr($text, 0, 7) == "/taunt ") {
+//				$text = $this->_generateTaunt(substr($text, 7));
+//			}
 			\application\entities\tables\ChatLines::getTable()->say($text, $user_id, $this->getId(), $time);
 		}
 

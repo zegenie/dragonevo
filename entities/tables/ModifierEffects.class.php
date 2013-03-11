@@ -16,4 +16,14 @@
 			$this->doDelete($crit);
 		}
 
+		public function getByCardAndGame($card, $gamecard)
+		{
+			if (!$gamecard instanceof \application\entities\GameCard) return array();
+
+			$crit = $this->getCriteria();
+			$crit->addWhere('modifier_effects.game_id', $gamecard->getGameId());
+			$crit->addWhere('modifier_effects.card_id', $card->getId());
+			return $this->select($crit);
+		}
+
 	}

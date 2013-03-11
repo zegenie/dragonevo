@@ -276,7 +276,7 @@
 				\application\entities\Settings::saveSetting(\application\entities\Settings::SETTING_CARD_OF_THE_WEEK, $card);
 			}
 			$this->current_card = \application\entities\Settings::getCardOfTheWeek();
-			$item = \application\entities\tables\EquippableItemCards::getTable()->getAll();
+			$equippable_item = \application\entities\tables\EquippableItemCards::getTable()->getAll();
 			$event = \application\entities\tables\EventCards::getTable()->getAll();
 			$creature = array();
 			foreach (\application\entities\Card::getFactions() as $faction => $description) {
@@ -347,6 +347,90 @@
 			}
 		}
 
+		public function runTellables(Request $request)
+		{
+			$this->tellable_type = $request['tellable_type'];
+			switch ($this->tellable_type) {
+				case 'adventure':
+					$this->tellables = \application\entities\tables\Adventures::getTable()->getAll();
+					break;
+				default:
+					$this->tellables = \application\entities\tables\Stories::getTable()->getAll();
+			}
+		}
+
+		public function runEditTellable(Request $request)
+		{
+			switch ($request['tellable_type']) {
+				case 'story':
+					$this->tellable = new \application\entities\Story($request['tellable_id']);
+					break;
+				case 'chapter':
+					$this->tellable = new \application\entities\Chapter($request['tellable_id']);
+					if (!$this->tellable->getB2DBID()) {
+						$this->tellable->setStoryId($request['parent_id']);
+						$this->tellable->setAppliesNeutrals($this->tellable->getStory()->getAppliesNeutrals());
+						$this->tellable->setAppliesRutai($this->tellable->getStory()->getAppliesRutai());
+						$this->tellable->setAppliesResistance($this->tellable->getStory()->getAppliesResistance());
+					}
+					break;
+				case 'part':
+					$this->tellable = new \application\entities\Part($request['tellable_id']);
+					if (!$this->tellable->getB2DBID() && !$request->isPost()) {
+						if ($request['parent_type'] == 'chapter') {
+							$this->tellable->setChapterId($request['parent_id']);
+							$parent = $this->tellable->getChapter();
+						} else {
+							$this->tellable->setAdventureId($request['parent_id']);
+							$parent = $this->tellable->getAdventure();
+						}
+						$this->tellable->setAppliesNeutrals($parent->getAppliesNeutrals());
+						$this->tellable->setAppliesRutai($parent->getAppliesRutai());
+						$this->tellable->setAppliesResistance($parent->getAppliesResistance());
+					}
+					break;
+				case 'adventure':
+					$this->tellable = new \application\entities\Adventure($request['tellable_id']);
+					break;
+			}
+			if ($request->isPost()) {
+				$this->tellable->mergeFormData($request);
+				$this->tellable->save();
+				$this->forward($this->getRouting()->generate('edit_tellable', array('tellable_type' => $this->tellable->getTellableType(), 'tellable_id' => $this->tellable->getB2DBID())));
+			}
+		}
+
+		public function runDeleteTellable(Request $request)
+		{
+			$params = array();
+			switch ($request['tellable_type']) {
+				case 'story':
+					$this->tellable = new \application\entities\Story($request['tellable_id']);
+					$route = 'admin_tellables';
+					$params = array('tellable_type' => 'story');
+					break;
+				case 'chapter':
+					$this->tellable = new \application\entities\Chapter($request['tellable_id']);
+					$route = 'edit_tellable';
+					$params = array('tellable_type' => $this->tellable->getParentType(), 'tellable_id' => $this->tellable->getParentId());
+					break;
+				case 'part':
+					$this->tellable = new \application\entities\Part($request['tellable_id']);
+					$route = 'edit_tellable';
+					$params = array('tellable_type' => $this->tellable->getParentType(), 'tellable_id' => $this->tellable->getParentId());
+					break;
+				case 'adventure':
+					$this->tellable = new \application\entities\Adventure($request['tellable_id']);
+					$route = 'admin_tellables';
+					$params = array('tellable_type' => 'adventure');
+					break;
+			}
+			if ($request->isPost()) {
+				$this->tellable->delete();
+				$this->forward($this->getRouting()->generate($route, $params));
+			}
+		}
+
 		public function runNews(Request $request)
 		{
 			$this->all_news = \application\entities\tables\News::getTable()->getAll();
@@ -357,7 +441,7 @@
 			$news = new \application\entities\News($request['id']);
 			if ($request->isPost()) {
 				$news->setTitle($request['title']);
-				$news->setContent($request['content']);
+				$news->setContent(stripslashes($request->getRawParameter('content')));
 				$news->setUrl($request['news_url']);
 				$news->setCreatedAt(mktime($request['hour'], $request['minute'], $request['second'], $request['month'], $request['day'], $request['year']));
 				$news->save();
@@ -449,12 +533,15 @@
 			}
 		}
 
-		protected function _processResetUserSkills(Request $request)
+		protected function _processResetUserCharacter(Request $request)
 		{
 			if ($request['user_id'] && (int) $request['user_id'] > 0) {
 				$user_id = (int) $request['user_id'];
 				$user = new \application\entities\User($user_id);
 				$user->setLevel(1);
+				$user->setRace(0);
+				$user->setCharactername('');
+				$user->setAvatar('default.png');
 				$user->save();
 				\application\entities\tables\Skills::getTable()->removeSkillsByUserId($user_id);
 				return $this->renderJSON(array('reset_cards' => 'ok', 'message' => 'User skills and level has been reset'));
@@ -499,8 +586,8 @@
 					case 'reset_user_cards':
 						return $this->_processResetUserCards($request);
 						break;
-					case 'reset_user_skills':
-						return $this->_processResetUserSkills($request);
+					case 'reset_user_character':
+						return $this->_processResetUserCharacter($request);
 						break;
 					case 'remove_user_cards':
 						return $this->_processRemoveUserCards($request);

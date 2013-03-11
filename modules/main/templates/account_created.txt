@@ -1,8 +1,8 @@
 Hey there!
 
-You just registered with the username:
+You just registered a Dragon Evo account with the username:
 %username%
-using the following password:
+and the following password:
 %password%
 
 To login, click the link below:

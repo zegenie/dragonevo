@@ -8,7 +8,8 @@
 	<div class="fullpage_backdrop_content">
 		<div id="finding_opponent">
 			<?php echo image_tag('/images/spinner.png'); ?><br>
-			<?php echo __('Please wait, finding opponent ...'); ?>
+			Finding a random opponent ...<br>
+			<span style="font-size: 0.7em; font-weight: normal;">Please wait, this can take up to 30 seconds ...</span>
 			<br style="clear: both;">
 			<div style="float: right; margin: 20px; clear: both;">
 				<button class="button button-standard" id="cancel_quickmatch_button" onclick="Devo.Play.cancelQuickmatch();" style="opacity: 0;">Cancel</button>
@@ -24,9 +25,21 @@
 			<img src="/images/swirl_bottom_left.png" class="swirl bottom-left">
 			<img src="/images/swirl_top_left.png" class="swirl top-left">
 			<h1>Options</h1>
-			<form method="post" onsubmit="DETCG.saveOptions();return false;" id="options_form">
+			<form method="post" onsubmit="Devo.Main.saveSettings();return false;" id="options_form">
 				<input type="hidden" name="topic" value="savesettings">
 				<dl>
+					<dt><label for="options_drag_drop">Moving cards</label></dt>
+					<dd>
+						<input type="radio" value="1" <?php if ($csp_user->isDragDropEnabled()) echo ' checked'; ?> name="drag_drop_enabled" id="options_drag_drop_enabled"><label for="options_drag_drop_enabled">Drag / drop</label>&nbsp;
+						<input type="radio" value="0" <?php if (!$csp_user->isDragDropEnabled()) echo ' checked'; ?> name="drag_drop_enabled" id="options_drag_drop_disabled"><label for="options_drag_drop_disabled">Click to move</label>
+						<div class="faded_out">Choose which method you prefer for moving cards</div>
+					</dd>
+					<dt><label for="options_low_graphics">Graphics</label></dt>
+					<dd>
+						<input type="radio" value="0" <?php if (!$csp_user->isLowGraphicsEnabled()) echo ' checked'; ?> name="low_graphics_enabled" id="options_low_graphics_disabled"><label for="options_low_graphics_disabled">3D board</label>
+						<input type="radio" value="1" <?php if ($csp_user->isLowGraphicsEnabled()) echo ' checked'; ?> name="low_graphics_enabled" id="options_low_graphics_enabled"><label for="options_low_graphics_enabled">2D board</label>&nbsp;
+						<div class="faded_out">Choose 2D board if you're experiencing performance problems</div>
+					</dd>
 					<dt><label for="options_background_music">Background music</label></dt>
 					<dd>
 						<input type="radio" value="1" <?php if ($csp_user->isGameMusicEnabled()) echo ' checked'; ?> name="music_enabled" id="options_background_music_enabled"><label for="options_background_music_enabled">Yes</label>&nbsp;
@@ -41,7 +54,8 @@
 				</dl>
 				<br style="clear: both;">
 				<div style="text-align: center;">
-					<a href="#" onclick="Devo.Main.saveSettings();" class="button button-green"><img id="options_waiting" src="images/spinning_16.gif" style="display: none; margin: 3px 5px 0 0; float: left;">Save</a>
+					<img id="options_waiting" src="images/spinning_16.gif" style="display: none; margin: 3px 5px 0 0; float: left;">
+					<input type="submit" class="button button-green" value="Save">
 					<a href="#" onclick="$('settings-overlay').fade();" class="button button-silver">Cancel</a>
 				</div>
 			</form>
@@ -51,7 +65,7 @@
 </div>
 <div id="gamemenu-container" style="display: none;" class="fullpage_backdrop dark">
 	<a href="javascript:void(0);" onclick="Devo.Core.toggleFullscreen();" id="toggle-fullscreen-button" class="button button-silver button-icon" style="display: none;">Toggle fullscreen</a>
-	<div id="play-menu" class="swirl-dialog<?php /* if (isset($game)): ?> ingame<?php endif; */ ?>">
+	<div id="play-menu" class="swirl-dialog">
 		<img src="/images/swirl_top_right.png" class="swirl top-right">
 		<img src="/images/swirl_bottom_right.png" class="swirl bottom-right">
 		<img src="/images/swirl_bottom_left.png" class="swirl bottom-left">
@@ -62,26 +76,31 @@
 				<span class="slogan">the online action card game</span>
 			</a>
 		</div>
-		<div class="avatar" style="background-image: url('/images/avatars/avatar_3.png');"></div>
+		<div class="menu_glow" style="background-image: url('/images/avatars/avatar_3.png');"></div>
 		<div id="play-menu-main">
 			<div id="play-menu-setup" <?php if ($csp_user->hasCharacter() && $csp_user->hasCards()): ?>style="display: none;"<?php endif; ?>>
-				<button class="button button-green multiplayer settings" onclick="Devo.Main.loadProfile();" id="show-profile-button">Setup my profile</button>
+				<button class="button button-green multiplayer settings" onclick="Devo.Main.loadProfile();" id="show-profile-button">Create character</button>
 				<button class="button button-silver settings" onclick="$('settings-overlay').toggle();">Game settings</button>
 			</div>
 			<div id="play-menu-generic" <?php if (!$csp_user->hasCharacter() || !$csp_user->hasCards()): ?>style="display: none;"<?php endif; ?>>
-				<button class="button button-lightblue multiplayer" id="toggle-playmenu-button" onclick="$('play-menu-main').toggle();$('play-menu-play').toggle();">Multiplayer</button>
-				<button class="button button-green" onclick="Devo.Main.loadLobby();$('gamemenu-container').hide();" id="enter-lobby-button">Enter the lobby</button>
-				<button class="button button-silver singleplayer" onclick="$('play-menu-main').toggle();$('play-menu-single').toggle();">Single player</button>
-				<button class="button button-silver training" onclick="$('play-menu-main').toggle();$('play-menu-train').toggle();">Training</button>
-				<button class="button button-silver settings" onclick="$('settings-overlay').toggle();">Game settings</button>
+				<?php if ($csp_user->isAdmin()): ?>
+					<button class="button button-lightblue singleplayer adventure" onclick="Devo.Main.loadAdventureUI();$('gamemenu-container').hide();" id="play-adventure-button">Play adventure</button>
+				<?php endif; ?>
+				<button class="button button-green multiplayer" onclick="Devo.Main.loadLobby();$('gamemenu-container').hide();" id="enter-lobby-button">Hang out and play</button>
+				<button class="button button-orange" onclick="Devo.Main.loadMarketUI();$('gamemenu-container').hide();" id="enter-market-button">Trade and buy</button>
+				<button class="button button-silver" id="toggle-playmenu-button" onclick="$('play-menu-main').toggle();$('play-menu-play').toggle();">Multiplayer modes</button>
+				<button class="button button-silver singleplayer" onclick="$('play-menu-main').toggle();$('play-menu-single').toggle();">Training</button>
 				<button class="button button-silver settings" onclick="Devo.Main.loadProfile();" id="show-profile-button">My profile</button>
 				<button class="button button-silver" style="display: none;" onclick="$('gamemenu-container').toggle();" id="close-menu-button">Close menu</button>
 			</div>
 			<div id="play-menu-ingame" style="display: none;">
 				<button class="button button-green" onclick="$('gamemenu-container').toggle();">Resume game</button>
 				<button class="button button-silver settings" onclick="$('settings-overlay').toggle();">Settings</button>
-				<button class="button button-silver" onclick="Devo.Game.destroyGame();">Go to the lobby</a>
-				<button class="button button-silver exit" onclick="Devo.Main.Helpers.Dialog.show('Flee the battle?', 'Quitting the game means you lose, the opponent is awarded battlepoints and XP, and you\'re left with nothing! Not even loot!<br><span class=\'faded_out\'>Actually, the part about loot isn\'t implemented yet, but suddenly it will be and then you\'ll be sorry!</span>', {yes: {click: function() {Devo.Game.flee(); }}, no: {click: function() {Devo.Main.Helpers.Dialog.dismiss();}}});" id="leave-game-button">Leave game</button>
+				<button class="button button-silver" onclick="Devo.Game.destroyGame();Devo.Main.loadLobbyUI();">Go to the lobby</a>
+				<?php if ($csp_user->isAdmin()): ?>
+					<button class="button button-silver singleplayer" onclick="Devo.Game.destroyGame();Devo.Main.loadAdventureUI();$('gamemenu-container').hide();">Switch to singleplayer</button>
+				<?php endif; ?>
+				<button class="button button-silver exit" onclick="$('gamemenu-container').hide();Devo.Main.Helpers.Dialog.show('Flee the battle?', 'Quitting the game means you lose, the opponent is awarded battlepoints and XP, and you\'re left with nothing! Not even loot!<br><span class=\'faded_out\'>Actually, the part about loot isn\'t implemented yet, but suddenly it will be and then you\'ll be sorry!</span>', {yes: {click: function() {Devo.Game.flee(); }}, no: {click: function() {Devo.Main.Helpers.Dialog.dismiss();}}});" id="leave-game-button">Leave game</button>
 			</div>
 			<a href="<?php echo make_url('home'); ?>" class="button button-silver exit">Exit</a>
 		</div>
@@ -92,15 +111,10 @@
 			<button class="button button-silver back" onclick="$('play-menu-play').toggle();$('play-menu-main').toggle();">&laquo;&nbsp;Back</button>
 		</div>
 		<div id="play-menu-single" style="display: none;">
-			<button class="button button-lightblue play_story disabled" onclick="Devo.Main.Helpers.Message.success('Not implemented yet', 'This feature has not yet been implemented');" disabled>Play story</button>
-			<button class="button button-lightblue single_quest disabled" onclick="Devo.Main.Helpers.Message.success('Not implemented yet', 'This feature has not yet been implemented');" disabled>Single quest</button>
-			<button class="button button-silver back" onclick="$('play-menu-single').toggle();$('play-menu-main').toggle();">&laquo;&nbsp;Back</button>
-		</div>
-		<div id="play-menu-train" style="display: none;">
 			<a href="javascript:void(0);" onclick="Devo.Play.training(1);" class="button button-silver">Easy training</a>
 			<a href="javascript:void(0);" onclick="Devo.Play.training(2);" class="button button-silver">Skilled training</a>
 			<a href="javascript:void(0);" onclick="Devo.Play.training(3);" class="button button-silver">Expert training</a>
-			<button class="button button-silver back" onclick="$('play-menu-train').toggle();$('play-menu-main').toggle();">&laquo;&nbsp;Back</button>
+			<button class="button button-silver back" onclick="$('play-menu-single').toggle();$('play-menu-main').toggle();">&laquo;&nbsp;Back</button>
 		</div>
 		<br style="clear: both;">
 		<div id="play-version">
@@ -109,7 +123,7 @@
 		</div>
 	</div>
 </div>
-<div id="game-content-container">
+<div id="game-content-container" data-location="">
 </div>
 <script>
 	Devo.Core.Events.listen('devo:core:initialized', function(options) {
@@ -118,5 +132,8 @@
 			$('toggle-fullscreen-button').appear();
 		}
 		Devo.Main.showMenu();
+		<?php if ($changelog): ?>
+			$('changelog-overlay').show();
+		<?php endif; ?>
 	});
 </script>

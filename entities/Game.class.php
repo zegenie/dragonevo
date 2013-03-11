@@ -235,9 +235,19 @@
 		
 		protected $_affected_cards = array();
 
+		/**
+		 * If single player part, the part
+		 *
+		 * @Column(type="integer", length=10)
+		 * @Relates(class="\application\entities\Part")
+		 *
+		 * @var \application\entities\Part
+		 */
+		protected $_part_id;
+
 		protected function _preSave($is_new)
 		{
-			if ($is_new && !$this->_created_at) {
+			if ($is_new) {
 				$this->_created_at = time();
 				$this->_current_phase = self::PHASE_MOVE;
 
@@ -317,6 +327,14 @@
 			\application\entities\tables\ModifierEffects::getTable()->removeEffects($this->getId());
 		}
 
+		public function resetAICards()
+		{
+			\application\entities\tables\EventCards::getTable()->resetAICards($this->getId());
+			\application\entities\tables\CreatureCards::getTable()->resetAICards($this->getId());
+			\application\entities\tables\PotionItemCards::getTable()->resetAICards($this->getId());
+			\application\entities\tables\EquippableItemCards::getTable()->resetAICards($this->getId());
+		}
+
 		protected function _calculateWinningConditions()
 		{
 			$player_cards = $this->hasPlayerCardsInPlay();
@@ -335,6 +353,7 @@
 			$this->_state = self::STATE_COMPLETED;
 			$this->_ended_at = time();
 			$this->resetUserCards();
+			if ($this->getOpponent()->isAI()) $this->resetAICards();
 			
 			$this->_winning_player_id = $winning_player_id;
 			$this->_losing_player_id = ($this->getPlayer()->getId() == $winning_player_id) ? $this->getOpponentId() : $this->getPlayer()->getId();
@@ -346,17 +365,22 @@
 
 			$this->_current_player_id = 0;
 
-			$winner_statistics = $this->getStatistics($this->getWinningPlayerId());
-			$this->getWinningPlayer()->addXp($winner_statistics['xp']);
-			$this->getWinningPlayer()->addGold($winner_statistics['gold']);
-			$this->getWinningPlayer()->save();
+			if ($this->isScenario()) {
+				$winning = (bool) ($winning_player_id == $this->getPlayer()->getId());
+				$this->getPart()->resolve($this->getPlayer(), $this, $winning);
+			} else {
+				$winner_statistics = $this->getStatistics($this->getWinningPlayerId());
+				$this->getWinningPlayer()->addXp($winner_statistics['xp']);
+				$this->getWinningPlayer()->addGold($winner_statistics['gold']);
+				$this->getWinningPlayer()->save();
 
-			$loser_statistics = $this->getStatistics($this->getLosingPlayerId());
-			$this->getLosingPlayer()->addXp($loser_statistics['xp']);
-			$this->getLosingPlayer()->addGold($loser_statistics['gold']);
-			$this->getLosingPlayer()->save();
+				$loser_statistics = $this->getStatistics($this->getLosingPlayerId());
+				$this->getLosingPlayer()->addXp($loser_statistics['xp']);
+				$this->getLosingPlayer()->addGold($loser_statistics['gold']);
+				$this->getLosingPlayer()->save();
+			}
 			
-			if ($this->getOpponent()->isAI()) return;
+			if ($this->getOpponent()->isAI() || $this->getTurnNumber() <= 2) return;
 
 			$lobby = tables\ChatRooms::getTable()->selectById(1);
 			$lobby->say("{$this->getWinningPlayer()->getUsername()} ({$winner_statistics['hp']} HP damage, {$winner_statistics['cards']} kills) won the match against {$this->getLosingPlayer()->getUsername()} ({$loser_statistics['hp']} HP damage, {$loser_statistics['cards']} kills). ", 0);
@@ -383,6 +407,11 @@
 			$this->_player_id = $user;
 		}
 		
+		/**
+		 * Return the player
+		 *
+		 * @return User
+		 */
 		public function getPlayer()
 		{
 			return $this->_b2dbLazyload('_player_id');
@@ -420,25 +449,93 @@
 
 		public function getUserOpponentGold()
 		{
-			return ($this->getOpponentId() == Caspar::getUser()->getId()) ? $this->getOpponentGold() : $this->getPlayerGold();
+			return ($this->getPlayer()->getId() == Caspar::getUser()->getId()) ? $this->getOpponentGold() : $this->getPlayerGold();
 		}
 
 		public function setUserOpponentGold($gold)
 		{
-			return ($this->getOpponentId() == Caspar::getUser()->getId()) ? $this->setOpponentGold($gold) : $this->setPlayerGold($gold);
+			return ($this->getPlayer()->getId() == Caspar::getUser()->getId()) ? $this->setOpponentGold($gold) : $this->setPlayerGold($gold);
+		}
+
+		public function addCard($card_unique_id, $user_id)
+		{
+			$gamecard = new GameCard();
+			$gamecard->setUserId($user_id);
+			$gamecard->setGame($this);
+			$gamecard->setCardUniqueId($card_unique_id);
+			$gamecard->save();
+		}
+
+		public function hasCard($card)
+		{
+			$card_id = ($card instanceof Card) ? $card->getUniqueId() : $card;
+			foreach ($this->getPlayerCards() as $pcards) {
+				foreach ($pcards as $pcard) {
+					if ($pcard->getUniqueId() == $card_id) return true;
+				}
+			}
+			foreach ($this->getOpponentCards() as $ocards) {
+				foreach ($ocards as $ocard) {
+					if ($ocard->getUniqueId() == $card_id) return true;
+				}
+			}
+
+			return false;
+		}
+
+		public function getCard($card)
+		{
+			$card_id = ($card instanceof Card) ? $card->getUniqueId() : $card;
+			foreach ($this->getPlayerCards() as $pcards) {
+				foreach ($pcards as $pcard) {
+					if ($pcard->getUniqueId() == $card_id) return $pcard;
+				}
+			}
+			foreach ($this->getOpponentCards() as $ocards) {
+				foreach ($ocards as $ocard) {
+					if ($ocard->getUniqueId() == $card_id) return $ocard;
+				}
+			}
+
+			return null;
+		}
+
+		protected function _getCardByUserId($user_id)
+		{
+			$creature = array();
+			$equippable_item = array();
+			$event = array();
+			$game_cards = \application\entities\tables\GameCards::getTable()->getByUserIdAndGameId($user_id, $this->getId());
+			foreach ($game_cards as $game_card) {
+				$card = $game_card->getCard();
+				switch ($card->getCardType()) {
+					case Card::TYPE_CREATURE:
+						$creature[$card->getId()] = $card;
+						break;
+					case Card::TYPE_EQUIPPABLE_ITEM:
+						$equippable_item[$card->getId()] = $card;
+						break;
+					case Card::TYPE_EVENT:
+						$event[$card->getId()] = $card;
+						break;
+				}
+			}
+
+			return compact('creature', 'equippable_item', 'event');
 		}
 
 		protected function _populatePlayerCards()
 		{
 			if ($this->_player_cards === null) {
-				$user_id = $this->getPlayer()->getId();
-				$creature = \application\entities\tables\CreatureCards::getTable()->getByUserIdAndGameId($user_id, $this->getId());
-				$equippable_item = \application\entities\tables\EquippableItemCards::getTable()->getByUserIdAndGameId($user_id, $this->getId());
-				$event = \application\entities\tables\EventCards::getTable()->getByUserIdAndGameId($user_id, $this->getId());
-				$this->_player_cards = compact('creature', 'equippable_item', 'event');
+				$this->_player_cards = $this->_getCardByUserId($this->getPlayer()->getId());
 			}
 		}
 
+		/**
+		 * Return the player's cards
+		 *
+		 * @return array|Card
+		 */
 		public function getPlayerCards()
 		{
 			$this->_populatePlayerCards();
@@ -528,25 +625,44 @@
 		public function getStatistics($player_id)
 		{
 			$statistics = tables\GameEvents::getTable()->getStatisticsByGameId($this->getId(), $player_id);
-
-			if ($player_id == $this->getWinningPlayerId()) {
-				$statistics['xp'] = floor(($statistics['hp'] / 100) * 20) + floor(($statistics['hp'] / 100) * $statistics['cards']);
-				$statistics['gold'] = floor($statistics['cards'] * 2);
-				if ($statistics['gold'] > 15) $statistics['gold'] = 15;
+			if ($this->isScenario()) {
+				$winning = (bool) ($this->getWinningPlayerId() == $this->getPlayer()->getId());
+				if ($winning) {
+					$statistics['xp'] = $this->getPart()->getRewardXp();
+					$statistics['gold'] = $this->getPart()->getRewardGold();
+				}
+				$statistics['scenario'] = true;
 			} else {
-				$statistics['xp'] = floor(($statistics['hp'] / 100) * 10);
-				$statistics['gold'] = $statistics['cards'];
-				if ($statistics['gold'] > 5) $statistics['gold'] = 5;
+				if ($player_id == $this->getWinningPlayerId()) {
+					$statistics['xp'] = floor(($statistics['hp'] / 100) * 20) + floor(($statistics['hp'] / 100) * $statistics['cards']);
+					$statistics['gold'] = floor($statistics['cards'] * 2);
+					if ($statistics['gold'] > 15) $statistics['gold'] = 15;
+				} else {
+					$statistics['xp'] = floor(($statistics['hp'] / 100) * 10);
+					$statistics['gold'] = $statistics['cards'];
+					if ($statistics['gold'] > 5) $statistics['gold'] = 5;
+				}
 			}
+
 
 			return $statistics;
 		}
 
+		/**
+		 * Return the user player
+		 *
+		 * @return User
+		 */
 		public function getUserPlayer()
 		{
 			return ($this->getPlayer()->getId() == Caspar::getUser()->getId()) ? $this->getPlayer() : $this->getOpponent();
 		}
 
+		/**
+		 * Return the user opponent
+		 *
+		 * @return User
+		 */
 		public function getUserOpponent()
 		{
 			return ($this->getPlayer()->getId() == Caspar::getUser()->getId()) ? $this->getOpponent() : $this->getPlayer();
@@ -603,7 +719,7 @@
 		}
 
 		/**
-		 * Return the user who won the game
+		 * Return the user who lost the game
 		 *
 		 * @return User
 		 */
@@ -627,6 +743,11 @@
 			$this->_current_player_id = $user;
 		}
 
+		/**
+		 * Return the current player
+		 *
+		 * @return User
+		 */
 		public function getCurrentPlayer()
 		{
 			return $this->_b2dbLazyload('_current_player_id');
@@ -654,9 +775,14 @@
 		
 		public function isScenario()
 		{
-			return false;
+			return $this->hasPart();
 		}
-		
+
+		/**
+		 * Return the opponent player
+		 * 
+		 * @return User
+		 */
 		public function getOpponent()
 		{
 			return $this->_b2dbLazyload('_opponent_id');
@@ -670,14 +796,15 @@
 		protected function _populateOpponentCards()
 		{
 			if ($this->_opponent_cards === null) {
-				$user_id = $this->getOpponentId();
-				$creature = \application\entities\tables\CreatureCards::getTable()->getByUserIdAndGameId($user_id, $this->getId());
-				$equippable_item = \application\entities\tables\EquippableItemCards::getTable()->getByUserIdAndGameId($user_id, $this->getId());
-				$event = \application\entities\tables\EventCards::getTable()->getByUserIdAndGameId($user_id, $this->getId());
-				$this->_opponent_cards = compact('creature', 'equippable_item', 'event');
+				$this->_opponent_cards = $this->_getCardByUserId($this->getOpponentId());
 			}
 		}
 
+		/**
+		 * Return the opponent cards
+		 *
+		 * @return array|Card
+		 */
 		public function getOpponentCards()
 		{
 			$this->_populateOpponentCards();
@@ -853,6 +980,11 @@
 			return ($this->getUserPlayer()->getId() != $this->getPlayer()->getId()) ? $this->hasPlayerPlacedCards() : $this->hasOpponentPlacedCards();
 		}
 
+		/**
+		 * Return the user player cards
+		 *
+		 * @return array|Card
+		 */
 		public function getUserPlayerCards()
 		{
 			return ($this->getUserPlayer()->getId() == $this->getPlayer()->getId()) ? $this->getPlayerCards() : $this->getOpponentCards();
@@ -989,16 +1121,31 @@
 			return $this->hasUserPlayerCards();
 		}
 
+		/**
+		 * Return the user's cards
+		 *
+		 * @return array|Card
+		 */
 		public function getCards()
 		{
 			return $this->getUserPlayerCards();
 		}
 
+		/**
+		 * Return the current player's cards
+		 *
+		 * @return array|Card
+		 */
 		public function getCurrentPlayerCards()
 		{
 			return ($this->getCurrentPlayerId() == $this->getPlayer()->getId()) ? $this->getPlayerCards() : $this->getOpponentCards();
 		}
 
+		/**
+		 * Return the linked chatroom
+		 *
+		 * @return ChatRoom
+		 */
 		public function getChatroom()
 		{
 			return $this->_b2dbLazyload('_chatroom_id');
@@ -1062,6 +1209,11 @@
 			$this->_invitation_rejected = $invitation_rejected;
 		}
 
+		/**
+		 * @param \application\entities\User $user
+		 * 
+		 * @return \application\entities\GameInvite
+		 */
 		public function invite(User $user)
 		{
 			$invitation = new GameInvite();
@@ -1071,6 +1223,8 @@
 			$invitation->save();
 			$this->setOpponent($user);
 			$this->setInvitationSent();
+
+			return $invitation;
 		}
 
 		public function cancel()
@@ -1091,6 +1245,11 @@
 			$this->changePlayer();
 		}
 
+		/**
+		 * Return the events
+		 *
+		 * @return array|GameEvent
+		 */
 		public function getEvents()
 		{
 			return $this->_b2dbLazyload('_events');
@@ -1115,7 +1274,7 @@
 			$old_gold = ($this->getCurrentPlayerKey() == 'player') ? $this->getPlayerGold() : $this->getOpponentGold();
 			$card_updates = array();
 			foreach ($p_cards as $card_type => $cards) {
-				foreach ($cards as $card) {
+				foreach ($cards as $card_id => $card) {
 					if (!$card->isInPlay()) continue;
 					if (!$card instanceof CreatureCard || !$card->hasEffect(ModifierEffect::TYPE_STUN)) {
 						$gold += $card->getGPTIncreasePlayer();
@@ -1162,6 +1321,11 @@
 						}
 						if ($card->getInGameHP() <= 0) {
 							$this->removeCard($card);
+							if ($this->getCurrentPlayerKey() == 'player') {
+								unset($this->_player_cards[$card_id]);
+							} else {
+								unset($this->_opponent_cards[$card_id]);
+							}
 						}
 						$this->addAffectedCard($card);
 					}
@@ -1251,7 +1415,7 @@
 		{
 			$event = new GameEvent();
 			$event->setEventType(GameEvent::TYPE_THINKING);
-			$event->setEventData(array('player_id' => $this->getCurrentPlayerId(), 'player_name' => $this->getCurrentPlayer()->getCharactername(), 'current_turn' => $this->getTurnNumber(), 'duration' => rand(1000 * $level, 2000 * $level)));
+			$event->setEventData(array('player_id' => $this->getCurrentPlayerId(), 'player_name' => $this->getCurrentPlayer()->getCharactername(), 'current_turn' => $this->getTurnNumber(), 'part_id' => $this->getPartId(), 'duration' => rand(1000 * $level, 2000 * $level)));
 			$this->addEvent($event);
 		}
 		
@@ -1272,7 +1436,7 @@
 
 		public function getCurrentPlayerActions()
 		{
-			return $this->_current_player_actions;
+			return (int) $this->_current_player_actions;
 		}
 
 		public function setCurrentPlayerActions($actions)
@@ -1304,17 +1468,15 @@
 				foreach ($card->getPowerupCards() as $c) {
 					$this->removeCard($c);
 				}
-				$card->setInGameHP(0);
-				$card->setInGameEP(0);
 			}
-			$card->setSlot(0);
-			$card->setIsInPlay(false);
-			if ($card->getCardType() == Card::TYPE_EQUIPPABLE_ITEM) {
-				$card->setPowerupSlot1(false);
-				$card->setPowerupSlot2(false);
+			$gc = $card->getGameCard();
+			$card->removeGameCard();
+			$gc->delete();
+			if ($card->getUserId() == $this->getOpponentId()) {
+				unset($this->_opponent_cards[$card->getCardType()][$card->getId()]);
+			} else {
+				unset($this->_player_cards[$card->getCardType()][$card->getId()]);
 			}
-			$card->setGameId(0);
-			$this->addAffectedCard($card);
 
 			$event = new GameEvent();
 			$event->setEventType(GameEvent::TYPE_CARD_REMOVED);
@@ -1334,7 +1496,7 @@
 
 		public function canUserMove($user_id)
 		{
-			return (bool) (($this->getCurrentPlayerId() == $user_id && $this->getCurrentPhase() == Game::PHASE_MOVE) || ($this->getTurnNumber() <= 2 && !$this->hasUserPlayerCardsInPlay()));
+			return (bool) (($this->getCurrentPlayerId() == $user_id && $this->getCurrentPhase() == Game::PHASE_MOVE && $this->getTurnNumber() > 2) || ($this->getTurnNumber() <= 2 && !$this->hasUserPlayerCardsInPlay()));
 		}
 		
 		public function isUserOnline($user_id)
@@ -1365,6 +1527,109 @@
 			$event->setEventType(GameEvent::TYPE_PLAYER_ONLINE);
 			$event->setEventData(array('player_id' => $user_id, 'player_name' => '', 'changed_player_id' => $user_id, 'changed_player_name' => ($this->getPlayer()->getId() == $user_id) ? $this->getPlayer()->getUsername() : $this->getOpponent()->getUsername()));
 			$this->addEvent($event);
+		}
+
+		public function getOptions($user)
+		{
+			$options = array(
+				'game_id' => $this->getId(),
+				'user_level' => $user->getLevel(),
+				'user_level_opponent' => ($this->getUserOpponent()->isAi()) ? 1000 : $this->getUserOpponent()->getLevel(),
+				'room_id' => ($this->getUserOpponent()->isAi()) ? 0 : $this->getChatroom()->getId(),
+				'latest_event_id' => max(array_keys($this->getEvents())),
+				'current_turn' => $this->getTurnNumber(),
+				'current_phase' => $this->getCurrentPhase(),
+				'current_player_id' => $this->getCurrentPlayerId(),
+				'min_creature_cards' => $this->getMinCreatureCards(),
+				'max_creature_cards' => $this->getMaxCreatureCards(),
+				'min_item_cards' => $this->getMinItemCards(),
+				'max_item_cards' => $this->getMaxItemCards(),
+				'min_cards' => $this->getMinimumCards(),
+				'max_cards' => $this->getMaximumCards(),
+				'allow_potions' => $this->getAllowPotions(),
+				'movable' => ($this->canUserMove($user->getId())) ? 'true' : 'false',
+				'actions' => ($this->getCurrentPlayerId() == $user->getId() && $this->getCurrentPhase() == Game::PHASE_ACTION) ? 'true' : 'false',
+				'music_enabled' => ($user->isGameMusicEnabled()) ? 'true' : 'false',
+				'actions_remaining' => ($this->getCurrentPlayerId() == $user->getId() && $this->getCurrentPhase() == Game::PHASE_ACTION) ? $this->getCurrentPlayerActions() : 0
+			);
+			return $options;
+		}
+
+		public function getMinimumCards()
+		{
+			$max_creature_cards = $this->getMaxCreatureCards();
+			$max_item_cards = $this->getMaxItemCards();
+			$minimum_cards = $max_creature_cards + $max_item_cards;
+			
+			return ($minimum_cards > 5 || $minimum_cards == 0) ? 5 : $minimum_cards;
+		}
+
+		public function getMinCreatureCards()
+		{
+			return (!$this->isScenario() || !$this->getPart()->getMaxCreatureCards()) ? 3 : 1;
+		}
+
+		public function getMaxCreatureCards()
+		{
+			return (!$this->isScenario() || !$this->getPart()->getMaxCreatureCards()) ? 8 : $this->getPart()->getMaxCreatureCards();
+		}
+
+		public function getMinItemCards()
+		{
+			return (!$this->isScenario() || !$this->getPart()->getMaxItemCards()) ? 2 : 1;
+		}
+
+		public function getMaxItemCards()
+		{
+			return (!$this->isScenario() || !$this->getPart()->getMaxItemCards()) ? 16 : $this->getPart()->getMaxItemCards();
+		}
+
+		public function getMaximumCards()
+		{
+			$max_creature_cards = $this->getMaxCreatureCards();
+			$max_item_cards = $this->getMaxItemCards();
+			$maximum_cards = $max_creature_cards + $max_item_cards;
+
+			return ($maximum_cards > 20 || $maximum_cards == 0) ? 20 : $maximum_cards;
+		}
+
+		public function getAllowPotions()
+		{
+			return (!$this->isScenario()) ? true : $this->getPart()->getAllowPotions();
+		}
+
+		public function setPart(Part $part)
+		{
+			$this->_part_id = $part;
+		}
+
+		public function setPartId($part_id)
+		{
+			$this->_part_id = $part_id;
+		}
+
+		/**
+		 * Return the linked quest if any
+		 * 
+		 * @return Part
+		 */
+		public function getPart()
+		{
+			return $this->_b2dbLazyload('_part_id');
+		}
+
+		public function getPartId()
+		{
+			if ($this->_part_id instanceof Part)
+				return $this->_part_id->getId();
+
+			if ($this->_part_id)
+				return (int) $this->_part_id;
+		}
+
+		public function hasPart()
+		{
+			return (bool) $this->getPartId();
 		}
 
 	}

@@ -17,6 +17,7 @@
 	<?php else: ?>
 		+ <?php echo $attack->getRepeatAttackPointsMin(); ?>
 	<?php endif; ?>
+	HP
 	<?php if ($attack->hasRepeatRoundsRange()): ?>
 		<?php echo $attack->getRepeatRoundsMin() . '-' . $attack->getRepeatRoundsMax(); ?> time(s)
 	<?php else: ?>
@@ -24,6 +25,9 @@
 	<?php endif; ?>
 <?php endif; ?>
 <br>
+<?php if ($attack->getRequiresLevel()): ?>
+	<div class="attack_unblockable">This attack requires a character level <?php echo $attack->getRequiresLevel(); ?> or higher</div>
+<?php endif; ?>
 <?php if ($attack->isUnblockable()): ?>
 	<div class="attack_unblockable">This attack cannot be blocked!</div>
 <?php endif; ?>
@@ -69,6 +73,9 @@
 			case \application\entities\Attack::TYPE_POISON:
 				echo "<div class=\"attack_unblockable\">{$effect_percentage}% chance of poisoning attacked card for {$effect_duration} round(s)</div>";
 				echo "<div class=\"attack_unblockable\">(Poison reduces opponents damage capabilities by 10-50%)</div>";
+				break;
+			default:
+				echo "<div class=\"attack_unblockable\">{$effect_percentage}% chance of stunning opponent for {$effect_duration} round(s)</div>";
 				break;
 		}
 

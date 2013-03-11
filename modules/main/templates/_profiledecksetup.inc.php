@@ -19,7 +19,7 @@
 		<br>
 		<?php foreach (array('resistance', 'neutrals', 'rutai') as $faction): ?>
 			<div style="float: left; width: 310px; text-align: center; position: relative;">
-				<form action="<?php echo make_url('profile'); ?>" method="post" onsubmit="Devo.Main.Profile.completeCharacterSetup();return false;" id="character-setup-form">
+				<form action="<?php echo make_url('profile'); ?>" method="post" onsubmit="Devo.Main.Profile.completeCharacterSetup(this);return false;" id="character-setup-form-<?php echo $faction; ?>">
 					<input type="hidden" name="character_setup" value="1">
 					<input type="hidden" name="step" value="2">
 					<input type="hidden" name="faction" value="<?php echo $faction; ?>">

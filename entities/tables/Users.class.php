@@ -15,7 +15,7 @@
 				return null;
 			}
 			$crit = $this->getCriteria();
-			$crit->addWhere('users.username', $username);
+			$crit->addWhere('users.username', strtolower($username), \b2db\Criteria::DB_EQUALS, '', '', \b2db\Criteria::DB_LOWER);
 			$crit->addWhere('users.password', $password);
 			return $this->selectOne($crit);
 		}
@@ -93,8 +93,9 @@
 		public function getAll()
 		{
 			$crit = $this->getCriteria();
+			$crit->addWhere('users.ai_level', \application\entities\User::AI_HUMAN);
 			$crit->addOrderBy('users.isadmin', \b2db\Criteria::SORT_DESC);
-			$crit->addOrderBy('users.username', \b2db\Criteria::SORT_ASC);
+			$crit->addOrderBy('users.created_at', \b2db\Criteria::SORT_ASC);
 			return $this->select($crit);
 		}
 
@@ -106,6 +107,7 @@
 			} else {
 				$crit->addWhere('users.username', $userinfo);
 			}
+			$crit->addWhere('users.email', '', Criteria::DB_NOT_EQUALS);
 			return $this->select($crit);
 		}
 

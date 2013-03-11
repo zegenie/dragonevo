@@ -47,14 +47,6 @@
 		protected $_base_health_randomness = 0;
 
 		/**
-		 * Current in-game health
-		 *
-		 * @Column(type="integer", length=10, default=1)
-		 * @var integer
-		 */
-		protected $_in_game_health = 1;
-
-		/**
 		 * Base ep
 		 *
 		 * @Column(type="integer", length=10, default=0)
@@ -69,14 +61,6 @@
 		 * @var integer
 		 */
 		protected $_base_ep_randomness = 0;
-
-		/**
-		 * Current in-game health
-		 *
-		 * @Column(type="integer", length=10, default=1)
-		 * @var integer
-		 */
-		protected $_in_game_ep = 1;
 
 		/**
 		 * Base defence multiplier
@@ -107,6 +91,20 @@
 		 * @var string
 		 */
 		protected $_card_level = 'regular';
+
+		/**
+		 * @Column(type="integer", length=10, default=10)
+		 * @var string
+		 */
+		protected $_levelup_factor = 10;
+
+		/**
+		 * @Column(type="integer", length=10, default=0)
+		 * @var string
+		 */
+		protected $_levelup_randomizer = 0;
+
+		protected $_levelledup = false;
 
 		/**
 		 * Creature faction
@@ -153,10 +151,9 @@
 		protected $_user_dmp = 1;
 
 		/**
-		 * List of this card's attacks
+		 * List of this card's current effects
 		 *
 		 * @var array|ModifierEffect
-		 * @Relates(class="\application\entities\ModifierEffect", collection=true, foreign_column="card_id")
 		 */
 		protected $_applied_effects;
 
@@ -171,6 +168,15 @@
 				self::CLASS_PHYSICAL => 'Physical',
 				self::CLASS_RANGED => 'Ranged'
 			);
+		}
+
+		protected function _preSave($is_new)
+		{
+			parent::_preSave($is_new);
+			if ($this->_levelledup) {
+				$this->_calculateLevelupFactor();
+				$this->_levelledup = false;
+			}
 		}
 
 		public function getBaseHealth()
@@ -188,35 +194,9 @@
 			$this->_base_health = (int) $base_health;
 		}
 
-		public function getInGameHealth()
-		{
-			return (int) $this->_in_game_health;
-		}
-
-		public function getInGameHP()
-		{
-			return $this->getInGameHealth();
-		}
-
 		public function getHP()
 		{
 			return ($this->isInPlay()) ? $this->getInGameHP() : $this->getBaseHealth();
-		}
-
-		public function setInGameHealth($in_game_health)
-		{
-			$this->_in_game_health = (int) $in_game_health;
-		}
-
-		public function setInGameHP($hp)
-		{
-			$this->setInGameHealth($hp);
-		}
-
-		public function removeHP($dmg)
-		{
-			$this->_in_game_health -= $dmg;
-			if ($this->_in_game_health < 0) $this->_in_game_health = 0;
 		}
 
 		public function getBaseHealthRandomness()
@@ -239,25 +219,9 @@
 			$this->_base_ep = (int) $base_ep;
 		}
 
-		public function getInGameEP()
-		{
-			return (int) $this->_in_game_ep;
-		}
-
 		public function getEP()
 		{
 			return ($this->isInPlay()) ? $this->getInGameEP() : $this->getBaseEP();
-		}
-
-		public function setInGameEP($in_game_ep)
-		{
-			$this->_in_game_ep = (int) $in_game_ep;
-		}
-
-		public function removeEP($dmg)
-		{
-			$this->_in_game_ep -= $dmg;
-			if ($this->_in_game_ep < 0) $this->_in_game_ep = 0;
 		}
 
 		public function getBaseEPRandomness()
@@ -436,7 +400,10 @@
 		 */
 		public function getModifierEffects()
 		{
-			return $this->_b2dbLazyLoad('_applied_effects');
+			if (!is_array($this->_applied_effects)) {
+				$this->_applied_effects = tables\ModifierEffects::getTable()->getByCardAndGame($this, $this->getGameCard());
+			}
+			return $this->_applied_effects;
 		}
 		
 		public function getValidEffects()
@@ -536,8 +503,15 @@
 								}
 							}
 							break;
+						case ModifierEffect::TYPE_DARK:
+							$effect_name = 'Dark magic';
+							break;
+						case ModifierEffect::TYPE_STUN:
+							$effect_name = 'Stun';
+							break;
 					}
 					$hp = $this->getInGameHP() - $dmg;
+					if ($hp < 0) $hp = 0;
 					$attacked_from_hp = $this->getInGameHP();
 					$this->setInGameHP($hp);
 					$event = new GameEvent();
@@ -562,6 +536,76 @@
 		public function hasEffect($effect)
 		{
 			return in_array($effect, $this->getValidEffects());
+		}
+
+		public function hasAnyEffect($effects)
+		{
+			foreach ($effects as $effect) {
+				if (in_array($effect, $this->getValidEffects())) return true;
+			}
+			return false;
+		}
+
+		public function levelUp($mode)
+		{
+			$upgrade_card = false;
+			$upgrade_attacks = false;
+			if ($mode == 'both') {
+				$upgrade_card = true;
+				$upgrade_attacks = true;
+			} elseif ($mode == 'card') {
+				$upgrade_card = true;
+			} elseif ($mode == 'attacks') {
+				$upgrade_attacks = true;
+			}
+			if ($upgrade_card) $this->_user_card_level++;
+			$this->_calculateCardProperties($upgrade_card, $upgrade_attacks);
+		}
+
+		protected function _calculateLevelUpFactor()
+		{
+			switch ($this->_card_level) {
+				case 'low':
+					$this->_levelup_factor = rand(7, 12);
+					break;
+				case 'regular':
+					$this->_levelup_factor = rand(10, 15);
+					break;
+				case 'power':
+					$this->_levelup_factor = rand(13, 18);
+					break;
+			}
+		}
+
+		protected function _calculateCardProperties($upgrade_card, $upgrade_attacks)
+		{
+			$oc = $this->getOriginalCard();
+
+			if ($upgrade_card) {
+				$this->_user_dmp = floor($this->_base_dmp + ((1 / $this->_levelup_factor) * $this->_user_card_level));
+				$this->_base_health += floor((($oc->getBaseHP() / 100) * ($this->_levelup_factor / 2)) * ($this->_user_card_level * 0.9));
+				if ($this->_base_ep > 0) $this->_base_ep += floor((($oc->getBaseEP() / 100) * ($this->_levelup_factor / 2)) * $this->_user_card_level);
+				if ($this->_gpt_increase_player > 0) $this->_gpt_increase_player += floor((($oc->getGPTIncreasePlayer() / 100) * ($this->_levelup_factor)) * $this->_user_card_level);
+				if ($this->_gpt_decrease_player > 0) $this->_gpt_decrease_player += floor((($oc->getGPTDecreasePlayer() / 100) * ($this->_levelup_factor)) * $this->_user_card_level);
+				if ($this->_gpt_increase_opponent > 0) $this->_gpt_increase_opponent += floor((($oc->getGPTIncreaseOpponent() / 100) * ($this->_levelup_factor)) * $this->_user_card_level);
+				if ($this->_gpt_decrease_opponent > 0) $this->_gpt_decrease_opponent += floor((($oc->getGPTDecreaseOpponent() / 100) * ($this->_levelup_factor)) * $this->_user_card_level);
+			}
+
+			if ($upgrade_attacks) {
+				foreach ($this->getAttacks() as $attack) {
+					$attack->levelUp($this->_levelup_factor, $this->_levelup_randomizer);
+				}
+			}
+		}
+
+		public function getLevelUpCost()
+		{
+			$card_cost = 500 + ($this->getUserCardLevel() * 50);
+			$attack_cost = 0;
+			foreach ($this->getAttacks() as $attack) {
+				$attack_cost += $attack->getLevelUpCost();
+			}
+			return array($card_cost, $attack_cost);
 		}
 
 	}

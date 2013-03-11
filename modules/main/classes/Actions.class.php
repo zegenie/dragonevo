@@ -8,22 +8,8 @@ use \caspar\core\Request,
 /**
  * Actions for the main module
  */
-class Actions extends \caspar\core\Actions
+class Actions extends \application\lib\Actions
 {
-
-	protected $_mailer = null;
-
-	protected function _getMailer()
-	{
-		if ($this->_mailer === null) {
-			require_once CASPAR_LIB_PATH . 'swift/lib/swift_required.php';
-			$transport = \Swift_SmtpTransport::newInstance('smtp.domeneshop.no', 587)
-				->setUsername('dragonevo1')
-				->setPassword('sDf47nQ5');
-			$this->_mailer = \Swift_Mailer::newInstance($transport);
-		}
-		return $this->_mailer;
-	}
 
 	/**
 	 * Index page
@@ -32,17 +18,6 @@ class Actions extends \caspar\core\Actions
 	 */
 	public function runIndex(Request $request)
 	{
-//		\application\entities\User::getB2DBTable()->create();
-//		$user = new \application\entities\User();
-//		$user->setUsername('zegenie');
-//		$user->setIsAdmin();
-//		$user->setPassword('pooWZLX1');
-//		$user->save();
-//		$user = new \application\entities\User();
-//		$user->setUsername('thondal');
-//		$user->setIsAdmin();
-//		$user->setPassword('elskerhelena88');
-//		$user->save();
 	}
 
 	public function runNotFound(Request $request)
@@ -108,7 +83,14 @@ class Actions extends \caspar\core\Actions
 	 */
 	public function runPlay(Request $request)
 	{
-		$this->forward403unless($this->getUser()->isAuthenticated());
+		if (!$this->getUser()->isAuthenticated()) {
+			return $this->forward($this->getRouting()->generate('home'));
+		}
+		if ($this->getUser()->getLastVersion() != $this->getResponse()->getVersion()) {
+			$this->changelog = true;
+		} else {
+			$this->changelog = false;
+		}
 		$this->getResponse()->setFullscreen();
 	}
 
@@ -140,6 +122,11 @@ class Actions extends \caspar\core\Actions
 	 */
 	public function runFaq(Request $request)
 	{
+		$this->cards = array(
+			'rutai' => \application\entities\tables\CreatureCards::getTable()->selectById(4),
+			'resistance' => \application\entities\tables\CreatureCards::getTable()->selectById(8),
+			'neutrals' => \application\entities\tables\CreatureCards::getTable()->selectById(12)
+			);
 	}
 
 	/**
@@ -148,6 +135,15 @@ class Actions extends \caspar\core\Actions
 	 * @param Request $request
 	 */
 	public function runChangelog(Request $request)
+	{
+	}
+
+	/**
+	 * "How to play" page
+	 *
+	 * @param Request $request
+	 */
+	public function runHowtoplay(Request $request)
 	{
 	}
 
@@ -211,6 +207,23 @@ class Actions extends \caspar\core\Actions
 					}
 					$options['attack'] = $attack;
 					$options['card'] = $card;
+					break;
+				case 'tellable_card_reward':
+					$template_name = 'admin/addcardreward';
+					$options['tellable_type'] = $request['tellable_type'];
+					$options['tellable_id'] = $request['tellable_id'];
+					break;
+				case 'tellable_card_opponent':
+					$template_name = 'admin/addcardopponent';
+					$options['tellable_type'] = $request['tellable_type'];
+					$options['tellable_id'] = $request['tellable_id'];
+					break;
+				case 'tellable_coordinates':
+					$template_name = 'admin/tellablecoordinates';
+					$options['tellable_type'] = $request['tellable_type'];
+					$options['tellable_id'] = $request['tellable_id'];
+					$options['parent_id'] = $request['parent_id'];
+					$options['parent_type'] = $request['parent_type'];
 					break;
 			}
 			if ($template_name !== null) {

@@ -1,6 +1,52 @@
 <?php $csp_response->setTitle(__('Dragon Evo - The Card Game')); ?>
 <?php include_template('main/profileleftmenu'); ?>
+<div id="levelup-popup" class="buy-popup levelup-popup fullpage_backdrop dark" style="display: none;">
+	<div class="swirl-dialog">
+		<img src="/images/swirl_top_right.png" class="swirl top-right">
+		<img src="/images/swirl_bottom_right.png" class="swirl bottom-right">
+		<img src="/images/swirl_bottom_left.png" class="swirl bottom-left">
+		<img src="/images/swirl_top_left.png" class="swirl top-left">
+		<h1>Level up card</h1>
+		<p id="levelup-disclaimer">
+			Leveling up this card will permanently increase its properties as indicated below. Please choose which parts of this card you want to level up.
+		</p>
+		<br style="clear: both;">
+		<ul class="levelup-buttons">
+			<li>
+				<a id="levelup-both-button" class="button button-lightblue buy-button" href="javascript:void(0);" onclick="if ($(this).hasClassName('disabled')) return; Devo.Main.Profile.levelUp('both');">Entire card</a>
+				<div class="levelup-cost">
+					<span id="levelup-cost-both"></span>XP<br>
+					Upgrades the cards base HP and EP, as well as all its attacks
+				</div>
+			</li>
+			<li>
+				<a id="levelup-attacks-button" class="button button-lightblue buy-button" href="javascript:void(0);" onclick="if ($(this).hasClassName('disabled')) return; Devo.Main.Profile.levelUp('attacks');">Only attacks</a>
+				<div class="levelup-cost">
+					<span id="levelup-cost-attacks"></span>XP<br>
+					Upgrades all the card's attacks
+				</div>
+			</li>
+			<li>
+				<a id="levelup-card-button" class="button button-lightblue buy-button" href="javascript:void(0);" onclick="if ($(this).hasClassName('disabled')) return; Devo.Main.Profile.levelUp('card');">Only base card</a>
+				<div class="levelup-cost">
+					<span id="levelup-cost-card"></span>XP<br>
+					Upgrades the cards base HP and EP
+				</div>
+			</li>
+			<li>
+				<a class="button button-silver dontbuy-button" href="javascript:void(0);" onclick="Devo.Main.Profile.dontLevelUp();">Don't level up anything</a>
+			</li>
+		</ul>
+		<div class="levelup-complete">
+			<a class="button button-orange buy-button" href="javascript:void(0);" onclick="Devo.Main.Profile.dontLevelUp();">Done!</a><br>
+		</div>
+		<div id="levelup-indicator" style="display: none;">
+			<img src="/images/spinning_20.gif">
+		</div>
+	</div>
+</div>
 <div class="content left" id="profile-cards-container">
+	<?php include_template('main/profiledetailstop'); ?>
 	<h2 style="margin-bottom: 10px;">
 		My card collection<br>
 		<span id="top-shelf-menu-container" style="display: none; font-weight: normal; font-size: 0.7em;"><a href="javascript:void(0);" onclick="Devo.Main.loadProfile();">&laquo; Back to profile</a></span>
@@ -8,36 +54,34 @@
 	<p>
 		These are your cards, collected throughout the game, including your starter pack cards.
 	</p>
+	<div class="button-group shelf-filter" style="position: relative;">
+		<button class="button button-silver" data-selected-filter="creature" id="card-category-button" onclick="Devo.Main.Helpers.popup(this);">Creature cards<span>&#9660;</span></button>
+		<div class="popup-menu" id="card-category-popup" style="left: 0; right: auto; width: 350px; z-index: 10;">
+			<ul>
+				<li><a href="javascript:void(0);" data-filter="creature" onclick="Devo.Main.filterCardsCategory('creature');">Creature cards</a></li>
+				<li><a href="javascript:void(0);" data-filter="potion_item" onclick="Devo.Main.filterCardsCategory('potion_item');">Potion cards</a></li>
+				<li><a href="javascript:void(0);" data-filter="equippable_item" onclick="Devo.Main.filterCardsCategory('equippable_item');">Item cards</a></li>
+			</ul>
+		</div>
+		<button class="button button-silver last" id="card-race-button" onclick="Devo.Main.Helpers.popup(this);"></button>
+		<div class="popup-menu" id="card-race-popup" style="left: 0; right: auto; width: 350px; z-index: 10;">
+			<ul>
+				<?php foreach ($factions as $faction => $description): ?>
+					<li><a href="javascript:void(0);" data-filter="<?php echo $faction; ?>" onclick="Devo.Main.filterCardsRace('<?php echo $faction; ?>');"><?php echo $description; ?></a></li>
+				<?php endforeach; ?>
+			</ul>
+		</div>
+	</div>
+	<br style="clear: both;">
 	<div class="shelf" id="cards-shelf">
 		<?php if (count($cards)): ?>
 			<ul>
 				<?php foreach ($cards as $card): ?>
-					<li>
-						<div onclick="Devo.Main.showCardActions('<?php echo $card->getUniqueId(); ?>');" style="cursor: pointer;">
+					<li <?php if (!($card->getCardType() == \application\entities\Card::TYPE_CREATURE)): ?>style="display: none;"<?php endif; ?>>
+						<div onclick="Devo.Main.showCardDetails('<?php echo $card->getUniqueId(); ?>', true);" style="cursor: pointer;" id="card_<?php echo $card->getUniqueId(); ?>_container">
 							<?php include_template('game/card', array('card' => $card, 'mode' => 'medium', 'ingame' => false)); ?>
 						</div>
-						<div id="card_<?php echo $card->getUniqueId(); ?>_actions" class="card_actions" style="display: none;">
-							<div class="card_actions_description">
-								<h3><?php echo $card->getName(); ?></h3>
-								<p><?php echo nl2br($card->getLongDescription()); ?></p>
-							</div>
-							<?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE): ?>
-								<div class="card_actions_attacks">
-									<h3>Attacks</h3>
-									<?php foreach ($card->getAttacks() as $attack): ?>
-										<h6><?php echo $attack->getName(); ?></h6>
-										<p><?php echo $attack->getDescription(); ?></p>
-										<div class="cardattack_damage"><?php include_template('game/cardattackdamage', compact('attack')); ?></div>
-									<?php endforeach; ?>
-								</div>
-							<?php endif; ?>
-							<br style="clear: both;">
-							<div class="card_actions_actions">
-								<h5>Actions</h5>
-								<a href="#"><img src="/images/glyph_fullscreen.png">Look at card</a>
-							</div>
-							<br style="clear: both;">
-						</div>
+						<?php include_template('main/carddetails', compact('card')); ?>
 					</li>
 				<?php endforeach; ?>
 			</ul>
@@ -52,3 +96,13 @@
 		<br style="clear: both;">
 	</div>
 </div>
+<script>
+	var first = true;
+	$$('.card.creature').each(function(card) {
+		if (first) {
+			Devo.Main._default_race_filter = card.dataset.faction;
+			first = false;
+		}
+	});
+	Devo.Main.filterCardsCategory('creature');
+</script>

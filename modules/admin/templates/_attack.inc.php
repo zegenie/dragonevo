@@ -69,7 +69,7 @@
 						</select>
 					</div>
 					<div>
-					<select name="attack_<?php echo $attack->getId(); ?>_requires_item_both" id="attack_<?php echo $attack->getId(); ?>_requires_item_both" style="margin-left: 140px;">
+					<select name="requires_item_both" id="attack_<?php echo $attack->getId(); ?>_requires_item_both" style="margin-left: 140px;">
 						<option value="1"<?php if ($attack->doesRequireBothItems()) echo ' selected'; ?>>and</option>
 						<option value="0"<?php if (!$attack->doesRequireBothItems()) echo ' selected'; ?>>or</option>
 					</select>

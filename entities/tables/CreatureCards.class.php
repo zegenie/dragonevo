@@ -26,6 +26,14 @@
 			return $this->count($crit);
 		}
 
+		public function getAllCards()
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('creature_cards.card_state', \application\entities\Card::STATE_TEMPLATE);
+			$crit->addOrderBy('creature_cards.cost', Criteria::SORT_DESC);
+			return $this->select($crit);
+		}
+
 		public function getNumberOfUserCards()
 		{
 			$crit = $this->getCriteria();
@@ -79,7 +87,7 @@
 		{
 			$crit = $this->getCriteria();
 			if ($user_id === null) {
-				$crit->addWhere('creature_cards.user_id', 0, Criteria::DB_NOT_EQUALS);
+				$crit->addWhere('creature_cards.card_state', \application\entities\Card::STATE_OWNED);
 			} else {
 				$crit->addWhere('creature_cards.user_id', $user_id);
 			}
@@ -105,6 +113,17 @@
 			$crit->addUpdate('creature_card.game_id', 0);
 			$crit->addUpdate('creature_card.is_in_play', false);
 			$this->doUpdate($crit);
+		}
+
+		public function resetAICards()
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('creature_cards.game_id', 0);
+			$ctn = $crit->returnCriterion('creature_cards.user_id', 21);
+			$ctn->addOr('creature_cards.user_id', 22);
+			$ctn->addOr('creature_cards.user_id', 23);
+			$crit->addWhere($ctn);
+			$this->doDelete($crit);
 		}
 
 	}
