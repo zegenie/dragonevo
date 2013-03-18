@@ -132,13 +132,15 @@
 		{
 			if (!is_object($this->_card)) {
 				$this->_card = tables\Cards::getTable()->getCardByUniqueId($this->_card_unique_id);
-				$this->_card->setGameCard($this);
-				$this->_card->setSlot($this->_slot);
-				$this->_card->setInGameEP($this->_in_game_ep);
-				$this->_card->setInGameHP($this->_in_game_health);
-				$this->_card->setIsInPlay($this->_is_in_play);
-				$this->_card->setPowerupSlot1($this->_powerup_slot_1);
-				$this->_card->setPowerupSlot2($this->_powerup_slot_2);
+				if ($this->_card instanceof Card) {
+					$this->_card->setGameCard($this);
+					$this->_card->setSlot($this->_slot);
+					$this->_card->setInGameEP($this->_in_game_ep);
+					$this->_card->setInGameHP($this->_in_game_health);
+					$this->_card->setIsInPlay($this->_is_in_play);
+					$this->_card->setPowerupSlot1($this->_powerup_slot_1);
+					$this->_card->setPowerupSlot2($this->_powerup_slot_2);
+				}
 			}
 			return $this->_card;
 		}

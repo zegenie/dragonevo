@@ -508,16 +508,20 @@
 			$game_cards = \application\entities\tables\GameCards::getTable()->getByUserIdAndGameId($user_id, $this->getId());
 			foreach ($game_cards as $game_card) {
 				$card = $game_card->getCard();
-				switch ($card->getCardType()) {
-					case Card::TYPE_CREATURE:
-						$creature[$card->getId()] = $card;
-						break;
-					case Card::TYPE_EQUIPPABLE_ITEM:
-						$equippable_item[$card->getId()] = $card;
-						break;
-					case Card::TYPE_EVENT:
-						$event[$card->getId()] = $card;
-						break;
+				if ($card instanceof Card) {
+					switch ($card->getCardType()) {
+						case Card::TYPE_CREATURE:
+							$creature[$card->getId()] = $card;
+							break;
+						case Card::TYPE_EQUIPPABLE_ITEM:
+							$equippable_item[$card->getId()] = $card;
+							break;
+						case Card::TYPE_EVENT:
+							$event[$card->getId()] = $card;
+							break;
+					}
+				} else {
+					$game_card->delete();
 				}
 			}
 

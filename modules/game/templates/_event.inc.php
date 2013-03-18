@@ -13,7 +13,7 @@
 			$is_current_player = ($data['player_id'] == $csp_user->getId());
 			switch ($event->getEventType()) {
 				case GameEvent::TYPE_RESTORE_HEALTH:
-					echo "{$data['attacked_card_name']} restores {$data['hp']['diff']} HP from {$data['attacking_card_name']}";
+					//echo "{$data['attacked_card_name']} restores {$data['hp']['diff']} HP from {$data['attacking_card_name']}";
 					break;
 				case GameEvent::TYPE_RESTORE_ENERGY:
 					echo "{$data['attacked_card_name']} restores {$data['ep']['diff']} EP from {$data['attacking_card_name']}";

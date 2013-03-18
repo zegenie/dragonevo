@@ -1,3 +1,8 @@
+<?php
+
+	$userfriends = $csp_user->getUserFriends();
+
+?>
 <div class="content left" id="left-menu-container">
 	<div class="menu-left">
 		<img src="/images/swirl_top_right.png" class="swirl top-right">
@@ -28,6 +33,24 @@
 					<input type="text" name="invite_email" id="invite_email_input" style="width: 160px; margin-right: 2px;"><input type="submit" id="invite_email_button" class="button button-standard" value="Invite">
 				</form>
 			</li>
+		</ul>
+		<h1 style="margin-top: 25px;">Friends</h1>
+		<ul id="online-friends">
+		</ul>
+		<ul id="offline-friends">
+			<?php include_template('main/userfriends', compact('userfriends')); ?>
+		</ul>
+		<ul id="friend-requests">
+			<?php include_template('main/friendrequests', compact('userfriends')); ?>
+		</ul>
+		<ul id="no-friends">
+			<?php if (!count($userfriends)): ?>
+				<li class="faded_out">
+					You don't have any friends.
+					<?php $encouragements = array('Sad face.', 'Awww.', 'Make some!', "Who needs 'em!", 'Pity.', 'Such a disgrace.', 'Oh well.', "There's always youtube.", 'All alone in a dangerous world.'); ?>
+					<?php echo $encouragements[array_rand($encouragements)]; ?>
+				</li>
+			<?php endif; ?>
 		</ul>
 	</div>
 </div>

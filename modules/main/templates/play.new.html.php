@@ -65,24 +65,25 @@
 </div>
 <div id="gamemenu-container" style="display: none;" class="fullpage_backdrop dark">
 	<a href="javascript:void(0);" onclick="Devo.Core.toggleFullscreen();" id="toggle-fullscreen-button" class="button button-silver button-icon" style="display: none;">Toggle fullscreen</a>
-	<div id="play-menu" class="new" style="margin-top: 0;">
-		<div id="menu-middle" class="menu-middle" style="margin: 20px 0;">
+	<div id="play-menu" class="new">
+		<div id="menu-middle" class="menu-middle">
 			<img src="/images/avatars/<?php echo $csp_user->getAvatar(); ?>" class="avatar">
 		</div>
 		<div id="play-menu-main">
 			<div id="play-menu-setup" <?php if ($csp_user->hasCharacter() && $csp_user->hasCards()): ?>style="display: none;"<?php endif; ?>>
-				<button class="button button-green multiplayer settings" onclick="Devo.Main.loadProfile();" id="show-profile-button">Create character</button>
-				<button class="button button-silver settings" onclick="$('settings-overlay').toggle();">Game settings</button>
+				<div class="menu-item menu-middleleft" id="show-profile-button"><a href="javascript:void(0);" onclick="Devo.Main.loadProfile();">Create character</a></div>
+				<div class="menu-item menu-middleleft"><a href="javascript:void(0);" onclick="$('settings-overlay').toggle();">Game settings</a></div>
 			</div>
 			<div id="play-menu-generic" <?php if (!$csp_user->hasCharacter() || !$csp_user->hasCards()): ?>style="display: none;"<?php endif; ?>>
-				<button class="button button-green quickmatch" id="toggle-playmenu-button" onclick="$('play-menu-main').toggle();$('play-menu-play').toggle();">Multiplayer</button>
 				<?php if ($csp_user->isAdmin()): ?>
-					<button class="button button-lightblue singleplayer" onclick="Devo.Main.loadAdventureUI();$('gamemenu-container').hide();" id="play-adventure-button">Singleplayer</button>
+					<div class="menu-item animated menu-middleright" id="play-adventure-button"><a href="javascript:void(0);" onclick="Devo.Main.loadAdventureUI();$('gamemenu-container').hide();">Play adventure</a></div>
 				<?php endif; ?>
-				<button class="button button-orange" onclick="Devo.Main.loadMarketUI();$('gamemenu-container').hide();" id="enter-market-button">Trade and buy</button>
-				<button class="button button-silver singleplayer" onclick="$('play-menu-main').toggle();$('play-menu-single').toggle();">Training</button>
-				<button class="button button-silver settings" onclick="Devo.Main.loadProfile();" id="show-profile-button">My profile</button>
-				<button class="button button-silver" style="display: none;" onclick="$('gamemenu-container').toggle();" id="close-menu-button">Close menu</button>
+				<div class="menu-item animated menu-middleleft" id="enter-lobby-button"><a href="javascript:void(0);" onclick="Devo.Main.loadLobby();$('gamemenu-container').hide();">Multiplayer</a></div>
+				<div class="menu-item animated menu-topleft" id="enter-market-button"><a href="javascript:void(0);" onclick="Devo.Main.loadMarketUI();$('gamemenu-container').hide();">Trade and buy</a></div>
+				<div class="menu-item animated menu-topright" id="toggle-playmenu-button"><a href="javascript:void(0);" onclick="$('play-menu-main').toggle();$('play-menu-play').toggle();">Custom games</a></div>
+				<div class="menu-item animated menu-bottomleft"><a href="javascript:void(0);" onclick="$('play-menu-main').toggle();$('play-menu-single').toggle();">Training</a></div>
+				<div class="menu-item animated menu-bottomright" id="show-profile-button"><a href="javascript:void(0);" onclick="Devo.Main.loadProfile();">My profile</a></div>
+				<div class="menu-item animated button-silver" style="display: none;" id="close-menu-button"><a href="javascript:void(0);" onclick="$('gamemenu-container').toggle();">Close menu</a></div>
 			</div>
 			<div id="play-menu-ingame" style="display: none;">
 				<button class="button button-green" onclick="$('gamemenu-container').toggle();">Resume game</button>
@@ -93,25 +94,19 @@
 				<?php endif; ?>
 				<button class="button button-silver exit" onclick="$('gamemenu-container').hide();Devo.Main.Helpers.Dialog.show('Flee the battle?', 'Quitting the game means you lose, the opponent is awarded battlepoints and XP, and you\'re left with nothing! Not even loot!<br><span class=\'faded_out\'>Actually, the part about loot isn\'t implemented yet, but suddenly it will be and then you\'ll be sorry!</span>', {yes: {click: function() {Devo.Game.flee(); }}, no: {click: function() {Devo.Main.Helpers.Dialog.dismiss();}}});" id="leave-game-button">Leave game</button>
 			</div>
-			<a href="<?php echo make_url('home'); ?>" class="button button-silver exit">Exit</a>
+			<?php /*<a href="<?php echo make_url('home'); ?>" class="button button-silver exit">Exit</a> */ ?>
 		</div>
 		<div id="play-menu-play" style="display: none;">
-			<button class="button button-green multiplayer" onclick="Devo.Main.loadLobby();$('gamemenu-container').hide();" id="enter-lobby-button">Hang out and play</button>
-			<button class="button button-silver play_friend" onclick="Devo.Main.Helpers.Backdrop.show('<?php echo make_url('get_backdrop_partial', array('key' => 'invitefriend')); ?>');Devo.Main.Helpers.popup($('play-quickmatch-button'));return false;">Challenge a friend</button>
-			<button class="button button-silver" id="quickmatch_button" onclick="Devo.Play.quickmatch();$('gamemenu-container').toggle();">Play quickmatch</button>
-			<button class="button button-silver custom_game disabled" onclick="Devo.Main.Helpers.Message.success('Not implemented yet', 'This feature has not yet been implemented');" disabled>Custom game</button>
-			<button class="button button-silver back" onclick="$('play-menu-play').toggle();$('play-menu-main').toggle();">&laquo;&nbsp;Back</button>
+			<button class="ui_button" id="quickmatch_button" onclick="Devo.Play.quickmatch();$('gamemenu-container').toggle();">Play quickmatch</button><br>
+			<button class="ui_button" onclick="Devo.Main.Helpers.Message.success('Not implemented yet', 'This feature has not yet been implemented');" disabled>Challenge a friend</button><br>
+			<button class="ui_button disabled" onclick="Devo.Main.Helpers.Message.success('Not implemented yet', 'This feature has not yet been implemented');" disabled>Custom game</button><br>
+			<button class="ui_button" onclick="$('play-menu-play').toggle();$('play-menu-main').toggle();">&laquo;&nbsp;Back</button>
 		</div>
 		<div id="play-menu-single" style="display: none;">
 			<a href="javascript:void(0);" onclick="Devo.Play.training(1);" class="button button-silver">Easy training</a>
 			<a href="javascript:void(0);" onclick="Devo.Play.training(2);" class="button button-silver">Skilled training</a>
 			<a href="javascript:void(0);" onclick="Devo.Play.training(3);" class="button button-silver">Expert training</a>
 			<button class="button button-silver back" onclick="$('play-menu-single').toggle();$('play-menu-main').toggle();">&laquo;&nbsp;Back</button>
-		</div>
-		<br style="clear: both;">
-		<div id="play-version">
-			<a href="<?php echo make_url('changelog'); ?>">Version alpha-<?php echo $csp_response->getVersion(); ?></a><br>
-			&copy; Magical Pictures / zegenie studios
 		</div>
 	</div>
 </div>

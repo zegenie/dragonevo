@@ -213,6 +213,9 @@ class Actions extends \application\lib\Actions
 					$options['tellable_type'] = $request['tellable_type'];
 					$options['tellable_id'] = $request['tellable_id'];
 					break;
+				case 'invitefriend':
+					$template_name = 'main/invitefriend';
+					break;
 				case 'tellable_card_opponent':
 					$template_name = 'admin/addcardopponent';
 					$options['tellable_type'] = $request['tellable_type'];

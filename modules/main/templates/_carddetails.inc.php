@@ -22,7 +22,7 @@
 			<?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE): ?>
 				<a href="javascript:void(0);" onclick="Devo.Main.Profile.toggleLevelup('<?php echo $card->getUniqueId(); ?>');" class="levelup-card" id="levelup_card_<?php echo $card->getUniqueId(); ?>"><img src="/images/glyph_levelup_green.png">Level up!</a>
 			<?php endif; ?>
-			<a href="javascript:void(0);" onclick="Devo.Main.Helpers.Message.success('This functionality is not implemented yet');" class="sell-card" id="sell_card_<?php echo $card->getUniqueId(); ?>"><img src="/images/glyph_sell.png">Sell card</a>
+			<a href="javascript:void(0);" onclick="Devo.Market.toggleSell('<?php echo $card->getUniqueId(); ?>');" class="sell-card" id="sell_card_<?php echo $card->getUniqueId(); ?>"><img src="/images/glyph_sell.png">Sell card</a>
 			<a href="javascript:void(0);" onclick="Devo.Main.Helpers.Message.success('This functionality is not implemented yet');" class="auction-card" id="auction_card_<?php echo $card->getUniqueId(); ?>"><img src="/images/glyph_auction.png">Put up for auction</a>
 		<?php endif; ?>
 		<a href="javascript:void(0);" onclick="Devo.Main.Helpers.Message.success('This functionality is not implemented yet');"><img src="/images/glyph_fullscreen.png">Look at card</a>

@@ -48,6 +48,11 @@
 			$this->games = $this->getUser()->getGames();			
 		}
 
+		public function componentInviteFriend()
+		{
+			$this->userfriends = $this->getUser()->getUserFriends();
+		}
+
 		public function componentProfileContent()
 		{
 			$greetings = array('Hello', 'Hey there', 'Hola', 'Bonjour', 'Ohoy', 'Heya', 'Hey', 'Welcome', 'There you are');

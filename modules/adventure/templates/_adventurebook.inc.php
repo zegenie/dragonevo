@@ -46,8 +46,8 @@
 				<span id="chapter-explanation">To earn these rewards, complete all quests in this chapter</span>
 				<span id="adventure-explanation">To earn these rewards, complete all quests in this adventure</span>
 				<span id="tellable-level-too-low" style="display: none;">You need to be at least level <span id="tellable-required-level"></span> before attempting this quest</span>
-				<span id="tellable-unavailable-message" style="display: none;">Complete the previous quest first</span>
-				<button class="button button-standard" id="start-tellable-button">Start quest</button>
+				<span id="tellable-unavailable-message" style="display: none;">Quest requirements not met</span>
+				<button class="ui_button" id="start-tellable-button">Start quest</button>
 			</div>
 		</div>
 	</div>

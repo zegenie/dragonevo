@@ -18,25 +18,27 @@
 		</div>
 	</p>
 	<?php if (count($cards)): ?>
-		<div class="button-group shelf-filter" id="pickcards-filter-container">
-			<button class="button button-silver button-pressed" data-filter="creature" onclick="Devo.Main.filterCards('creature');">Creature cards (<span id="picked-creature-cards">0</span>/<?php echo $game->getMaxCreatureCards(); ?>)</li>
-			<button class="button button-silver" data-filter="equippable_item" onclick="Devo.Main.filterCards('equippable_item');">Item cards (<span id="picked-item-cards">0</span>/<?php echo $game->getMaxItemCards(); ?>)</li>
-			<button class="button button-silver" data-filter="card" onclick="Devo.Main.filterCards('card');">All cards (<span id="picked-all-cards">0</span>/<?php echo $game->getMaximumCards(); ?>)</li>
-		</div>
 		<form action="<?php echo make_url('pick_cards', array('game_id' => $game->getId())); ?>" method="post" onsubmit="Devo.Game.pickCards();return false;" id="card-picker-form">
+			<div id="pickcards-filter-container">
+				<div class="button-group shelf-filter">
+					<button class="button button-silver button-pressed" data-filter="creature" onclick="Devo.Main.filterCards('creature');return false;">Creature cards (<span id="picked-creature-cards">0</span>/<?php echo $game->getMaxCreatureCards(); ?>)</button>
+					<button class="button button-silver" data-filter="equippable_item" onclick="Devo.Main.filterCards('equippable_item');return false;">Item cards (<span id="picked-item-cards">0</span>/<?php echo $game->getMaxItemCards(); ?>)</button>
+					<button class="button button-silver" data-filter="card" onclick="Devo.Main.filterCards('card');return false;">All cards (<span id="picked-all-cards">0</span>/<?php echo $game->getMaximumCards(); ?>)</button>
+				</div>
+				<div class="play_game_container" id="play-game-container-top">
+					<?php if (!$game->isScenario()): ?>
+						<button class="button button-silver card-picker" onclick="$('gamemenu-container').hide();Devo.Main.Helpers.Dialog.show('Flee the battle?', 'Quitting the game means you lose, the opponent is awarded battlepoints and XP, and you\'re left with nothing! Not even loot!<br><span class=\'faded_out\'>Actually, the part about loot isn\'t implemented yet, but suddenly it will be and then you\'ll be sorry!</span>', {yes: {click: function() {Devo.Game.flee(); }}, no: {click: function() {Devo.Main.Helpers.Dialog.dismiss();}}});return false;">Leave game</button>
+					<?php else: ?>
+						<button class="button button-silver card-picker" onclick="Devo.Game.destroyGame();Devo.Main.loadAdventureUI('part', <?php echo $game->getPartId(); ?>);return false;">Try later</button>
+					<?php endif; ?>
+					<input type="submit" value="<?php echo ($game->isScenario()) ? 'Start quest' : 'Play game'; ?>" class="button button-green play-button card-picker" disabled>
+				</div>
+			</div>
 			<?php foreach ($cards as $card): ?>
 				<?php if ($card->getGameId()) continue; ?>
 				<input type="hidden" name="cards[<?php echo $card->getUniqueId(); ?>]" value="<?php echo (int) ($game->hasCard($card) && $card->getGame()->getId() == $game->getId()); ?>" id="picked_card_<?php echo $card->getUniqueId(); ?>">
 				<input type="hidden" name="card_types[<?php echo $card->getId(); ?>]" value="<?php echo $card->getCardType(); ?>">
 			<?php endforeach; ?>
-			<div class="play_game_container" id="play-game-container-top">
-				<?php if (!$game->isScenario()): ?>
-					<button class="button button-silver card-picker" onclick="$('gamemenu-container').hide();Devo.Main.Helpers.Dialog.show('Flee the battle?', 'Quitting the game means you lose, the opponent is awarded battlepoints and XP, and you\'re left with nothing! Not even loot!<br><span class=\'faded_out\'>Actually, the part about loot isn\'t implemented yet, but suddenly it will be and then you\'ll be sorry!</span>', {yes: {click: function() {Devo.Game.flee(); }}, no: {click: function() {Devo.Main.Helpers.Dialog.dismiss();}}});return false;">Leave game</button>
-				<?php else: ?>
-					<button class="button button-silver card-picker" onclick="Devo.Game.destroyGame();Devo.Main.loadAdventureUI('part', <?php echo $game->getPartId(); ?>);">Try later</button>
-				<?php endif; ?>
-				<input type="submit" value="<?php echo ($game->isScenario()) ? 'Start quest' : 'Play game'; ?>" class="button button-green play-button card-picker" disabled>
-			</div>
 			<br style="clear: both;">
 			<div class="shelf cardpicker" id="pickcards-shelf">
 				<ul>

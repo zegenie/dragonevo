@@ -45,6 +45,43 @@
 		</div>
 	</div>
 </div>
+<div id="sell-popup" class="buy-popup fullpage_backdrop dark" style="display: none;">
+	<div class="swirl-dialog">
+		<img src="/images/swirl_top_right.png" class="swirl top-right">
+		<img src="/images/swirl_bottom_right.png" class="swirl bottom-right">
+		<img src="/images/swirl_bottom_left.png" class="swirl bottom-left">
+		<img src="/images/swirl_top_left.png" class="swirl top-left">
+		<h1>Buy card</h1>
+		<p id="sell-disclaimer">
+			If you sell this card, you will receive a gold amount, and the card will be removed from your deck.<br>
+			<u>There is no way to recover a sold card!</u><br>
+			<br>
+			<strong>Do you want to sell this card for <span id="sell-popup-cost"></span> gold?</strong>
+		</p>
+		<div class="buy-buttons">
+			<a class="button button-green buy-button" href="javascript:void(0);" onclick="Devo.Market.sell();">Yes, sell this card</a>
+			<a class="button button-silver dontbuy-button" href="javascript:void(0);" onclick="$('sell-popup').hide();">No</a>
+		</div>
+		<div id="sell-indicator" style="display: none;">
+			<img src="/images/spinning_20.gif">
+		</div>
+	</div>
+</div>
+<div id="sell-complete" class="buy-popup fullpage_backdrop dark" style="display: none;">
+	<div class="swirl-dialog">
+		<img src="/images/swirl_top_right.png" class="swirl top-right">
+		<img src="/images/swirl_bottom_right.png" class="swirl bottom-right">
+		<img src="/images/swirl_bottom_left.png" class="swirl bottom-left">
+		<img src="/images/swirl_top_left.png" class="swirl top-left">
+		<h1>An exchange of gold has happened</h1>
+		<p id="sell-complete-description">
+			Thank you for doing business with us! We will totally not use your card against you, ever.
+		</p>
+		<div class="buy-buttons">
+			<a class="button button-silver buy-button" href="javascript:void(0);" onclick="Devo.Market.dismissSellComplete();">OK, great!</a>
+		</div>
+	</div>
+</div>
 <div class="content left" id="profile-cards-container">
 	<?php include_template('main/profiledetailstop'); ?>
 	<h2 style="margin-bottom: 10px;">

@@ -53,7 +53,12 @@ var Devo = {
             Message: {}
         },
 		Login: {},
-		Profile: {}
+		Profile: {
+			Friends: {
+				loaded: false,
+				users: []
+			}
+		}
     },
 	Chat: {
 		Bubbles: []
@@ -272,7 +277,7 @@ Devo.Main.Helpers.Dialog.dismiss = function() {
 
 Devo.Main.Helpers.popup = function(element) {
 	var visible = $(element) && $(element).hasClassName('button-pressed');
-	$$('.button.button-pressed').each(function(popup) {
+	$$('.button-pressed').each(function(popup) {
 		$(popup).removeClassName('button-pressed');
 	});
 	if (!visible && $(element)) {
@@ -397,6 +402,7 @@ Devo.Main.Helpers.ajax = function(url, options) {
 Devo.Core._stop = function() {
 	Devo.Core.destroyGameListPoller();
 	Devo.Core.destroyInvitePoller();
+	Devo.Core.destroyFriendsPoller();
 	Devo.Core.destroyChatRoomPoller();
 	Devo.Core.destroyQuickmatchPoller();
 	Devo.Game.destroyGame();
@@ -407,7 +413,7 @@ Devo.Main.Helpers.loading = function() {
 	if (!$('fullpage_backdrop').visible()) {
 		$('loading-details').update('');
 		$('loading').show();
-		if ($('gamemenu-container')) $('gamemenu-container').hide();
+		if ($('gamemenu-container') && $('ui') && $('ui').visible()) $('gamemenu-container').hide();
 		$('fullpage_backdrop').appear({duration: 0.2});
 //		$$('body')[0].setStyle({'overflow': 'hidden'});
 	}
@@ -444,7 +450,7 @@ Devo.Main.Helpers.Backdrop.show = function(url) {
 Devo.Main.Helpers.Backdrop.reset = function() {
 	$$('body')[0].setStyle({'overflow': 'auto'});
 	$('fullpage_backdrop').fade({duration: 0.2});
-	Devo.Core._resizeWatcher();
+	Devo.Main._resizeWatcher();
 };
 
 Devo.Main.Helpers.tabSwitcher = function(element, visibletab) {
@@ -484,6 +490,70 @@ Devo.Main.Login.register = function(url)
 	});
 }
 
+Devo.Main.Profile.reloadFriendsList = function() {
+	Devo.Core.destroyFriendsPoller();
+};
+
+Devo.Main.Profile.addFriend = function(user_id, button) {
+	Devo.Main.Helpers.ajax(Devo.options['say_url'], {
+		additional_params: '&topic=add_friend&user_id=' + user_id,
+		loading: {
+			callback: function() {
+				var parent = $(button).up();
+				if (parent.hasClassName('userfriend-list-item')) {
+					parent.select('button').each(function(b) {
+						$(b).disable();
+					});
+				} else {
+					$(button).disable();
+				}
+				$(button).down('img').show();
+			}
+		},
+		success: {
+			callback: function(json) {
+				var parent = $(button).up();
+				if (parent.hasClassName('userfriend-list-item')) {
+					parent.down('div').remove();
+					parent.select('button').each(function(b) {
+						$(b).remove();
+					});
+					$('offline-friends').insert(parent.remove());
+				} else {
+					$(button).remove();
+					Devo.Main.Profile.reloadFriendsList();
+				}
+			}
+		}
+	});
+}
+
+Devo.Main.Profile.removeFriend = function(userfriend_id, button, usermode) {
+	var p = (usermode != undefined) ? 'user_id' : 'userfriend_id';
+	Devo.Main.Helpers.ajax(Devo.options['say_url'], {
+		additional_params: '&topic=remove_userfriend&' + p + '=' + userfriend_id,
+		loading: {
+			callback: function() {
+				var parent = $(button).up();
+				if (parent.hasClassName('userfriend-list-item')) {
+					parent.select('button').each(function(b) {
+						$(b).disable();
+					});
+				} else {
+					$(button).disable();
+				}
+				$(button).down('img').show();
+			}
+		},
+		success: {
+			callback: function(json) {
+				var parent = $(button).up();
+				parent.remove();
+			}
+		}
+	});
+}
+
 Devo.Main.Profile.inviteUser = function() {
 	if (!$('invite_email_button').hasClassName('disabled')) {
 		Devo.Main.Helpers.ajax(Devo.options['say_url'], {
@@ -497,6 +567,25 @@ Devo.Main.Profile.inviteUser = function() {
 				callback: function() {
 					$('invite_email_button').removeClassName('disabled');
 					$('invite_email').hide();
+				}
+			}
+		});
+	}
+}
+
+Devo.Main.Profile.inviteUserGame = function() {
+	if (!$('invite_game_email_button').hasClassName('disabled')) {
+		Devo.Main.Helpers.ajax(Devo.options['say_url'], {
+			additional_params: '&topic=invite_user&invite_email=' + $('invite_game_email_input').getValue() + '&invite_game=1',
+			loading: {
+				callback: function() {
+					$('invite_game_email_button').addClassName('disabled');
+				}
+			},
+			complete: {
+				callback: function() {
+					$('invite_game_email_button').removeClassName('disabled');
+					Devo.Main.Helpers.Backdrop.reset();
 				}
 			}
 		});
@@ -780,6 +869,61 @@ Devo.Core.Pollers.Callbacks.invitePoller = function() {
 	}
 };
 
+Devo.Core.Pollers.Callbacks.friendsPoller = function() {
+	if (!Devo.Core.Pollers.Locks.friendspoller) {
+		var params = '&for=online_friends';
+		if ($('online-friends')) params += '&detailed=true';
+		Devo.Main.Helpers.ajax(Devo.options['ask_url'], {
+			additional_params: params,
+			loading: {
+				callback: function() {
+					Devo.Core.Pollers.Locks.friendspoller = true;
+				}
+			},
+			success: {
+				callback: function(json) {
+					var friends = [];
+					if (json.online_friends) {
+						for (var d in json.online_friends) {
+							if (json.online_friends.hasOwnProperty(d)) {
+								friends.push(d);
+							}
+						}
+					}
+					Devo.Main.Profile.Friends.online_users = friends;
+					if (Devo.Main.Profile.Friends.loaded == false) {
+						Devo.Main.Profile.Friends.loaded = true;
+					} else {
+						
+					}
+					if ($('offline-friends')) {
+						$('offline-friends').childElements().each(function(userfriend) {
+							if (friends.indexOf(userfriend.dataset.userfriendId) !== '-1') {
+								userfriend.down('img').src = '/images/user-online.png';
+								$('online-friends').insert(userfriend.remove());
+							}
+						});
+						$('online-friends').childElements().each(function(userfriend) {
+							if (friends.indexOf(userfriend.dataset.userfriendId) == '-1') {
+								userfriend.down('img').src = '/images/user-offline.png';
+								$('offline-friends').insert(userfriend.remove());
+							}
+						});
+					}
+					if ($('friend-requests')) {
+						$('friend-requests').update(json.friend_requests);
+					}
+				}
+			},
+			complete: {
+				callback: function() {
+					Devo.Core.Pollers.Locks.friendspoller = false;
+				}
+			}
+		});
+	}
+};
+
 Devo.Core.Pollers.Callbacks.chatLinesPoller = function() {
 	if (!Devo.Core.Pollers.Locks.chatlinespoller) {
 		Devo.Main.Helpers.ajax(Devo.options['ask_url'], {
@@ -830,7 +974,13 @@ Devo.Core.Pollers.Callbacks.chatLinesPoller = function() {
 													chat_line += ' '+line['user_race'];
 												}
 
-												chat_line += '<br><div class="buttons"><button class="button button-standard" onclick="Devo.Play.invite('+user_id+', this);"><img src="/images/spinning_16.gif" style="display: none;">Challenge!</button></div></div>';
+												chat_line += '<br><div class="buttons"><button class="button button-standard" onclick="Devo.Play.invite('+user_id+', this);"><img src="/images/spinning_16.gif" style="display: none;">Challenge!</button>';
+												if (line['user_friends'] == false) {
+													chat_line += '<button class="button button-standard" onclick="Devo.Main.Profile.addFriend('+user_id+', this);"><img src="/images/spinning_16.gif" style="display: none;">Add friend</button>';
+												} else {
+													chat_line += '<button class="button button-standard" onclick="Devo.Main.Profile.removeFriend('+user_id+', this, true);"><img src="/images/spinning_16.gif" style="display: none;">Remove friend</button>';
+												}
+												chat_line += '</div></div>';
 											}
 											chat_line += (line['user_charactername']) ? line['user_charactername'] : line['user_username'];
 											chat_line += '&nbsp;<span class="chat_timestamp">('+line['posted_formatted_hours']+'<span class="date"> - '+line['posted_formatted_date']+'</span>)</div><div class="chat_line_content">'+Devo.Chat.emotify(line['text'])+'</div></div>';
@@ -933,7 +1083,14 @@ Devo.Core.Pollers.Callbacks.chatUsersPoller = function() {
 													user_line += ' '+user['race'];
 												}
 
-												user_line += '<br><div class="buttons"><button class="button button-standard" onclick="Devo.Play.invite('+user_id+', this);"><img src="/images/spinning_16.gif" style="display: none;">Challenge!</button></div></div>';
+												user_line += '<br><div class="buttons button-group">';
+												user_line += '<button class="button button-standard" onclick="Devo.Play.invite('+user_id+', this);"><img src="/images/spinning_16.gif" style="display: none;">Challenge</button>';
+												if (user['friends'] == false) {
+													user_line += '<button class="button button-standard" onclick="Devo.Main.Profile.addFriend('+user_id+', this);"><img src="/images/spinning_16.gif" style="display: none;">Add friend</button>';
+												} else {
+													user_line += '<button class="button button-standard" onclick="Devo.Main.Profile.removeFriend('+user_id+', this, true);"><img src="/images/spinning_16.gif" style="display: none;">Remove friend</button>';
+												}
+												user_line += '</div></div>';
 											}
 											user_line += (user['charactername']) ? user['charactername'] : user['username']+'</div></div>';
 											if (user['is_admin']) {
@@ -1070,6 +1227,18 @@ Devo.Core.destroyInvitePoller = function() {
 	Devo.Core.Pollers.Locks.invitepoller = undefined;
 }
 
+Devo.Core._initializeFriendsPoller = function(friends) {
+	Devo.Main.Profile.Friends.users = friends;
+	Devo.Core.Pollers.friendspoller = new PeriodicalExecuter(Devo.Core.Pollers.Callbacks.friendsPoller, 10);
+	Devo.Core.Pollers.Callbacks.friendsPoller();
+}
+
+Devo.Core.destroyFriendsPoller = function() {
+	if (Devo.Core.Pollers.friendspoller) Devo.Core.Pollers.friendspoller.stop();
+	Devo.Core.Pollers.friendspoller = undefined;
+	Devo.Core.Pollers.Locks.friendspoller = undefined;
+}
+
 Devo.Core._initializeChatRoomPoller = function() {
 	if ($('chat_rooms_joined')) {
 		if (Devo.Core.Pollers.chatlinespoller == undefined) Devo.Core.Pollers.chatlinespoller = new PeriodicalExecuter(Devo.Core.Pollers.Callbacks.chatLinesPoller, 4);
@@ -1110,6 +1279,7 @@ Devo.Core.destroyQuickmatchPoller = function() {
 Devo.Core.initialize = function(options) {
 	Devo.options = options;
 	Devo.Core._initializeInvitePoller();
+	Devo.Core._initializeFriendsPoller(options.friends);
 	Devo.Core._infocus = true;
 	Devo.Core._isOldTitle = true;
 	Devo.Core._titleBlinkInterval = undefined;
@@ -1405,6 +1575,7 @@ Devo.Game.flee = function() {
 					} else {
 						Devo.Main.removeGameFromList(Devo.Game._id);
 					}
+					console.log(json);
 					Devo.Main.Helpers.Dialog.dismiss();
 					Devo.Game.destroyGame();
 					if (json.is_adventure != undefined && json.is_adventure) {
@@ -3792,10 +3963,11 @@ Devo.Game.getStatistics = function() {
 		loading: {indicator: 'game_statistics_indicator'},
 		success: {
 			callback: function(json) {
+				console.log(json.stats);
 				$('statistics_hp').update(json.stats.hp);
 				$('statistics_cards').update(json.stats.cards);
-				$('statistics_gold').update(json.stats.gold);
-				$('statistics_xp').update(json.stats.xp);
+				if (json.stats.gold != undefined) $('statistics_gold').update(json.stats.gold);
+				if (json.stats.xp != undefined) $('statistics_xp').update(json.stats.xp);
 				if (json.stats.scenario != undefined) {
 					$('goto-lobby-button').hide();
 					$('goto-adventure-button').show();
@@ -3805,6 +3977,7 @@ Devo.Game.getStatistics = function() {
 				}
 				$('goto-buttons-container').show();
 				$('game_statistics').show();
+				console.log(json.stats);
 			}
 		}
 	});
@@ -3950,6 +4123,11 @@ Devo.Market.dismissBuyComplete = function() {
 	$('buy-complete').hide();
 }
 
+Devo.Market.dismissSellComplete = function() {
+	$('user-top-details').insert({top: $('user-gold').remove()});
+	$('sell-complete').hide();
+}
+
 Devo.Market.Effects.useGold = function(cost) {
 	var gg = $('user-gold-amount');
 	var gold = parseInt(gg.innerHTML);
@@ -3963,6 +4141,20 @@ Devo.Market.Effects.useGold = function(cost) {
 
 	if (gold != cost.to) {
 		gg.update(gold+'<div class="negative fadeOutUp diff animated">'+cost.diff+'</div>');
+		window.setTimeout(function() {
+			gg.update(cost.to);
+		}, 1000);
+	}
+}
+
+Devo.Market.Effects.getGold = function(cost) {
+	var gg = $('user-gold-amount');
+	var gold = parseInt(gg.innerHTML);
+	$('user-gold').dataset.amount = cost.to;
+	Devo._user_gold = cost.to;
+
+	if (gold != cost.to) {
+		gg.update(gold+'<div class="positive fadeInDown diff animated">'+cost.diff+'</div>');
 		window.setTimeout(function() {
 			gg.update(cost.to);
 		}, 1000);
@@ -4003,6 +4195,43 @@ Devo.Market.buy = function() {
 	});
 };
 
+Devo.Market.sell = function() {
+	var card_id = $('sell-popup').dataset.cardId;
+	Devo.Main.Helpers.ajax(Devo.options['say_url'], {
+		params: '&topic=sell_card&card_id='+card_id,
+		loading: {
+			callback: function() {
+				$('sell-popup').select('buy-button').each(Element.hide);
+				$('sell-indicator').show();
+			}
+		},
+		success: {
+			callback: function(json) {
+				$('sell-complete').select('.card').each(function (existing_card) {
+					existing_card.remove();
+				});
+				Devo.Main.showCardDetails(card_id, true);
+				$('card_'+card_id).remove();
+				$('card_'+card_id+'_details').remove();
+				$('sell-complete-description').insert({top: $('user-gold').remove()});
+				$('sell-popup').select('.card').each(function (existing_card) {
+					$('sell-complete-description').insert({before: existing_card.remove()});
+				});
+				$('sell-complete').show();
+				$('sell-popup').hide();
+				window.setTimeout(function() {
+					Devo.Market.Effects.getGold(json.cost);
+				}, 500);
+			}
+		},
+		complete: {
+			callback: function() {
+				$('sell-indicator').hide();
+			}
+		}
+	});
+};
+
 Devo.Market.toggleBuy = function(card_id) {
 	var card = $('card_' + card_id);
 	var cost = card.dataset.cost;
@@ -4019,6 +4248,39 @@ Devo.Market.toggleBuy = function(card_id) {
 	$$('buy-buttons').each(Element.show);
 	$('buy-popup').show();
 }
+
+Devo.Market.toggleSell = function(card_id) {
+	var card = $('card_' + card_id);
+	var cost = card.dataset.cost;
+	var card_clone = card.clone(true);
+	card_clone.id = card.id + '_clone';
+	card_clone.removeClassName('medium');
+	$('sell-popup').select('.card').each(function (existing_card) {
+		existing_card.remove();
+	});
+	$('sell-popup').dataset.cardId = card_id;
+	$('sell-disclaimer').insert({before: card_clone});
+	$('sell-popup-cost').update('<img src="/images/spinning_16.gif">');
+	$('sell-popup').dataset.cost = 0;
+	$('sell-popup').select('buy-button').each(function(b) {
+		b.show();
+		b.disable();
+	});
+	Devo.Market.getPrice(card_id);
+	$('sell-popup').show();
+}
+
+Devo.Market.getPrice = function(card_id) {
+	Devo.Main.Helpers.ajax(Devo.options['ask_url'], {
+		additional_params: '&for=card_price&card_id='+card_id,
+		success: {
+			callback: function(json) {
+				$('sell-popup-cost').update(json.cost);
+				$('sell-popup').dataset.cost = parseInt(json.cost);
+			}
+		}
+	});
+};
 
 Devo.Main.Profile.getLevelupCard = function() {
 	var card_id = $('levelup-popup').dataset.cardId;
@@ -4188,11 +4450,15 @@ Devo.Play.invite = function(user_id, button) {
 		},
 		success: {
 			callback: function(json) {
-				$('my_ongoing_games_none').removeClassName('animated fadeIn');
-				$('my_ongoing_games_none').addClassName('animated fadeOut');
-				window.setTimeout(function() {$('my_ongoing_games_none').hide();$('my_ongoing_games').insert(json.game);}, 1100);
-				window.setTimeout(function() {$('my_ongoing_games').childElements().last().addClassName('animated tada');}, 1200);
-				window.setTimeout(function() {$('my_ongoing_games').childElements().last().removeClassName('animated tada');}, 3000);
+				if ($('my_ongoing_games') != undefined) {
+					$('my_ongoing_games_none').removeClassName('animated fadeIn');
+					$('my_ongoing_games_none').addClassName('animated fadeOut');
+					window.setTimeout(function() {$('my_ongoing_games_none').hide();$('my_ongoing_games').insert(json.game);}, 1100);
+					window.setTimeout(function() {$('my_ongoing_games').childElements().last().addClassName('animated tada');}, 1200);
+					window.setTimeout(function() {$('my_ongoing_games').childElements().last().removeClassName('animated tada');}, 3000);
+				} else {
+					Devo.Main.Helpers.Backdrop.reset();
+				}
 			}
 		},
 		complete: {
@@ -4797,7 +5063,12 @@ Devo.Main.loadCardOpponents = function(td) {
 						$('tellable-card-opponent-cards').insert(card);
 						cc++;
 					});
-					if (cc <= 4) {
+					if (cc == 1) {
+						$('tellable-card-opponent-cards').select('.card').each(function(c) {
+							c.removeClassName('medium');
+							c.removeClassName('tiny');
+						})
+					} else if (cc <= 4) {
 						$('tellable-card-opponent-cards').select('.card').each(function(c) {
 							c.addClassName('medium');
 							c.removeClassName('tiny');
@@ -4901,7 +5172,11 @@ Devo.Main.showBook = function(tellable) {
 				celm += 'data-tellable-id="'+ct.dataset.tellableId+'">';
 				celm += '<h6>'+ct.dataset.title;
 				if (ct.hasClassName('completed')) celm += '<img src="/images/icon_ok_alternate.png">';
-				celm += '</h6>'+ct.dataset.excerpt+'</div>';
+				celm += '</h6>';
+				if (ct.dataset.requiredLevel > 0) {
+					celm += '<div class="requires-level">Minimum level '+ct.dataset.requiredLevel+'</div><br>';
+				}
+				celm += ct.dataset.excerpt+'</div>';
 				$('tellable-children-list').insert(celm);
 				window.setTimeout(function() {
 					if (ct.dataset.tellableType == 'chapter') {

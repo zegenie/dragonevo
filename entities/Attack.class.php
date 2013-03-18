@@ -862,6 +862,7 @@
 			$this->_cost_gold = $request['cost_gold'];
 			$this->_cost_magic = $request['cost_magic'];
 			$this->_attack_all = $request['attack_all'];
+			$this->_attack_points_restored = $request['hp_restored'];
 			$this->_attack_points_min = $request['hp_min'];
 			$this->_attack_points_max = $request['hp_max'];
 			$this->_repeat_rounds_min = $request['rep_min'];
@@ -1203,6 +1204,26 @@
 										'defence_bonus_cards' => $defence_bonus_cards
 										));
 				$this->getCard()->getGame()->addEvent($event);
+				if ($type == 'regular' && $this->_attack_points_restored > 0) {
+					$old_hp = $this->getCard()->getHP();
+					$hp = +ceil(($dmg / 100) * $this->_attack_points_restored);
+					$this->getCard()->setInGameHP($old_hp + $hp);
+					$this->getCard()->getGame()->addAffectedCard($this->getCard());
+
+					$event = new GameEvent();
+					$event->setEventType(GameEvent::TYPE_RESTORE_HEALTH);
+					$event->setEventData(array(
+											'player_id' => $this->getCard()->getUser()->getId(),
+											'attacking_card_id' => $this->getCard()->getUniqueId(),
+											'attacking_card_name' => $this->getCard()->getName(),
+											'attacked_card_id' => $this->getCard()->getUniqueId(),
+											'attacked_card_name' => $this->getCard()->getName(),
+											'attack_name' => $this->getName(),
+											'hp' => array('from' => $old_hp, 'to' => $this->getCard()->getInGameHP(), 'diff' => $hp)
+											));
+					$this->getCard()->getGame()->addEvent($event);
+				}
+
 			}
 		}
 

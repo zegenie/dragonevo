@@ -53,7 +53,7 @@
 				while ($row = $res->getNextRow()) {
 					$posted = $row->get('chat_lines.posted');
 					$user_id = $row->get('chat_lines.user_id');
-					array_unshift($lines, array('line_id' => $row->get('chat_lines.id'), 'user_id' => $user_id, 'user_username' => ($user_id) ? $row->get('users.username') : 'System', 'user_charactername' => ($user_id) ? $row->get('users.charactername') : 'System', 'user_race' => ($user_id && $row->get('users.race')) ? \application\entities\User::getRaceNameByRace($row->get('users.race')) : '', 'user_level' => ($user_id) ? $row->get('users.level') : 0, 'text' => htmlspecialchars($row->get('chat_lines.text'), ENT_NOQUOTES, 'utf-8'), 'posted' => $posted, 'posted_formatted_hours' => date('H:i', $posted), 'posted_formatted_date' => date('d/m/Y', $posted)));
+					array_unshift($lines, array('line_id' => $row->get('chat_lines.id'), 'user_id' => $user_id, 'user_username' => ($user_id) ? $row->get('users.username') : 'System', 'user_charactername' => ($user_id) ? $row->get('users.charactername') : 'System', 'user_race' => ($user_id && $row->get('users.race')) ? \application\entities\User::getRaceNameByRace($row->get('users.race')) : '', 'user_level' => ($user_id) ? $row->get('users.level') : 0, 'user_friends' => ($user_id) ? \caspar\core\Caspar::getUser()->isFriends($user_id) : false, 'text' => htmlspecialchars($row->get('chat_lines.text'), ENT_NOQUOTES, 'utf-8'), 'posted' => $posted, 'posted_formatted_hours' => date('H:i', $posted), 'posted_formatted_date' => date('d/m/Y', $posted)));
 				}
 			}
 

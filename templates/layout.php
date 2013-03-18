@@ -155,9 +155,14 @@
 		<?php endif; ?>
 		<?php if ($csp_user->isAuthenticated()): ?>
 			<script type="text/javascript">
+				var friends = {
+					<?php foreach ($csp_user->getUserfriends() as $userfriend): ?>
+						<?php if ($userfriend->isAccepted()) echo "{$userfriend->getFriend()->getId()}: '{$userfriend->getFriend()->getCharactername()}'\n"; ?>
+					<?php endforeach; ?>
+				};
 //				console.log(document.getElementsByTagName('body')[0]);
 				document.observe('dom:loaded', function() {
-					Devo.Core.initialize({location: '<?php echo $csp_routing->getCurrentRouteName(); ?>', title: '<?php echo $csp_response->getTitle(); ?>', ask_url: '<?php echo make_url('ask'); ?>?version=<?php echo str_replace('.', '_', $csp_response->getVersion()); ?>', say_url: '<?php echo make_url('say'); ?>?version=<?php echo str_replace('.', '_', $csp_response->getVersion()); ?>', user_id: <?php echo $csp_user->getId(); ?>, candrag: <?php echo ($csp_user->isDragDropEnabled()) ? 'true' : 'false'; ?>});
+					Devo.Core.initialize({location: '<?php echo $csp_routing->getCurrentRouteName(); ?>', title: '<?php echo $csp_response->getTitle(); ?>', ask_url: '<?php echo make_url('ask'); ?>?version=<?php echo str_replace('.', '_', $csp_response->getVersion()); ?>', say_url: '<?php echo make_url('say'); ?>?version=<?php echo str_replace('.', '_', $csp_response->getVersion()); ?>', user_id: <?php echo $csp_user->getId(); ?>, candrag: <?php echo ($csp_user->isDragDropEnabled()) ? 'true' : 'false'; ?>, friends: friends});
 				});
 			</script>
 		<?php endif; ?>

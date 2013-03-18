@@ -95,7 +95,7 @@
 					$room->ping($this->getUser());
 					$users = array();
 					foreach ($room->getUsers() as $user) {
-						$users[$user->getId()] = array('username' => $user->getUsername(), 'avatar' => $user->getAvatar(), 'charactername' => $user->getCharactername(), 'race' => $user->getRaceName(), 'user_id' => $user->getId(), 'is_admin' => $user->isAdmin(), 'level' => $user->getLevel());
+						$users[$user->getId()] = array('username' => $user->getUsername(), 'avatar' => $user->getAvatar(), 'charactername' => $user->getCharactername(), 'race' => $user->getRaceName(), 'user_id' => $user->getId(), 'is_admin' => $user->isAdmin(), 'level' => $user->getLevel(), 'friends' => $this->getUser()->isFriends($user));
 					}
 					$chat_users[$room_id] = array(
 						'users' => $users,
@@ -107,22 +107,74 @@
 			return $this->renderJSON(compact('chat_users'));
 		}
 
+		protected function _processAddFriend(Request $request)
+		{
+			try {
+				$user = \application\entities\tables\Users::getTable()->selectById((int) $request['user_id']);
+				if ($user instanceof \application\entities\User) {
+					if ($this->getUser()->isFriends($user)) {
+						$this->getResponse()->setHttpStatus(400);
+						return $this->renderJSON(array('add_friend' => 'failed', 'error' => 'This user is already your friend'));
+					} else {
+						$val = $this->getUser()->addFriend($user);
+					}
+				} else {
+					$this->getResponse()->setHttpStatus(400);
+					return $this->renderJSON(array('add_friend' => 'failed', 'error' => 'This user does not exist'));
+				}
+				$message = ($val === false) ? 'You are now friends' : 'Friend request sent successfully';
+				return $this->renderJSON(array('add_friend' => 'ok', 'message' => $message));
+			} catch (\Exception $e) {
+				$this->getResponse()->setHttpStatus(400);
+				return $this->renderJSON(array('error' => 'An error occured. Please try again in a little while.'));
+			}
+		}
+
+		protected function _processRemoveFriend(Request $request)
+		{
+			try {
+				$userfriend = null;
+				if ($request->hasParameter('user_id')) {
+					$userfriends = $this->getUser()->getUserFriends();
+					foreach ($userfriends as $uf) {
+						if (in_array($this->getUser()->getId(), array($uf->getUserId(), $uf->getFriendUserId()))) {
+							$userfriend = $uf;
+							break;
+						}
+					}
+				} else {
+					$userfriend = \application\entities\tables\UserFriends::getTable()->selectById((int) $request['userfriend_id']);
+				}
+				if ($userfriend instanceof \application\entities\UserFriend) {
+					if (in_array($this->getUser()->getId(), array($userfriend->getUserId(), $userfriend->getFriendUserId()))) {
+						$userfriend->delete();
+					} else {
+						$this->getResponse()->setHttpStatus(400);
+						return $this->renderJSON(array('remove_friend' => 'failed', 'error' => 'This user is not your friend'));
+					}
+				} else {
+					$this->getResponse()->setHttpStatus(400);
+					return $this->renderJSON(array('remove_friend' => 'failed', 'error' => 'This user does not exist'));
+				}
+				return $this->renderJSON(array('remove_friend' => 'ok', 'message' => 'You are no longer friends'));
+			} catch (\Exception $e) {
+				$this->getResponse()->setHttpStatus(400);
+				return $this->renderJSON(array('error' => 'An error occured. Please try again in a little while.'));
+			}
+		}
+
 		protected function _processInviteUser(Request $request)
 		{
 			try {
-				if (filter_var($request->getParameter('invite_email'), FILTER_VALIDATE_EMAIL)) {
+				$email_address = $request['invite_email'];
+				if (filter_var($email_address, FILTER_VALIDATE_EMAIL)) {
 					$invite_code = substr($this->getUser()->getPassword(), -10);
-					require_once CASPAR_APPLICATION_PATH . 'swift/lib/swift_required.php';
-					$message = \Swift_Message::newInstance('Dragon Evo: The Card Game invitation');
-					$message->setFrom('support@dragonevo.com', 'The Dragon Evo team');
-					$message->setTo($request->getParameter('invite_email'));
-					$plain_content = str_replace(array('%code%', '%user%'), array($invite_code, $this->getUser()->getCharactername()), file_get_contents(CASPAR_MODULES_PATH . 'main' . DS . 'templates' . DS . 'invitation_email.txt'));
-					$message->setBody($plain_content, 'text/plain');
-					$transport = \Swift_SmtpTransport::newInstance('smtp.domeneshop.no', 587)
-						->setUsername('dragonevo1')
-						->setPassword('sDf47nQ5');
-					$mailer = \Swift_Mailer::newInstance($transport);
-					$retval = $mailer->send($message);
+					$user = \application\entities\tables\Users::getTable()->getByEmail($email_address);
+					if ($user instanceof \application\entities\User) {
+						$this->_createGameInvite($user);
+					} else {
+						$this->_sendEmailGameInvite($this->getUser(), $email_address, $invite_code);
+					}
 					return $this->renderJSON(array('invite' => 'ok', 'message' => 'Invite sent successfully!'));
 				} else {
 					$this->getResponse()->setHttpStatus(400);
@@ -130,7 +182,7 @@
 				}
 			} catch (\Exception $e) {
 				$this->getResponse()->setHttpStatus(400);
-				return $this->renderJSON(array('invite' => 'failed', 'error' => 'An error occured. Pleaes try again in a little while.'));
+				return $this->renderJSON(array('invite' => 'failed', 'error' => 'An error occured. Please try again in a little while.'));
 			}
 		}
 
@@ -184,20 +236,26 @@
 			return $this->renderJSON(array('version' => $this->getResponse()->getVersion()));
 		}
 
+		protected function _createGameInvite(\application\entities\User $opponent)
+		{
+			$game = new \application\entities\Game();
+			$game->setPlayer($this->getUser());
+			$game->save();
+			$invite = $game->invite($opponent);
+			$game->save();
+			$invited = false;
+			if (true || $opponent->getLastSeen() < time() - 180) {
+				$this->_sendGameInvite($invite, $opponent, $this->getUser());
+				$invited = true;
+			}
+			return $invited;
+		}
+
 		protected function _processInvite(Request $request)
 		{
 			$user_id = $request['user_id'];
 			$user = \application\entities\tables\Users::getTable()->selectById($user_id);
-			$game = new \application\entities\Game();
-			$game->setPlayer($this->getUser());
-			$game->save();
-			$invite = $game->invite($user);
-			$game->save();
-			$invited = false;
-			if ($user->getLastSeen() < time() - 180) {
-				$this->_sendGameInvite($invite, $user, $this->getUser());
-				$invited = true;
-			}
+			$invited = $this->_createGameInvite($user);
 			return $this->renderJSON(array('sent_invite' => $invited, 'game' => $this->getTemplateHTML('lobby/game', compact('game'))));
 		}
 
@@ -268,6 +326,19 @@
 			return $this->renderJSON(array('game' => array('data' => $game_data, 'events' => $events)));
 		}
 
+		protected function _processGetOnlineFriends(Request $request)
+		{
+			$online_friends = array();
+			$userfriends = $this->getUser()->getUserFriends();
+			foreach ($userfriends as $userfriend) {
+				if ($userfriend->isAccepted() && $userfriend->getFriend()->getLastSeen() >= time() - 180) {
+					$online_friends[$userfriend->getId()] = true;
+				}
+			}
+			$friend_requests = $this->getTemplateHTML('main/friendrequests', compact('userfriends'));
+			return $this->renderJSON(compact('online_friends', 'friend_requests'));
+		}
+
 		protected function _processGetCard(Request $request)
 		{
 			try {
@@ -294,6 +365,41 @@
 				$xp = $this->getUser()->getXp();
 				list($xp_card, $xp_attacks) = $card->getLevelUpCost();
 				return $this->renderJSON(array('user_xp' => $xp, 'xp_card' => $xp_card, 'xp_attacks' => $xp_attacks, 'card' => $this->getTemplateHTML('game/card', array('card' => $card, 'ingame' => false, 'mode' => 'levelledup'))));
+			} catch (\Exception $e) {
+				$this->getResponse()->setHttpStatus(400);
+				return $this->renderJSON(array('error' => 'An error occured while trying to retrieve a card. Try reloading the page.'));
+			}
+		}
+
+		protected function _getCardSellValue($card)
+		{
+			$cost = ($card instanceof \application\entities\CreatureCard && $card->getUserCardLevel() > 1) ? round($card->getCost() * (1 + ($card->getUserCardLevel() / 10))) : $card->getCost();
+			$cost = round($cost * 0.75);
+			return $cost;
+		}
+
+		protected function _processGetCardPrice(Request $request)
+		{
+			try {
+				$card = \application\entities\tables\Cards::getTable()->getCardByUniqueId($request['card_id']);
+				$cost = $this->_getCardSellValue($card);
+				return $this->renderJSON(array('cost' => $cost));
+			} catch (\Exception $e) {
+				$this->getResponse()->setHttpStatus(400);
+				return $this->renderJSON(array('error' => 'An error occured while trying to retrieve a card. Try reloading the page.'));
+			}
+		}
+
+		protected function _processSellCard(Request $request)
+		{
+			try {
+				$card = \application\entities\tables\Cards::getTable()->getCardByUniqueId($request['card_id']);
+				$card->delete();
+				$cost = $this->_getCardSellValue($card);
+				$old_gold = $this->getUser()->getGold();
+				$this->getUser()->setGold($old_gold + $cost);
+				$this->getUser()->save();
+				return $this->renderJSON(array('cost' => array('from' => $old_gold, 'to' => $this->getUser()->getGold(), 'diff' => $cost)));
 			} catch (\Exception $e) {
 				$this->getResponse()->setHttpStatus(400);
 				return $this->renderJSON(array('error' => 'An error occured while trying to retrieve a card. Try reloading the page.'));
@@ -946,8 +1052,14 @@
 					case 'card':
 						return $this->_processGetCard($request);
 						break;
+					case 'online_friends':
+						return $this->_processGetOnlineFriends($request);
+						break;
 					case 'levelledup_card':
 						return $this->_processGetLevelledUpCard($request);
+						break;
+					case 'card_price':
+						return $this->_processGetCardPrice($request);
 						break;
 					case 'tellable_card_rewards':
 						return $this->_processGetTellableCardRewards($request);
@@ -1046,6 +1158,15 @@
 						break;
 					case 'start_part':
 						return $this->_processStartPart($request);
+						break;
+					case 'add_friend':
+						return $this->_processAddFriend($request);
+						break;
+					case 'remove_userfriend':
+						return $this->_processRemoveFriend($request);
+						break;
+					case 'sell_card':
+						return $this->_processSellCard($request);
 						break;
 					default:
 						return $this->renderJSON(array('topic' => $request['topic']));

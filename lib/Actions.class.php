@@ -39,6 +39,18 @@
 			$retval = $mailer->send($message);
 		}
 
+		protected function _sendEmailGameInvite(User $user, $email, $invite_code)
+		{
+			$mailer = $this->_getMailer();
+			$message = \Swift_Message::newInstance('Dragon Evo: The Card Game invitation');
+			$message->setFrom('support@dragonevo.com', 'The Dragon Evo team');
+			$message->setTo($email);
+			$filename = 'invitation_game_email.txt';
+			$plain_content = str_replace(array('%code%', '%user%'), array($invite_code, $user->getCharactername()), file_get_contents(CASPAR_MODULES_PATH . 'main' . DS . 'templates' . DS . $filename));
+			$message->setBody($plain_content, 'text/plain');
+			$retval = $mailer->send($message);
+		}
+
 		protected function _sendGameTurnEmail(Game $game, User $user, User $player)
 		{
 			$mailer = $this->_getMailer();

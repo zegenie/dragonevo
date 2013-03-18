@@ -250,6 +250,13 @@
 		protected $_games;
 
 		/**
+		 * Userfriend objects
+		 * 
+		 * @var array|UserFriend
+		 */
+		protected $_userfriends;
+
+		/**
 		 * This users password restore key
 		 *
 		 * @var string
@@ -1311,6 +1318,48 @@
 			}
 
 			return $this->_has_cards_in_faction[$faction];
+		}
+
+		public function getUserFriends()
+		{
+			if ($this->_userfriends === null) {
+				$this->_userfriends = tables\UserFriends::getTable()->getFriendsByUserId($this->getId());
+			}
+
+			return $this->_userfriends;
+		}
+
+		protected function _isFriends($user_id)
+		{
+			foreach ($this->getUserFriends() as $userfriend) {
+				if (in_array($user_id, array($userfriend->getFriendUserId(), $userfriend->getUserId()))) return true;
+			}
+
+			return false;
+		}
+
+		public function isFriends($user)
+		{
+			$user_id = ($user instanceof User) ? $user->getId() : $user;
+			return $this->_isFriends($user_id);
+		}
+
+		public function addFriend(User $user)
+		{
+			$userfriends = $this->getUserFriends();
+			foreach ($userfriends as $userfriend) {
+				if ($userfriend->getUserId() == $user->getId()) {
+					$userfriend->setAccepted(true);
+					$userfriend->save();
+					return false;
+				}
+			}
+
+			$uf = new \application\entities\UserFriend();
+			$uf->setFriendUser($user);
+			$uf->setUser($this);
+			$uf->save();
+			return true;
 		}
 
 	}

@@ -27,6 +27,13 @@
 			return $this->selectOne($crit);
 		}
 		
+		public function getByEmail($email)
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('users.email', $email);
+			return $this->selectOne($crit);
+		}
+
 		public function validateCode($code)
 		{
 			$crit = $this->getCriteria();
