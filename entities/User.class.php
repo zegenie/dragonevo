@@ -746,7 +746,7 @@
 				$this->_cards = array();
 				$cards = array();
 				foreach (array('Creature', 'EquippableItem', 'PotionItem', 'Event') as $card_type) {
-					$class_name = "\application\entities\\tables\\" . $card_type . "Cards";
+					$class_name = "\application\\entities\\tables\\" . $card_type . "Cards";
 					$cards += $class_name::getTable()->getByUserId($this->getID());
 				}
 				$this->_cards = $cards;
