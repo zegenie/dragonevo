@@ -6251,6 +6251,7 @@ li.card-slot {
 #invitefriends_popup ul li { margin-left: 20px; padding: 2px; }
 #offline-friends li a { color: #555; }
 #online-friends li a { color: #FFF; }
+#friend-requests li { height: 50px; }
 
 .userfriend-list-item { position: relative; }
 
