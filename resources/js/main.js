@@ -63,6 +63,9 @@ var Devo = {
 	Chat: {
 		Bubbles: []
 	},
+	Notifications: {
+		Messages: []
+	},
 	Admin: {
 		Cards: {},
 		Users: {}
@@ -494,6 +497,29 @@ Devo.Main.Profile.reloadFriendsList = function() {
 	Devo.Core.destroyFriendsPoller();
 };
 
+Devo.Main.Profile.show = function(user_id, button) {
+	Devo.Main.Helpers.ajax(Devo.options['ask_url'], {
+		additional_params: '&for=profile_info&user_id='+user_id,
+		loading: {
+			callback: function() {
+				if ($(button)) $(button).down('img').show();
+			}
+		},
+		success: {
+			callback: function(json) {
+				$('loading').hide();
+				$('fullpage_backdrop_content').update(json.profile_info);
+				$('fullpage_backdrop').show();
+			}
+		},
+		complete: {
+			callback: function() {
+				if ($(button)) $(button).down('img').hide();
+			}
+		}
+	});
+};
+
 Devo.Main.Profile.addFriend = function(user_id, button) {
 	Devo.Main.Helpers.ajax(Devo.options['say_url'], {
 		additional_params: '&topic=add_friend&user_id=' + user_id,
@@ -512,6 +538,7 @@ Devo.Main.Profile.addFriend = function(user_id, button) {
 		},
 		success: {
 			callback: function(json) {
+				$(button).down('img').hide();
 				var parent = $(button).up();
 				if (parent.hasClassName('userfriend-list-item')) {
 					parent.down('div').remove();
@@ -519,10 +546,10 @@ Devo.Main.Profile.addFriend = function(user_id, button) {
 						$(b).remove();
 					});
 					$('offline-friends').insert(parent.remove());
-				} else {
-					$(button).remove();
-					Devo.Main.Profile.reloadFriendsList();
 				}
+				$$('.userinfo-'+user_id).each(function(popup) {
+					popup.addclassname('user-friends');
+				});
 			}
 		}
 	});
@@ -547,8 +574,13 @@ Devo.Main.Profile.removeFriend = function(userfriend_id, button, usermode) {
 		},
 		success: {
 			callback: function(json) {
-				var parent = $(button).up();
-				parent.remove();
+				$(button).down('img').hide();
+				$$('.userfriend-list-item').each(function(uli) {
+					if (uli.dataset.userId == json.user_id) uli.remove();
+				});
+				$$('.userinfo-'+json.user_id).each(function(popup) {
+					popup.removeClassName('user-friends');
+				});
 			}
 		}
 	});
@@ -875,6 +907,7 @@ Devo.Core.Pollers.Callbacks.friendsPoller = function() {
 		if ($('online-friends')) params += '&detailed=true';
 		Devo.Main.Helpers.ajax(Devo.options['ask_url'], {
 			additional_params: params,
+			url_method: 'get',
 			loading: {
 				callback: function() {
 					Devo.Core.Pollers.Locks.friendspoller = true;
@@ -886,25 +919,35 @@ Devo.Core.Pollers.Callbacks.friendsPoller = function() {
 					if (json.online_friends) {
 						for (var d in json.online_friends) {
 							if (json.online_friends.hasOwnProperty(d)) {
-								friends.push(d);
+								var u = json.online_friends[d];
+								friends[parseInt(u.user_id)] = json.online_friends[d];
 							}
 						}
 					}
-					Devo.Main.Profile.Friends.online_users = friends;
 					if (Devo.Main.Profile.Friends.loaded == false) {
 						Devo.Main.Profile.Friends.loaded = true;
 					} else {
-						
+						Devo.Main.Profile.Friends.online_users.each(function(user) {
+							if (user != undefined) {
+								if (friends[user.user_id] == undefined) Devo.Notifications.add(user.charactername + ' went offline');
+							}
+						});
+						friends.each(function(user) {
+							if (user != undefined) {
+								if (Devo.Main.Profile.Friends.online_users[user.user_id] == undefined) Devo.Notifications.add(user.charactername + ' just came online');
+							}
+						});
 					}
-					if ($('offline-friends')) {
+					Devo.Main.Profile.Friends.online_users = friends;
+					if ($('friends-list-container')) {
 						$('offline-friends').childElements().each(function(userfriend) {
-							if (friends.indexOf(userfriend.dataset.userfriendId) !== '-1') {
+							if (friends[userfriend.dataset.userId] != undefined) {
 								userfriend.down('img').src = '/images/user-online.png';
 								$('online-friends').insert(userfriend.remove());
 							}
 						});
 						$('online-friends').childElements().each(function(userfriend) {
-							if (friends.indexOf(userfriend.dataset.userfriendId) == '-1') {
+							if (friends[userfriend.dataset.userId] == undefined) {
 								userfriend.down('img').src = '/images/user-offline.png';
 								$('offline-friends').insert(userfriend.remove());
 							}
@@ -952,7 +995,7 @@ Devo.Core.Pollers.Callbacks.chatLinesPoller = function() {
 											if (!$('chat_room_'+room_id+'_user_'+user_id)) {
 												needs_users_refresh = true;
 											}
-											var user_id = line['user_id'];
+											var user_id = parseInt(line['user_id']);
 											if (line_id > $('chat_room_'+room_id+'_since').getValue()) {
 												$('chat_room_'+room_id+'_since').setValue(line_id);
 											}
@@ -960,43 +1003,23 @@ Devo.Core.Pollers.Callbacks.chatLinesPoller = function() {
 											if (user_id == 0) chat_line += ' system';
 											chat_line += '"><div class="chat_nickname" onclick="$(\'chat_line_'+line_id+'\').toggleClassName(\'selected\');">';
 											if (user_id != Devo.options['user_id'] && user_id != 0) {
-												chat_line += '<div class="userinfo">';
-
-												if (line['user_charactername']) {
-													chat_line += line['user_charactername']+' ('+line['user_username']+')';
-												} else {
-													chat_line += 'Username: '+line['user_username'];
-												}
-
-												chat_line += '<br>Level '+line['user_level'];
-
-												if (line['user_race'] != '') {
-													chat_line += ' '+line['user_race'];
-												}
-
-												chat_line += '<br><div class="buttons"><button class="button button-standard" onclick="Devo.Play.invite('+user_id+', this);"><img src="/images/spinning_16.gif" style="display: none;">Challenge!</button>';
-												if (line['user_friends'] == false) {
-													chat_line += '<button class="button button-standard" onclick="Devo.Main.Profile.addFriend('+user_id+', this);"><img src="/images/spinning_16.gif" style="display: none;">Add friend</button>';
-												} else {
-													chat_line += '<button class="button button-standard" onclick="Devo.Main.Profile.removeFriend('+user_id+', this, true);"><img src="/images/spinning_16.gif" style="display: none;">Remove friend</button>';
-												}
-												chat_line += '</div></div>';
+												chat_line += Devo.Chat.getUserPopupHtml(user_id, line['user']);
 											}
-											chat_line += (line['user_charactername']) ? line['user_charactername'] : line['user_username'];
+											chat_line += (line['user']['charactername']) ? line['user']['charactername'] : line['user']['username'];
 											chat_line += '&nbsp;<span class="chat_timestamp">('+line['posted_formatted_hours']+'<span class="date"> - '+line['posted_formatted_date']+'</span>)</div><div class="chat_line_content">'+Devo.Chat.emotify(line['text'])+'</div></div>';
 											$('chat_room_'+room_id+'_lines').insert(chat_line);
 											$('chat_room_'+room_id+'_lines').scrollTop = $('chat_line_'+line_id).offsetTop;
-											if (parseInt(line['user_id']) > 0 && parseInt(line['user_id']) != Devo.Game.getUserId()) {
-												if (!is_empty && line['user_id'] != Devo.options['user_id'] && !$('chat_'+room_id+'_toggler').hasClassName('selected')) {
+											if (user_id > 0 && user_id != Devo.Game.getUserId()) {
+												if (!is_empty && user_id != Devo.options['user_id'] && !$('chat_'+room_id+'_toggler').hasClassName('selected')) {
 													$('chat_'+room_id+'_toggler').down('.notify').addClassName('visible');
 													if (room_id > 1) {
 														Devo.Chat.Bubbles.push({id: line_id, text: line['text']});
 														Devo.Chat._initializeBubblePoller();
 													}
 												}
-												if (!blinking && !Devo.Core._infocus && line['user_id'] > 0) {
+												if (!blinking && !Devo.Core._infocus && user_id > 0) {
 													clearInterval(Devo.Core._titleBlinkInterval);
-													Devo.options.alternate_title = ((line['user_charactername']) ? line['user_charactername'] : line['user_username']) + ' says ...';
+													Devo.options.alternate_title = ((line['user']['charactername']) ? line['user']['charactername'] : line['user']['username']) + ' says ...';
 													Devo.Core._titleBlinkInterval = setInterval(Devo.Core._blinkTitle, 2000);
 													blinking = true;
 												}
@@ -1031,6 +1054,35 @@ Devo.Core.Pollers.Callbacks.chatLinesPoller = function() {
 			}
 		});
 	}
+};
+
+Devo.Chat.getUserPopupHtml = function(user_id, user) {
+	var user_line = '<div class="userinfo userinfo-'+user_id;
+	if (user['friends'] == true) user_line += ' user-friends';
+	user_line += '">';
+
+	if (user['charactername']) {
+	user_line += user['charactername'];
+	} else {
+	user_line += 'Username: '+user['username'];
+	}
+
+	user_line += '<br>Level '+user['level'];
+
+	if (user['race'] != '') {
+	user_line += ' '+user['race'];
+	}
+
+	user_line += '<br><div class="buttons button-group">';
+	user_line += '<button class="ui_button" onclick="Devo.Main.Profile.show('+user_id+', this);"><img src="/images/spinning_16.gif" style="display: none;">Show profile</button>';
+	user_line += '<button class="ui_button" onclick="Devo.Play.invite('+user_id+', this);"><img src="/images/spinning_16.gif" style="display: none;">Challenge</button>';
+	user_line += '<button class="ui_button addfriend" ';
+	user_line += 'onclick="Devo.Main.Profile.addFriend('+user_id+', this);"><img src="/images/spinning_16.gif" style="display: none;">Add friend</button>';
+	user_line += '<button class="ui_button removefriend" ';
+	user_line += 'onclick="Devo.Main.Profile.removeFriend('+user_id+', this, true);"><img src="/images/spinning_16.gif" style="display: none;">Unfriend</button>';
+	user_line += '</div></div>';
+
+	return user_line;
 };
 
 Devo.Core.Pollers.Callbacks.chatUsersPoller = function() {
@@ -1069,28 +1121,7 @@ Devo.Core.Pollers.Callbacks.chatUsersPoller = function() {
 											user_line += '>';
 											user_line += '<div class="chat_avatar" style="background-image: url(\'/images/avatars/'+user['avatar']+'\');"></div>';
 											if (user_id != Devo.options['user_id'] && user_id != 0) {
-												user_line += '<div class="userinfo">';
-
-												if (user['charactername']) {
-													user_line += user['charactername']; //+' ('+user['username']+')';
-												} else {
-													user_line += 'Username: '+user['username'];
-												}
-												
-												user_line += '<br>Level '+user['level'];
-
-												if (user['race'] != '') {
-													user_line += ' '+user['race'];
-												}
-
-												user_line += '<br><div class="buttons button-group">';
-												user_line += '<button class="button button-standard" onclick="Devo.Play.invite('+user_id+', this);"><img src="/images/spinning_16.gif" style="display: none;">Challenge</button>';
-												if (user['friends'] == false) {
-													user_line += '<button class="button button-standard" onclick="Devo.Main.Profile.addFriend('+user_id+', this);"><img src="/images/spinning_16.gif" style="display: none;">Add friend</button>';
-												} else {
-													user_line += '<button class="button button-standard" onclick="Devo.Main.Profile.removeFriend('+user_id+', this, true);"><img src="/images/spinning_16.gif" style="display: none;">Remove friend</button>';
-												}
-												user_line += '</div></div>';
+												user_line += Devo.Chat.getUserPopupHtml(user_id, user);
 											}
 											user_line += (user['charactername']) ? user['charactername'] : user['username']+'</div></div>';
 											if (user['is_admin']) {
@@ -1279,6 +1310,7 @@ Devo.Core.destroyQuickmatchPoller = function() {
 Devo.Core.initialize = function(options) {
 	Devo.options = options;
 	Devo.Core._initializeInvitePoller();
+	Devo.Core._initializeNotificationsPoller();
 	Devo.Core._initializeFriendsPoller(options.friends);
 	Devo.Core._infocus = true;
 	Devo.Core._isOldTitle = true;
@@ -1678,6 +1710,7 @@ Devo.Main.loadMarketUI = function() {
 					Devo.Main.initializeLobby();
 					Devo.Main.setGameInterfacePart(json, function() {
 						Devo.Main.Helpers.finishLoading();
+						$('gamemenu-container').hide();
 						if ($('chat_1_container').visible()) Devo.Game.toggleChat(1);
 					});
 				}
@@ -1695,6 +1728,7 @@ Devo.Main.loadAdventureUI = function(tellable_type, tellable_id) {
 				tellable_type = 'part';
 			}
 		}
+		$('gamemenu-container').hide();
 		$('game-content-container').dataset.location = '#'+location;
 		window.location.hash = location;
 		Devo.Main.Helpers.loading();
@@ -2011,6 +2045,26 @@ Devo.Core.Pollers.Callbacks.gameDataPoller = function() {
 	}
 };
 
+Devo.Notifications.add = function(message) {
+	Devo.Notifications.Messages.push({message: message});
+};
+
+Devo.Core.Pollers.Callbacks.notificationsPoller = function() {
+	if (!Devo.Core.Pollers.Locks.notificationspoller && Devo.Notifications.Messages.size() > 0) {
+		Devo.Core.Pollers.Locks.notificationspoller = true;
+		var nc = $('notifications-container');
+		var line = Devo.Notifications.Messages.shift();
+		var d = new Date();
+		var tstamp = d.getTime();
+		var notification = '<div class="notification" id="notification-'+tstamp+'">'+line['message']+'</div>';
+		nc.insert(notification);
+		window.setTimeout(function() {
+			$('notification-'+tstamp).remove();
+			Devo.Core.Pollers.Locks.notificationspoller = false;
+		}, 6500);
+	}
+};
+
 Devo.Core.Pollers.Callbacks.bubblePoller = function() {
 	if (!Devo.Core.Pollers.Locks.bubblepoller && Devo.Chat.Bubbles.size() > 0) {
 		var avatar = $('avatar-opponent');
@@ -2160,6 +2214,20 @@ Devo.Chat.destroyBubblePoller = function() {
 Devo.Chat._initializeBubblePoller = function() {
 	if (Devo.Core.Pollers.bubblepoller == null || Devo.Core.Pollers.bubblepoller == undefined) {
 		Devo.Core.Pollers.bubblepoller = new PeriodicalExecuter(Devo.Core.Pollers.Callbacks.bubblePoller, 0.2);
+	}
+};
+
+Devo.Chat.destroyNotificationsPoller = function() {
+	Devo.Notifications.Messages = [];
+	if (Devo.Core.Pollers.notificationspoller) {
+		Devo.Core.Pollers.notificationspoller.stop();
+		Devo.Core.Pollers.notificationspoller = undefined;
+	}
+};
+
+Devo.Core._initializeNotificationsPoller = function() {
+	if (Devo.Core.Pollers.notificationspoller == null || Devo.Core.Pollers.notificationspoller == undefined) {
+		Devo.Core.Pollers.notificationspoller = new PeriodicalExecuter(Devo.Core.Pollers.Callbacks.notificationsPoller, 2);
 	}
 };
 

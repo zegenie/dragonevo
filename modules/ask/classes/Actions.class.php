@@ -107,12 +107,27 @@
 			return $this->renderJSON(compact('chat_users'));
 		}
 
+		protected function _processProfileInfo(Request $request)
+		{
+			try {
+				$user = \application\entities\tables\Users::getTable()->selectById((int) $request['user_id']);
+				if (!$user instanceof \application\entities\User) {
+					$this->getResponse()->setHttpStatus(400);
+					return $this->renderJSON(array('add_friend' => 'failed', 'error' => 'This user does not exist'));
+				}
+				return $this->renderJSON(array('profile_info' => $this->getTemplateHTML('main/profileinfo', compact('user'))));
+			} catch (\Exception $e) {
+				$this->getResponse()->setHttpStatus(400);
+				return $this->renderJSON(array('error' => 'An error occured. Please try again in a little while.'));
+			}
+		}
+
 		protected function _processAddFriend(Request $request)
 		{
 			try {
 				$user = \application\entities\tables\Users::getTable()->selectById((int) $request['user_id']);
 				if ($user instanceof \application\entities\User) {
-					if ($this->getUser()->isFriends($user)) {
+					if ($this->getUser()->isAcceptedFriends($user)) {
 						$this->getResponse()->setHttpStatus(400);
 						return $this->renderJSON(array('add_friend' => 'failed', 'error' => 'This user is already your friend'));
 					} else {
@@ -147,6 +162,7 @@
 				}
 				if ($userfriend instanceof \application\entities\UserFriend) {
 					if (in_array($this->getUser()->getId(), array($userfriend->getUserId(), $userfriend->getFriendUserId()))) {
+						$user_id = $userfriend->getFriend()->getId();
 						$userfriend->delete();
 					} else {
 						$this->getResponse()->setHttpStatus(400);
@@ -156,7 +172,7 @@
 					$this->getResponse()->setHttpStatus(400);
 					return $this->renderJSON(array('remove_friend' => 'failed', 'error' => 'This user does not exist'));
 				}
-				return $this->renderJSON(array('remove_friend' => 'ok', 'message' => 'You are no longer friends'));
+				return $this->renderJSON(array('remove_friend' => 'ok', 'user_id' => $user_id, 'message' => 'You are no longer friends'));
 			} catch (\Exception $e) {
 				$this->getResponse()->setHttpStatus(400);
 				return $this->renderJSON(array('error' => 'An error occured. Please try again in a little while.'));
@@ -330,9 +346,10 @@
 		{
 			$online_friends = array();
 			$userfriends = $this->getUser()->getUserFriends();
+			$online_userids = \application\entities\tables\ChatPings::getTable()->getUserIdsByRoomId(1);
 			foreach ($userfriends as $userfriend) {
-				if ($userfriend->isAccepted() && $userfriend->getFriend()->getLastSeen() >= time() - 180) {
-					$online_friends[$userfriend->getId()] = true;
+				if ($userfriend->isAccepted() && in_array($userfriend->getFriend()->getId(), $online_userids)) {
+					$online_friends[$userfriend->getId()] = array('user_id' => $userfriend->getFriend()->getId(), 'username' => $userfriend->getFriend()->getUsername(), 'charactername' => $userfriend->getFriend()->getCharactername());
 				}
 			}
 			$friend_requests = $this->getTemplateHTML('main/friendrequests', compact('userfriends'));
@@ -1018,6 +1035,9 @@
 				switch ($request['for']) {
 					case 'game_interface':
 						return $this->_processGameInterface($request);
+						break;
+					case 'profile_info':
+						return $this->_processProfileInfo($request);
 						break;
 					case 'game_topmenu':
 						return $this->_processGameTopMenu($request);

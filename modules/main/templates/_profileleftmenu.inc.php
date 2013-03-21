@@ -35,22 +35,24 @@
 			</li>
 		</ul>
 		<h1 style="margin-top: 25px;">Friends</h1>
-		<ul id="online-friends">
-		</ul>
-		<ul id="offline-friends">
-			<?php include_template('main/userfriends', compact('userfriends')); ?>
-		</ul>
-		<ul id="friend-requests">
-			<?php include_template('main/friendrequests', compact('userfriends')); ?>
-		</ul>
-		<ul id="no-friends">
-			<?php if (!count($userfriends)): ?>
-				<li class="faded_out">
-					You don't have any friends.
-					<?php $encouragements = array('Sad face.', 'Awww.', 'Make some!', "Who needs 'em!", 'Pity.', 'Such a disgrace.', 'Oh well.', "There's always youtube.", 'All alone in a dangerous world.'); ?>
-					<?php echo $encouragements[array_rand($encouragements)]; ?>
-				</li>
-			<?php endif; ?>
-		</ul>
+		<div id="friends-list-container">
+			<ul id="online-friends">
+			</ul>
+			<ul id="offline-friends">
+				<?php include_template('main/userfriends', compact('userfriends')); ?>
+			</ul>
+			<ul id="friend-requests">
+				<?php include_template('main/friendrequests', compact('userfriends')); ?>
+			</ul>
+			<ul id="no-friends">
+				<?php if (!count($userfriends)): ?>
+					<li class="faded_out">
+						You don't have any friends.
+						<?php $encouragements = array('Sad face.', 'Awww.', 'Make some!', "Who needs 'em!", 'Pity.', 'Such a disgrace.', 'Oh well.', "There's always youtube.", 'All alone in a dangerous world.'); ?>
+						<?php echo $encouragements[array_rand($encouragements)]; ?>
+					</li>
+				<?php endif; ?>
+			</ul>
+		</div>
 	</div>
 </div>

@@ -1338,10 +1338,25 @@
 			return false;
 		}
 
+		protected function _isAcceptedFriends($user_id)
+		{
+			foreach ($this->getUserFriends() as $userfriend) {
+				if (in_array($user_id, array($userfriend->getFriendUserId(), $userfriend->getUserId())) && $userfriend->isAccepted()) return true;
+			}
+
+			return false;
+		}
+
 		public function isFriends($user)
 		{
 			$user_id = ($user instanceof User) ? $user->getId() : $user;
 			return $this->_isFriends($user_id);
+		}
+
+		public function isAcceptedFriends($user)
+		{
+			$user_id = ($user instanceof User) ? $user->getId() : $user;
+			return $this->_isAcceptedFriends($user_id);
 		}
 
 		public function addFriend(User $user)

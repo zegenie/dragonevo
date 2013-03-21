@@ -1253,6 +1253,8 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 #user_level .xp { font-size: 1.9em; font-weight: normal; }
 .profile .statistics { list-style: none; padding: 0; margin: 0; }
 #profile-container { margin-top: 20px; }
+#game-events-button { display: none !important; }
+#profile-menu-strip.in-game #game-events-button { display: inline-block !important; }
 #left-menu-container { position: relative; width: 280px; }
 #left-menu-container .menu-left { position: fixed; top: 40px; width: 250px; left: 40px; }
 #profile-skills-train-button-container { position: fixed; top: 140px; right: 20px; }
@@ -5247,22 +5249,32 @@ li.card-slot {
 }
 .userinfo {
 	display: none;
-	width: 200px;
+	width: 300px;
 	height: 90px;
 	z-index: 10;
 	position: absolute;
-	background-color: rgba(255, 255, 255, 0.8);
-	border: 1px solid rgba(100, 100, 100, 0.6);
-	box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+	background-color: rgba(0, 0, 0, 0.8);
+	border: 1px solid rgba(0, 0, 0, 0.9);
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 	border-radius: 5px;
 	padding: 10px;
-	color: rgba(0, 0, 0, 0.8);
-	left: -20px;
+	color: #CBB66F;
+	right: 0;
 	font-size: 1.1em;
 	font-family: 'Amaranth';
 	font-weight: normal;
 	top: 18px;
 	cursor: default;
+}
+#userprofile_popup p {
+	font-size: 1.2em;
+	margin: 10px 0 15px 0;
+	padding: 0 5px;
+}
+#userprofile_popup .ui_button {
+	font-size: 0.9em;
+	font-weight: normal;
+	line-height: 14px !important;
 }
 .chat_room_lines .userinfo {
 	left: 0;
@@ -5271,10 +5283,17 @@ li.card-slot {
 	font-size: 1.2em;
 	font-weight: bold;
 }
+.buttons .addfriend { display: inline-block; }
+.user-friends .buttons .addfriend { display: none; }
+.buttons .removefriend { display: none; }
+.user-friends .buttons .removefriend { display: inline-block; }
 .userinfo .buttons {
 	position: absolute;
 	bottom: 5px;
 	right: 5px;
+}
+.userinfo .buttons .ui_button {
+	line-height: 14px !important;
 }
 .selected .userinfo {
 	display: block;
@@ -6209,6 +6228,24 @@ li.card-slot {
 
 #invitefriends_popup ul { list-style: none; margin: 0; padding: 0; }
 #invitefriends_popup ul li { margin-left: 20px; padding: 2px; }
-#offline-friends li { color: #555; }
+#offline-friends li a { color: #555; }
+#online-friends li a { color: #FFF; }
 
 .userfriend-list-item { position: relative; }
+
+.notification {
+	position: fixed;
+	top: 15px;
+	right: 15px;
+	color: #FFF;
+	background-color: rgba(0, 0, 0, 0.8);
+	border: 1px solid rgba(0, 0, 0, 0.9);
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+	min-width: 200px;
+	padding: 15px;
+	text-align: right;
+	font-family: 'Open Sans';
+	z-index: 1000001;
+	border-radius: 10px;
+	font-size: 0.8em;
+}

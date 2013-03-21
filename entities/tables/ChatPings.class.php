@@ -95,7 +95,7 @@
 			return $this->doCount($crit);
 		}
 
-		public function getUsersByRoomId($room_id)
+		public function getUserIdsByRoomId($room_id)
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere('chat_pings.room_id', $room_id);
@@ -109,11 +109,18 @@
 				}
 			}
 
+			return $user_ids;
+		}
+		
+		public function getUsersByRoomId($room_id)
+		{
+			$user_ids = $this->getUserIdsByRoomId($room_id);
+
 			$crit = Users::getTable()->getCriteria();
 			$crit->addWhere('users.id', $user_ids, Criteria::DB_IN);
 			$users = Users::getTable()->select($crit);
 
 			return $users;
 		}
-		
+
 	}

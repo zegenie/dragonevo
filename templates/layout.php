@@ -149,6 +149,8 @@
 					Please report the following error:
 				</div>
 			</div>
+			<div id="notifications-container">
+			</div>
 			<div id="fullscreen-container">
 				<?php echo $content; ?>
 			</div>

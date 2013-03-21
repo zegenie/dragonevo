@@ -17,11 +17,12 @@
 				<div class="popup-menu" style="bottom: 25px; left: 85px; right: auto;">
 					<ul>
 						<li><a href="javascript:void(0);" onclick="Devo.Main.Helpers.Backdrop.show('<?php echo make_url('get_backdrop_partial', array('key' => 'invitefriend')); ?>');Devo.Main.Helpers.popup($('play-quickmatch-button'));return false;">Invite a friend</a></li>
-						<li><a href="javascript:void(0);" onclick="Devo.Play.quickmatch();return false;">Play a quickmatch</a></li>
+						<li><a href="javascript:void(0);" onclick="Devo.Play.quickmatch();Devo.Main.Helpers.popup($('play-quickmatch-button'));return false;">Play a random opponent</a></li>
+						<li><a href="javascript:void(0);" onclick="Devo.Main.loadAdventureUI();Devo.Main.Helpers.popup($('play-quickmatch-button'));return false;">Singleplayer adventure</a></li>
 					</ul>
 				</div>
 				<li id="chat_1_toggler" class="ui_button" onclick="Devo.Game.toggleChat(1);">Lobby<span class="notify"> *</span></li>
-				<li onclick="Devo.Game.toggleEvents();" style="display: none;" class="ui_button toggle-events-button" id="game-events-button">Game events</li>
+				<li onclick="Devo.Game.toggleEvents();" class="ui_button toggle-events-button" id="game-events-button">Game events</li>
 			</ul>
 		</div>
 	</div>
