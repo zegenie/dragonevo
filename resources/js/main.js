@@ -95,7 +95,7 @@ var Devo = {
 		16: 'poison',
 		17: 'ranged'
 	},
-	debug: true
+	debug: false
 }
 
 Devo.Chat.emoticons = {
@@ -1643,17 +1643,18 @@ Devo.Main.initializeLobby = function() {
 Devo.Game._uninitializeGameChat = function(room_id) {
 	Devo.Chat.leaveRoom(room_id);
 	var toggler = $('chat_'+room_id+'_toggler');
-        var container = $('chat_'+room_id+'_container');
+	var container = $('chat_'+room_id+'_container');
 	if (container) container.remove();
-        if (toggler) {
-            toggler.addClassName('animated fadeOutUp');
-            window.setTimeout(function() {
-                    toggler.remove();
-            }, 1000);
-        }
+	if (toggler) {
+		toggler.addClassName('animated fadeOutUp');
+		window.setTimeout(function() {
+				toggler.remove();
+		}, 1000);
+	}
 }
 
 Devo.Game._initializeGameChat = function(room_id) {
+	Devo.Game._room_id = room_id;
 	if ($('chat_'+room_id+'_toggler')) return;
 
 	var toggler = '<li id="chat_'+room_id+'_toggler" data-room-id="'+room_id+'" onclick="Devo.Game.toggleChat('+room_id+');" class="ui_button">Game chat<span class="notify"> *</span></li>';
@@ -3938,18 +3939,20 @@ Devo.Game.togglePotions = function() {
 };
 
 Devo.Game.toggleEvents = function() {
-	if ($('game_events').hasClassName('visible')) {
-		$('game_events').toggleClassName('fadeIn');
-		$('game_events').toggleClassName('fadeOut');
-		window.setTimeout( function() {
-			$('game_events').toggleClassName('visible');
-		}, 1000);
-	} else {
-		$('game_events').toggleClassName('visible');
-		window.setTimeout( function() {
+	if ($('game_events')) {
+		if ($('game_events').hasClassName('visible')) {
 			$('game_events').toggleClassName('fadeIn');
 			$('game_events').toggleClassName('fadeOut');
-		}, 100);
+			window.setTimeout( function() {
+				$('game_events').toggleClassName('visible');
+			}, 1000);
+		} else {
+			$('game_events').toggleClassName('visible');
+			window.setTimeout( function() {
+				$('game_events').toggleClassName('fadeIn');
+				$('game_events').toggleClassName('fadeOut');
+			}, 100);
+		}
 	}
 };
 

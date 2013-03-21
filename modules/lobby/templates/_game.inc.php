@@ -21,6 +21,10 @@
 	<button class="ui_button button-ok" onclick="Devo.Play.cancelGame(<?php echo $game->getId(); ?>);return false;" style="<?php if ($game->isInvitationConfirmed()) echo 'display: none;'; ?>"><img src="/images/spinning_16.gif" style="display: none;">OK</button>
 	<div class="versus_player">
 		<?php if ($game->getOpponent()->isAI()) echo 'Training '; ?>versus<br>
-		<?php echo $game->getUserOpponent()->getCharactername(); ?>
+		<?php if ($game->getOpponent()->isAI()): ?>
+			<?php echo $game->getUserOpponent()->getCharactername(); ?>
+		<?php else: ?>
+			<a href="javascript:void(0);" onclick="Devo.Main.Profile.show(<?php echo $game->getUserOpponentId(); ?>);"><?php echo $game->getUserOpponent()->getCharactername(); ?></a>
+		<?php endif; ?>
 	</div>
 </li>

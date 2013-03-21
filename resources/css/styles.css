@@ -550,7 +550,7 @@ h6 {
 	left: -15px;
 }*/
 .border-dialog { padding: 5px 10px; margin: 0; background: transparent; border: none; position: relative; }
-.border-dialog .background-underlay { z-index: 0; padding: 0; margin: 0; border: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.5; background: url('/images/blue_background.png') repeat top left; }
+.border-dialog .background-underlay { z-index: 0; padding: 0; margin: 0; border: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.7; background-color: rgba(60, 75, 82, 0.8); }
 .border-dialog .dialog-content { z-index: 1; }
 .border-dialog .border { position: absolute; z-index: 10; }
 .border.top-left { top: -5px; left: -5px; }
@@ -1253,8 +1253,6 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 #user_level .xp { font-size: 1.9em; font-weight: normal; }
 .profile .statistics { list-style: none; padding: 0; margin: 0; }
 #profile-container { margin-top: 20px; }
-#game-events-button { display: none !important; }
-#profile-menu-strip.in-game #game-events-button { display: inline-block !important; }
 #left-menu-container { position: relative; width: 280px; }
 #left-menu-container .menu-left { position: fixed; top: 40px; width: 250px; left: 40px; }
 #profile-skills-train-button-container { position: fixed; top: 140px; right: 20px; }
@@ -4557,13 +4555,13 @@ li.card-slot {
 	transition: margin 2s ease-in-out;
 }
 .profile_menu.in-game .quickmatch-button {
-	display: none;
+	display: none !important;
 }
 .profile_menu .strip .toggle-events-button {
-	display: none;
+	display: none !important;
 }
 .profile_menu.in-game .toggle-events-button {
-	display: inline-block;
+	display: inline-block !important;
 }
 .menu_glow {
 	border: 2px solid rgba(255, 255, 255, 0.9);
@@ -4645,9 +4643,12 @@ li.card-slot {
 	opacity: 0.3;
 }
 .ui_button:hover {
+	color: #FFF;
 	box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.6);
 }
 .ui_button:active {
+	background: url('/images/ui_button_small_repeat.png') repeat left top;
+	opacity: 0.9;
 	box-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
 }
 .ui_button:before {
@@ -4971,6 +4972,11 @@ li.card-slot {
 	text-overflow: ellipsis;
 	overflow: hidden;
 }
+.my_games li .versus_player a {
+	color: #FFF;
+	font-family: 'Amaranth';
+	font-size: inherit;
+}
 .my_games li .versus_player {
 	position: absolute;
 }
@@ -5145,7 +5151,7 @@ li.card-slot {
 	padding: 0;
 	position: relative;
 	text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.6);
-	font-family: 'Calligraffitti';
+	font-family: 'Open Sans';
 }
 .chat_room header {
 	position: absolute;
@@ -5168,7 +5174,7 @@ li.card-slot {
 	position: absolute;
 	right: 0;
 	top: 7px;
-	font-size: 1.05em;
+	font-size: 0.9em;
 	font-weight: bold;
 	width: 200px;
 	color: #FFF;
@@ -5253,9 +5259,9 @@ li.card-slot {
 	height: 90px;
 	z-index: 10;
 	position: absolute;
-	background-color: rgba(0, 0, 0, 0.8);
+	background-color: rgba(0, 0, 0, 0.85);
 	border: 1px solid rgba(0, 0, 0, 0.9);
-	box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
 	border-radius: 5px;
 	padding: 10px;
 	color: #CBB66F;
@@ -5268,8 +5274,18 @@ li.card-slot {
 }
 #userprofile_popup p {
 	font-size: 1.2em;
+	font-weight: normal;
+	line-height: 1.1em;
 	margin: 10px 0 15px 0;
 	padding: 0 5px;
+}
+#userprofile_popup p strong {
+	font-style: italic;
+}
+#userprofile_popup .buttons {
+	position: absolute;
+	top: 5px;
+	right: 5px;
 }
 #userprofile_popup .ui_button {
 	font-size: 0.9em;
@@ -5327,13 +5343,14 @@ li.card-slot {
 	font-size: 1em;
 	font-weight: normal;
 	line-height: 1.1em;
-	padding: 3px 0 10px 5px;
+	padding: 3px 0 5px 5px;
 	color: #FFF;
 	text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
 	position: relative;
 }
 .chat_room_lines .chat_line .chat_line_content {
 	clear: both;
+	font-size: 0.8em;
 }
 
 @-webkit-keyframes loading {

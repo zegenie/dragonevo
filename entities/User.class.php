@@ -79,6 +79,54 @@
 		protected $_realname = '';
 
 		/**
+		 * User age
+		 *
+		 * @Column(type="integer", length=10)
+		 * @var string
+		 */
+		protected $_age = null;
+
+		/**
+		 * Whether to only show age to friends
+		 *
+		 * @Column(type="boolean", deafult=true)
+		 * @var boolean
+		 */
+		protected $_age_show_only_friends = true;
+
+		/**
+		 * User location
+		 *
+		 * @Column(type="string", length=200)
+		 * @var string
+		 */
+		protected $_location = null;
+
+		/**
+		 * Whether to only show location to friends
+		 *
+		 * @Column(type="boolean", deafult=true)
+		 * @var boolean
+		 */
+		protected $_location_show_only_friends = true;
+
+		/**
+		 * User bio
+		 *
+		 * @Column(type="text")
+		 * @var string
+		 */
+		protected $_bio = null;
+
+		/**
+		 * Whether to only show bio to friends
+		 *
+		 * @Column(type="boolean", deafult=true)
+		 * @var boolean
+		 */
+		protected $_bio_show_only_friends = true;
+
+		/**
 		 * User email
 		 *
 		 * @Column(type="string", length=250)
@@ -1376,5 +1424,66 @@
 			$uf->save();
 			return true;
 		}
+
+		public function getAge()
+		{
+			return $this->_age;
+		}
+
+		public function setAge($age)
+		{
+			$this->_age = $age;
+		}
+
+		public function getAgeShowOnlyFriends()
+		{
+			return $this->_age_show_only_friends;
+		}
+
+		public function setAgeShowOnlyFriends($age_show_only_friends)
+		{
+			$this->_age_show_only_friends = $age_show_only_friends;
+		}
+
+		public function getLocation()
+		{
+			return $this->_location;
+		}
+
+		public function setLocation($location)
+		{
+			$this->_location = $location;
+		}
+
+		public function getLocationShowOnlyFriends()
+		{
+			return $this->_location_show_only_friends;
+		}
+
+		public function setLocationShowOnlyFriends($location_show_only_friends)
+		{
+			$this->_location_show_only_friends = $location_show_only_friends;
+		}
+
+		public function getBio()
+		{
+			return $this->_bio;
+		}
+
+		public function setBio($bio)
+		{
+			$this->_bio = $bio;
+		}
+
+		public function getBioShowOnlyFriends()
+		{
+			return $this->_bio_show_only_friends;
+		}
+
+		public function setBioShowOnlyFriends($bio_show_only_friends)
+		{
+			$this->_bio_show_only_friends = $bio_show_only_friends;
+		}
+
 
 	}
