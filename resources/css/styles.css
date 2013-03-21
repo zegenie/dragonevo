@@ -4720,6 +4720,10 @@ li.card-slot {
 	left: 190px;
 	top: 100px;
 	border-radius: 90px;
+	padding: 0;
+	box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.9);
+	overflow: hidden;
+	background-size: cover !important;
 }
 
 #play-menu .menu-item {

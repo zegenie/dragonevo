@@ -67,7 +67,7 @@
 	<a href="javascript:void(0);" onclick="Devo.Core.toggleFullscreen();" id="toggle-fullscreen-button" class="button button-silver button-icon" style="display: none;">Toggle fullscreen</a>
 	<div id="play-menu" class="new" style="margin-top: 0;">
 		<div id="menu-middle" class="menu-middle" style="margin: 20px 0;">
-			<img src="/images/avatars/<?php echo $csp_user->getAvatar(); ?>" class="avatar">
+			<div class="avatar" style="background: url('/images/avatars/<?php echo $csp_user->getAvatar(); ?>') no-repeat left top;"></div>
 		</div>
 		<div id="play-menu-main">
 			<div id="play-menu-setup" <?php if ($csp_user->hasCharacter() && $csp_user->hasCards()): ?>style="display: none;"<?php endif; ?>>
