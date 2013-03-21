@@ -158,9 +158,11 @@
 		<?php if ($csp_user->isAuthenticated()): ?>
 			<script type="text/javascript">
 				var friends = {
+					<?php $uf = array(); ?>
 					<?php foreach ($csp_user->getUserfriends() as $userfriend): ?>
-						<?php if ($userfriend->isAccepted()) echo "{$userfriend->getFriend()->getId()}: '{$userfriend->getFriend()->getCharactername()}'\n"; ?>
+						<?php if ($userfriend->isAccepted()) $uf[] = "{$userfriend->getFriend()->getId()}: '{$userfriend->getFriend()->getCharactername()}'\n"; ?>
 					<?php endforeach; ?>
+					<?php echo join(', ', $uf); ?>
 				};
 //				console.log(document.getElementsByTagName('body')[0]);
 				document.observe('dom:loaded', function() {
