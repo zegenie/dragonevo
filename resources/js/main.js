@@ -4515,6 +4515,8 @@ Devo.Main.filterCardsCategory = function(card_class) {
 	var button = $('card-category-button');
 	var popup = $('card-category-popup');
 	var race_button = $('card-race-button');
+	var itemclass_button = $('card-itemclass-button');
+	button.removeClassName('last');
 	popup.down('ul').childElements().each(function(list_item) {
 		var link = list_item.down('a');
 		if (link.dataset.filter == card_class) {
@@ -4531,13 +4533,20 @@ Devo.Main.filterCardsCategory = function(card_class) {
 			}
 		});
 	});
+	race_button.hide();
+	itemclass_button.hide();
 	if (card_class == 'creature') {
 		var race_popup = $('card-race-popup');
 		var first_race = (Devo.Main._default_race_filter != undefined) ? Devo.Main._default_race_filter : race_popup.down('ul').childElements()[0].down('a').dataset.filter;
 		Devo.Main.filterCardsRace(first_race);
 		race_button.show();
+	} else if (card_class == 'equippable_item') {
+		var itemclass_popup = $('card-itemclass-popup');
+		var first_itemclass = (Devo.Main._default_itemclass_filter != undefined) ? Devo.Main._default_itemclass_filter : itemclass_popup.down('ul').childElements()[0].down('a').dataset.filter;
+		Devo.Main.filterCardsItemClass(first_itemclass);
+		itemclass_button.show();
 	} else {
-		race_button.hide();
+		button.addClassName('last');
 		Devo.Main.Helpers.popup();
 	}
 }

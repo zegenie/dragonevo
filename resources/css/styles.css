@@ -1585,12 +1585,21 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 	z-index: 2;
 }
 .card.equippable_item .card_cost {
-	right: 27px;
-	bottom: -3px;
+    background-position: -20px -5px;
+    border-bottom-left-radius: 10px;
+    bottom: -3px;
+    left: 0;
+    right: auto;
+    text-align: left;
+    width: 55px;
+}
+.card.equippable_item .card_cost span {
+	left: 5px;
+	right: auto;
 }
 .card_cost span {
     bottom: 2px;
-    font-size: 1.2em;
+    font-size: 1.1em;
     font-weight: normal;
     position: absolute;
     right: 5px;

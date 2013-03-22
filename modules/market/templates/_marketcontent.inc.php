@@ -65,6 +65,14 @@
 				<?php endforeach; ?>
 			</ul>
 		</div>
+		<button class="button button-silver last" id="card-itemclass-button" onclick="Devo.Main.Helpers.popup(this);return false;"></button>
+		<div class="popup-menu" id="card-itemclass-popup" style="left: 0; right: auto; width: 350px; z-index: 10;">
+			<ul>
+				<?php foreach ($itemclasses as $itemclass => $description): ?>
+					<li><a href="javascript:void(0);" data-filter="<?php echo $itemclass; ?>" onclick="Devo.Main.filterCardsItemClass('<?php echo $itemclass; ?>');"><?php echo $description; ?></a></li>
+				<?php endforeach; ?>
+			</ul>
+		</div>
 	</div>
 	<br style="clear: both;">
 	<div class="shelf" id="cards-shelf">
