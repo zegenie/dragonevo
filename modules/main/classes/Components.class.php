@@ -66,6 +66,7 @@
 		public function componentProfileCardsContent()
 		{
 			$this->factions = \application\entities\Card::getFactions();
+			$this->itemclasses = \application\entities\EquippableItemCard::getEquippableItemClasses();
 			$this->cards = $this->getUser()->getCards();
 		}
 
