@@ -4464,6 +4464,7 @@ li.card-slot {
 }
 .chat_line.system, .chat_line.system .chat_nickname, .chat_line.system .chat_line_content { cursor: default; color: rgba(255, 255, 255, 0.5); font-size: 0.7em; }
 .chat_line.system .chat_line_content { font-size: 0.8em; }
+.chat_line.mentioned { background-color: rgba(100, 200, 100, 0.1); border-radius: 10px; }
 .chat_line_content .chat_action { font-size: 1.5em; float: left; display: block; margin: 4px 5px -4px 0; }
 .chat_line_content img { margin-top: -1px; margin-bottom: -4px; }
 #game_events div {

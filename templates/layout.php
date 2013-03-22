@@ -159,7 +159,7 @@
 			<script type="text/javascript">
 //				console.log(document.getElementsByTagName('body')[0]);
 				document.observe('dom:loaded', function() {
-					Devo.Core.initialize({location: '<?php echo $csp_routing->getCurrentRouteName(); ?>', title: '<?php echo $csp_response->getTitle(); ?>', ask_url: '<?php echo make_url('ask'); ?>?version=<?php echo str_replace('.', '_', $csp_response->getVersion()); ?>', say_url: '<?php echo make_url('say'); ?>?version=<?php echo str_replace('.', '_', $csp_response->getVersion()); ?>', user_id: <?php echo $csp_user->getId(); ?>, candrag: <?php echo ($csp_user->isDragDropEnabled()) ? 'true' : 'false'; ?>});
+					Devo.Core.initialize({location: '<?php echo $csp_routing->getCurrentRouteName(); ?>', title: '<?php echo $csp_response->getTitle(); ?>', ask_url: '<?php echo make_url('ask'); ?>?version=<?php echo str_replace('.', '_', $csp_response->getVersion()); ?>', say_url: '<?php echo make_url('say'); ?>?version=<?php echo str_replace('.', '_', $csp_response->getVersion()); ?>', user_id: <?php echo $csp_user->getId(); ?>, candrag: <?php echo ($csp_user->isDragDropEnabled()) ? 'true' : 'false'; ?>, username: '<?php echo $csp_user->getUsername(); ?>', charactername: "<?php echo addslashes($csp_user->getCharacterName()); ?>"});
 				});
 			</script>
 		<?php endif; ?>

@@ -57,6 +57,7 @@ var Devo = {
 		}
     },
 	Chat: {
+		loaded: false,
 		Bubbles: []
 	},
 	Notifications: {
@@ -980,8 +981,8 @@ Devo.Core.Pollers.Callbacks.chatLinesPoller = function() {
 							if (json.chat_lines.hasOwnProperty(d)) {
 								var room = json.chat_lines[d];
 								var room_id = d;
+								var visible = $('chat_'+room_id+'_container').visible();
 								var blinking = $('chat_room_'+room_id+'_loading').visible();
-								var is_empty = ($('chat_room_'+room_id+'_lines').childElements().size() == 0);
 								for (var l in room['lines']) {
 									if (room['lines'].hasOwnProperty(l)) {
 										var line = room['lines'][l];
@@ -994,8 +995,10 @@ Devo.Core.Pollers.Callbacks.chatLinesPoller = function() {
 											if (line_id > $('chat_room_'+room_id+'_since').getValue()) {
 												$('chat_room_'+room_id+'_since').setValue(line_id);
 											}
+											var mentioned = (user_id > 0 && user_id != Devo.Game.getUserId() && (line['text'].indexOf(Devo.options['username']) != '-1' || line['text'].indexOf(Devo.options['charactername']) != '-1')) ? true : false;
 											var chat_line = '<div id="chat_line_'+line_id+'" class="chat_line';
 											if (user_id == 0) chat_line += ' system';
+											if (mentioned == true) chat_line += ' mentioned';
 											chat_line += '"><div class="chat_nickname" onclick="$(\'chat_line_'+line_id+'\').toggleClassName(\'selected\');">';
 											if (user_id != Devo.options['user_id'] && user_id != 0) {
 												chat_line += Devo.Chat.getUserPopupHtml(user_id, line['user']);
@@ -1004,8 +1007,11 @@ Devo.Core.Pollers.Callbacks.chatLinesPoller = function() {
 											chat_line += '&nbsp;<span class="chat_timestamp">('+line['posted_formatted_hours']+'<span class="date"> - '+line['posted_formatted_date']+'</span>)</div><div class="chat_line_content">'+Devo.Chat.emotify(line['text'])+'</div></div>';
 											$('chat_room_'+room_id+'_lines').insert(chat_line);
 											$('chat_room_'+room_id+'_lines').scrollTop = $('chat_line_'+line_id).offsetTop;
-											if (user_id > 0 && user_id != Devo.Game.getUserId()) {
-												if (!is_empty && user_id != Devo.options['user_id'] && !$('chat_'+room_id+'_toggler').hasClassName('selected')) {
+											if (Devo.Chat.loaded == true && user_id > 0 && user_id != Devo.Game.getUserId()) {
+												if (Devo.Core._infocus && !visible && mentioned) {
+													Devo.Notifications.add('Someone just mentioned you in the chat!');
+												}
+												if (user_id != Devo.options['user_id'] && !$('chat_'+room_id+'_toggler').hasClassName('selected')) {
 													$('chat_'+room_id+'_toggler').down('.notify').addClassName('visible');
 													if (room_id > 1) {
 														Devo.Chat.Bubbles.push({id: line_id, text: line['text']});
@@ -1024,6 +1030,7 @@ Devo.Core.Pollers.Callbacks.chatLinesPoller = function() {
 								}
 							}
 						}
+						Devo.Chat.loaded = true;
 						if (needs_users_refresh) {
 							Devo.Core.Pollers.Callbacks.chatUsersPoller();
 						}
@@ -2043,6 +2050,17 @@ Devo.Notifications.add = function(message) {
 	Devo.Notifications.Messages.push({message: message});
 };
 
+Devo.Notifications.remove = function(tstamp) {
+	if ($('notification-'+tstamp).hasClassName('hovered')) {
+		window.setTimeout(function() {
+			Devo.Notifications.remove(tstamp);
+		}, 6500);
+	} else {
+		$('notification-'+tstamp).remove();
+		Devo.Core.Pollers.Locks.notificationspoller = false;
+	}
+};
+
 Devo.Core.Pollers.Callbacks.notificationsPoller = function() {
 	if (!Devo.Core.Pollers.Locks.notificationspoller && Devo.Notifications.Messages.size() > 0) {
 		Devo.Core.Pollers.Locks.notificationspoller = true;
@@ -2053,8 +2071,11 @@ Devo.Core.Pollers.Callbacks.notificationsPoller = function() {
 		var notification = '<div class="notification" id="notification-'+tstamp+'">'+line['message']+'</div>';
 		nc.insert(notification);
 		window.setTimeout(function() {
-			$('notification-'+tstamp).remove();
-			Devo.Core.Pollers.Locks.notificationspoller = false;
+			$('notification-'+tstamp).observe('mouseover', function() { $('notification-'+tstamp).addClassName('hovered'); });
+			$('notification-'+tstamp).observe('mouseout', function() { $('notification-'+tstamp).removeClassName('hovered'); });
+		}, 200);
+		window.setTimeout(function() {
+			Devo.Notifications.remove(tstamp);
 		}, 6500);
 	}
 };
@@ -2221,7 +2242,7 @@ Devo.Chat.destroyNotificationsPoller = function() {
 
 Devo.Core._initializeNotificationsPoller = function() {
 	if (Devo.Core.Pollers.notificationspoller == null || Devo.Core.Pollers.notificationspoller == undefined) {
-		Devo.Core.Pollers.notificationspoller = new PeriodicalExecuter(Devo.Core.Pollers.Callbacks.notificationsPoller, 2);
+		Devo.Core.Pollers.notificationspoller = new PeriodicalExecuter(Devo.Core.Pollers.Callbacks.notificationsPoller, 1);
 	}
 };
 
