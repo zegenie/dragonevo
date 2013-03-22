@@ -670,7 +670,7 @@
 		protected function _processOpponentAvatar(Request $request)
 		{
 			$avatar_url = '/images/avatars/'.$this->game->getUserOpponent()->getAvatar();
-			return $this->renderJSON(array('avatar_url' => $avatar_url));
+			return $this->renderJSON(array('avatar_url' => $avatar_url, 'opponent_id' => $this->game->getUserOpponentId()));
 		}
 
 		protected function _processGameTopMenu(Request $request)

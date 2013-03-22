@@ -4622,6 +4622,7 @@ li.card-slot {
 .profile_menu .avatar.opponent {
 	z-index: 101;
 	right: 33px;
+	cursor: pointer;
 }
 .profile_menu .button, .profile_menu .button:hover, .profile_menu .button:active {
 	width: 100%;

@@ -3771,6 +3771,8 @@ Devo.Game.loadOpponentAvatar = function(game_id) {
 			callback: function(json) {
 				avatar.setStyle({backgroundImage: "url('"+json.avatar_url+"')"});
 				avatar.show();
+				avatar.stopObserving('click');
+				avatar.observe('click', function() { Devo.Main.Profile.show(json.opponent_id); });
 			}
 		}
 	});
