@@ -9,10 +9,6 @@ function ucfirst(string)
 }
 
 function eventFire(el, etype){
-	if ($(el) == undefined) {
-//		console.log(el);
-//		console.log(etype);
-	}
 	if (el.fireEvent) {
 		(el.fireEvent('on' + etype));
 	} else {
@@ -432,8 +428,6 @@ Devo.Main.Helpers.finishLoading = function() {
 				Devo.Main._resizeWatcher();
 			}, 1000);
 		}
-	} else {
-		console.log('finish loading when not loading');
 	}
 }
 
@@ -1607,7 +1601,6 @@ Devo.Game.flee = function() {
 					} else {
 						Devo.Main.removeGameFromList(Devo.Game._id);
 					}
-					console.log(json);
 					Devo.Main.Helpers.Dialog.dismiss();
 					Devo.Game.destroyGame();
 					if (json.is_adventure != undefined && json.is_adventure) {
@@ -4036,7 +4029,6 @@ Devo.Game.getStatistics = function() {
 		loading: {indicator: 'game_statistics_indicator'},
 		success: {
 			callback: function(json) {
-				console.log(json.stats);
 				$('statistics_hp').update(json.stats.hp);
 				$('statistics_cards').update(json.stats.cards);
 				if (json.stats.gold != undefined) $('statistics_gold').update(json.stats.gold);
@@ -4050,7 +4042,6 @@ Devo.Game.getStatistics = function() {
 				}
 				$('goto-buttons-container').show();
 				$('game_statistics').show();
-				console.log(json.stats);
 			}
 		}
 	});
