@@ -22,12 +22,12 @@
 			<?php endif; ?>
 		</p>
 		<div class="buttons button-group">
-			<button class="ui_button" onclick="Devo.Play.invite(<?php echo $user->getId(); ?>, this);"><img src="/images/spinning_16.gif" style="display: none;">Challenge</button>
-			<button class="ui_button addfriend" onclick="Devo.Main.Profile.addFriend(<?php echo $user->getId(); ?>, this);"><img src="/images/spinning_16.gif" style="display: none;">Add friend</button>
+			<button class="ui_button" onclick="Devo.Play.invite(<?php echo $user->getId(); ?>, this);"><img src="/images/spinning_16.gif" style="display: none;">Challenge to a game</button>
+			<button class="ui_button addfriend" onclick="Devo.Main.Profile.addFriend(<?php echo $user->getId(); ?>, this);"><img src="/images/spinning_16.gif" style="display: none;">Add as friend</button>
 			<button class="ui_button removefriend" onclick="Devo.Main.Profile.removeFriend(<?php echo $user->getId(); ?>, this, true);"><img src="/images/spinning_16.gif" style="display: none;">Unfriend</button>
 		</div>
 	</div>
 	<div class="backdrop_detail_footer" style="z-index: 100; position: relative;">
-		<a href="javascript:void(0);" onclick="Devo.Main.Helpers.Backdrop.reset();$('fullpage_backdrop_content').update('');">Close this popup</a>
+		<a href="javascript:void(0);" class="ui_button" onclick="Devo.Main.Helpers.Backdrop.reset();$('fullpage_backdrop_content').update('');">Close</a>
 	</div>
 </div>

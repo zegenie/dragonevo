@@ -4972,8 +4972,13 @@ li.card-slot {
 .my_games li:hover {
 	overflow: visible;
 }
-.my_games li.rejected .versus_player {
+.my_games li.rejected .versus_player, .my_games li.rejected .versus_player a {
 	color: #777;
+	-webkit-transition: color 0.5s ease;
+	-moz-transition: color 0.5s ease;
+	-ms-transition: color 0.5s ease;
+	-o-transition: color 0.5s ease;
+	transition: color 0.5s ease;
 }
 .my_games li button { float: right; margin: 8px 0 0 0; z-index: 1; }
 .my_games li.rejected button, .my_games li .button-ok { display: none; }
@@ -6284,4 +6289,16 @@ ul#offline-friends { margin-top: 0; }
 	z-index: 1000001;
 	border-radius: 10px;
 	font-size: 0.8em;
+	line-height: 1.3em;
+}
+.notification .title {
+	font-weight: bold;
+	font-size: 1.1em;
+}
+.notification .button-group {
+	margin: 10px 0 0 0;
+}
+.notification .button-group .ui_button {
+	line-height: 14px !important;
+	font-size: 0.85em;
 }

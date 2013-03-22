@@ -45,7 +45,8 @@
 
 		public function componentMyGames()
 		{
-			$this->games = $this->getUser()->getGames();			
+			$this->games = $this->getUser()->getGames();
+			$this->game_invites = \application\entities\tables\GameInvites::getTable()->getInvitesByUserId($this->getUser()->getId());
 		}
 
 		public function componentInviteFriend()

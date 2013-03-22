@@ -58,13 +58,12 @@
 			$invites = array();
 			$removed_invites = array();
 			if ($this->getUser()->isAuthenticated()) {
-				$game_invites = GameInvites::getTable()->getInvitesByUserId($this->getUser()->getId(), $request->getParameter('invites', array()));
-				$removed_invites = GameInvites::getTable()->getRemovedInvitesByUserId($this->getUser()->getId(), $request->getParameter('invites', array()));
+				$game_invites = GameInvites::getTable()->getInvitesByUserId($this->getUser()->getId());
 				foreach ($game_invites as $invite_id => $invite) {
-					$invites[$invite_id] = array('player_name' => $invite->getFromPlayer()->getName(), 'game_id' => $invite->getGameId(), 'invite_id' => $invite->getId());
+					$invites[$invite_id] = array('player_name' => $invite->getFromPlayer()->getCharactername(), 'game_id' => $invite->getGameId(), 'invite_id' => $invite->getId());
 				}
 			}
-			return $this->renderJSON(compact('invites', 'removed_invites'));
+			return $this->renderJSON(compact('invites'));
 		}
 
 		protected function _processChatLines(Request $request)

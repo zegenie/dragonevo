@@ -150,6 +150,14 @@
 				</div>
 			</div>
 			<div id="notifications-container">
+				<?php /* <div class="notification">
+					<div class="title">Hey there</div>
+					Something
+					<div class="button-group">
+						<a href="#" class="ui_button">Something</a>
+						<a href="#" class="ui_button">Something</a>
+					</div>
+				</div> */ ?>
 			</div>
 			<div id="fullscreen-container">
 				<?php echo $content; ?>

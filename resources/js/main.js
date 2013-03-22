@@ -71,6 +71,9 @@ var Devo = {
 	Market: {
 		Effects: {}
 	},
+	Games: {
+		invites_loaded: false
+	},
 	Game: {
 		Effects: {},
 		Events: []
@@ -819,10 +822,9 @@ Devo.Main.saveSettings = function() {
 }
 
 Devo.Core.Pollers.Callbacks.invitePoller = function() {
-	if (!Devo.Core.Pollers.Locks.invitepoller && $('game_invites')) {
+	if (!Devo.Core.Pollers.Locks.invitepoller) {
 		Devo.Main.Helpers.ajax(Devo.options['ask_url'], {
 			additional_params: '&for=game_invites',
-			form: 'existing_game_invites',
 			loading: {
 				callback: function() {
 					Devo.Core.Pollers.Locks.invitepoller = true;
@@ -830,61 +832,88 @@ Devo.Core.Pollers.Callbacks.invitePoller = function() {
 			},
 			success: {
 				callback: function(json) {
-					if (json.removed_invites) {
-						for (var d in json.removed_invites) {
-							if (json.removed_invites.hasOwnProperty(d)) {
-								var invite_id = d;
-								Devo.Play.removeInvite(invite_id);
-							}
-						}
-					}
+					var game_invites = [];
+					if (Devo.Games.invites == undefined) Devo.Games.invites = [];
 					if (json.invites) {
-						var ic = 0;
 						var invites = [];
-						var no_invites_visible = $('no_invites').visible();
+						var no_invites_visible = ($('no_invites')) ? $('no_invites').visible() : false;
 						for (var d in json.invites) {
 							if (json.invites.hasOwnProperty(d)) {
-								ic++;
 								var invite = json.invites[d];
-								$('existing_game_invites').insert('<input type="hidden" id="invites_input_'+invite.invite_id+'" name="invites['+invite.invite_id+']" value="'+invite.invite_id+'">');
-								var invite_element = $('__game_invite_template').clone(true);
-								invite_element.id = 'game_invite_' + invite.invite_id;
-								var accept_button = $(invite_element).down('.button-accept');
-								accept_button.observe('click', function(event) {
-									var button = Event.element(event);
-									Devo.Play.acceptInvite(invite.invite_id, $(button));
-								});
-								var reject_button = $(invite_element).down('.button-reject');
-								reject_button.observe('click', function(event) {
-									var button = Event.element(event);
-									Devo.Play.rejectInvite(invite.invite_id, $(button));
-								});
-								$(invite_element).insert('<input type="hidden" name="invite_id" value="'+invite.invite_id+'">');
-								$(invite_element).down('.player_name').update(invite.player_name);
-								$(invite_element).show();
-								if (no_invites_visible) {
-									$('no_invites').removeClassName('animated fadeIn');
-									$('no_invites').addClassName('animated fadeOut');
-									window.setTimeout(function() {$('no_invites').hide();$('game_invites').insert(invite_element); no_invites_visible = false;}, 1100);
-								} else {
-									$('game_invites').insert(invite_element);
+								var invite_id = parseInt(invite.invite_id);
+								if (Devo.Games.invites_loaded == false || Devo.Games.invites.indexOf(invite_id) == '-1') {
+									if ($('game_invites')) {
+										if ($('game_invite_'+invite_id) == null) {
+											var invite_element = $('__game_invite_template').clone(true);
+											invite_element.id = 'game_invite_' + invite_id;
+											$('game_invites').insert(invite_element);
+											var accept_button = $(invite_element).down('.button-accept');
+											accept_button.observe('click', function(event) {
+												var button = Event.element(event);
+												Devo.Play.acceptInvite(invite_id, $(button));
+											});
+											var reject_button = $(invite_element).down('.button-reject');
+											reject_button.observe('click', function(event) {
+												var button = Event.element(event);
+												Devo.Play.rejectInvite(invite_id, $(button));
+											});
+											$(invite_element).down('.player_name').update(invite.player_name);
+											if (no_invites_visible) {
+												$('no_invites').removeClassName('animated fadeIn');
+												$('no_invites').addClassName('animated fadeOut');
+												window.setTimeout(function() {
+													$('no_invites').hide();
+												}, 1100);
+											}
+											invites.push(invite_element.id);
+										}
+									} else if (Devo.Games.invites_loaded) {
+										if (Devo.Games.invites.indexOf(invite_id) == '-1') {
+											Devo.Notifications.add('Choose an action now, or visit the lobby later', {
+												title: invite.player_name + ' invited you to a game',
+												buttons: [
+													{
+														click: "Devo.Play.acceptInvite("+invite_id+", $(this));$(this).up('.notification').hide();",
+														title: '<img src="/images/spinning_16.gif" style="display: none;">Accept'
+													},
+													{
+														click: "Devo.Play.rejectInvite("+invite_id+", $(this));$(this).up('.notification').hide();",
+														title: '<img src="/images/spinning_16.gif" style="display: none;">Reject'
+													}
+												],
+												timeout: 10
+											});
+										}
+									}
 								}
-								invites.push(invite_element.id);
+								game_invites.push(parseInt(invite.invite_id));
 							}
 						}
 						if (invites.size() > 0) {
 							invites.each(function(invite) {
 								window.setTimeout(function() {
+									$(invite).show();
 									$(invite).addClassName('animated bounceIn');
 									window.setTimeout(function() {
 										$(invite).removeClassName('animated bounceIn');
 									}, 1500);
 								}, 1200);
-							})
+							});
 						}
 					} else {
-						window.setTimeout(function() {$('no_invites').show();$('no_invites').removeClassName('animated fadeOut');$('no_invites').addClassName('animated fadeIn');}, 1000);
+						window.setTimeout(function() {
+							$('no_invites').show();
+							$('no_invites').removeClassName('animated fadeOut');
+							$('no_invites').addClassName('animated fadeIn');
+						}, 1000);
 					}
+					Devo.Games.invites.each(function(invite_id) {
+						if (game_invites.indexOf(invite_id) == '-1') {
+							Devo.Play.removeInvite(invite_id);
+						}
+					});
+					Devo.Games.invites = game_invites;
+					Devo.Games.invites_loaded = true;
 				}
 			},
 			complete: {
@@ -1189,10 +1218,9 @@ Devo.Core.Pollers.Callbacks.quickMatchPoller = function() {
 };
 
 Devo.Core.Pollers.Callbacks.gameListPoller = function() {
-	if (!Devo.Core.Pollers.Locks.gamelistpoller && $('my_ongoing_games_form')) {
+	if (!Devo.Core.Pollers.Locks.gamelistpoller) {
 		Devo.Main.Helpers.ajax(Devo.options['ask_url'], {
 			additional_params: '&for=gamelist',
-			form: 'my_ongoing_games_form',
 			loading: {
 				callback: function() {
 					Devo.Core.Pollers.Locks.gamelistpoller = true;
@@ -1248,10 +1276,8 @@ Devo.Core.Pollers.Callbacks.gameListPoller = function() {
 };
 
 Devo.Core._initializeInvitePoller = function() {
-	if ($('existing_game_invites') && $('__game_invite_template')) {
-		Devo.Core.Pollers.invitepoller = new PeriodicalExecuter(Devo.Core.Pollers.Callbacks.invitePoller, 15);
-		Devo.Core.Pollers.Callbacks.invitePoller();
-	}
+	Devo.Core.Pollers.invitepoller = new PeriodicalExecuter(Devo.Core.Pollers.Callbacks.invitePoller, 10);
+	Devo.Core.Pollers.Callbacks.invitePoller();
 }
 
 Devo.Core.destroyInvitePoller = function() {
@@ -1312,6 +1338,7 @@ Devo.Core.initialize = function(options) {
 	Devo.options = options;
 	Devo.Core._initializeInvitePoller();
 	Devo.Core._initializeNotificationsPoller();
+	Devo.Core._initializeGameListPoller();
 	Devo.Core._initializeFriendsPoller();
 	Devo.Core._infocus = true;
 	Devo.Core._isOldTitle = true;
@@ -1627,7 +1654,6 @@ Devo.Main.initializeLobby = function() {
 	Devo.Main.Helpers.loading();
 	Devo.Chat.joinRoom(1);
 	Devo.Core._initializeChatRoomPoller();
-	Devo.Core._initializeGameListPoller();
 	Event.observe(window, 'resize', Devo.Main._resizeWatcher);
 	Event.observe(window, 'scroll', Devo.Main._scrollWatcher);
 	Devo.Main._resizeWatcher();
@@ -2046,8 +2072,8 @@ Devo.Core.Pollers.Callbacks.gameDataPoller = function() {
 	}
 };
 
-Devo.Notifications.add = function(message) {
-	Devo.Notifications.Messages.push({message: message});
+Devo.Notifications.add = function(message, options) {
+	Devo.Notifications.Messages.push({message: message, options: options});
 };
 
 Devo.Notifications.remove = function(tstamp) {
@@ -2068,7 +2094,18 @@ Devo.Core.Pollers.Callbacks.notificationsPoller = function() {
 		var line = Devo.Notifications.Messages.shift();
 		var d = new Date();
 		var tstamp = d.getTime();
-		var notification = '<div class="notification" id="notification-'+tstamp+'">'+line['message']+'</div>';
+		var timeout = (line['options'] && line['options']['timeout']) ? line['options']['timeout'] : 6.5;
+		var notification = '<div class="notification" id="notification-'+tstamp+'">';
+		if (line['options'] && line['options']['title']) notification += '<div class="title">'+line['options']['title']+'</div>';
+		notification += line['message'];
+		if (line['options'] && line['options']['buttons']) {
+			notification += '<div class="buttons button-group">';
+			line['options']['buttons'].each(function(button) {
+				notification += '<a href="javascript:void(0);" class="ui_button" onclick="'+button['click']+'">'+button['title']+'</a>';
+			});
+			notification += '</div>';
+		}
+		notification += '</div>';
 		nc.insert(notification);
 		window.setTimeout(function() {
 			$('notification-'+tstamp).observe('mouseover', function() { $('notification-'+tstamp).addClassName('hovered'); });
@@ -2076,7 +2113,7 @@ Devo.Core.Pollers.Callbacks.notificationsPoller = function() {
 		}, 200);
 		window.setTimeout(function() {
 			Devo.Notifications.remove(tstamp);
-		}, 6500);
+		}, parseint(timeout * 1000));
 	}
 };
 
@@ -4736,11 +4773,14 @@ Devo.Play.cancelGame = function(game_id) {
 Devo.Play.removeInvite = function(invite_id) {
 	if ($('game_invite_' + invite_id)) {
 		$('game_invite_' + invite_id).addClassName('animated bounceOut');
-		$('invites_input_' + invite_id).remove();
 		window.setTimeout(function() {
 			$('game_invite_' + invite_id).remove();
 			if ($('game_invites').childElements().size() == 0) {
-				window.setTimeout(function() {$('no_invites').show();$('no_invites').removeClassName('animated fadeOut');$('no_invites').addClassName('animated fadeIn');}, 1000);
+				window.setTimeout(function() {
+					$('no_invites').show();
+					$('no_invites').removeClassName('animated fadeOut');
+					$('no_invites').addClassName('animated fadeIn');
+				}, 1000);
 			}
 		}, 1000);
 	}

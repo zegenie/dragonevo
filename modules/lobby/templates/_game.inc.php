@@ -1,5 +1,4 @@
 <li id="game_<?php echo $game->getId(); ?>_list">
-	<input type="hidden" name="games[<?php echo $game->getId(); ?>]" value="<?php echo $game->getId(); ?>">
 	<div class="tooltip">
 		<div class="game_tooltip_versus">
 			<?php echo $game->getPlayer()->getCharactername(); ?>&nbsp;<span class="game_tooltip_versus_versus">vs.</span>&nbsp;<?php echo $game->getOpponent()->getCharactername(); ?>
