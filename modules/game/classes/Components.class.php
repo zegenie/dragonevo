@@ -26,6 +26,7 @@
 		public function componentPickCardsContent()
 		{
 			$this->factions = \application\entities\Card::getFactions();
+			$this->itemclasses = \application\entities\EquippableItemCard::getEquippableItemClasses();
 			$cards = $this->getUser()->getCards();
 			if ($this->game->isScenario()) {
 				$part = $this->game->getPart();

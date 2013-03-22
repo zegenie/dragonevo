@@ -21,8 +21,26 @@
 		<form action="<?php echo make_url('pick_cards', array('game_id' => $game->getId())); ?>" method="post" onsubmit="Devo.Game.pickCards();return false;" id="card-picker-form">
 			<div id="pickcards-filter-container">
 				<div class="button-group shelf-filter">
+				</div>
+				<div class="button-group shelf-filter" id="card-category-button" data-selected-filter="creature" style="position: relative;">
 					<button class="button button-silver button-pressed" data-filter="creature" onclick="Devo.Main.filterCards('creature');return false;">Creature cards (<span id="picked-creature-cards">0</span>/<?php echo $game->getMaxCreatureCards(); ?>)</button>
+					<button class="button button-silver" id="card-race-button" onclick="Devo.Main.Helpers.popup(this);return false;"></button>
+					<div class="popup-menu" id="card-race-popup" style="left: 0; right: auto; width: 350px; z-index: 10;">
+						<ul>
+							<?php foreach ($factions as $faction => $description): ?>
+								<li><a href="javascript:void(0);" data-filter="<?php echo $faction; ?>" onclick="Devo.Main.filterCardsRace('<?php echo $faction; ?>');"><?php echo $description; ?></a></li>
+							<?php endforeach; ?>
+						</ul>
+					</div>
 					<button class="button button-silver" data-filter="equippable_item" onclick="Devo.Main.filterCards('equippable_item');return false;">Item cards (<span id="picked-item-cards">0</span>/<?php echo $game->getMaxItemCards(); ?>)</button>
+					<button class="button button-silver" id="card-itemclass-button" onclick="Devo.Main.Helpers.popup(this);return false;"></button>
+					<div class="popup-menu" id="card-itemclass-popup" style="left: 0; right: auto; width: 350px; z-index: 10;">
+						<ul>
+							<?php foreach ($itemclasses as $itemclass => $description): ?>
+								<li><a href="javascript:void(0);" data-filter="<?php echo $itemclass; ?>" onclick="Devo.Main.filterCardsItemClass('<?php echo $itemclass; ?>');"><?php echo $description; ?></a></li>
+							<?php endforeach; ?>
+						</ul>
+					</div>
 					<button class="button button-silver" data-filter="card" onclick="Devo.Main.filterCards('card');return false;">All cards (<span id="picked-all-cards">0</span>/<?php echo $game->getMaximumCards(); ?>)</button>
 				</div>
 				<div class="play_game_container" id="play-game-container-top">
@@ -76,8 +94,10 @@
 		</div>
 	<?php endif; ?>
 </div>
-<?php if ($csp_user->isPickCardsTutorialEnabled()): ?>
-	<script>
+<script>
+	Devo.Main._default_race_filter = undefined;
+	Devo.Main.filterCards('creature');
+	<?php if ($csp_user->isPickCardsTutorialEnabled()): ?>
 		Devo.Tutorial.Stories.pickcards = {
 			1: {
 				message: "<h3>Game on</h3>Finally! You're ready to play your first game! To help you get started quickly, this tutorial will guide you through the basics. We'll start with picking cards for your game.",
@@ -159,5 +179,5 @@
 			}
 		};
 		Devo.Tutorial.start('pickcards');
-	</script>
-<?php endif; ?>
+	<?php endif; ?>
+</script>

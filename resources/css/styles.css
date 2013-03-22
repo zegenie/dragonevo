@@ -1517,6 +1517,7 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 	font-size: 0.7em;
 	display: inline-block;
 	margin-left: 10px;
+	float: right;
 }
 #user-top-details {
     position: fixed;
@@ -6250,6 +6251,8 @@ li.card-slot {
 #invitefriends_popup ul { list-style: none; margin: 0; padding: 0; }
 #invitefriends_popup ul li { margin-left: 20px; padding: 2px; }
 #offline-friends li a { color: #555; }
+ul#online-friends { margin-bottom: 0; }
+ul#offline-friends { margin-top: 0; }
 #online-friends li a { color: #FFF; }
 #friend-requests li { height: 50px; }
 

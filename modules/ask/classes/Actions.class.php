@@ -264,14 +264,14 @@
 				$this->_sendGameInvite($invite, $opponent, $this->getUser());
 				$invited = true;
 			}
-			return $invited;
+			return array($invited, $game);
 		}
 
 		protected function _processInvite(Request $request)
 		{
 			$user_id = $request['user_id'];
 			$user = \application\entities\tables\Users::getTable()->selectById($user_id);
-			$invited = $this->_createGameInvite($user);
+			list($invited, $game) = $this->_createGameInvite($user);
 			return $this->renderJSON(array('sent_invite' => $invited, 'game' => $this->getTemplateHTML('lobby/game', compact('game'))));
 		}
 

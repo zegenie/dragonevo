@@ -1258,8 +1258,7 @@ Devo.Core.destroyInvitePoller = function() {
 	Devo.Core.Pollers.Locks.invitepoller = undefined;
 }
 
-Devo.Core._initializeFriendsPoller = function(friends) {
-	Devo.Main.Profile.Friends.users = friends;
+Devo.Core._initializeFriendsPoller = function() {
 	Devo.Core.Pollers.friendspoller = new PeriodicalExecuter(Devo.Core.Pollers.Callbacks.friendsPoller, 10);
 	Devo.Core.Pollers.Callbacks.friendsPoller();
 }
@@ -1311,7 +1310,7 @@ Devo.Core.initialize = function(options) {
 	Devo.options = options;
 	Devo.Core._initializeInvitePoller();
 	Devo.Core._initializeNotificationsPoller();
-	Devo.Core._initializeFriendsPoller(options.friends);
+	Devo.Core._initializeFriendsPoller();
 	Devo.Core._infocus = true;
 	Devo.Core._isOldTitle = true;
 	Devo.Core._titleBlinkInterval = undefined;
@@ -4150,13 +4149,7 @@ Devo.Play.training = function(level) {
 }
 
 Devo.Main.filterCards = function(card_class) {
-	$$('.shelf-filter .button').each(function(button) {
-		if (button.dataset.filter == card_class) {
-			button.addClassName('button-pressed');
-		} else {
-			button.removeClassName('button-pressed');
-		}
-	});
+	$('card-category-button').dataset.selectedFilter = card_class;
 	$$('.shelf').each(function(shelf) {
 		shelf.select('.card').each(function(card) {
 			if (card.hasClassName(card_class)) {
@@ -4165,6 +4158,38 @@ Devo.Main.filterCards = function(card_class) {
 				card.up('li').hide();
 			}
 		});
+	});
+	var race_button = $('card-race-button');
+	var itemclass_button = $('card-itemclass-button');
+	race_button.hide();
+	itemclass_button.hide();
+	if (card_class == 'creature') {
+		var race_popup = $('card-race-popup');
+		var first_race = (Devo.Main._default_race_filter != undefined) ? Devo.Main._default_race_filter : race_popup.down('ul').childElements()[0].down('a').dataset.filter;
+		var visible_cards = Devo.Main.filterCardsRace(first_race);
+		if (visible_cards == 0) {
+			var second_race = race_popup.down('ul').childElements()[1].down('a').dataset.filter;
+			visible_cards = Devo.Main.filterCardsRace(second_race);
+		}
+		race_button.show();
+	} else if (card_class == 'equippable_item') {
+		var itemclass_popup = $('card-itemclass-popup');
+		var first_itemclass = (Devo.Main._default_itemclass_filter != undefined) ? Devo.Main._default_itemclass_filter : itemclass_popup.down('ul').childElements()[0].down('a').dataset.filter;
+		var visible_cards = Devo.Main.filterCardsItemClass(first_itemclass);
+		if (visible_cards == 0) {
+			var second_itemclass = itemclass_popup.down('ul').childElements()[1].down('a').dataset.filter;
+			visible_cards = Devo.Main.filterCardsItemClass(second_itemclass);
+		}
+		itemclass_button.show();
+	} else {
+		Devo.Main.Helpers.popup();
+	}
+	$$('.shelf-filter .button').each(function(button) {
+		if (button.dataset.filter == card_class) {
+			button.addClassName('button-pressed');
+		} else {
+			button.removeClassName('button-pressed');
+		}
 	});
 }
 
@@ -4435,12 +4460,14 @@ Devo.Main.Profile.dontLevelUp = function() {
 
 Devo.Main.filterCardsRace = function(race) {
 	var race_button = $('card-race-button');
+	var visible_cards = 0;
 	var card_type = $('card-category-button').dataset.selectedFilter;
 	$$('.shelf').each(function(shelf) {
 		shelf.select('.card').each(function(card) {
 			if (card.hasClassName(card_type) && card.hasClassName(race)) {
 				card.up('li').show();
-				Devo.Market.checkCardActions(card);
+				visible_cards++;
+				if ($('market-container')) Devo.Market.checkCardActions(card);
 			} else {
 				card.up('li').hide();
 			}
@@ -4455,6 +4482,33 @@ Devo.Main.filterCardsRace = function(race) {
 	})
 	Devo.Main._default_race_filter = race;
 	Devo.Main.Helpers.popup();
+	return visible_cards;
+}
+
+Devo.Main.filterCardsItemClass = function(itemclass) {
+	var itemclass_button = $('card-itemclass-button');
+	var itemclass_popup = $('card-itemclass-popup');
+	var visible_cards = 0;
+	var card_type = $('card-category-button').dataset.selectedFilter;
+	$$('.shelf').each(function(shelf) {
+		shelf.select('.card').each(function(card) {
+			if (card.hasClassName(card_type) && card.hasClassName('equippable-item-class-'+itemclass)) {
+				card.up('li').show();
+				visible_cards++;
+			} else {
+				card.up('li').hide();
+			}
+		});
+	});
+	itemclass_popup.down('ul').childElements().each(function(list_item) {
+		var link = list_item.down('a');
+		if (link.dataset.filter == itemclass) {
+			itemclass_button.update(link.innerHTML + '<span class="dropdown-triangle">&#9660;</span>');
+		}
+	})
+	Devo.Main._default_itemclass_filter = itemclass;
+	Devo.Main.Helpers.popup();
+	return visible_cards;
 }
 
 Devo.Main.filterCardsCategory = function(card_class) {
