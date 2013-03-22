@@ -952,6 +952,7 @@ Devo.Core.Pollers.Callbacks.friendsPoller = function() {
 								$('offline-friends').insert(userfriend.remove());
 							}
 						});
+						$('friends-loading-indicator').hide();
 					}
 					if ($('friend-requests')) {
 						$('friend-requests').update(json.friend_requests);

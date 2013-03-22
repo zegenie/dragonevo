@@ -34,7 +34,7 @@
 				</form>
 			</li>
 		</ul>
-		<h1 style="margin-top: 25px;">Friends</h1>
+		<h1 style="margin-top: 25px;">Friends&nbsp;<img src="/images/spinning_16.gif" id="friends-loading-indicator"></h1>
 		<div id="friends-list-container">
 			<ul id="online-friends">
 			</ul>
