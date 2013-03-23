@@ -7,7 +7,9 @@
 <div class="backdrop_box medium userinfo-<?php echo $user->getId(); ?><?php if ($is_friends) echo ' user-friends'; ?>" id="userprofile_popup" style="overflow: hidden;">
 	<div style="position: absolute; bottom: 0; right: 0; border-radius: 360px 0 0 0; background: url('/images/avatars/<?php echo $user->getAvatar(); ?>') no-repeat left bottom; z-index: 1; width: 360px; height: 360px;"></div>
 	<div id="backdrop_detail_content" style="z-index: 100; position: relative;">
-		<h3><?php echo $user->getCharactername(); ?> (<?php echo $user->getUsername(); ?>)</h3>
+		<h3>
+			<?php echo $user->getCharactername(); ?> (<?php echo $user->getUsername(); ?>)
+		</h3>
 		<p>
 			<strong>Level:</strong> <?php echo $user->getLevel(); ?><br>
 			<strong>Race:</strong> <?php echo $user->getRaceName(); ?><br>

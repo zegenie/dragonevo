@@ -355,6 +355,17 @@
 			return $this->renderJSON(compact('online_friends', 'friend_requests'));
 		}
 
+		protected function _processSaveProfile(Request $request)
+		{
+			if (strlen(trim($request->getParameter('charactername'))) == 0) {
+				$this->getResponse()->setHttpStatus(400);
+				return $this->renderJSON(array('error' => 'You need to pick a character name'));
+			}
+			$this->getUser()->mergeFormData($request);
+			$this->getUser()->save();
+			return $this->renderJSON(array('message' => 'Profile updated!'));
+		}
+
 		protected function _processGetCard(Request $request)
 		{
 			try {
@@ -977,11 +988,7 @@
 					$interface_content = $this->getComponentHTML('lobby/lobbycontent');
 					break;
 				case 'adventure':
-					if ($this->getUser()->isAdmin()) {
-						$interface_content = $this->getComponentHTML('adventure/adventurecontent');
-					} else {
-						$interface_content = $this->getComponentHTML('lobby/lobbycontent');
-					}
+					$interface_content = $this->getComponentHTML('adventure/adventurecontent');
 					break;
 				case 'market':
 					$interface_content = $this->getComponentHTML('market/marketcontent');
@@ -1183,6 +1190,9 @@
 						break;
 					case 'remove_userfriend':
 						return $this->_processRemoveFriend($request);
+						break;
+					case 'saveprofile':
+						return $this->_processSaveProfile($request);
 						break;
 					case 'sell_card':
 						return $this->_processSellCard($request);

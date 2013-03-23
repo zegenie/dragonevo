@@ -179,12 +179,8 @@ class Actions extends \application\lib\Actions
 			$template_name = null;
 			$options = array();
 			switch ($request['key']) {
-				case 'usercard':
-					$template_name = 'main/usercard';
-					if ($user_id = $request['user_id']) {
-						$user = new User($user_id);
-						$options['user'] = $user;
-					}
+				case 'editprofile':
+					$template_name = 'main/profileedit';
 					break;
 				case 'login':
 					$template_name = 'main/loginpopup';

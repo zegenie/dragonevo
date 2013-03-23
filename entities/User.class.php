@@ -1485,5 +1485,15 @@
 			$this->_bio_show_only_friends = $bio_show_only_friends;
 		}
 
+		public function mergeFormData(\caspar\core\Request $form_data)
+		{
+			$this->_charactername = $form_data['charactername'];
+			$this->_age = $form_data['age'];
+			$this->_age_show_only_friends = $form_data['age_show_only_friends'];
+			$this->_bio = $form_data['bio'];
+			$this->_bio_show_only_friends = $form_data['bio_show_only_friends'];
+			$this->_location = $form_data['location'];
+			$this->_location_show_only_friends = $form_data['location_show_only_friends'];
+		}
 
 	}

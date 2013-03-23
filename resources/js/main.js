@@ -518,6 +518,27 @@ Devo.Main.Profile.show = function(user_id, button) {
 	});
 };
 
+Devo.Main.Profile.save = function(form) {
+	Devo.Main.Helpers.ajax(Devo.options['say_url'], {
+		additional_params: '&topic=saveprofile',
+		form: form,
+		loading: {
+			indicator: 'save_profile_indicator'
+		},
+		success: {
+			callback: function(json) {
+				Devo.Main.Helpers.Backdrop.reset();
+				var c_name = $('profile_edit_charactername').getValue();
+				if ($('profile-user-charactername')) {
+					$('profile-user-charactername').update(c_name);
+				}
+				Devo.options['charactername'] = c_name;
+			}
+		}
+	});
+	
+}
+
 Devo.Main.Profile.addFriend = function(user_id, button) {
 	Devo.Main.Helpers.ajax(Devo.options['say_url'], {
 		additional_params: '&topic=add_friend&user_id=' + user_id,

@@ -43,6 +43,10 @@
 			$this->trained = $this->getUser()->hasTrainedSkill($this->skill);
 		}
 
+		public function componentProfileEdit()
+		{
+		}
+
 		public function componentMyGames()
 		{
 			$this->games = $this->getUser()->getGames();

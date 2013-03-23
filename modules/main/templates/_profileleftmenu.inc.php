@@ -17,6 +17,7 @@
 				<?php endif; ?>
 				<li>&nbsp;</li>
 				<li><a href="#!profile">Profile summary</a></li>
+				<li><a href="javascript:void(0);" onclick="Devo.Main.Helpers.Backdrop.show('<?php echo make_url('get_backdrop_partial', array('key' => 'editprofile')); ?>');return false;">Edit profile</a></li>
 				<li><a href="#!profile/skills">My skills</a></li>
 				<?php if ($csp_user->hasCards()): ?>
 					<li><a href="#!profile/cards">My cards</a></li>

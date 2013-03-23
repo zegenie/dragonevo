@@ -76,9 +76,7 @@
 			</div>
 			<div id="play-menu-generic" <?php if (!$csp_user->hasCharacter() || !$csp_user->hasCards()): ?>style="display: none;"<?php endif; ?>>
 				<button class="button button-green quickmatch" id="toggle-playmenu-button" onclick="$('play-menu-main').toggle();$('play-menu-play').toggle();">Multiplayer</button>
-				<?php if ($csp_user->isAdmin()): ?>
-					<button class="button button-lightblue singleplayer" onclick="Devo.Main.loadAdventureUI();$('gamemenu-container').hide();" id="play-adventure-button">Singleplayer</button>
-				<?php endif; ?>
+				<button class="button button-lightblue singleplayer" onclick="Devo.Main.loadAdventureUI();$('gamemenu-container').hide();" id="play-adventure-button">Singleplayer</button>
 				<button class="button button-orange" onclick="Devo.Main.loadMarketUI();$('gamemenu-container').hide();" id="enter-market-button">Trade and buy</button>
 				<button class="button button-silver singleplayer" onclick="$('play-menu-main').toggle();$('play-menu-single').toggle();">Training</button>
 				<button class="button button-silver settings" onclick="Devo.Main.loadProfile();" id="show-profile-button">My profile</button>
@@ -88,9 +86,7 @@
 				<button class="button button-green" onclick="$('gamemenu-container').toggle();">Resume game</button>
 				<button class="button button-silver settings" onclick="$('settings-overlay').toggle();">Settings</button>
 				<button class="button button-silver" onclick="Devo.Game.destroyGame();Devo.Main.loadLobbyUI();">Go to the lobby</a>
-				<?php if ($csp_user->isAdmin()): ?>
-					<button class="button button-silver singleplayer" onclick="Devo.Game.destroyGame();Devo.Main.loadAdventureUI();$('gamemenu-container').hide();">Switch to singleplayer</button>
-				<?php endif; ?>
+				<button class="button button-silver singleplayer" onclick="Devo.Game.destroyGame();Devo.Main.loadAdventureUI();$('gamemenu-container').hide();">Switch to singleplayer</button>
 				<button class="button button-silver exit" onclick="$('gamemenu-container').hide();Devo.Main.Helpers.Dialog.show('Flee the battle?', 'Quitting the game means you lose, the opponent is awarded battlepoints and XP, and you\'re left with nothing! Not even loot!<br><span class=\'faded_out\'>Actually, the part about loot isn\'t implemented yet, but suddenly it will be and then you\'ll be sorry!</span>', {yes: {click: function() {Devo.Game.flee(); }}, no: {click: function() {Devo.Main.Helpers.Dialog.dismiss();}}});" id="leave-game-button">Leave game</button>
 			</div>
 			<a href="<?php echo make_url('home'); ?>" class="button button-silver exit">Exit</a>

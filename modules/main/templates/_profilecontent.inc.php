@@ -49,7 +49,9 @@
 		</div>
 	</div>
 	<div class="content profile summary" id="profile-container">
-		<h1><?php echo $intro; ?>, <?php echo $csp_user->getName(); ?>!</h1>
+		<h1>
+			<?php echo $intro; ?>, <span id="profile-user-charactername"><?php echo $csp_user->getCharactername(); ?></span>!
+		</h1>
 		<?php include_template('main/profiledetailstop'); ?>
 		<div id="user_level">
 			<a href="javascript:void(0);" onclick="$('levelup-overlay').show();" class="button button-orange" style="float: right; margin: 10px 10px 20px 20px; font-size: 1.2em !important; padding: 10px 15px !important;">Spend XP!</a>
