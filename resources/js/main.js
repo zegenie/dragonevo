@@ -2115,7 +2115,7 @@ Devo.Core.Pollers.Callbacks.notificationsPoller = function() {
 		var line = Devo.Notifications.Messages.shift();
 		var d = new Date();
 		var tstamp = d.getTime();
-		var timeout = (line['options'] && line['options']['timeout']) ? line['options']['timeout'] : 6.5;
+		var timeout = (line['options'] && line['options']['timeout']) ? parseInt(parseInt(line['options']['timeout']) * 1000) : 6500;
 		var notification = '<div class="notification" id="notification-'+tstamp+'">';
 		if (line['options'] && line['options']['title']) notification += '<div class="title">'+line['options']['title']+'</div>';
 		notification += line['message'];
@@ -2134,7 +2134,7 @@ Devo.Core.Pollers.Callbacks.notificationsPoller = function() {
 		}, 200);
 		window.setTimeout(function() {
 			Devo.Notifications.remove(tstamp);
-		}, parseint(timeout * 1000));
+		}, timeout);
 	}
 };
 

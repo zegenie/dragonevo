@@ -4,12 +4,6 @@
 
 ?>
 <?php if ($game instanceof Game && ($csp_user->isAdmin() || in_array($csp_user->getId(), array($game->getPlayer()->getId(), $game->getOpponentId())))): ?>
-	<?php
-
-		$csp_response->setTitle("Game board ~ game vs. {$game->getUserOpponent()->getUsername()}");
-		$csp_response->addStylesheet('/css/animate.css');
-
-	?>
 	<div id="board-container" class="<?php if (!$csp_user->isLowGraphicsEnabled()) echo 'effect-3d'; ?>">
 		<div id="phase-1-overlay" class="fullpage_backdrop dark" style="display: none;"><a href="javascript:void(0);" id="end-phase-1-button" class="turn-button button button-green<?php if ($game->getCurrentPlayerId() != $csp_user->getId()) echo ' disabled'; ?>" onclick="Devo.Game.endPhase(this);"><img src="/images/spinning_16.gif" style="display: none;">End replenishment phase</a></div>
 		<div id="gameover-overlay" class="fullpage_backdrop dark" style="<?php if (!$game->isGameOver()): ?>display: none;<?php endif; ?>">
