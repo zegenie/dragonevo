@@ -28,6 +28,7 @@
 	<h1 style="margin-top: 25px;">Manage users</h1>
 	<ul>
 		<li><a href="<?php echo make_url('admin_users'); ?>">Edit users</a></li>
+		<li><a href="<?php echo make_url('admin_users_list'); ?>">Get user's emails</a></li>
 		<li><a href="<?php echo make_url('admin_skills'); ?>">Edit available skills</a></li>
 	</ul>
 	<h1 style="margin-top: 25px;">Manage games</h1>

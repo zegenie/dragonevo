@@ -57,7 +57,7 @@ var Devo = {
 		}
     },
 	Chat: {
-		loaded: false,
+		loaded: {},
 		Bubbles: []
 	},
 	Notifications: {
@@ -1057,7 +1057,7 @@ Devo.Core.Pollers.Callbacks.chatLinesPoller = function() {
 											chat_line += '&nbsp;<span class="chat_timestamp">('+line['posted_formatted_hours']+'<span class="date"> - '+line['posted_formatted_date']+'</span>)</div><div class="chat_line_content">'+Devo.Chat.emotify(line['text'])+'</div></div>';
 											$('chat_room_'+room_id+'_lines').insert(chat_line);
 											$('chat_room_'+room_id+'_lines').scrollTop = $('chat_line_'+line_id).offsetTop;
-											if (Devo.Chat.loaded == true && user_id > 0 && user_id != Devo.Game.getUserId()) {
+											if (Devo.Chat.loaded['loaded-'+room_id] != undefined && Devo.Chat.loaded['loaded-'+room_id] == true && user_id > 0 && user_id != Devo.Game.getUserId()) {
 												if (Devo.Core._infocus && !visible && mentioned) {
 													Devo.Notifications.add('Someone just mentioned you in the chat!');
 												}
@@ -1078,9 +1078,9 @@ Devo.Core.Pollers.Callbacks.chatLinesPoller = function() {
 										}
 									}
 								}
+								Devo.Chat.loaded['loaded-'+room_id] = true;
 							}
 						}
-						Devo.Chat.loaded = true;
 						if (needs_users_refresh) {
 							Devo.Core.Pollers.Callbacks.chatUsersPoller();
 						}

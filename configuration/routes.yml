@@ -155,6 +155,11 @@ admin_users:
   module: admin
   action: users
 
+admin_users_list:
+  url: /admin/list/users
+  module: admin
+  action: listusers
+
 admin_games_finished:
   url: /admin/games/finished
   module: admin

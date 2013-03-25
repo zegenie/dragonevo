@@ -505,6 +505,17 @@
 			$this->users = \application\entities\tables\Users::getTable()->getAll();
 		}
 
+		public function runListUsers(Request $request)
+		{
+			$users = \application\entities\tables\Users::getTable()->getAll();
+			$emails = array();
+			foreach ($users as $user) {
+				if (filter_var($user->getEmail(), FILTER_VALIDATE_EMAIL)) $emails[] = $user->getEmail();
+			}
+
+			$this->emails = $emails;
+		}
+
 		protected function _processResetUserCards(Request $request)
 		{
 			if ($request['user_id'] && (int) $request['user_id'] > 0) {
