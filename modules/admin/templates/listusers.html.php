@@ -10,7 +10,7 @@
 	<h1>
 		List user's emails
 	</h1>
-	<h4>Comma-separated list of email addresses</h4>
+	<h4>Comma-separated list of email addresses (<?php echo count($emails); ?>)</h4>
 	<p>
 		<?php echo join(', ', $emails); ?>
 	</p>
