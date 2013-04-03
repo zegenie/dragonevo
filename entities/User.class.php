@@ -267,8 +267,40 @@
 		protected $_cards;
 		
 		/**
-		 * This user's number of invites
+		 * This user's singleplayer ranking points
 		 * 
+		 * @Column(type="integer", default=300, length=10)
+		 * @var integer
+		 */
+		protected $_ranking_points_sp = 300;
+
+		/**
+		 * This user's singleplayer ranking
+		 *
+		 * @Column(type="integer", default=0, length=10)
+		 * @var integer
+		 */
+		protected $_ranking_sp = 0;
+
+		/**
+		 * This user's multiplayer ranking points
+		 *
+		 * @Column(type="integer", default=300, length=10)
+		 * @var integer
+		 */
+		protected $_ranking_points_mp = 300;
+
+		/**
+		 * This user's multiplayer ranking
+		 *
+		 * @Column(type="integer", default=0, length=10)
+		 * @var integer
+		 */
+		protected $_ranking_mp = 0;
+
+		/**
+		 * This user's number of invites
+		 *
 		 * @Column(type="integer", default=0, length=10)
 		 * @var integer
 		 */
@@ -1483,6 +1515,56 @@
 		public function setBioShowOnlyFriends($bio_show_only_friends)
 		{
 			$this->_bio_show_only_friends = $bio_show_only_friends;
+		}
+
+		public function getRankingPointsSp()
+		{
+			return $this->_ranking_points_sp;
+		}
+
+		public function setRankingPointsSp($ranking_points_sp)
+		{
+			$this->_ranking_points_sp = $ranking_points_sp;
+		}
+
+		public function addRankingPointsSp($points)
+		{
+			$this->_ranking_points_sp += floor($points);
+		}
+
+		public function getRankingSp()
+		{
+			return $this->_ranking_sp;
+		}
+
+		public function setRankingSp($ranking_sp)
+		{
+			$this->_ranking_sp = $ranking_sp;
+		}
+
+		public function getRankingPointsMp()
+		{
+			return $this->_ranking_points_mp;
+		}
+
+		public function setRankingPointsMp($ranking_points_mp)
+		{
+			$this->_ranking_points_mp = $ranking_points_mp;
+		}
+
+		public function addRankingPointsMp($points)
+		{
+			$this->_ranking_points_mp += floor($points);
+		}
+
+		public function getRankingMp()
+		{
+			return $this->_ranking_mp;
+		}
+
+		public function setRankingMp($ranking_mp)
+		{
+			$this->_ranking_mp = $ranking_mp;
 		}
 
 		public function mergeFormData(\caspar\core\Request $form_data)

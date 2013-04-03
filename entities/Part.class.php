@@ -178,6 +178,8 @@
 
 		public function resolve(User $player, Game $game, $winning)
 		{
+			$previous_attempts = tables\UserParts::getTable()->getAttemptsByPartIdAndUserId($this->getId(), $player->getId());
+			$has_previous_attempts = !empty($previous_attempts);
 			$attempt = new UserPart();
 			$attempt->setPart($this);
 			$attempt->setUser($player);
@@ -191,6 +193,13 @@
 					foreach ($this->getCardRewards() as $reward) {
 						$player->giveCard($reward->getCard());
 					}
+				}
+				if ($this->getTellableType() == Tellable::TYPE_ADVENTURE) {
+					$points = 5;
+					$points -= $player->getLevel() - $this->getRequiredLevel();
+					if ($points > 0) $player->addRankingPointsSp($points);
+				} elseif (!$has_previous_attempts) {
+					$player->addRankingPointsSp(5);
 				}
 				$this->getParent()->resolvePart($this, $player);
 				$player->save();

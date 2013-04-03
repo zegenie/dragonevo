@@ -372,18 +372,55 @@
 				$winner_statistics = $this->getStatistics($this->getWinningPlayerId());
 				$this->getWinningPlayer()->addXp($winner_statistics['xp']);
 				$this->getWinningPlayer()->addGold($winner_statistics['gold']);
-				$this->getWinningPlayer()->save();
 
 				$loser_statistics = $this->getStatistics($this->getLosingPlayerId());
 				$this->getLosingPlayer()->addXp($loser_statistics['xp']);
 				$this->getLosingPlayer()->addGold($loser_statistics['gold']);
-				$this->getLosingPlayer()->save();
 			}
 			
 			if ($this->getOpponent()->isAI() || $this->getTurnNumber() <= 2) return;
+			
+			$this->_addRankingPoints($winner_statistics, $loser_statistics);
+			
+			$this->getWinningPlayer()->save();
+			$this->getLosingPlayer()->save();
 
 			$lobby = tables\ChatRooms::getTable()->selectById(1);
 			$lobby->say("{$this->getWinningPlayer()->getUsername()} ({$winner_statistics['hp']} HP damage, {$winner_statistics['cards']} kills) won the match against {$this->getLosingPlayer()->getUsername()} ({$loser_statistics['hp']} HP damage, {$loser_statistics['cards']} kills). ", 0);
+		}
+
+		protected function _addRankingPoints($winner_statistics, $loser_statistics)
+		{
+			$winner_points = 10;
+			$winner_player = $this->getWinningPlayer();
+			$loser_points = 0;
+			$loser_player = $this->getLosingPlayer();
+
+			if ($winner_player->getLevel() < $loser_player) {
+				$level_diff = $loser_player->getLevel() - $winner_player->getLevel();
+				$points_increase = 0;
+				for ($cc = $level_diff; $cc--; $cc > 0) {
+					$winner_points += 2 + $points_increase;
+					$points_increase += 2;
+				}
+				$loser_points -= 2 * $level_diff;
+			}
+			
+			if ($winner_statistics['cards'] > 1) {
+				$winner_points += 5 + (3 * ($winner_statistics['cards'] - 1));
+				$loser_points -= 3 + ($winner_statistics['cards'] - 1);
+			}
+
+			if ($loser_statistics['cards'] > 1) {
+				$winner_points -= 3 + ($loser_statistics['cards'] - 1);
+				$loser_points += 3 + ($loser_statistics['cards'] - 1);
+			} elseif ($loser_statistics['cards'] > 0) {
+				$winner_points -= 3;
+				$loser_points += 3;
+			}
+
+			$winner_player->addRankingPointsMp($winner_points);
+			$loser_player->addRankingPointsMp($loser_points);
 		}
 
 		public function endTurn()
@@ -628,7 +665,12 @@
 
 		public function getStatistics($player_id)
 		{
-			$statistics = tables\GameEvents::getTable()->getStatisticsByGameId($this->getId(), $player_id);
+			static $statistics;
+
+			if ($statistics === null) {
+				$statistics = tables\GameEvents::getTable()->getStatisticsByGameId($this->getId(), $player_id);
+			}
+
 			if ($this->isScenario()) {
 				$winning = (bool) ($this->getWinningPlayerId() == $this->getPlayer()->getId());
 				if ($winning) {

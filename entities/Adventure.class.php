@@ -73,6 +73,11 @@
 						$player->giveCard($reward->getCard());
 					}
 				}
+				$points = 7 * $this->getRequiredLevel();
+				if ($points > 0) {
+					$points -= $player->getLevel() / $this->getRequiredLevel();
+					if ($points > 0) $player->addRankingPointsSp($points);
+				}
 			}
 		}
 

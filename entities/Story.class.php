@@ -58,6 +58,8 @@
 
 		public function resolveChapter(Chapter $chapter, User $player)
 		{
+			$previous_attempts = tables\UserStories::getTable()->getAttemptsByStoryIdAndUserId($this->getId(), $player->getId());
+			$has_previous_attempts = !empty($previous_attempts);
 			$chapters = $this->getChapters();
 			$last_chapter = array_pop($chapters);
 			if ($last_chapter->getId() == $chapter->getId()) {
@@ -71,6 +73,13 @@
 				if ($this->hasCardRewards()) {
 					foreach ($this->getCardRewards() as $reward) {
 						$player->giveCard($reward->getCard());
+					}
+				}
+				if (!$has_previous_attempts) {
+					$points = 10 * $this->getRequiredLevel();
+					if ($points > 0) {
+						$points -= $player->getLevel() / $this->getRequiredLevel();
+						if ($points > 0) $player->addRankingPointsSp($points);
 					}
 				}
 			}

@@ -98,6 +98,8 @@
 
 		public function resolvePart(Part $part, User $player)
 		{
+			$previous_attempts = tables\UserChapters::getTable()->getAttemptsByChapterIdAndUserId($this->getId(), $player->getId());
+			$has_previous_attempts = !empty($previous_attempts);
 			$parts = $this->getParts();
 			$last_part = array_pop($parts);
 			if ($last_part->getId() == $part->getId()) {
@@ -114,6 +116,13 @@
 					}
 				}
 				$this->getStory()->resolveChapter($this, $player);
+				if (!$has_previous_attempts) {
+					$points = 5 * $this->getRequiredLevel();
+					if ($points > 0) {
+						$points -= $player->getLevel() / $this->getRequiredLevel();
+						if ($points > 0) $player->addRankingPointsSp($points);
+					}
+				}
 			}
 		}
 
