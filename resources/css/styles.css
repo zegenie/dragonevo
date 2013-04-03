@@ -3912,7 +3912,7 @@ li.card-slot {
 	border-top-left-radius: 4px 2px;
 	box-shadow: inset 1px 3px 3px -2px rgba(85, 71, 67, 0.6);
 }
-.item-slot .card.item > .description, .card.tiny > .description, .card.tiny > .attacks, .card.tiny .gold_increase, .card.tiny > .ep, .card.tiny > .hp, .card.tiny > .dmp, #adventure-book .card .attack_bonus {
+.item-slot .card.item > .description, .card.tiny > .description, .card.tiny > .attacks, .card.tiny .gold_increase, .card.tiny > .ep, .card.tiny > .hp, .card.tiny > .dmp, #adventure-book .card .attack_bonus, .cards.admin .card .attack_bonus {
 	display: none;
 }
 .card.tiny .card_cost {

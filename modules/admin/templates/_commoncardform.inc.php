@@ -1,7 +1,7 @@
 <fieldset>
 	<legend>Basic details</legend>
 	<div style="float: right; clear: none; width: 270px;">
-		<ul class="cards">
+		<ul class="cards admin">
 			<?php include_template('game/card', array('card' => $card, 'ingame' => false)); ?>
 		</ul>
 	</div>
