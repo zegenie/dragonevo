@@ -8,7 +8,7 @@
 	<?php include_template('main/gameinvites'); ?>
 	<div class="profile_menu" id="profile-menu-strip">
 		<img id="main-menu-badge" class="badge" src="/images/ui_bottom_center_small.png" onclick="Devo.Main.showMenu();">
-		<div style="background-image: url('/images/avatars/<?php echo $csp_user->getAvatar(); ?>')" class="avatar mine" id="avatar-player"></div>
+		<div style="background-image: url('/images/avatars/<?php echo $csp_user->getAvatar(); ?>')" class="avatar mine" id="avatar-player" onclick="Devo.Main.Profile.show(<?php echo $csp_user->getId(); ?>);"></div>
 		<div style="display: none;" class="avatar opponent" id="avatar-opponent"></div>
 		<div class="strip">
 			<ul id="profile_menu_strip">

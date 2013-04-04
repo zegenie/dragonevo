@@ -23,7 +23,7 @@
 			<br style="clear: both;">
 			<div style="clear: both; text-align: right; padding: 10px; margin-top: 10px; background-color: rgba(80, 54, 32, 0.4); border: 1px dotted rgba(72, 48, 28, 0.8); border-left: none; border-right: none;">
 				<img src="/images/spinning_20.gif" id="save_profile_indicator" style="display: none; margin: 2px 5px -6px 0;">
-				<a href="javascript:void(0);" onclick="Devo.Main.Helpers.Backdrop.reset();" style="font-size: 0.9em; font-weight: normal;">Cancel</a> or <button class="ui_button" style="font-size: 0.9em; line-height: 14px !important;">Update profile</button>
+				<a href="javascript:void(0);" onclick="Devo.Main.Helpers.Backdrop.reset();$('fullpage_backdrop_content').update('');" style="font-size: 0.9em; font-weight: normal;">Cancel</a> or <button class="ui_button" style="font-size: 0.9em; line-height: 14px !important;">Update profile</button>
 			</div>
 		</form>
 	</div>

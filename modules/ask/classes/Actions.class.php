@@ -94,7 +94,7 @@
 					$room->ping($this->getUser());
 					$users = array();
 					foreach ($room->getUsers() as $user) {
-						$users[$user->getId()] = array('username' => $user->getUsername(), 'avatar' => $user->getAvatar(), 'charactername' => $user->getCharactername(), 'race' => $user->getRaceName(), 'user_id' => $user->getId(), 'is_admin' => $user->isAdmin(), 'level' => $user->getLevel(), 'friends' => $this->getUser()->isFriends($user));
+						$users[$user->getId()] = array('username' => $user->getUsername(), 'mp_ranking' => $user->getRankingMP(), 'sp_ranking' => $user->getRankingSP(), 'avatar' => $user->getAvatar(), 'charactername' => $user->getCharactername(), 'race' => $user->getRaceName(), 'user_id' => $user->getId(), 'is_admin' => $user->isAdmin(), 'level' => $user->getLevel(), 'friends' => $this->getUser()->isFriends($user));
 					}
 					$chat_users[$room_id] = array(
 						'users' => $users,

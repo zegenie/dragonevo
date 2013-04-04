@@ -118,4 +118,32 @@
 			return $this->select($crit);
 		}
 
+		public function updateRanking()
+		{
+			$return_array = array();
+			foreach (array('sp', 'mp') as $item) {
+				$var = "{$item}_users";
+				$return_array[$var] = array();
+				$crit = $this->getCriteria();
+				$crit->addSelectionColumn('users.id', 'id');
+				$crit->addSelectionColumn('users.username', 'username');
+				$crit->addOrderBy("users.ranking_points_{$item}", 'desc');
+				$res = $this->doSelect($crit);
+
+				$cc = 1;
+				if ($res) {
+					while ($row = $res->getNextRow()) {
+						$c = $this->getCriteria();
+						$c->addUpdate("users.ranking_{$item}", $cc);
+						$this->doUpdateById($c, $row['id']);
+
+						$return_array[$var][$row['username']] = $cc;
+						$cc++;
+					}
+				}
+			}
+
+			return $return_array;
+		}
+
 	}

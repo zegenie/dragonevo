@@ -1114,15 +1114,18 @@ Devo.Chat.getUserPopupHtml = function(user_id, user) {
 	user_line += '">';
 
 	if (user['charactername']) {
-	user_line += user['charactername'];
+		user_line += user['charactername'];
 	} else {
-	user_line += 'Username: '+user['username'];
+		user_line += 'Username: '+user['username'];
 	}
+
+	user_line += '<div class="rating">#'+user['mp_ranking']+'<br>MP ranking</div>';
+	user_line += '<div class="rating">#'+user['sp_ranking']+'<br>SP ranking</div>';
 
 	user_line += '<br>Level '+user['level'];
 
 	if (user['race'] != '') {
-	user_line += ' '+user['race'];
+		user_line += ' '+user['race'];
 	}
 
 	user_line += '<br><div class="buttons button-group">';
