@@ -394,7 +394,7 @@ h6 {
 .article .content ul { margin: 15px 0 15px 25px; }
 .article .content a { font-family: 'Gentium Basic'; }
 
-.article .image_container { display: inline-block; clear: both; margin: 10px; background-color: rgba(100, 100, 100, 0.3); border: 1px solid rgba(100, 100, 100, 0.7); padding: 10px; border-radius: 10px; }
+.article .image_container { display: inline-block; font-size: 1.1em; text-align: center; clear: both; margin: 10px; background-color: rgba(100, 100, 100, 0.3); border: 1px solid rgba(100, 100, 100, 0.7); padding: 10px; border-radius: 10px; }
 .article .image_container.iccenter { margin: 0 auto; position: relative; }
 .article .image_container.icright { float: right; }
 .article .image_container.icleft { float: left; }
