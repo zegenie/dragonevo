@@ -61,8 +61,9 @@
 			<ul class="main-menu">
 				<li><a href="http://dragonevo.com" class="<?php if ($tbg_response->getPage() == 'home') echo ' selected'; ?>">Home</a></li>
 				<li><a href="http://dragonevo.com/media" class="<?php if ($tbg_response->getPage() == 'media') echo ' selected'; ?>">Media</a></li>
-				<li><a href="http://wiki.dragonevo.com/wiki/GameGuide" class="selected">Game guide</a></li>
-				<li><a href="http://forum.dragonevo.com">Forum</a></li>
+					<li><a href="http://guide.dragonevo.com/wiki/GameGuide" class="selected">Game guide</a></li>
+					<li><a href="http://forum.dragonevo.com">Forum</a></li>
+					<li><a href="http://dragonevotcg.wordpress.com">Blog</a></li>
 				<?php /* if ($csp_user->isAuthenticated()): ?>
 					<li><a href="<?php echo make_url('profile'); ?>" class="<?php if ($tbg_response->getPage() == 'profile') echo ' selected'; ?>">Profile</a></li>
 				<?php endif; */ ?>

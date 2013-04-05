@@ -84,8 +84,9 @@
 				<ul class="main-menu">
 					<li><a href="<?php echo make_url('home'); ?>" class="<?php if ($csp_response->getPage() == 'home') echo ' selected'; ?>">Home</a></li>
 					<li><a href="<?php echo make_url('media'); ?>" class="<?php if ($csp_response->getPage() == 'media') echo ' selected'; ?>">Media</a></li>
-					<li><a href="http://wiki.dragonevo.com/wiki/GameGuide">Game guide</a></li>
+					<li><a href="http://guide.dragonevo.com/wiki/GameGuide">Game guide</a></li>
 					<li><a href="http://forum.dragonevo.com">Forum</a></li>
+					<li><a href="http://dragonevotcg.wordpress.com">Blog</a></li>
 					<li><a href="<?php echo make_url('faq'); ?>" class="<?php if ($csp_response->getPage() == 'faq') echo ' selected'; ?>">FAQ</a></li>
 				</ul>
 				<?php echo $content; ?>
