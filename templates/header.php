@@ -59,13 +59,13 @@
 				<a class="button button-standard play-now" style="font-family: 'Gentium Basic'; border-radius: 10px; font-size: 2em; font-weight: normal; padding: 20px 10px !important;" href="http://dragonevo.com/play">Play now!</a>
 			</div>
 			<ul class="main-menu">
-				<li><a href="http://dragonevo.com" class="<?php if ($tbg_response->getPage() == 'home') echo ' selected'; ?>">Home</a></li>
-				<li><a href="http://dragonevo.com/media" class="<?php if ($tbg_response->getPage() == 'media') echo ' selected'; ?>">Media</a></li>
+				<li><a href="http://new.dragonevo.com" class="<?php if ($tbg_response->getPage() == 'home') echo ' selected'; ?>">Home</a></li>
+				<li><a href="http://new.dragonevo.com/media" class="<?php if ($tbg_response->getPage() == 'media') echo ' selected'; ?>">Media</a></li>
 					<li><a href="http://guide.dragonevo.com/wiki/GameGuide" class="selected">Game guide</a></li>
 					<li><a href="http://forum.dragonevo.com">Forum</a></li>
 					<li><a href="http://dragonevotcg.wordpress.com">Blog</a></li>
 				<?php /* if ($csp_user->isAuthenticated()): ?>
 					<li><a href="<?php echo make_url('profile'); ?>" class="<?php if ($tbg_response->getPage() == 'profile') echo ' selected'; ?>">Profile</a></li>
 				<?php endif; */ ?>
-				<li><a href="http://dragonevo.com/faq" class="<?php if ($tbg_response->getPage() == 'faq') echo ' selected'; ?>">FAQ</a></li>
+				<li><a href="http://new.dragonevo.com/faq" class="<?php if ($tbg_response->getPage() == 'faq') echo ' selected'; ?>">FAQ</a></li>
 			</ul>
