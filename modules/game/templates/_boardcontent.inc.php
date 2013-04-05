@@ -32,7 +32,7 @@
 						<div class="button-container" id="goto-buttons-container"<?php if (!$game->isUserInGame()): ?> style="display: none;"<?php endif; ?>>
 							<button class="button button-silver" onclick="Devo.Game.destroyGame();Devo.Main.loadLobbyUI();" id="goto-lobby-button"<?php if ($game->isScenario()): ?> style="display: none;"<?php endif; ?>>Go to the lobby</a>
 							<button class="button button-lightblue" onclick="<?php if ($game->isScenario()): ?>Devo.Game.destroyGame();Devo.Main.loadAdventureUI('part', <?php echo $game->getPartId(); ?>);<?php endif; ?>" id="goto-adventure-button"<?php if (!$game->isScenario()): ?> style="display: none;"<?php endif; ?>>Back to map</a>
-							<button class="button button-orange" onclick="Devo.Game.destroyGame();Devo.Main.loadMarketUI();">Buy better cards</a>
+							<button class="button button-orange" onclick="Devo.Game.destroyGame();Devo.Main.loadMarketFrontpage();">Buy better cards</a>
 						</div>
 					</div>
 				</div>

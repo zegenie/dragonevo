@@ -394,6 +394,12 @@ h6 {
 .article .content ul { margin: 15px 0 15px 25px; }
 .article .content a { font-family: 'Gentium Basic'; }
 
+.article .image_container { display: inline-block; clear: both; margin: 10px; background-color: rgba(100, 100, 100, 0.3); border: 1px solid rgba(100, 100, 100, 0.7); padding: 10px; border-radius: 10px; }
+.article .image_container.iccenter { margin: 0 auto; position: relative; }
+.article .image_container.icright { float: right; }
+.article .image_container.icleft { float: left; }
+.article .image_container a { display: none; }
+
 .banner-container { position: relative; padding: 0; margin: 0; }
 .devo-box {
 	font-size: 2.7em;
@@ -1094,8 +1100,14 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 .character_setup label { float: left; padding: 4px 4px 4px 0; }
 #profile-character-setup label { font-size: 1.3em; font-weight: bold; display: inline-block; float: none; color: #CBB66F; }
 #character_name_input { padding: 9px; font-size: 1.1em; width: 300px; }
-#character-name-container, #race-card-picker { margin: 10px; }
-#character-avatar-container { padding: 10px; }
+#race-card-picker { margin: 10px; }
+#race-card-picker .card .description { font-family: 'Open Sans'; font-weight: normal; font-size: 0.7em; }
+#race-card-picker .card .description_content { line-height: 1.2em; text-align: left; }
+#race-card-picker .card .description_content strong { font-size: 1.1em; }
+#character-name-container, #character-name-header { margin: 25px 0 0 10px; display: inline-block; float: left; }
+#character-name-header { line-height: 1em; font-size: 2em; padding-top: 0; }
+#character-name-header:first-line { font-size: 0.5em; }
+#character-avatar-container { padding: 10px; float: left; }
 #character-avatar-container.completed label, #character-avatar-container.completed .avatar_preview.unselected, #character-avatar-container.completed .button { display: none !important; }
 .avatar_preview {
 	border: 2px solid rgba(255, 255, 255, 0.9);
@@ -1121,6 +1133,7 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 }
 .character_setup input[type="submit"] { font-size: 1.2em; margin: 10px auto; font-weight: normal; display: block; padding: 10px 20px !important; }
 .character_setup input.pick_faction { padding: 10px 15px !important; font-weight: normal; color: #FFF !important; text-shadow: 1px 1px 1px #666666 !important; font-size: 1em; left: 50%; width: 160px; margin-left: -95px; top: 295px; position: absolute; z-index: 10; }
+.character_setup .faction-description { font-family: 'Open Sans'; font-size: 1em !important; padding: 0 20px !important; text-align: justify; }
 .character_setup .card {
 	z-index: 1;
 	margin: 0 auto; opacity: 0.5;
@@ -1237,8 +1250,12 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 	text-align: center;
 	margin: 5px auto;
 	background-color: rgba(0, 0, 0, 0.6);
-	padding: 5px;
+	padding: 10px;
 	border-radius: 7px;
+}
+.character_setup .card_help span {
+	font-weight: bold;
+	font-size: 1.3em;
 }
 
 .swirl-dialog.profile_setup { font-size: 1em; background: rgba(162, 213, 236, 0.2); width: 800px; margin: 50px auto; position: relative; color: rgba(255, 255, 255, 0.9); text-align: left; }
@@ -1255,6 +1272,7 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 #profile-container { margin-top: 20px; }
 #left-menu-container { position: relative; width: 280px; }
 #left-menu-container .menu-left { position: fixed; top: 40px; width: 250px; left: 40px; }
+#left-menu-container a.selected { font-weight: bold; }
 #profile-skills-train-button-container { position: fixed; top: 140px; right: 20px; }
 .skill {
 	border: 1px solid rgba(162, 213, 236, 0.2);
@@ -1547,6 +1565,10 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 	font-size: 2.2em;
 	font-family: 'Fredericka The Great';
 	text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+}
+#market-menu #user-gold {
+	background-image: none;
+	padding: 5px 0 20px 5px;
 }
 .user-xp {
 	width: auto;
@@ -2076,6 +2098,20 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 	position: relative;
 	margin-bottom: 20px;
 	overflow: visible;
+	min-height: 280px;
+}
+.shelf #shelf-loading {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	border-radius: 10px;
+	background-color: rgba(0, 0, 0, 0.5);
+	z-index: 10;
+}
+#shelf-loading img {
+	margin: 50px auto;
+	display: block;
+	height: 150px;
 }
 .shelf ul { list-style: none; padding: 0 35px; position: relative; min-height: 280px; }
 .shelf li { margin: 30px 9px 37px 10px; float: none; display: inline-block; }
@@ -2763,7 +2799,7 @@ li.card {
 	position: absolute;
 	top: 215px;
 	left: 23px;
-	width: 228px;
+	width: 220px;
 }
 #player_potions .card.potion_item {
 	display: inline-block;
@@ -4005,49 +4041,45 @@ li.card-slot {
 	height: 0;
 	border: 10px solid transparent;
 }
-.tutorial-message.above:before,
-.tutorial-message.above:after {
+.tutorial-message.above:before, .tutorial-message.above:after, .popup-menu.above:before, .popup-menu.above:after {
 	bottom: -20px;
 	top: auto;
 	left: 50%;
 	border-top: 10px solid rgba(0, 0, 0, 0.75);
 }
-.tutorial-message.above:after {
+.tutorial-message.above:after, .popup-menu.above:after {
 	margin-left: -10px;
 	border-top: 10px solid rgba(255, 255, 255, 1);
 }
-.tutorial-message.below:before,
-.tutorial-message.below:after {
+.tutorial-message.below:before, .tutorial-message.below:after, .popup-menu.below:before, .popup-menu.below:after {
 	top: -20px;
 	bottom: auto;
 	left: 50%;
 	border-bottom: 10px solid rgba(0, 0, 0, 0.75);
 }
-.tutorial-message.below:after {
+.tutorial-message.below:after, .popup-menu.below:after {
 	margin-left: -10px;
 	border-bottom: 10px solid rgba(255, 255, 255, 1);
 }
-.tutorial-message.left:before,
-.tutorial-message.left:after {
+.tutorial-message.left:before, .tutorial-message.left:after, .popup-menu.left:before, .popup-menu.left:after {
 	top: 50%;
 	bottom: auto;
 	right: -20px;
 	left: auto;
 	border-left: 10px solid rgba(0, 0, 0, 0.75);
 }
-.tutorial-message.left:after {
+.tutorial-message.left:after, .popup-menu.left:after {
 	margin-top: -1px;
 	border-left: 10px solid rgba(255, 255, 255, 1);
 }
-.tutorial-message.right:before,
-.tutorial-message.right:after {
+.tutorial-message.right:before, .tutorial-message.right:after, .popup-menu.right:before, .popup-menu.right:after {
 	top: 50%;
 	bottom: auto;
 	right: auto;
 	left: -11px;
 	border-right: 10px solid rgba(0, 0, 0, 0.75);
 }
-.tutorial-message.right:after {
+.tutorial-message.right:after, .popup-menu.right:after {
 	margin-top: -1px;
 	border-right: 10px solid rgba(255, 255, 255, 1);
 }
@@ -5800,7 +5832,7 @@ li.card-slot {
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
-#quickmatch_overlay.loading .fullpage_backdrop_content img {
+#quickmatch_overlay.loading .fullpage_backdrop_content img, .cssloader img {
 	-webkit-animation-name: loading;
 	-webkit-animation-duration: 2s;
 	-webkit-animation-iteration-count: infinite;

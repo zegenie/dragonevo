@@ -77,15 +77,15 @@
 			<div id="play-menu-generic" <?php if (!$csp_user->hasCharacter() || !$csp_user->hasCards()): ?>style="display: none;"<?php endif; ?>>
 				<button class="button button-green quickmatch" id="toggle-playmenu-button" onclick="$('play-menu-main').toggle();$('play-menu-play').toggle();">Multiplayer</button>
 				<button class="button button-lightblue singleplayer" onclick="Devo.Main.loadAdventureUI();$('gamemenu-container').hide();" id="play-adventure-button">Singleplayer</button>
-				<button class="button button-orange" onclick="Devo.Main.loadMarketUI();$('gamemenu-container').hide();" id="enter-market-button">Trade and buy</button>
-				<button class="button button-silver singleplayer" onclick="$('play-menu-main').toggle();$('play-menu-single').toggle();">Training</button>
+				<button class="button button-orange" onclick="Devo.Main.loadMarketFrontpage();$('gamemenu-container').hide();" id="enter-market-button">Trade and buy</button>
+				<?php /* <button class="button button-silver" onclick="Devo.Main.Helpers.Backdrop.show('<?php echo make_url('get_backdrop_partial', array('key' => 'editprofile')); ?>');return false;">Edit profile</button> */ ?>
 				<button class="button button-silver settings" onclick="Devo.Main.loadProfile();" id="show-profile-button">My profile</button>
 				<button class="button button-silver" style="display: none;" onclick="$('gamemenu-container').toggle();" id="close-menu-button">Close menu</button>
 			</div>
 			<div id="play-menu-ingame" style="display: none;">
 				<button class="button button-green" onclick="$('gamemenu-container').toggle();">Resume game</button>
 				<button class="button button-silver settings" onclick="$('settings-overlay').toggle();">Settings</button>
-				<button class="button button-silver" onclick="Devo.Game.destroyGame();Devo.Main.loadLobbyUI();">Go to the lobby</a>
+				<button class="button button-silver" onclick="Devo.Game.destroyGame();Devo.Main.loadLobbyUI();">Go to the lobby</button>
 				<button class="button button-silver singleplayer" onclick="Devo.Game.destroyGame();Devo.Main.loadAdventureUI();$('gamemenu-container').hide();">Switch to singleplayer</button>
 				<button class="button button-silver exit" onclick="$('gamemenu-container').hide();Devo.Main.Helpers.Dialog.show('Flee the battle?', 'Quitting the game means you lose, the opponent is awarded battlepoints and XP, and you\'re left with nothing! Not even loot!<br><span class=\'faded_out\'>Actually, the part about loot isn\'t implemented yet, but suddenly it will be and then you\'ll be sorry!</span>', {yes: {click: function() {Devo.Game.flee(); }}, no: {click: function() {Devo.Main.Helpers.Dialog.dismiss();}}});" id="leave-game-button">Leave game</button>
 			</div>
@@ -97,12 +97,6 @@
 			<button class="button button-silver" id="quickmatch_button" onclick="Devo.Play.quickmatch();$('gamemenu-container').toggle();">Play quickmatch</button>
 			<button class="button button-silver custom_game disabled" onclick="Devo.Main.Helpers.Message.success('Not implemented yet', 'This feature has not yet been implemented');" disabled>Custom game</button>
 			<button class="button button-silver back" onclick="$('play-menu-play').toggle();$('play-menu-main').toggle();">&laquo;&nbsp;Back</button>
-		</div>
-		<div id="play-menu-single" style="display: none;">
-			<a href="javascript:void(0);" onclick="Devo.Play.training(1);" class="button button-silver">Easy training</a>
-			<a href="javascript:void(0);" onclick="Devo.Play.training(2);" class="button button-silver">Skilled training</a>
-			<a href="javascript:void(0);" onclick="Devo.Play.training(3);" class="button button-silver">Expert training</a>
-			<button class="button button-silver back" onclick="$('play-menu-single').toggle();$('play-menu-main').toggle();">&laquo;&nbsp;Back</button>
 		</div>
 		<br style="clear: both;">
 		<div id="play-version">

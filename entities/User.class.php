@@ -27,8 +27,8 @@
 
 		const RACE_HUMAN = 1;
 		const RACE_LIZARD = 2;
-		const RACE_BEAST = 3;
-		const RACE_ELF = 4;
+		const RACE_ELF = 3;
+		const RACE_BEAST = 4;
 
 		/**
 		 * Unique identifier
@@ -400,15 +400,19 @@
 			return $pass;
 		}
 
-		public static function getRaceNameByRace($race)
+		public static function getRaces()
 		{
-			static $races = array(
+			return array(
 				self::RACE_HUMAN => 'Human',
 				self::RACE_LIZARD => 'Lacerta',
-				self::RACE_BEAST => 'Faewryn',
-				self::RACE_ELF => 'Skurn'
+				self::RACE_BEAST => 'Skurn',
+				self::RACE_ELF => 'Faewryn'
 			);
+		}
 
+		public static function getRaceNameByRace($race)
+		{
+			$races = self::getRaces();
 			return isset($races[$race]) ? $races[$race] : '';
 		}
 

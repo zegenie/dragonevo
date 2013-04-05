@@ -18,14 +18,17 @@
 		<br>
 		<?php foreach (array('resistance', 'neutrals', 'rutai') as $faction): ?>
 			<div style="float: left; width: 310px; text-align: center; position: relative;">
-				<form action="<?php echo make_url('profile'); ?>" method="post" onsubmit="Devo.Main.Profile.completeCharacterSetup(this);return false;" id="character-setup-form-<?php echo $faction; ?>">
+				<form action="<?php echo make_url('profile'); ?>" method="post" onsubmit="Devo.Main.Profile.completeCharacterSetup(this);return false;" id="character-setup-form-<?php echo $faction; ?>" style="height: 360px;">
 					<input type="hidden" name="character_setup" value="1">
 					<input type="hidden" name="step" value="2">
 					<input type="hidden" name="faction" value="<?php echo $faction; ?>">
 					<img src="/images/<?php echo strtolower($faction_names[$faction]); ?>_crest.png">
 					<input type="submit" value="Pick <?php echo $faction_names[$faction]; ?> starter pack" class="pick_faction button button-<?php echo $faction_colors[$faction]; ?>">
-					<br style="clear: both;">
 				</form>
+				<br style="clear: both;">
+				<p class="faction-description">
+				</p>
+				<br style="clear: both;">
 			</div>
 		<?php endforeach; ?>
 		<br style="clear: both;">

@@ -1,5 +1,19 @@
 <h1>Changelog</h1>
 <h3>Latest version: <?php echo $csp_response->getVersion(); ?> (alpha)</h3>
+<h6>0.5.0 (beta)</h6>
+<ul>
+	<li>A whole new Game Guide</li>
+	<li>A complete new Game menu and ingame menu optimization</li>
+	<li>New Playable cards and card art</li>
+	<li>New Race art and new skills for the different races</li>
+	<li>Singleplayer mode (Adventure and Story mode)</li>
+	<li>Ranking system / Leaderboard</li>
+	<li>More playable cards</li>
+	<li>Improved character creation screen</li>
+	<li>New profile section with profile information</li>
+	<li>New friend and challenge options.</li>
+	<li> ... and a whole lot of bug fixes and other stuff</li>
+</ul>
 <h6>0.4.502</h6>
 <ul>
 	<li>You can now use cards in as many games as you want</li>

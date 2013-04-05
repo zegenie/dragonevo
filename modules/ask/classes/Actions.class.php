@@ -398,6 +398,11 @@
 			}
 		}
 
+		protected function _processGetMarketBuyCards($card)
+		{
+			return $this->renderJSON(array('buycards' => $this->getComponentHTML('market/buycards')));
+		}
+
 		protected function _getCardSellValue($card)
 		{
 			$cost = ($card instanceof \application\entities\CreatureCard && $card->getUserCardLevel() > 1) ? round($card->getCost() * (1 + ($card->getUserCardLevel() / 10))) : $card->getCost();
@@ -993,6 +998,12 @@
 				case 'market':
 					$interface_content = $this->getComponentHTML('market/marketcontent');
 					break;
+				case 'market_buy':
+					$interface_content = $this->getComponentHTML('market/buycontent');
+					break;
+				case 'market_sell':
+					$interface_content = $this->getComponentHTML('market/sellcontent');
+					break;
 				case 'chat_room':
 					$room = \application\entities\tables\ChatRooms::getTable()->selectById($request['room_id']);
 					$interface_content = $this->getComponentHTML('lobby/chatroom', array('room' => $room));
@@ -1086,6 +1097,9 @@
 						break;
 					case 'card_price':
 						return $this->_processGetCardPrice($request);
+						break;
+					case 'buy_cards':
+						return $this->_processGetMarketBuyCards($request);
 						break;
 					case 'tellable_card_rewards':
 						return $this->_processGetTellableCardRewards($request);
