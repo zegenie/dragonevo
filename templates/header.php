@@ -8,10 +8,10 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 		<link rel="shortcut icon" href="/images/favicon.png">
 		<title><?php echo strip_tags($tbg_response->getTitle()); ?></title>
-		<link rel="stylesheet" href="http://dragonevo.com/css/styles.css">
-		<script type="text/javascript" src="http://dragonevo.com/js/main.js"></script>
-		<script type="text/javascript" src="http://dragonevo.com/js/prototype.js"></script>
-		<script type="text/javascript" src="http://dragonevo.com/js/scriptaculous.js"></script>
+		<link rel="stylesheet" href="http://new.dragonevo.com/css/styles.css">
+		<script type="text/javascript" src="http://new.dragonevo.com/js/main.js"></script>
+		<script type="text/javascript" src="http://new.dragonevo.com/js/prototype.js"></script>
+		<script type="text/javascript" src="http://new.dragonevo.com/js/scriptaculous.js"></script>
 		<script type="text/javascript" src="/js/jquery-1.6.2.min.js"></script>
 		<script type="text/javascript" src="/js/jquery.markitup.js"></script>
 		<script type="text/javascript" src="/js/thebuggenie.js"></script>
@@ -51,12 +51,12 @@
 		</div>
 		<div class="main-content">
 			<div class="banner-container">
-				<img src="http://dragonevo.com/images/banner_shorter.jpg">
-				<a class="devo-box" href="http://dragonevo.com">
+				<img src="http://new.dragonevo.com/images/banner_shorter.jpg">
+				<a class="devo-box" href="http://new.dragonevo.com">
 					DRAGON EVO<br>
 					<span class="slogan">the online action card game</span>
 				</a>
-				<a class="button button-standard play-now" style="font-family: 'Gentium Basic'; border-radius: 10px; font-size: 2em; font-weight: normal; padding: 20px 10px !important;" href="http://dragonevo.com/play">Play now!</a>
+				<a class="button button-standard play-now" style="font-family: 'Gentium Basic'; border-radius: 10px; font-size: 2em; font-weight: normal; padding: 20px 10px !important;" href="http://new.dragonevo.com/play">Play now!</a>
 			</div>
 			<ul class="main-menu">
 				<li><a href="http://new.dragonevo.com" class="<?php if ($tbg_response->getPage() == 'home') echo ' selected'; ?>">Home</a></li>
