@@ -123,6 +123,14 @@
 		protected $_name = '';
 
 		/**
+		 * Showcased or not
+		 *
+		 * @Column(type="boolean", default=false)
+		 * @var boolean
+		 */
+		protected $_showcased = false;
+
+		/**
 		 * Brief card description
 		 *
 		 * @Column(type="string", length=300)
@@ -486,6 +494,7 @@
 				$this->$property_name = (string) stripslashes($form_data[$field]);
 			}
 			$this->_is_special_card = (bool) $form_data['is_special_card'];
+			$this->_showcased = (bool) $form_data['showcased'];
 			foreach (array('cost', 'likelihood') as $field) {
 				$property_name = "_{$field}";
 				$this->$property_name = (integer) $form_data[$field];
@@ -715,4 +724,19 @@
 			if ($this->_in_game_ep < 0) $this->_in_game_ep = 0;
 		}
 
-	}
+		public function getShowcased()
+		{
+			return $this->_showcased;
+		}
+
+		public function isShowcased()
+		{
+			return $this->getShowcased();
+		}
+
+		public function setShowcased($showcased)
+		{
+			$this->_showcased = $showcased;
+		}
+
+		}

@@ -63,7 +63,7 @@
 	</div>
 	<div style="background-color: #000; width: 100%; height: 100%; position: absolute; top: 0; left: 0; margin: 0; padding: 0; z-index: 999;" class="semi_transparent"> </div>
 </div>
-<div id="gamemenu-container" style="display: none;" class="fullpage_backdrop dark">
+<div id="gamemenu-container" style="display: none; z-index: 999998;" class="fullpage_backdrop dark">
 	<a href="javascript:void(0);" onclick="Devo.Core.toggleFullscreen();" id="toggle-fullscreen-button" class="button button-silver button-icon" style="display: none;">Toggle fullscreen</a>
 	<div id="play-menu" class="new" style="margin-top: 0;">
 		<div id="menu-middle" class="menu-middle" style="margin: 20px 0;">

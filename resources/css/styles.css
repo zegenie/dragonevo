@@ -1570,6 +1570,12 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 	background-image: none;
 	padding: 5px 0 20px 5px;
 }
+#market-menu #user-gold .tooltip {
+	font-weight: normal;
+}
+#market-menu #user-gold .tooltip:first-line {
+	font-weight: bold;
+}
 .user-xp {
 	width: auto;
 	color: #FFF;
@@ -2100,6 +2106,9 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 	overflow: visible;
 	min-height: 280px;
 }
+.shelf.showcase {
+	background-position: bottom left;
+}
 .shelf #shelf-loading {
 	position: absolute;
 	width: 100%;
@@ -2113,13 +2122,15 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 	display: block;
 	height: 150px;
 }
-.shelf ul { list-style: none; padding: 0 35px; position: relative; min-height: 280px; }
-.shelf li { margin: 30px 9px 37px 10px; float: none; display: inline-block; }
+.shelf > ul { list-style: none; padding: 0 35px; position: relative; min-height: 280px; }
+.shelf > ul > li { margin: 30px 9px 37px 10px; float: none; display: inline-block; }
+.shelf.showcase { overflow: visible; }
+.shelf.showcase > ul > li { margin: 30px 15px 37px 20px; }
 .shelf .card { 
 	cursor: pointer;
-	height: 100%;
+/*	height: 100%;
+	width: 100%;*/
 	background-size: contain;
-	width: 100%;
 	box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.8);
 	-webkit-transition: -webkit-filter 0.5s ease-in-out, opacity 0.5s ease-in-out;
 	-moz-transition: -moz-filter 0.5s ease-in-out, opacity 0.5s ease-in-out;
@@ -4032,8 +4043,7 @@ li.card-slot {
 }
 .fullpage_backdrop.tutorial { background-color: rgba(0, 0, 0, 0.8); }
 .tutorial-message { position: fixed; z-index: 9999999; margin: 0; }
-.tutorial-message:before,
-.tutorial-message:after {
+.tutorial-message:before, .tutorial-message:after, .popup-menu.above:before, .popup-menu.above:after, .popup-menu.below:before, .popup-menu.below:after {
 	content: '';
 	position: absolute;
 	margin-left: -9px;
@@ -5041,19 +5051,19 @@ li.card-slot {
 	font-size: 0.65em;
 	font-weight: normal;
 }
-.my_games li .tooltip {
+.my_games li .tooltip, .tooltip.from-left {
 	width: 400px;
 	font-family: 'Amaranth';
 	top: 0;
 	bottom: auto;
 	left: -410px;
 }
-.my_games li:hover .tooltip {
+.my_games li:hover .tooltip, *:hover .tooltip.from-left {
 	left: 290px;
 	top: 0;
 	bottom: auto;
 }
-.my_games li .tooltip:before, .my_games li .tooltip:after {
+.my_games li .tooltip:before, .my_games li .tooltip:after, .tooltip.from-left:before, .tooltip.from-left:after {
 	left: -10px;
 	top: 20px;
 	opacity: 1;

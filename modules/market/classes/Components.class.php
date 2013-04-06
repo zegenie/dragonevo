@@ -17,9 +17,7 @@
 		{
 			$this->factions = \application\entities\Card::getFactions();
 			$this->itemclasses = \application\entities\EquippableItemCard::getEquippableItemClasses();
-			$this->allcards = array('creature' => \application\entities\tables\CreatureCards::getTable()->getAllCards(),
-				'potion_cards' => \application\entities\tables\PotionItemCards::getTable()->getAll(),
-				'item_cards' => \application\entities\tables\EquippableItemCards::getTable()->getAll());
+			$this->showcasedcards = \application\entities\tables\Cards::getTable()->getShowcasedCards();
 		}
 
 		/**
@@ -31,6 +29,13 @@
 		{
 			$this->factions = \application\entities\Card::getFactions();
 			$this->itemclasses = \application\entities\EquippableItemCard::getEquippableItemClasses();
+		}
+
+		public function componentSellContent()
+		{
+			$this->factions = \application\entities\Card::getFactions();
+			$this->itemclasses = \application\entities\EquippableItemCard::getEquippableItemClasses();
+			$this->cards = $this->getUser()->getCards();
 		}
 
 		/**

@@ -7,6 +7,12 @@
 		<h1 id="user-gold" data-amount="<?php echo $csp_user->getGold(); ?>">
 			<span id="user-gold-amount" class="gold"><?php echo $csp_user->getGold(); ?></span><br>
 			Gold
+			<div class="tooltip from-left">
+				Profile gold<br>
+				This is the gold you've accumulated when playing matches.<br>
+				<br>
+				Later you will also be able to buy more gold, but this is not implemented yet.
+			</div>
 		</h1>
 		<h1>Market shortcuts</h1>
 		<ul>

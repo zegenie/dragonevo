@@ -2,7 +2,7 @@ Never fear, the help is here.
 
 You have successfully set a new password for your Dragon Evo:TCG account (%username%).
 To log in, click the link below (or copy it and open it in a browser of choice):
-http://www.dragonevo.com/login
+http://new.dragonevo.com/login
 
 Now, get playing!
 

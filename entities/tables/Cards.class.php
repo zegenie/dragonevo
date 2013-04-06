@@ -34,6 +34,22 @@
 			
 			return $card;
 		}
+
+		public function getShowcasedCards()
+		{
+			$cards = array();
+			foreach (CreatureCards::getTable()->getShowcasedCards() as $card) {
+				$cards[] = $card;
+			}
+			foreach (EquippableItemCards::getTable()->getShowcasedCards() as $card) {
+				$cards[] = $card;
+			}
+			foreach (PotionItemCards::getTable()->getShowcasedCards() as $card) {
+				$cards[] = $card;
+			}
+
+			return $cards;
+		}
 		
 		public static function pickCards($cards, $player, $num = 5)
 		{

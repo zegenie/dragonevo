@@ -33,6 +33,14 @@
 			return $this->count($crit);
 		}
 
+		public function getShowcasedCards()
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('equippable_item_cards.card_state', \application\entities\Card::STATE_TEMPLATE);
+			$crit->addWhere('equippable_item_cards.showcased', true);
+			return $this->select($crit);
+		}
+
 		public function getNumberOfUserCards()
 		{
 			$crit = $this->getCriteria();

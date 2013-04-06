@@ -26,6 +26,14 @@
 			return $this->select($crit);
 		}
 		
+		public function getShowcasedCards()
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('potion_item_cards.card_state', \application\entities\Card::STATE_TEMPLATE);
+			$crit->addWhere('potion_item_cards.showcased', true);
+			return $this->select($crit);
+		}
+
 		public function getByUserId($user_id)
 		{
 			$crit = $this->getCriteria();

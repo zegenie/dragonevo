@@ -1809,7 +1809,7 @@ Devo.Main.loadMarketSell = function() {
 	}
 }
 
-Devo.Main.loadMarketBuy = function() {
+Devo.Main.loadMarketBuy = function(options) {
 	if (!$('market-container-buy')) {
 		$('game-content-container').dataset.location = '#!market/buy';
 		window.location.hash = "!market/buy";
@@ -1828,8 +1828,12 @@ Devo.Main.loadMarketBuy = function() {
 								callback: function(json) {
 									$('shelf-loading').insert({after: json.buycards});
 									Devo.Main._default_race_filter = undefined;
-									Devo.Main.filterCardsCategory('creature');
-									Devo.Main.filterCardsRace('neutrals');
+									(options != undefined && options.category != undefined) ? Devo.Main.filterCardsCategory(options.category) : Devo.Main.filterCardsCategory('creature');
+									if (options != undefined && options.itemclass != undefined) {
+										Devo.Main.filterCardsItemClass(options.itemclass);
+									} else {
+										(options != undefined && options.race != undefined) ? Devo.Main.filterCardsRace(options.race) : Devo.Main.filterCardsRace('neutrals');
+									}
 								}
 							}
 						});
@@ -4370,7 +4374,6 @@ Devo.Market.dismissBuyComplete = function() {
 }
 
 Devo.Market.dismissSellComplete = function() {
-	$('user-top-details').insert({top: $('user-gold').remove()});
 	$('sell-complete').hide();
 }
 
@@ -4387,11 +4390,13 @@ Devo.Market.Effects.useGold = function(cost) {
 	});
 
 	if (gold != cost.to) {
-		ggb.update(gold+'<div class="negative fadeOutUp diff animated">'+cost.diff+'</div>');
 		gg.update(cost.to);
-		window.setTimeout(function() {
-			ggb.update(cost.to);
-		}, 1000);
+		if (ggb) {
+			ggb.update(gold+'<div class="negative fadeOutUp diff animated">'+cost.diff+'</div>');
+			window.setTimeout(function() {
+				ggb.update(cost.to);
+			}, 1000);
+		}
 	}
 }
 
@@ -4403,11 +4408,13 @@ Devo.Market.Effects.getGold = function(cost) {
 	Devo._user_gold = cost.to;
 
 	if (gold != cost.to) {
-		ggb.update(gold+'<div class="positive fadeInDown diff animated">'+cost.diff+'</div>');
 		gg.update(cost.to);
-		window.setTimeout(function() {
-			ggb.update(cost.to);
-		}, 1000);
+		if (ggb) {
+			ggb.update(gold+'<div class="positive fadeInDown diff animated">'+cost.diff+'</div>');
+			window.setTimeout(function() {
+				ggb.update(cost.to);
+			}, 1000);
+		}
 	}
 }
 
@@ -4459,18 +4466,23 @@ Devo.Market.sell = function() {
 				$('sell-complete').select('.card').each(function (existing_card) {
 					existing_card.remove();
 				});
-				Devo.Main.showCardDetails(card_id, true);
-				$('card_'+card_id).remove();
-				$('card_'+card_id+'_details').remove();
-				$('sell-complete-description').insert({top: $('user-gold').remove()});
+				if ($('card_'+card_id+'_details')) {
+					Devo.Main.showCardDetails(card_id, true);
+					$('card_'+card_id).remove();
+					$('card_'+card_id+'_details').remove();
+				} else {
+					$('card_'+card_id).up('li').remove();
+				}
+				if ($('user-gold')) {
+					window.setTimeout(function() {
+						Devo.Market.Effects.getGold(json.cost);
+					}, 500);
+				}
 				$('sell-popup').select('.card').each(function (existing_card) {
 					$('sell-complete-description').insert({before: existing_card.remove()});
 				});
 				$('sell-complete').show();
 				$('sell-popup').hide();
-				window.setTimeout(function() {
-					Devo.Market.Effects.getGold(json.cost);
-				}, 500);
 			}
 		},
 		complete: {
@@ -4615,7 +4627,7 @@ Devo.Main.filterCardsRace = function(race) {
 	var race_button = $('card-race-button');
 	var visible_cards = 0;
 	var card_type = $('card-category-button').dataset.selectedFilter;
-	$('shelf-loading').show();
+	if ($('shelf-loading')) $('shelf-loading').show();
 	$$('.shelf').each(function(shelf) {
 		shelf.select('.card').each(function(card) {
 			if (card.hasClassName(card_type) && card.hasClassName(race)) {
@@ -4636,7 +4648,7 @@ Devo.Main.filterCardsRace = function(race) {
 	})
 	Devo.Main._default_race_filter = race;
 	Devo.Main.Helpers.popup();
-	$('shelf-loading').hide();
+	if ($('shelf-loading')) $('shelf-loading').hide();
 	return visible_cards;
 }
 
@@ -4644,7 +4656,7 @@ Devo.Main.filterCardsItemClass = function(itemclass) {
 	var itemclass_button = $('card-itemclass-button');
 	var itemclass_popup = $('card-itemclass-popup');
 	var visible_cards = 0;
-	$('shelf-loading').show();
+	if ($('shelf-loading')) $('shelf-loading').show();
 	var card_type = $('card-category-button').dataset.selectedFilter;
 	$$('.shelf').each(function(shelf) {
 		shelf.select('.card').each(function(card) {
@@ -4664,7 +4676,7 @@ Devo.Main.filterCardsItemClass = function(itemclass) {
 	})
 	Devo.Main._default_itemclass_filter = itemclass;
 	Devo.Main.Helpers.popup();
-	$('shelf-loading').hide();
+	if ($('shelf-loading')) $('shelf-loading').hide();
 	return visible_cards;
 }
 
@@ -4673,7 +4685,7 @@ Devo.Main.filterCardsCategory = function(card_class) {
 	var popup = $('card-category-popup');
 	var race_button = $('card-race-button');
 	var itemclass_button = $('card-itemclass-button');
-	$('shelf-loading').show();
+	if ($('shelf-loading')) $('shelf-loading').show();
 	button.removeClassName('last');
 	popup.down('ul').childElements().each(function(list_item) {
 		var link = list_item.down('a');
@@ -4707,7 +4719,7 @@ Devo.Main.filterCardsCategory = function(card_class) {
 		button.addClassName('last');
 		Devo.Main.Helpers.popup();
 	}
-	$('shelf-loading').hide();
+	if ($('shelf-loading')) $('shelf-loading').hide();
 }
 
 Devo.Game.pickCards = function() {

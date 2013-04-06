@@ -18,6 +18,13 @@
 			</select>
 		</div>
 		<div>
+			<label for="showcased">Showcase in market</label>
+			<select name="showcased" id="showcased">
+				<option value="1"<?php if ($card->isShowcased()) echo ' selected'; ?>>Yes</option>
+				<option value="0"<?php if (!$card->isShowcased()) echo ' selected'; ?>>No</option>
+			</select>
+		</div>
+		<div>
 			<label for="card_image">Card image</label>
 			<input type="file" name="card_image" id="card_image">
 		</div>

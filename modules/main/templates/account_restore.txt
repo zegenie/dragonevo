@@ -3,7 +3,7 @@ Never fear, the help is near.
 You (or someone pretending to be you, with a fake beard and hat) requested a new password for your Dragon Evo:TCG account.
 
 To generate a new password, click the link below:
-http://www.dragonevo.com/restore/%username%/%code%
+http://new.dragonevo.com/restore/%username%/%code%
 
 If you changed your mind, remembered your password, or that random person with the funny hat wasn't you, just disregard this email.
 
