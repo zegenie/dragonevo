@@ -24,6 +24,12 @@
 				<option value="0"<?php if (!$card->isShowcased()) echo ' selected'; ?>>No</option>
 			</select>
 		</div>
+			<label for="available">Available to buy</label>
+			<select name="available" id="available">
+				<option value="1"<?php if ($card->isAvailable()) echo ' selected'; ?>>Yes</option>
+				<option value="0"<?php if (!$card->isAvailable()) echo ' selected'; ?>>No</option>
+			</select>
+		</div>
 		<div>
 			<label for="card_image">Card image</label>
 			<input type="file" name="card_image" id="card_image">

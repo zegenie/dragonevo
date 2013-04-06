@@ -503,6 +503,7 @@
 			}
 			$this->_is_special_card = (bool) $form_data['is_special_card'];
 			$this->_showcased = (bool) $form_data['showcased'];
+			$this->_available = (bool) $form_data['available'];
 			foreach (array('cost', 'likelihood') as $field) {
 				$property_name = "_{$field}";
 				$this->$property_name = (integer) $form_data[$field];
