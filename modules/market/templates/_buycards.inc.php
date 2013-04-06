@@ -1,6 +1,7 @@
 <ul>
 	<?php foreach ($allcards as $cards): ?>
 		<?php foreach ($cards as $card): ?>
+			<?php if (!$card->isAvailable()) continue; ?>
 			<li style="display: none;">
 				<div onclick="Devo.Main.showCardDetails('<?php echo $card->getUniqueId(); ?>');" style="cursor: pointer;">
 					<?php include_template('game/card', array('card' => $card, 'mode' => 'medium', 'ingame' => false)); ?>

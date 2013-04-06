@@ -131,6 +131,14 @@
 		protected $_showcased = false;
 
 		/**
+		 * Available (released to market) or not
+		 *
+		 * @Column(type="boolean", default=false)
+		 * @var boolean
+		 */
+		protected $_available = false;
+
+		/**
 		 * Brief card description
 		 *
 		 * @Column(type="string", length=300)
@@ -737,6 +745,21 @@
 		public function setShowcased($showcased)
 		{
 			$this->_showcased = $showcased;
+		}
+
+		public function getAvailable()
+		{
+			return $this->_available;
+		}
+
+		public function isAvailable()
+		{
+			return $this->getAvailable();
+		}
+
+		public function setAvailable($available)
+		{
+			$this->_available = $available;
 		}
 
 		}
