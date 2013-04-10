@@ -51,17 +51,13 @@
 		</div>
 		<div id="dialog_backdrop" style="display: none;">
 			<div id="dialog_backdrop_content" class="fullpage_backdrop_content">
-				<div class="swirl-dialog">
-					<img src="/images/swirl_top_right.png" class="swirl top-right">
-					<img src="/images/swirl_bottom_right.png" class="swirl bottom-right">
-					<img src="/images/swirl_bottom_left.png" class="swirl bottom-left">
-					<img src="/images/swirl_top_left.png" class="swirl top-left">
+				<div class="backdrop_box medium">
 					<h3 id="dialog_title"></h3>
-					<p id="dialog_content"></p>
-					<div style="text-align: center; padding: 10px;">
+					<p id="dialog_content" class="box_content"></p>
+					<div class="button-container">
 						<?php echo image_tag('/images/spinning_20.gif', array('style' => 'float: right; display: none;', 'id' => 'dialog_indicator')); ?>
-						<a href="javascript:void(0)" id="dialog_yes" class="button button-green"><?php echo __('Yes'); ?></a>
-						<a href="javascript:void(0)" id="dialog_no" class="button button-red"><?php echo __('No'); ?></a>
+						<a href="javascript:void(0)" id="dialog_yes" class="ui_button"><?php echo __('Yes'); ?></a>
+						<a href="javascript:void(0)" id="dialog_no" class="ui_button"><?php echo __('No'); ?></a>
 					</div>
 				</div>
 			</div>

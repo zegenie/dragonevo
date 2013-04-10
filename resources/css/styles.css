@@ -186,7 +186,11 @@ p {
 #dialog_backdrop .button { font-size: 1.1em !important; padding: 8px 15px !important; font-weight: normal; margin: 15px 0; }
 #dialog_backdrop .swirl-dialog { margin: 50px auto; width: 50%; background-color: rgba(162, 213, 236, 0.8); text-align: left; color: #FFF; }
 #dialog_backdrop .swirl-dialog .faded_out { color: rgba(255, 255, 255, 0.6); }
-#dialog_title, #dialog_content {margin-left: 75px; }
+.backdrop_box h3 { margin: 20px; text-align: left; }
+.backdrop_box h1 { margin: 20px; text-align: left; }
+.backdrop_box .box_content { padding: 5px 20px; font-size: 1.1em; color: #FFF; }
+.backdrop_box .box_content .faded_out { color: rgba(255, 255, 255, 0.4); }
+.backdrop_box .button-container { text-align: center; padding: 10px; font-size: 0.9em; font-weight: normal; line-height: 14px !important; }
 #dialog_yes, #dialog_no { border-bottom: none !important; }
 /* end backdrop styling */
 
@@ -393,6 +397,11 @@ h6 {
 .article .content { padding: 15px 0; font-size: 1.1em; }
 .article .content ul { margin: 15px 0 15px 25px; }
 .article .content a { font-family: 'Gentium Basic'; }
+
+.article .content:first-line a { display: inline-block; }
+
+.article .tab_menu li a { font-family: 'Open Sans'; font-size: 0.8em; }
+.article hr { border: 0px; border-bottom: 1px solid rgba(146, 148, 100, 0.4); }
 
 .article .image_container { display: inline-block; font-size: 1.1em; text-align: center; clear: both; margin: 10px; background-color: rgba(100, 100, 100, 0.3); border: 1px solid rgba(100, 100, 100, 0.7); padding: 10px; border-radius: 10px; }
 .article .image_container.iccenter { margin: 0 auto; position: relative; }
@@ -5883,7 +5892,7 @@ li.card-slot {
 .fullpage_backdrop h5 { color: #333; }
 #gameover-overlay.fullpage_backdrop h5 { font-size: 2.5em; }
 #gameover-overlay.fullpage_backdrop h4 { color: #333; margin-top: 20px; }
-#gameover-overlay #game_statistics strong { text-shadow: none; }
+#gameover-overlay #game_statistics { font-family: 'Open Sans'; font-size: 0.9em; }
 #gameover-overlay .button {
 	font-size: 1.1em !important;
 	font-weight: normal;
@@ -5909,7 +5918,7 @@ li.card-slot {
 	font-family: 'Fredericka The Great';
 }
 .fullpage_backdrop #replenish_gold_summary { position: relative; }
-.fullpage_backdrop .summary .winning { font-size: 2.2em; font-weight: normal; padding: 20px; color: #CBB66F; }
+.fullpage_backdrop .winning { font-size: 2em; font-weight: normal; padding: 20px; color: #CBB66F; }
 .diff {
 	left: 50%;
     margin: 0 0 0 -75px;

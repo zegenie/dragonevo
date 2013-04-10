@@ -6,33 +6,31 @@
 <?php if ($game instanceof Game && ($csp_user->isAdmin() || in_array($csp_user->getId(), array($game->getPlayer()->getId(), $game->getOpponentId())))): ?>
 	<div id="board-container" class="<?php if (!$csp_user->isLowGraphicsEnabled()) echo 'effect-3d'; ?>">
 		<div id="phase-1-overlay" class="fullpage_backdrop dark" style="display: none;"><a href="javascript:void(0);" id="end-phase-1-button" class="turn-button button button-green<?php if ($game->getCurrentPlayerId() != $csp_user->getId()) echo ' disabled'; ?>" onclick="Devo.Game.endPhase(this);"><img src="/images/spinning_16.gif" style="display: none;">End replenishment phase</a></div>
-		<div id="gameover-overlay" class="fullpage_backdrop dark" style="<?php if (!$game->isGameOver()): ?>display: none;<?php endif; ?>">
+		<div id="gameover-overlay" class="fullpage_backdrop dark" style="<?php if ($game->isGameOver()): ?>display: none;<?php endif; ?>">
 			<div class="fullpage_backdrop_content">
-				<div class="swirl-dialog summary">
-					<img src="/images/swirl_top_right.png" class="swirl top-right">
-					<img src="/images/swirl_bottom_right.png" class="swirl bottom-right">
-					<img src="/images/swirl_bottom_left.png" class="swirl bottom-left">
-					<img src="/images/swirl_top_left.png" class="swirl top-left">
+				<div class="backdrop_box medium">
 					<h1>Game over</h1>
-					<div id="winning_player_<?php echo $game->getPlayer()->getId(); ?>" class="winning" style="<?php if ($game->getWinningPlayerId() != $game->getPlayer()->getId()) echo 'display: none;'; ?>"><?php echo ($game->getPlayer()->getId() == $csp_user->getId()) ? 'You won!' : $game->getPlayer()->getCharactername() . ' won!'; ?></div>
-					<div id="winning_player_<?php echo $game->getOpponentId(); ?>" class="winning" style="<?php if ($game->getWinningPlayerId() != $game->getOpponentId()) echo 'display: none;'; ?>"><?php echo ($game->getOpponentId() == $csp_user->getId()) ? 'You won!' : $game->getOpponent()->getCharactername() . ' won!'; ?></div>
-					<div style="text-align: left;">
-						<h6>Statistics</h6>
-						<div id="game_statistics_indicator" style="<?php if ($game->isGameOver()): ?>display: none;<?php endif; ?>">
-							<img src="/images/spinning_16.gif" style="margin-right: 5px; margin-top: 3px; margin-bottom: -3px;">Loading statistics, please wait
-						</div>
-						<div<?php if (!$game->isUserInGame()): ?> style="display: none;"<?php endif; ?>>
-							<div id="game_statistics" style="<?php if (!$game->isGameOver()): ?>display: none;<?php endif; ?>">
-								<strong>Damage inflicted:</strong>&nbsp;<span id="statistics_hp"><?php echo $statistics['hp']; ?></span>HP<br>
-								<strong>Cards killed:</strong>&nbsp;<span id="statistics_cards"><?php echo $statistics['cards']; ?></span><br>
-								<strong>XP earned:</strong>&nbsp;<span id="statistics_xp"><?php echo $statistics['xp']; ?></span><br>
-								<strong>Gold payout:</strong>&nbsp;<span id="statistics_gold"><?php echo $statistics['gold']; ?></span>
+					<div class="box_content">
+						<div id="winning_player_<?php echo $game->getPlayer()->getId(); ?>" class="winning" style="<?php if ($game->getWinningPlayerId() != $game->getPlayer()->getId()) echo 'display: none;'; ?>"><?php echo ($game->getPlayer()->getId() == $csp_user->getId()) ? 'You won!' : $game->getPlayer()->getCharactername() . ' won!'; ?></div>
+						<div id="winning_player_<?php echo $game->getOpponentId(); ?>" class="winning" style="<?php if ($game->getWinningPlayerId() != $game->getOpponentId()) echo 'display: none;'; ?>"><?php echo ($game->getOpponentId() == $csp_user->getId()) ? 'You won!' : $game->getOpponent()->getCharactername() . ' won!'; ?></div>
+						<div style="text-align: left;">
+							<h6>Statistics</h6>
+							<div id="game_statistics_indicator" style="<?php if (!$game->isGameOver()): ?>display: none;<?php endif; ?>">
+								<img src="/images/spinning_16.gif" style="margin-right: 5px; margin-top: 3px; margin-bottom: -3px;">Loading statistics, please wait
 							</div>
-						</div>
-						<div class="button-container" id="goto-buttons-container"<?php if (!$game->isUserInGame()): ?> style="display: none;"<?php endif; ?>>
-							<button class="button button-silver" onclick="Devo.Game.destroyGame();Devo.Main.loadLobbyUI();" id="goto-lobby-button"<?php if ($game->isScenario()): ?> style="display: none;"<?php endif; ?>>Go to the lobby</a>
-							<button class="button button-lightblue" onclick="<?php if ($game->isScenario()): ?>Devo.Game.destroyGame();Devo.Main.loadAdventureUI('part', <?php echo $game->getPartId(); ?>);<?php endif; ?>" id="goto-adventure-button"<?php if (!$game->isScenario()): ?> style="display: none;"<?php endif; ?>>Back to map</a>
-							<button class="button button-orange" onclick="Devo.Game.destroyGame();Devo.Main.loadMarketFrontpage();">Buy better cards</a>
+							<div<?php if (!$game->isUserInGame()): ?> style="display: none;"<?php endif; ?>>
+								<div id="game_statistics" style="<?php if (!$game->isGameOver()): ?>display: none;<?php endif; ?>">
+									<strong>Damage inflicted:</strong>&nbsp;<span id="statistics_hp"><?php echo $statistics['hp']; ?></span>HP<br>
+									<strong>Cards killed:</strong>&nbsp;<span id="statistics_cards"><?php echo $statistics['cards']; ?></span><br>
+									<strong>XP earned:</strong>&nbsp;<span id="statistics_xp"><?php echo $statistics['xp']; ?></span><br>
+									<strong>Gold payout:</strong>&nbsp;<span id="statistics_gold"><?php echo $statistics['gold']; ?></span>
+								</div>
+							</div>
+							<div class="button-container" id="goto-buttons-container"<?php if (!$game->isUserInGame()): ?> style="display: none;"<?php endif; ?>>
+								<button class="ui_button" onclick="Devo.Game.destroyGame();Devo.Main.loadLobbyUI();" id="goto-lobby-button"<?php if ($game->isScenario()): ?> style="display: none;"<?php endif; ?>>Go to the lobby</a>
+								<button class="ui_button" onclick="<?php if ($game->isScenario()): ?>Devo.Game.destroyGame();Devo.Main.loadAdventureUI('part', <?php echo $game->getPartId(); ?>);<?php endif; ?>" id="goto-adventure-button"<?php if (!$game->isScenario()): ?> style="display: none;"<?php endif; ?>>Back to map</a>
+								<button class="ui_button" onclick="Devo.Game.destroyGame();Devo.Main.loadMarketFrontpage();">Buy better cards</a>
+							</div>
 						</div>
 					</div>
 				</div>

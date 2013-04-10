@@ -31,6 +31,7 @@
 				<button class="ui_button removefriend" onclick="Devo.Main.Profile.removeFriend(<?php echo $user->getId(); ?>, this, true);"><img src="/images/spinning_16.gif" style="display: none;">Unfriend</button>
 			<?php else: ?>
 				<button class="ui_button" onclick="Devo.Main.Helpers.Backdrop.show('<?php echo make_url('get_backdrop_partial', array('key' => 'editprofile')); ?>');return false;">Edit profile</button>
+				<button class="ui_button" onclick="Devo.Main.loadProfile();return false;">My profile</button>
 			<?php endif; ?>
 		</div>
 	</div>
