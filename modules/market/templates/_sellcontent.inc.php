@@ -36,7 +36,7 @@
 		</div>
 	</div>
 </div>
-<div class="content left" id="market-profile-cards-container" style="width: 985px; height: auto; overflow-y: auto;">
+<div class="content left" id="market-profile-cards-container" style="width: 985px; height: auto; overflow: visible;">
 	<h2 style="margin-bottom: 10px;">
 		Sell cards from your collection<br>
 		<span id="top-shelf-menu-container" style="display: none; font-weight: normal; font-size: 0.7em;"><a href="javascript:void(0);" onclick="Devo.Main.loadProfile();">&laquo; Back to profile</a></span>

@@ -1,6 +1,6 @@
 <?php include_template('market/leftmenu', array('section' => 'buy')); ?>
 <?php include_template('market/buyoverlay'); ?>
-<div class="content market left" id="market-container-buy" style="width: 985px; height: auto; overflow-y: auto;">
+<div class="content market left" id="market-container-buy" style="width: 985px; height: auto; overflow: visible;">
 	<h2 style="margin-bottom: 10px;">
 		Market
 	</h2>
