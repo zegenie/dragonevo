@@ -2,16 +2,16 @@ You've been invited to play Dragon Evo: The Card Game!
 
 %user% is already registered and sent you a game invite.
 If you haven't already registered, click the link below to join:
-http://new.dragonevo.com/join/%code%
+http://www.dragonevo.com/join/%code%
 
 or log in with your username and password at
-http://new.dragonevo.com/play
+http://www.dragonevo.com/play
 
 * What is Dragon Evo: The Card Game? *
 Dragon Evo:TCG is an epic fantasy-themed trading card game, played in your browser. 
 Play against friends or defeat online opponents in epic battles, where only the best combination of cards and skill will make you the winner.
 
-Dragon Evo:TCG has over 100 different cards to collect from 3 different and unique factions, all set in the Dragon Evo universe. Learn more about the Dragon Evo universe by visiting http://new.dragonevo.com
+Dragon Evo:TCG has over 100 different cards to collect from 3 different and unique factions, all set in the Dragon Evo universe. Learn more about the Dragon Evo universe by visiting http://www.dragonevo.com
 
 See you online!
 
