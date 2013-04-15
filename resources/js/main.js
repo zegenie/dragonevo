@@ -1033,10 +1033,12 @@ Devo.Core.Pollers.Callbacks.chatLinesPoller = function() {
 								var room_id = d;
 								var visible = $('chat_'+room_id+'_container').visible();
 								var blinking = $('chat_room_'+room_id+'_loading').visible();
+								var line = [];
+								var line_id = 0;
 								for (var l in room['lines']) {
 									if (room['lines'].hasOwnProperty(l)) {
-										var line = room['lines'][l];
-										var line_id = line['line_id'];
+										line = room['lines'][l];
+										line_id = parseInt(line['line_id']);
 										if (!$('chat_line_'+line_id)) {
 											if (!$('chat_room_'+room_id+'_user_'+user_id)) {
 												needs_users_refresh = true;
@@ -3803,7 +3805,7 @@ Devo.Game.highlightTargets = function(attack) {
 
 		$$(selector).each(function(sel) {
 			$(sel).select('.card-slot.creature-slot').each(function(slot) {
-				if (slot.down('.card')) {
+				if (slot.down('.card.creature')) {
 					$(slot).addClassName('targetted');
 					$(slot).observe('click', Devo.Game.performAttack);
 				}

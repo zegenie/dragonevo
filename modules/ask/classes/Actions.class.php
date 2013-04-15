@@ -495,9 +495,11 @@
 								$cards_to_save[$slot_card->getUniqueId()] = $slot_card;
 							}
 							if ($slot['card_id']) {
-								$card = Cards::getTable()->getCardByUniqueId($slot['card_id']);
-								$this->game->setUserPlayerCardSlot($slot_no, $card);
-								$cards_to_save[$card->getUniqueId()] = $card;
+								$card = $this->game->getCard($slot['card_id']);
+								if ($card !== null) {
+									$this->game->setUserPlayerCardSlot($slot_no, $card);
+									$cards_to_save[$card->getUniqueId()] = $card;
+								}
 							}
 						}
 						$p1_slot_card = $this->game->getUserPlayerCardSlotPowerupCard1($slot_no);
@@ -507,9 +509,11 @@
 								$cards_to_save[$p1_slot_card->getUniqueId()] = $p1_slot_card;
 							}
 							if ($slot['powerupcard1_id']) {
-								$card = Cards::getTable()->getCardByUniqueId($slot['powerupcard1_id']);
-								$this->game->setUserPlayerCardSlotPowerupCard1($slot_no, $card);
-								$cards_to_save[$card->getUniqueId()] = $card;
+								$card = $this->game->getCard($slot['powerupcard1_id']);
+								if ($card !== null) {
+									$this->game->setUserPlayerCardSlotPowerupCard1($slot_no, $card);
+									$cards_to_save[$card->getUniqueId()] = $card;
+								}
 							}
 						}
 						$p2_slot_card = $this->game->getUserPlayerCardSlotPowerupCard2($slot_no);
@@ -519,9 +523,11 @@
 								$cards_to_save[$p2_slot_card->getUniqueId()] = $p2_slot_card;
 							}
 							if ($slot['powerupcard2_id']) {
-								$card = Cards::getTable()->getCardByUniqueId($slot['powerupcard2_id']);
-								$this->game->setUserPlayerCardSlotPowerupCard2($slot_no, $card);
-								$cards_to_save[$card->getUniqueId()] = $card;
+								$card = $this->game->getCard($slot['powerupcard2_id']);
+								if ($card !== null) {
+									$this->game->setUserPlayerCardSlotPowerupCard2($slot_no, $card);
+									$cards_to_save[$card->getUniqueId()] = $card;
+								}
 							}
 						}
 					}

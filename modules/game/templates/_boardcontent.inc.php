@@ -6,7 +6,7 @@
 <?php if ($game instanceof Game && ($csp_user->isAdmin() || in_array($csp_user->getId(), array($game->getPlayer()->getId(), $game->getOpponentId())))): ?>
 	<div id="board-container" class="<?php if (!$csp_user->isLowGraphicsEnabled()) echo 'effect-3d'; ?>">
 		<div id="phase-1-overlay" class="fullpage_backdrop dark" style="display: none;"><a href="javascript:void(0);" id="end-phase-1-button" class="turn-button button button-green<?php if ($game->getCurrentPlayerId() != $csp_user->getId()) echo ' disabled'; ?>" onclick="Devo.Game.endPhase(this);"><img src="/images/spinning_16.gif" style="display: none;">End replenishment phase</a></div>
-		<div id="gameover-overlay" class="fullpage_backdrop dark" style="<?php if ($game->isGameOver()): ?>display: none;<?php endif; ?>">
+		<div id="gameover-overlay" class="fullpage_backdrop dark" style="<?php if (!$game->isGameOver()): ?>display: none;<?php endif; ?>">
 			<div class="fullpage_backdrop_content">
 				<div class="backdrop_box medium">
 					<h1>Game over</h1>
@@ -15,7 +15,7 @@
 						<div id="winning_player_<?php echo $game->getOpponentId(); ?>" class="winning" style="<?php if ($game->getWinningPlayerId() != $game->getOpponentId()) echo 'display: none;'; ?>"><?php echo ($game->getOpponentId() == $csp_user->getId()) ? 'You won!' : $game->getOpponent()->getCharactername() . ' won!'; ?></div>
 						<div style="text-align: left;">
 							<h6>Statistics</h6>
-							<div id="game_statistics_indicator" style="<?php if (!$game->isGameOver()): ?>display: none;<?php endif; ?>">
+							<div id="game_statistics_indicator" style="<?php if ($game->isGameOver()): ?>display: none;<?php endif; ?>">
 								<img src="/images/spinning_16.gif" style="margin-right: 5px; margin-top: 3px; margin-bottom: -3px;">Loading statistics, please wait
 							</div>
 							<div<?php if (!$game->isUserInGame()): ?> style="display: none;"<?php endif; ?>>

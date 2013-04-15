@@ -83,7 +83,7 @@
 		{
 			if ($this->_history === null)
 			{
-				$this->_history = tables\ChatLines::getTable()->getLinesByRoomId($this->getId(), $num_lines);
+				$this->_history = tables\ChatLines::getTable()->getLinesByRoomId($this->getId(), null, $num_lines);
 			}
 		}
 

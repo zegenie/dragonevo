@@ -360,7 +360,7 @@
 
 			$event = new GameEvent();
 			$event->setEventType(GameEvent::TYPE_GAME_OVER);
-			$event->setEventData(array('player_id' => $this->getUserPlayer()->getId(), 'player_name' => $this->getUserPlayer()->getUsername(), 'winning_player_id' => $this->getWinningPlayerId()));
+			$event->setEventData(array('player_id' => $this->getUserPlayer()->getId(), 'player_name' => $this->getUserPlayer()->getUsername(), 'winning_player_id' => $winning_player_id));
 			$this->addEvent($event);
 
 			$this->_current_player_id = 0;
@@ -396,7 +396,7 @@
 			$loser_points = 0;
 			$loser_player = $this->getLosingPlayer();
 
-			if ($winner_player->getLevel() < $loser_player) {
+			if ($winner_player->getLevel() < $loser_player->getLevel()) {
 				$level_diff = $loser_player->getLevel() - $winner_player->getLevel();
 				$points_increase = 0;
 				for ($cc = $level_diff; $cc--; $cc > 0) {
