@@ -1,11 +1,7 @@
 <?php include_template('market/leftmenu', array('section' => 'sell')); ?>
 <div id="sell-popup" class="buy-popup fullpage_backdrop dark" style="display: none;">
-	<div class="swirl-dialog">
-		<img src="/images/swirl_top_right.png" class="swirl top-right">
-		<img src="/images/swirl_bottom_right.png" class="swirl bottom-right">
-		<img src="/images/swirl_bottom_left.png" class="swirl bottom-left">
-		<img src="/images/swirl_top_left.png" class="swirl top-left">
-		<h1>Buy card</h1>
+	<div class="backdrop_box large">
+		<h1>Sell card</h1>
 		<p id="sell-disclaimer">
 			If you sell this card, you will receive a gold amount, and the card will be removed from your deck.<br>
 			<u>There is no way to recover a sold card!</u><br>
@@ -22,11 +18,7 @@
 	</div>
 </div>
 <div id="sell-complete" class="buy-popup fullpage_backdrop dark" style="display: none;">
-	<div class="swirl-dialog">
-		<img src="/images/swirl_top_right.png" class="swirl top-right">
-		<img src="/images/swirl_bottom_right.png" class="swirl bottom-right">
-		<img src="/images/swirl_bottom_left.png" class="swirl bottom-left">
-		<img src="/images/swirl_top_left.png" class="swirl top-left">
+	<div class="backdrop_box large">
 		<h1>An exchange of gold has happened</h1>
 		<p id="sell-complete-description">
 			Thank you for doing business with us! We will totally not use your card against you, ever.
@@ -77,7 +69,7 @@
 				<?php foreach ($cards as $card): ?>
 					<li style="position: relative; <?php if (!($card->getCardType() == \application\entities\Card::TYPE_CREATURE)): ?>display: none;<?php endif; ?>">
 						<div onclick="Devo.Main.Helpers.popup($(this));" style="cursor: pointer;" id="card_<?php echo $card->getUniqueId(); ?>_container">
-							<?php include_template('game/card', array('card' => $card, 'mode' => 'medium', 'ingame' => false)); ?>
+							<?php include_template('game/card', array('card' => $card, 'mode' => 'medium', 'sellmode' => true, 'ingame' => false)); ?>
 						</div>
 						<div class="popup-menu below" style="width: 155px; right: auto; margin-top: 15px; left: 0px; z-index: 100000;">
 							<ul>

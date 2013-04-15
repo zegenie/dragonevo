@@ -763,4 +763,10 @@
 			$this->_available = $available;
 		}
 
+		public function getSellValue()
+		{
+			$cost = round($this->getCost() * 0.75);
+			return $cost;
 		}
+
+	}

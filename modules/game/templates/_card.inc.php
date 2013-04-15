@@ -1,5 +1,5 @@
 <?php if ($card instanceof application\entities\Card): ?>
-	<?php $card_id = $card->getUniqueId(); ?>
+	<?php $card_id = (isset($clone) && $clone) ? $card->getUniqueId().'_'.rand(123456, 654321) : $card->getUniqueId(); ?>
 	<div <?php if ($ingame): ?>draggable="true" <?php endif; ?>
 		 class="card <?php
 
@@ -54,9 +54,9 @@
 			 <?php endforeach; ?>
 		 <?php endif; ?>
 	>
-		<?php if ($card->getCardState() == application\entities\Card::STATE_TEMPLATE): ?>
+		<?php if ($card->getCardState() == application\entities\Card::STATE_TEMPLATE || (isset($sellmode) && $sellmode)): ?>
 			<div class="card_cost">
-				<span><?php echo $card->getCost(); ?></span>
+				<span><?php echo (isset($sellmode) && $sellmode) ? $card->getSellValue() : $card->getCost(); ?></span>
 				<div class="cost_underlay"></div>
 			</div>
 		<?php endif; ?>

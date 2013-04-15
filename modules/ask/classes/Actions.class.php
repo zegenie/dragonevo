@@ -403,18 +403,11 @@
 			return $this->renderJSON(array('buycards' => $this->getComponentHTML('market/buycards')));
 		}
 
-		protected function _getCardSellValue($card)
-		{
-			$cost = ($card instanceof \application\entities\CreatureCard && $card->getUserCardLevel() > 1) ? round($card->getCost() * (1 + ($card->getUserCardLevel() / 10))) : $card->getCost();
-			$cost = round($cost * 0.75);
-			return $cost;
-		}
-
 		protected function _processGetCardPrice(Request $request)
 		{
 			try {
 				$card = \application\entities\tables\Cards::getTable()->getCardByUniqueId($request['card_id']);
-				$cost = $this->_getCardSellValue($card);
+				$cost = $card->getSellValue();
 				return $this->renderJSON(array('cost' => $cost));
 			} catch (\Exception $e) {
 				$this->getResponse()->setHttpStatus(400);
@@ -427,7 +420,7 @@
 			try {
 				$card = \application\entities\tables\Cards::getTable()->getCardByUniqueId($request['card_id']);
 				$card->delete();
-				$cost = $this->_getCardSellValue($card);
+				$cost = $card->getSellValue();
 				$old_gold = $this->getUser()->getGold();
 				$this->getUser()->setGold($old_gold + $cost);
 				$this->getUser()->save();

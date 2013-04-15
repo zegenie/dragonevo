@@ -608,4 +608,10 @@
 			return array($card_cost, $attack_cost);
 		}
 
+		public function getSellValue()
+		{
+			$cost = ($this->getUserCardLevel() > 1) ? round($this->getCost() * (1 + ($this->getUserCardLevel() / 10))) : $this->getCost();
+
+			return round($cost * 0.75);
+		}
 	}

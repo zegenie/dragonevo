@@ -148,7 +148,8 @@ p {
 .button:focus, .ui_button:focus {
     outline: 0;
 }
-.backdrop_box { position: absolute; top: 60px; left: 50%; z-index: 100001; clear: both; padding: 0 !important; }
+.backdrop_box { position: absolute; top: 60px; left: 50%; z-index: 100001; clear: both; padding: 0 !important; text-align: left; }
+.backdrop_box p { color: #FFF; font-size: 1.3em; padding: 20px; }
 .backdrop_box#reportissue_container { top: 10px; }
 .backdrop_box.small { width: 400px; margin: 0 -200px 0 -200px; }
 .backdrop_box.mediumsmall { width: 500px; margin: 0 -250px 0 -250px; }
@@ -1484,6 +1485,12 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 	color: #FFF;
 	margin: 50px auto;
 }
+#buy-gold-container {
+	display: block;
+}
+#buy-gold-container #user-gold-buy {
+	float: none;
+}
 #levelup-overlay .swirl-dialog div.info {
 	font-size: 1.2em;
 	padding: 10px;
@@ -1511,7 +1518,7 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 	font-style: italic;
 	font-size: 1.2em;
 }
-.buy-buttons, .buy-indicator { margin: 50px 0 0 400px; }
+.buy-buttons, .buy-indicator { margin: 50px 0 0 310px; }
 .levelup-buttons, .levelup-indicator { margin: 30px 0; text-align: left; }
 .levelup-complete { margin: 30px 0; text-align: center; }
 .levelup-buttons { list-style: none; width: 600px; margin: 30px 80px 30px 100px; }
@@ -1575,6 +1582,9 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 	font-family: 'Fredericka The Great';
 	text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
 }
+#market-buy-disclaimer strong, #sell-disclaimer strong { font-style: italic; }
+#market-container-buy .card .attacks .attack_level { display: inline-block; }
+#buy-popup-cost, #sell-popup-cost { font-size: 2em; }
 #market-menu #user-gold {
 	background-image: none;
 	padding: 5px 0 20px 5px;
@@ -2251,7 +2261,7 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
     width: 190px;
     z-index: 1;
 }
-.shelf .card_details_attacks, .shelf .card_details_description { float: left; width: 330px; height: 300px; overflow-y: auto; margin-right: 30px; }
+.shelf .card_details_attacks, .shelf .card_details_description { float: left; width: 330px; height: 100%; overflow-y: auto; margin-right: 30px; }
 .shelf .card_details_attacks p { padding: 0 5px; font-size: 0.95em; }
 .shelf .cardattack_damage { padding: 5px 5px 8px; font-size: 0.85em; font-weight: bold; font-family: Amaranth; }
 
