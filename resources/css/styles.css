@@ -3889,18 +3889,20 @@ li.card-slot {
 	animation-iteration-count: infinite;
 	animation-timing-function: linear;
 }
-.card-slot.targetted:hover {
+.card-slot.targetted:hover .card {
 	-webkit-transform: scale(1.2);
 	-moz-transform: scale(1.2);
 	-ms-transform: scale(1.2);
 	-o-transform: scale(1.2);
 	transform: scale(1.2);
+	-webkit-transition: -webkit-transform 0.3s ease-in-out;
+	-moz-transition: -moz-transform 0.3s ease-in-out;
+	-ms-transition: -ms-transform 0.3s ease-in-out;
+	-o-transition: -o-transform 0.3s ease-in-out;
+	transition: transform 0.3s ease-in-out;
+}
+.card-slot.targetted:hover {
 	z-index: 1000001;
-	-webkit-transition: -webkit-transform 0.8s ease-in-out;
-	-moz-transition: -moz-transform 0.8s ease-in-out;
-	-ms-transition: -ms-transform 0.8s ease-in-out;
-	-o-transition: -o-transform 0.8s ease-in-out;
-	transition: transform 0.8s ease-in-out;
 	-webkit-animation-name: glowing-box-highlighted;
 	-moz-animation-name: glowing-box-highlighted;
 	-ms-animation-name: glowing-box-highlighted;
