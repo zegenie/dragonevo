@@ -4212,7 +4212,7 @@ Devo.Game.getStatistics = function() {
 
 Devo.Main.showCardDetails = function(card_id, check_actions) {
 	var card = $('card_'+card_id);
-	var cards = $$('.card');
+	var cards = $$('.card.medium');
 	$$('.card_details').each(function(element) {$(element).hide();});
 	if (card.hasClassName('selected')) {
 		card.removeClassName('selected');

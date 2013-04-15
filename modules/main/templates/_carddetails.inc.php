@@ -1,6 +1,7 @@
 <div id="card_<?php echo $card->getUniqueId(); ?>_details" class="card_details" style="display: none;">
 	<div class="card_details_description">
 		<h3><?php echo $card->getName(); ?></h3>
+		<?php include_template('game/card', array('card' => $card, 'mode' => 'normal', 'ingame' => false, 'clone' => true)); ?>
 		<p><?php echo nl2br($card->getLongDescription()); ?></p>
 	</div>
 	<?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE): ?>
