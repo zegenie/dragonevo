@@ -425,13 +425,13 @@ Devo.Main.Helpers.loading = function() {
 Devo.Main.Helpers.finishLoading = function() {
 	if (Devo.Core.loaders > 0) {
 		Devo.Core.loaders--;
-		if (Devo.Core.loaders == 0) {
-			window.setTimeout(function() {
+	}
+	if (Devo.Core.loaders == 0 && $('fullpage_backdrop').visible()) {
+		window.setTimeout(function() {
 //				$$('body')[0].setStyle({'overflow': 'auto'});
-				$('fullpage_backdrop').fade({duration: 0.2});
-				Devo.Main._resizeWatcher();
-			}, 1000);
-		}
+			$('fullpage_backdrop').fade({duration: 0.2});
+			Devo.Main._resizeWatcher();
+		}, 1000);
 	}
 }
 
