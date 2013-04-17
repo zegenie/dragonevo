@@ -82,7 +82,7 @@
 		<?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE): ?>
 			<div class="attacks">
 				<?php foreach ($card->getAttacks() as $attack): ?>
-					<?php include_component('game/cardattack', compact('attack')); ?>
+					<?php include_component('game/cardattack', compact('attack', 'ingame')); ?>
 				<?php endforeach; ?>
 			</div>
 		<?php endif; ?>

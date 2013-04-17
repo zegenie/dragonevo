@@ -4,15 +4,28 @@
 		<img src="/images/swirl_bottom_right.png" class="swirl bottom-right">
 		<img src="/images/swirl_bottom_left.png" class="swirl bottom-left">
 		<img src="/images/swirl_top_left.png" class="swirl top-left">
-		<h1 id="user-gold" data-amount="<?php echo $csp_user->getGold(); ?>">
-			<span id="user-gold-amount" class="gold"><?php echo $csp_user->getGold(); ?></span><br>
-			Gold
-			<div class="tooltip from-left">
-				Profile gold<br>
-				This is the gold you've accumulated when playing matches.<br>
-				<br>
-				Later you will also be able to buy more gold, but this is not implemented yet.
+		<h1 id="user-details">
+			<div id="user-gold" data-amount="<?php echo $csp_user->getGold(); ?>">
+				<span id="user-gold-amount" class="gold"><?php echo $csp_user->getGold(); ?></span><br>
+				Gold
+				<div class="tooltip from-left">
+					Profile gold<br>
+					This is the gold you've accumulated when playing matches.<br>
+					<br>
+					Later you will also be able to buy more gold, but this is not implemented yet.
+				</div>
 			</div>
+			<div id="user-xp" data-xp="<?php echo $csp_user->getXp(); ?>">
+				<span id="user-xp-amount"><?php echo $csp_user->getXp(); ?></span><br>
+				<abbr title="eXperience Points">XP</abbr>
+				<div class="tooltip from-left">
+					Experience Points<br>
+					When you play single- and multiplayer matches, you earn XP.<br>
+					<br>
+					You can use XP to level up your cards, attacks and train skills.
+				</div>
+			</div>
+			<br style="clear: both;">
 		</h1>
 		<h1>Market shortcuts</h1>
 		<ul>

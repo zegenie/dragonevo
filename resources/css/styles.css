@@ -1271,12 +1271,13 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 .swirl-dialog.profile_setup p { font-size: 1.2em; padding: 10px; }
 .profile { font-size: 1em; position: relative; text-align: left; float: left; }
 .profile .swirl-dialog { width: 800px; margin: 50px auto 0 auto; }
+#profile_race { float: left; margin: 10px 10px 0 0; }
 #user_level strong { font-weight: bold; font-style: italic; }
-#user_level { position: absolute; right: 10px; top: 110px; width: 360px; font-size: 0.9em; text-align: left; }
-#user_level strong { text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 5px rgba(101, 193, 218, 1), 0 0 7px rgba(101, 193, 218, 0.8), 0 0 13px rgba(101, 193, 218, 0.6); }
-#user_level .level { font-size: 2.6em; font-weight: bold; }
-#user_level .xp { font-size: 1.9em; font-weight: normal; }
-.profile .statistics { list-style: none; padding: 0; margin: 0; }
+#user_level strong.level { text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 5px rgba(101, 193, 101, 1), 0 0 7px rgba(101, 101, 218, 0.8), 0 0 13px rgba(101, 193, 101, 0.6); }
+#profile-skills-container #user_level strong.level { font-size: 1.4em; display: inline-block; padding: 0 5px; }
+#user_level strong.xp { text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 5px rgba(101, 193, 218, 1), 0 0 7px rgba(101, 193, 218, 0.8), 0 0 13px rgba(101, 193, 218, 0.6); }
+.profile .statistics { list-style: none; padding: 0; margin: 10px 0; }
+.profile .statistics li { margin: 10px 0; font-family: 'Open Sans'; }
 #profile-container { margin-top: 20px; }
 #left-menu-container { position: relative; width: 280px; }
 #left-menu-container .menu-left { position: fixed; top: 40px; width: 250px; left: 40px; }
@@ -1576,21 +1577,22 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 	height: 56px;
 }
 #user-gold-amount {
-	font-size: 2.2em;
+	font-size: 2em;
 	font-family: 'Fredericka The Great';
 	text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
 }
 #market-buy-disclaimer strong, #sell-disclaimer strong { font-style: italic; }
-#market-container-buy .card .attacks .attack_level { display: inline-block; }
+#market-container-buy .card .attacks .attack_level, #profile-cards-container .card .attacks .attack_level { display: inline-block; }
 #buy-popup-cost, #sell-popup-cost { font-size: 2em; }
-#market-menu #user-gold {
+.menu-left #user-details {
 	background-image: none;
-	padding: 5px 0 20px 5px;
+	padding: 5px 10px 20px 5px;
 }
-#market-menu #user-gold .tooltip {
+.menu-left #user-details .tooltip {
 	font-weight: normal;
+	text-align: left;
 }
-#market-menu #user-gold .tooltip:first-line {
+.menu-left #user-details .tooltip:first-line {
 	font-weight: bold;
 }
 .user-xp {
@@ -1608,10 +1610,23 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 	font-size: 1.5em;
 	font-family: 'Amaranth';
 }
-#user-xp-amount, #user-level-amount {
-	font-size: 2.2em;
-	font-family: 'Fredericka The Great';
+.menu-left #user-gold {
+	float: left;
+	text-align: left;
+}
+.menu-left #user-xp {
+	float: right;
+	text-align: right;
+}
+.menu-left #user-xp-amount {
+	color: #A4C0E4;
+}
+.menu-left #user-level-amount {
 	color: #FFF;
+}
+.menu-left #user-xp-amount, .menu-left #user-level-amount {
+	font-size: 2em;
+	font-family: 'Fredericka The Great';
 	margin-bottom: 10px;
 }
 .card_cost {
@@ -2946,6 +2961,15 @@ li.card {
 	background-position: 4px 6px;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+}
+.card .attacks .attack_hover {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	position: absolute;
+	left: 0;
+	top: 0;
+	cursor: pointer;
 }
 .card .attacks .attack_bonus {
 	background-color: rgba(0, 125, 0, 0.4);

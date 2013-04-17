@@ -52,19 +52,30 @@
 		<h1>
 			<?php echo $intro; ?>, <span id="profile-user-charactername"><?php echo $csp_user->getCharactername(); ?></span>!
 		</h1>
-		<?php include_template('main/profiledetailstop'); ?>
-		<div id="user_level">
-			<a href="javascript:void(0);" onclick="$('levelup-overlay').show();" class="button button-orange" style="float: right; margin: 10px 10px 20px 20px; font-size: 1.2em !important; padding: 10px 15px !important;">Spend XP!</a>
-			<div style="margin-top: 23px; white-space: nowrap; font-size: 1.1em;">
-				Next profile level-up costs <strong><span class="next-level-xp"><?php echo $csp_user->getNextLevelXp(); ?></span>XP</strong><br>
-			</div>
-		</div>
+		<ul id="profile_race" class="cards">
+			<?php include_template('main/racecard', array('race' => $csp_user->getRace(), 'racename' => $csp_user->getRaceName())); ?>
+		</ul>
 		<ul class="statistics">
 			<?php if (!$games_played): ?>
 				<li>You have not played any games yet!</li>
 			<?php else: ?>
-				<li>Out of <b><?php echo $games_played; ?></b> games played, you have won <b><?php echo $games_won; ?></b> &ndash; that is <?php echo ($pct_won < 75) ? (($pct_won < 30) ? 'only' : 'about') : ' a whopping'; ?> <b><?php echo $pct_won; ?>%</b><?php echo ($pct_won < 75) ? '...' : '!'; ?><br></li>
+				<li>
+					<div style="padding: 10px; font-weight: bold;">
+						Games played, wins vs. losses: <br>
+					</div>
+					<div style="display: inline-block; border: 1px solid rgba(255, 255, 255, 0.6); padding: 0; width: 300px; height: 18px; margin: 5px 0;">
+						<div style="display: block; height: 100%; float: left; width: <?php echo $pct_won; ?>%; background-color: rgba(200, 255, 200, 0.6);"></div><div style="display: block; height: 100%; float: right; width: <?php echo 100 - $pct_won; ?>%; background-color: rgba(200, 255, 200, 0.2);"></div>
+					</div><br>
+					<b><?php echo $games_won; ?> of <?php echo $games_played; ?></b> &ndash; that is <?php echo ($pct_won < 75) ? (($pct_won < 30) ? 'only' : 'about') : ' a whopping'; ?> <b><?php echo $pct_won; ?>%</b><?php echo ($pct_won < 75) ? '...' : '!'; ?><br>
+				</li>
 			<?php endif; ?>
+			<li id="user_level">
+				<div style="display: inline-block; padding: 10px 20px 0 0;">
+					Your character is level <span id="user-level" data-level="<?php echo $csp_user->getLevel(); ?>"><strong class="level" id="user-level-amount"><?php echo $csp_user->getLevel(); ?></strong></span><br>
+					Next profile level-up costs <strong class="xp"><span class="next-level-xp"><?php echo $csp_user->getNextLevelXp(); ?></span>XP</strong>
+				</div>
+				<a href="javascript:void(0);" onclick="$('levelup-overlay').show();" class="button button-orange" style="display: inline-block; margin-top: -15px !important; font-size: 1.2em !important; padding: 10px 15px !important;">Spend XP!</a>
+			</li>
 		</ul>
 		<br style="clear: both;">
 		<br style="clear: both;">

@@ -1,11 +1,7 @@
 <?php $csp_response->setTitle(__('Dragon Evo - The Card Game')); ?>
 <?php include_template('main/profileleftmenu'); ?>
 <div id="levelup-popup" class="buy-popup levelup-popup fullpage_backdrop dark" style="display: none;">
-	<div class="swirl-dialog">
-		<img src="/images/swirl_top_right.png" class="swirl top-right">
-		<img src="/images/swirl_bottom_right.png" class="swirl bottom-right">
-		<img src="/images/swirl_bottom_left.png" class="swirl bottom-left">
-		<img src="/images/swirl_top_left.png" class="swirl top-left">
+	<div class="backdrop_box large">
 		<h1>Level up card</h1>
 		<p id="levelup-disclaimer">
 			Leveling up this card will permanently increase its properties as indicated below. Please choose which parts of this card you want to level up.
@@ -46,12 +42,8 @@
 	</div>
 </div>
 <div id="sell-popup" class="buy-popup fullpage_backdrop dark" style="display: none;">
-	<div class="swirl-dialog">
-		<img src="/images/swirl_top_right.png" class="swirl top-right">
-		<img src="/images/swirl_bottom_right.png" class="swirl bottom-right">
-		<img src="/images/swirl_bottom_left.png" class="swirl bottom-left">
-		<img src="/images/swirl_top_left.png" class="swirl top-left">
-		<h1>Buy card</h1>
+	<div class="backdrop_box large">
+		<h1>Sell card</h1>
 		<p id="sell-disclaimer">
 			If you sell this card, you will receive a gold amount, and the card will be removed from your deck.<br>
 			<u>There is no way to recover a sold card!</u><br>
@@ -68,11 +60,7 @@
 	</div>
 </div>
 <div id="sell-complete" class="buy-popup fullpage_backdrop dark" style="display: none;">
-	<div class="swirl-dialog">
-		<img src="/images/swirl_top_right.png" class="swirl top-right">
-		<img src="/images/swirl_bottom_right.png" class="swirl bottom-right">
-		<img src="/images/swirl_bottom_left.png" class="swirl bottom-left">
-		<img src="/images/swirl_top_left.png" class="swirl top-left">
+	<div class="backdrop_box large">
 		<h1>An exchange of gold has happened</h1>
 		<p id="sell-complete-description">
 			Thank you for doing business with us! We will totally not use your card against you, ever.

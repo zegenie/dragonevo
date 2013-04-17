@@ -11,6 +11,9 @@
 		<?php echo $csp_user->getRaceName(); ?> skills<br>
 		<span style="display: none; font-weight: normal; font-size: 0.7em;"><?php echo link_tag(make_url('profile'), '&laquo; Back to profile'); ?></span>
 	</h2>
+	<p id="user_level">
+		Your character is currently level <span id="user-level" data-level="<?php echo $csp_user->getLevel(); ?>"><strong class="level" id="user-level-amount"><?php echo $csp_user->getLevel(); ?></strong></span>
+	</p>
 	<div id="skill_list">
 		<?php foreach ($available_skills as $skill): ?>
 			<div class="skills">
