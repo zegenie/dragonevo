@@ -1530,7 +1530,7 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 .levelup-buttons { list-style: none; width: 600px; margin: 30px 80px 30px 100px; }
 .levelup-buttons li { list-style: none; padding: 0; margin: 0; height: 50px; }
 .levelup-buttons .button { float: left; width: 160px; }
-.levelup-cost { display: inline-block; padding: 0 0 0 7px; }
+.levelup-cost { color: #FFF; display: inline-block; padding: 0 0 0 7px; }
 .levelup-cost:first-line { font-size: 1.6em; font-weight: bold; font-family: 'Amaranth'; }
 .button.buy-button { font-size: 1.3em !important; font-weight: bold !important; padding: 10px 20px !important; }
 .button.dontbuy-button { font-size: 1.1em !important; font-weight: normal !important; padding: 7px 15px !important; }
