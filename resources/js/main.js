@@ -1745,6 +1745,7 @@ Devo.Main.loadLobbyUI = function() {
 	if (!$('lobby-container')) {
 		$('game-content-container').dataset.location = '#!lobby';
 		window.location.hash = "!lobby";
+		Devo.Main.Helpers.loading();
 		Devo.Main.Helpers.ajax(Devo.options['ask_url'], {
 			additional_params: '&for=game_interface&part=lobby',
 			success: {
@@ -1756,6 +1757,7 @@ Devo.Main.loadLobbyUI = function() {
 						$('chat_1_container').hide();
 						Devo.Game.toggleChat(1);
 					}
+					Devo.Main.Helpers.finishLoading();
 				}
 			}
 		});
