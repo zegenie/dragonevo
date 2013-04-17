@@ -5,7 +5,7 @@
 	class Response extends \caspar\core\Response
 	{
 		
-		protected $_version = '0.5.0';
+		protected $_version = '0.5.5';
 
 		protected $_fullscreen = false;
 
