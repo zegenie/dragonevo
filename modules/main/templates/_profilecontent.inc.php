@@ -63,9 +63,7 @@
 				</div>
 				<a href="javascript:void(0);" onclick="$('levelup-overlay').show();" class="ui_button" style="display: inline-block; margin-top: 2px;">Spend XP!</a>
 			</li>
-			<?php if (!$games_played): ?>
-				<li>You have not played any games yet!</li>
-			<?php else: ?>
+			<?php if ($games_played): ?>
 				<li>
 					<div style="padding: 10px 0; font-weight: bold;">
 						Games played, wins vs. losses: <br>
