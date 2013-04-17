@@ -56,11 +56,18 @@
 			<?php include_template('main/racecard', array('race' => $csp_user->getRace(), 'racename' => $csp_user->getRaceName())); ?>
 		</ul>
 		<ul class="statistics">
+			<li id="user_level" style="margin-top: 10px;">
+				<div style="float: left; padding: 0 20px 0 0;">
+					Your character is level <span id="user-level" data-level="<?php echo $csp_user->getLevel(); ?>"><strong class="level" id="user-level-amount"><?php echo $csp_user->getLevel(); ?></strong></span><br>
+					Next profile level-up costs <strong class="xp"><span class="next-level-xp"><?php echo $csp_user->getNextLevelXp(); ?></span>XP</strong>
+				</div>
+				<a href="javascript:void(0);" onclick="$('levelup-overlay').show();" class="ui_button" style="display: inline-block; margin-top: 2px;">Spend XP!</a>
+			</li>
 			<?php if (!$games_played): ?>
 				<li>You have not played any games yet!</li>
 			<?php else: ?>
 				<li>
-					<div style="padding: 10px; font-weight: bold;">
+					<div style="padding: 10px 0; font-weight: bold;">
 						Games played, wins vs. losses: <br>
 					</div>
 					<div style="display: inline-block; border: 1px solid rgba(255, 255, 255, 0.6); padding: 0; width: 300px; height: 18px; margin: 5px 0;">
@@ -68,14 +75,19 @@
 					</div><br>
 					<b><?php echo $games_won; ?> of <?php echo $games_played; ?></b> &ndash; that is <?php echo ($pct_won < 75) ? (($pct_won < 30) ? 'only' : 'about') : ' a whopping'; ?> <b><?php echo $pct_won; ?>%</b><?php echo ($pct_won < 75) ? '...' : '!'; ?><br>
 				</li>
+				<li>
+					<div style="float: left; padding: 2px 20px 0 0;">
+						Your <strong>multiplayer</strong> ranking is <strong class="level">#<?php echo $csp_user->getRankingMP(); ?></strong> with <strong class="level"><?php echo $csp_user->getRankingPointsMP(); ?> points</strong><br>
+					</div>
+					<a href="javascript:void(0);" onclick="Devo.Main.Helpers.Backdrop.show('<?php echo make_url('get_backdrop_partial', array('key' => 'leaderboard', 'mode' => 'mp')); ?>');return false;" class="ui_button" style="display: inline-block; margin-top: -4px;">Show leaderboard</a>
+				</li>
+				<li>
+					<div style="float: left; padding: 2px 20px 0 0;">
+						Your <strong>singleplayer</strong> ranking is <strong class="level">#<?php echo $csp_user->getRankingSP(); ?></strong> with <strong class="level"><?php echo $csp_user->getRankingPointsSP(); ?> points</strong><br>
+					</div>
+					<a href="javascript:void(0);" onclick="Devo.Main.Helpers.Backdrop.show('<?php echo make_url('get_backdrop_partial', array('key' => 'leaderboard', 'mode' => 'sp')); ?>');return false;" class="ui_button" style="display: inline-block; margin-top: -4px;">Show leaderboard</a>
+				</li>
 			<?php endif; ?>
-			<li id="user_level">
-				<div style="display: inline-block; padding: 10px 20px 0 0;">
-					Your character is level <span id="user-level" data-level="<?php echo $csp_user->getLevel(); ?>"><strong class="level" id="user-level-amount"><?php echo $csp_user->getLevel(); ?></strong></span><br>
-					Next profile level-up costs <strong class="xp"><span class="next-level-xp"><?php echo $csp_user->getNextLevelXp(); ?></span>XP</strong>
-				</div>
-				<a href="javascript:void(0);" onclick="$('levelup-overlay').show();" class="button button-orange" style="display: inline-block; margin-top: -15px !important; font-size: 1.2em !important; padding: 10px 15px !important;">Spend XP!</a>
-			</li>
 		</ul>
 		<br style="clear: both;">
 		<br style="clear: both;">

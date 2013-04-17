@@ -79,6 +79,7 @@
 				<button class="button button-lightblue singleplayer" onclick="Devo.Main.loadAdventureUI();$('gamemenu-container').hide();" id="play-adventure-button">Singleplayer</button>
 				<button class="button button-orange" onclick="Devo.Main.loadMarketFrontpage();$('gamemenu-container').hide();" id="enter-market-button">Trade and buy</button>
 				<?php /* <button class="button button-silver" onclick="Devo.Main.Helpers.Backdrop.show('<?php echo make_url('get_backdrop_partial', array('key' => 'editprofile')); ?>');return false;">Edit profile</button> */ ?>
+				<button class="button button-silver" id="toggle-leaderboard-button" onclick="$('play-menu-main').toggle();$('play-menu-leaderboard').toggle();">Leaderboard</button>
 				<button class="button button-silver settings" onclick="Devo.Main.loadProfile();" id="show-profile-button">My profile</button>
 				<button class="button button-silver" style="display: none;" onclick="$('gamemenu-container').toggle();" id="close-menu-button">Close menu</button>
 			</div>
@@ -97,6 +98,11 @@
 			<button class="button button-silver" id="quickmatch_button" onclick="Devo.Play.quickmatch();$('gamemenu-container').toggle();">Play quickmatch</button>
 			<button class="button button-silver custom_game disabled" onclick="Devo.Main.Helpers.Message.success('Not implemented yet', 'This feature has not yet been implemented');" disabled>Custom game</button>
 			<button class="button button-silver back" onclick="$('play-menu-play').toggle();$('play-menu-main').toggle();">&laquo;&nbsp;Back</button>
+		</div>
+		<div id="play-menu-leaderboard" style="display: none;">
+			<button class="button button-silver" id="show-leaderboard-mp" onclick="Devo.Main.Helpers.Backdrop.show('<?php echo make_url('get_backdrop_partial', array('key' => 'leaderboard', 'mode' => 'mp')); ?>');return false;">Multiplayer</button>
+			<button class="button button-silver" id="show-leaderboard-sp" onclick="Devo.Main.Helpers.Backdrop.show('<?php echo make_url('get_backdrop_partial', array('key' => 'leaderboard', 'mode' => 'sp')); ?>');return false;">Singleplayer</button>
+			<button class="button button-silver back" onclick="$('play-menu-leaderboard').toggle();$('play-menu-main').toggle();">&laquo;&nbsp;Back</button>
 		</div>
 		<br style="clear: both;">
 		<div id="play-version">

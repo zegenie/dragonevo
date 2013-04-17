@@ -209,6 +209,10 @@ class Actions extends \application\lib\Actions
 					$options['tellable_type'] = $request['tellable_type'];
 					$options['tellable_id'] = $request['tellable_id'];
 					break;
+				case 'leaderboard':
+					$template_name = 'main/leaderboard';
+					$options['mode'] = ($request['mode'] == 'mp') ? 'mp' : 'sp';
+					break;
 				case 'invitefriend':
 					$template_name = 'main/invitefriend';
 					break;

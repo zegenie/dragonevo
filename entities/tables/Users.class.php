@@ -117,6 +117,27 @@
 			$crit->addWhere('users.email', '', Criteria::DB_NOT_EQUALS);
 			return $this->select($crit);
 		}
+		
+		public function getByRanking($mode)
+		{
+			$crit = $this->getCriteria();
+			$crit->addSelectionColumn('users.id', 'id');
+			$crit->addSelectionColumn('users.charactername', 'character_name');
+			$crit->addSelectionColumn('users.username', 'username');
+			$crit->addSelectionColumn('users.ranking_'.$mode, 'rank');
+			$crit->addSelectionColumn('users.ranking_points_'.$mode, 'points');
+			$crit->addOrderBy('users.ranking_'.$mode, \b2db\Criteria::SORT_ASC);
+			
+			$return_array = array();
+			$res = $this->doSelect($crit);
+			if ($res) {
+				while ($row = $res->getNextRow()) {
+					$return_array[] = array('rank' => $row['rank'], 'points' => $row['points'], 'name' => ($row['character_name']) ? $row['character_name'] : $row['username']);
+				}
+			}
+			
+			return $return_array;
+		}
 
 		public function updateRanking()
 		{

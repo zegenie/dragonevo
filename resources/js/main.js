@@ -450,7 +450,7 @@ Devo.Main.Helpers.Backdrop.show = function(url) {
 
 Devo.Main.Helpers.Backdrop.reset = function() {
 	$$('body')[0].setStyle({'overflow': 'auto'});
-	$('fullpage_backdrop').fade({duration: 0.2});
+	Devo.Main.Helpers.finishLoading();
 	Devo.Main._resizeWatcher();
 };
 
@@ -1617,6 +1617,7 @@ Devo.Main.showMenu = function() {
 	} else {
 		$('play-menu-main').show();
 		$('play-menu-play').hide();
+		$('play-menu-leaderboard').hide();
 
 		if (Devo.Game._id != undefined) {
 			$('play-menu-ingame').show();

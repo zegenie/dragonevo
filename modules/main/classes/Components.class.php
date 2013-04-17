@@ -80,5 +80,11 @@
 			$this->available_skills = \application\entities\tables\Skills::getTable()->getSkillsByRace($this->getUser()->getRace());
 			$this->user_skills = $this->getUser()->getSkills();
 		}
+		
+		public function componentLeaderboard()
+		{
+			$this->users = \application\entities\tables\Users::getTable()->getByRanking($this->mode);
+			$this->headermode = ($this->mode == 'mp') ? 'Multiplayer' : 'Singleplayer';
+		}
 
 	}

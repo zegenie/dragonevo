@@ -1,6 +1,21 @@
 <h1>Changelog</h1>
 <h3>Latest version: <?php echo $csp_response->getVersion(); ?> (alpha)</h3>
-<h6>0.5.0 (beta)</h6>
+<h6>0.5.5 (weekend patch #1)</h6>
+<ul>
+	<li>Added more information to the profile summary page</li>
+	<li>Restyled gold and XP indicators and put them in the left menu</li>
+	<li>Unified popup styling</li>
+	<li>Changed card attack popup so that it only pops up when hovering the attack type icon</li>
+	<li>Ranking system / Leaderboard</li>
+	<li>More playable cards</li>
+	<li>Improved character creation screen</li>
+	<li>New profile section with profile information</li>
+	<li>New friend and challenge options.</li>
+	<li>A complete new Game menu and ingame menu optimization</li>
+	<li>A whole new Game Guide</li>
+	<li> ... and a whole lot of bug fixes and other stuff</li>
+</ul>
+<h6>0.5.0 (public beta)</h6>
 <ul>
 	<li>Singleplayer mode (Adventure and Story mode)</li>
 	<li>An updated market experience</li>

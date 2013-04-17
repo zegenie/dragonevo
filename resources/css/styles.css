@@ -1276,8 +1276,15 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 #user_level strong.level { text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 5px rgba(101, 193, 101, 1), 0 0 7px rgba(101, 101, 218, 0.8), 0 0 13px rgba(101, 193, 101, 0.6); }
 #profile-skills-container #user_level strong.level { font-size: 1.4em; display: inline-block; padding: 0 5px; }
 #user_level strong.xp { text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8), -1px -1px 1px rgba(0, 0, 0, 0.8), 0 0 5px rgba(101, 193, 218, 1), 0 0 7px rgba(101, 193, 218, 0.8), 0 0 13px rgba(101, 193, 218, 0.6); }
-.profile .statistics { list-style: none; padding: 0; margin: 10px 0; }
-.profile .statistics li { margin: 10px 0; font-family: 'Open Sans'; }
+.profile .statistics { list-style: none; padding: 0; margin: 10px 0; float: left; }
+.profile .statistics li { margin: 10px 0; font-family: 'Open Sans'; clear: both; }
+.leaderboard { list-style: none; padding: 0; margin: 0; }
+.leaderboard li { margin: 5px 10px; font-family: 'Open Sans'; clear: both; font-size: 1em; }
+.leaderboard li:first-child { font-size: 2em; font-weight: bold; }
+.leaderboard li:first-child + li { font-size: 1.6em; }
+.leaderboard li:first-child + li + li { font-size: 1.2em; }
+.leaderboard li .rank { color: rgba(255, 255, 255, 0.8); display: inline-block; padding: 5px; border-radius: 5px; background-color: rgba(100, 100, 100, 0.6); margin-right: 10px; }
+.leaderboard li .points { color: rgba(200, 255, 200, 0.8); display: inline-block; padding: 5px; font-size: 0.9em; font-weight: normal; margin-right: 10px; }
 #profile-container { margin-top: 20px; }
 #left-menu-container { position: relative; width: 280px; }
 #left-menu-container .menu-left { position: fixed; top: 40px; width: 250px; left: 40px; }
@@ -2969,7 +2976,7 @@ li.card {
 	position: absolute;
 	left: 0;
 	top: 0;
-	cursor: pointer;
+	cursor: pointer;,.
 }
 .card .attacks .attack_bonus {
 	background-color: rgba(0, 125, 0, 0.4);
