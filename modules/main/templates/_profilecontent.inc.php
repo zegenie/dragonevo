@@ -75,19 +75,19 @@
 					</div><br>
 					<b><?php echo $games_won; ?> of <?php echo $games_played; ?></b> &ndash; that is <?php echo ($pct_won < 75) ? (($pct_won < 30) ? 'only' : 'about') : ' a whopping'; ?> <b><?php echo $pct_won; ?>%</b><?php echo ($pct_won < 75) ? '...' : '!'; ?><br>
 				</li>
-				<li>
-					<div style="float: left; padding: 2px 20px 0 0;">
-						Your <strong>multiplayer</strong> ranking is <strong class="level">#<?php echo $csp_user->getRankingMP(); ?></strong> with <strong class="level"><?php echo $csp_user->getRankingPointsMP(); ?> points</strong><br>
-					</div>
-					<a href="javascript:void(0);" onclick="Devo.Main.Helpers.Backdrop.show('<?php echo make_url('get_backdrop_partial', array('key' => 'leaderboard', 'mode' => 'mp')); ?>');return false;" class="ui_button" style="display: inline-block; margin-top: -4px;">Show leaderboard</a>
-				</li>
-				<li>
-					<div style="float: left; padding: 2px 20px 0 0;">
-						Your <strong>singleplayer</strong> ranking is <strong class="level">#<?php echo $csp_user->getRankingSP(); ?></strong> with <strong class="level"><?php echo $csp_user->getRankingPointsSP(); ?> points</strong><br>
-					</div>
-					<a href="javascript:void(0);" onclick="Devo.Main.Helpers.Backdrop.show('<?php echo make_url('get_backdrop_partial', array('key' => 'leaderboard', 'mode' => 'sp')); ?>');return false;" class="ui_button" style="display: inline-block; margin-top: -4px;">Show leaderboard</a>
-				</li>
 			<?php endif; ?>
+			<li>
+				<div style="float: left; padding: 2px 20px 0 0;">
+					Your <strong>multiplayer</strong> ranking is <strong class="level">#<?php echo $csp_user->getRankingMP(); ?></strong> with <strong class="level"><?php echo $csp_user->getRankingPointsMP(); ?> points</strong><br>
+				</div>
+				<a href="javascript:void(0);" onclick="Devo.Main.Helpers.Backdrop.show('<?php echo make_url('get_backdrop_partial', array('key' => 'leaderboard', 'mode' => 'mp')); ?>');return false;" class="ui_button" style="display: inline-block; margin-top: -4px;">Show leaderboard</a>
+			</li>
+			<li>
+				<div style="float: left; padding: 2px 20px 0 0;">
+					Your <strong>singleplayer</strong> ranking is <strong class="level">#<?php echo $csp_user->getRankingSP(); ?></strong> with <strong class="level"><?php echo $csp_user->getRankingPointsSP(); ?> points</strong><br>
+				</div>
+				<a href="javascript:void(0);" onclick="Devo.Main.Helpers.Backdrop.show('<?php echo make_url('get_backdrop_partial', array('key' => 'leaderboard', 'mode' => 'sp')); ?>');return false;" class="ui_button" style="display: inline-block; margin-top: -4px;">Show leaderboard</a>
+			</li>
 		</ul>
 		<br style="clear: both;">
 		<br style="clear: both;">
