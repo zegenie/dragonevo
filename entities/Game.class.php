@@ -680,13 +680,13 @@
 				$statistics['scenario'] = true;
 			} else {
 				if ($player_id == $this->getWinningPlayerId()) {
-					$statistics['xp'] = floor(($statistics['hp'] / 100) * 20) + floor(($statistics['hp'] / 100) * $statistics['cards']);
-					$statistics['gold'] = floor($statistics['cards'] * 2);
-					if ($statistics['gold'] > 15) $statistics['gold'] = 15;
+					$statistics['xp'] = floor(($statistics['hp'] / 100) * 20) + floor(($statistics['hp'] / 100) * $statistics['cards']) * 3;
+					$statistics['gold'] = floor($statistics['cards'] * 2) * 3;
+					if ($statistics['gold'] > 100) $statistics['gold'] = 100;
 				} else {
-					$statistics['xp'] = floor(($statistics['hp'] / 100) * 10);
-					$statistics['gold'] = $statistics['cards'];
-					if ($statistics['gold'] > 5) $statistics['gold'] = 5;
+					$statistics['xp'] = floor(($statistics['hp'] / 100) * 10) * 3;
+					$statistics['gold'] = $statistics['cards'] * 3;
+					if ($statistics['gold'] > 50) $statistics['gold'] = 50;
 				}
 			}
 
