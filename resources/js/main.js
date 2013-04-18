@@ -1400,19 +1400,23 @@ Devo.Core._checkNav = function() {
 					} else {
 						Devo.Main.loadAdventureUI();
 					}
+					$('gamemenu-container').hide();
 					break;
 				case '!lobby':
 					Devo.Main.loadLobby();
+					$('gamemenu-container').hide();
 					break;
 				case '!game':
 					if (hasharray[1]) {
 						Devo.Main.initializeLobby();
 						Devo.Game.initializeGame(parseInt(hasharray[1]));
+						$('gamemenu-container').hide();
 					}
 					break;
 				case '!invite':
 					if (hasharray[1]) {
 						Devo.Play.acceptInvite(hasharray[1]);
+						$('gamemenu-container').hide();
 					}
 					break;
 				case '!market':
@@ -1420,13 +1424,16 @@ Devo.Core._checkNav = function() {
 						switch (hasharray[1]) {
 							case 'buy':
 								Devo.Main.loadMarketBuy();
+								$('gamemenu-container').hide();
 								break;
 							case 'sell':
 								Devo.Main.loadMarketSell();
+								$('gamemenu-container').hide();
 								break;
 						}
 					} else {
 						Devo.Main.loadMarketFrontpage();
+						$('gamemenu-container').hide();
 					}
 					break;
 				case '!profile':
@@ -1435,14 +1442,17 @@ Devo.Core._checkNav = function() {
 							case 'cards':
 								Devo.Main.initializeLobby();
 								Devo.Main.loadProfileCards();
+								$('gamemenu-container').hide();
 								break;
 							case 'skills':
 								Devo.Main.initializeLobby();
 								Devo.Main.loadProfileSkills();
+								$('gamemenu-container').hide();
 								break;
 						}
 					} else {
 						Devo.Main.loadProfile();
+						$('gamemenu-container').hide();
 					}
 					break;
 			}
