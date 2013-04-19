@@ -79,7 +79,8 @@
 				ItemCard::CLASS_SHIELD => 'Shield',
 				ItemCard::CLASS_SPEAR => 'Spear',
 				ItemCard::CLASS_STAFF => 'Staff',
-				ItemCard::CLASS_SWORD => 'Sword'
+				ItemCard::CLASS_SWORD => 'Sword',
+				ItemCard::CLASS_MAGIC => 'Magic'
 			);
 		}
 

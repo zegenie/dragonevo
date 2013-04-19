@@ -22,6 +22,7 @@
 		const CLASS_ARMOR = 5;
 		const CLASS_ARROW = 6;
 		const CLASS_STAFF = 7;
+		const CLASS_MAGIC = 8;
 		const CLASS_POTION_HEALTH = 10;
 		const CLASS_POTION_ALTERATION = 11;
 
@@ -43,6 +44,7 @@
 				self::CLASS_SPEAR => 'Spear',
 				self::CLASS_STAFF => 'Staff',
 				self::CLASS_SWORD => 'Sword',
+				self::CLASS_MAGIC => 'Magic',
 				);
 			
 			return $classes;
