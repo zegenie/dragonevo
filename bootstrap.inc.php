@@ -20,7 +20,6 @@
 		return $mailer;
 	}
 
-	
 	function devo_mail_error($message, $file, $line, $trace = null)
 	{
 		if ($trace === null) {

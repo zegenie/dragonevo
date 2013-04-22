@@ -694,6 +694,7 @@
 		{
 			if ($this->getCard()->getInGameEP() < $this->getCostMagic()) return false;
 			if ($this->getCard()->getGame()->getUserPlayerGold() < $this->getCostGold()) return false;
+			if ($this->getCard()->getUserCardLevel() < $this->getRequiresLevel()) return false;
 			
 			return true;
 		}

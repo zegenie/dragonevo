@@ -2785,31 +2785,35 @@ Devo.Game.isCardSlotEquippedWithItemClass = function(slot, equippable_class) {
 	return (item_cards.size() > 0) ? true : false;
 }
 
-Devo.Game.updateCardAttackAvailability = function(card) {
+Devo.Game.updateCardAttackAvailability = function(card, lightweight) {
 	if (!card.hasClassName('creature')) return;
 	var ep = parseInt(card.dataset.ep);
 	var is_player_card = card.hasClassName('player');
-	var gold = (is_player_card) ? Devo.Game.getGoldAmount() : Devo.Game.getGoldAmountOpponent();
-	var user_level = (is_player_card) ? Devo.Game.getUserLevel() : Devo.Game.getUserLevelOpponent();
+	if (lightweight === undefined) {
+		var gold = (is_player_card) ? Devo.Game.getGoldAmount() : Devo.Game.getGoldAmountOpponent();
+	}
+	var card_level = parseInt(card.dataset.level);
 	var slot = Devo.Game.getCardSlot(card);
 	card.down('.attacks').childElements().each(function(attack) {
 		var available = true;
-		if (parseInt(attack.dataset.costEp) > ep) available = false;
-		if (parseInt(attack.dataset.costGold) > gold) available = false;
-		if (parseInt(attack.dataset.requiresLevel) > 0 && parseInt(attack.dataset.requiresLevel) > user_level) available = false;
-		var eq_1 = parseInt(attack.dataset.requiresEquippableClassOne);
-		var eq_2 = parseInt(attack.dataset.requiresEquippableClassTwo);
-		var eq_both = (attack.dataset.requiresEquippableBoth != undefined);
-		if (eq_1 > 0) {
-			if (card.dataset.slotNo == 0) {
-				available = false;
-			} else {
-				var has_eq_1 = Devo.Game.isCardSlotEquippedWithItemClass(slot, eq_1);
-				var has_eq_2 = (eq_2 > 0) ? Devo.Game.isCardSlotEquippedWithItemClass(slot, eq_2) : false;
-				if (eq_both) {
-					if (!has_eq_1 || !has_eq_2) available = false;
+		if (parseInt(attack.dataset.requiresLevel) > 0 && parseInt(attack.dataset.requiresLevel) > card_level) available = false;
+		if (lightweight === undefined) {
+			if (parseInt(attack.dataset.costEp) > ep) available = false;
+			if (parseInt(attack.dataset.costGold) > gold) available = false;
+			var eq_1 = parseInt(attack.dataset.requiresEquippableClassOne);
+			var eq_2 = parseInt(attack.dataset.requiresEquippableClassTwo);
+			var eq_both = (attack.dataset.requiresEquippableBoth != undefined);
+			if (eq_1 > 0) {
+				if (card.dataset.slotNo == 0) {
+					available = false;
 				} else {
-					if (!has_eq_1 && !has_eq_2) available = false;
+					var has_eq_1 = Devo.Game.isCardSlotEquippedWithItemClass(slot, eq_1);
+					var has_eq_2 = (eq_2 > 0) ? Devo.Game.isCardSlotEquippedWithItemClass(slot, eq_2) : false;
+					if (eq_both) {
+						if (!has_eq_1 || !has_eq_2) available = false;
+					} else {
+						if (!has_eq_1 && !has_eq_2) available = false;
+					}
 				}
 			}
 		}
@@ -3993,7 +3997,12 @@ Devo.Game.initializeCardPicker = function(options) {
 					Devo.Game.initializeGame(game_id);
 					Devo.Main.Helpers.finishLoading();
 				} else {
-					Devo.Main.setGameInterfacePart(json, Devo.Main.Helpers.finishLoading);
+					Devo.Main.setGameInterfacePart(json, function() {
+						$$('.card.creature').each(function(card) {
+							Devo.Game.updateCardAttackAvailability(card, true);
+						});
+						Devo.Main.Helpers.finishLoading();
+					});
 				}
 			}
 		}

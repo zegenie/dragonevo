@@ -40,6 +40,7 @@
 			 data-ep="<?php echo $card->getEP(); ?>"
 			 data-hp="<?php echo $card->getHP(); ?>"
 			 data-faction="<?php echo $card->getFaction(); ?>"
+			 data-level="<?php echo $card->getUserCardLevel(); ?>"
 		 <?php elseif ($card->getCardType() == application\entities\Card::TYPE_EQUIPPABLE_ITEM): ?>
 			 <?php if ($card->isEquippableByCivilianCards()): ?> data-equippable-by-civilian="true"<?php endif; ?>
 			 <?php if ($card->isEquippableByMagicCards()): ?> data-equippable-by-magic="true"<?php endif; ?>
