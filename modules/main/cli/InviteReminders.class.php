@@ -2,10 +2,14 @@
 
     namespace application\modules\main\cli;
     
-    use caspar\core\Caspar;
+    use caspar\core\Caspar,
+		application\entities\User,
+		application\entities\GameInvite;
 
     class InviteReminders extends \caspar\core\CliCommand
     {
+		
+		protected $_mailer = null;
 
         protected function _setup()
         {
@@ -28,10 +32,11 @@
 		protected function _sendGameInviteReminder(GameInvite $invite, User $user, User $player)
 		{
 			$mailer = $this->_getMailer();
-			$message = \Swift_Message::newInstance('Unanswered game invitation from '.$player->getCharactername().' ('.$player->getUsername().')');
+			$player_name = $player->getCharactername().' ('.$player->getUsername().')';
+			$message = \Swift_Message::newInstance('Unanswered game invitation from '.$player_name);
 			$message->setFrom('support@dragonevo.com', 'The Dragon Evo team');
 			$message->setTo($user->getEmail());
-			$plain_content = str_replace(array('%username%', '%playername%', '%invite_id%'), array($user->getUsername(), $player->getUsername(), $invite->getId()), file_get_contents(CASPAR_MODULES_PATH . 'main' . DS . 'templates' . DS . 'game_invite_reminder.txt'));
+			$plain_content = str_replace(array('%username%', '%playername%', '%invite_id%'), array($user->getUsername(), $player_name, $invite->getId()), file_get_contents(CASPAR_MODULES_PATH . 'main' . DS . 'templates' . DS . 'game_invite_reminder.txt'));
 			$message->setBody($plain_content, 'text/plain');
 			$retval = $mailer->send($message);
 		}
@@ -43,7 +48,7 @@
 
 			foreach ($invites as $invite) {
 				if ($invite->getGame()->getCreatedAt() < time() - 21600) {
-					$this->_sendGameInviteReminder($invite, $invite->getFromPlayer(), $invite->getToPlayer());
+					$this->_sendGameInviteReminder($invite, $invite->getToPlayer(), $invite->getFromPlayer());
 				}
 			}
 

@@ -31,7 +31,7 @@
 
 		public function getAll()
 		{
-			return $this->selectAll($crit);
+			return $this->selectAll();
 		}
 
 		public function deleteInvitesByGameId($game_id)
