@@ -485,10 +485,7 @@
 			\application\entities\tables\GameEvents::getTable()->create();
 			\application\entities\tables\ChatRooms::getTable()->resetChatRooms();
 			\application\entities\tables\ChatLines::getTable()->resetChatLines();
-			\application\entities\tables\EventCards::getTable()->resetUserCards();
-			\application\entities\tables\CreatureCards::getTable()->resetUserCards();
-			\application\entities\tables\PotionItemCards::getTable()->resetUserCards();
-			\application\entities\tables\EquippableItemCards::getTable()->resetUserCards();
+			\application\entities\tables\GameCards::getTable()->removeCards();
 			\application\entities\tables\ModifierEffects::getTable()->removeEffects();
 			
 			$this->forward($this->getRouting()->generate('admin'));
@@ -521,10 +518,7 @@
 		{
 			if ($request['user_id'] && (int) $request['user_id'] > 0) {
 				$user_id = (int) $request['user_id'];
-				\application\entities\tables\EventCards::getTable()->resetUserCards(null, $user_id);
-				\application\entities\tables\CreatureCards::getTable()->resetUserCards(null, $user_id);
-				\application\entities\tables\PotionItemCards::getTable()->resetUserCards(null, $user_id);
-				\application\entities\tables\EquippableItemCards::getTable()->resetUserCards(null, $user_id);
+				\application\entities\tables\GameCards::getTable()->removeCards(null, $user_id);
 				return $this->renderJSON(array('reset_cards' => 'ok', 'message' => 'User cards has been reset'));
 			} else {
 				return $this->renderJSON(array('reset_cards' => 'failed', 'error' => 'That is not a valid user id'));

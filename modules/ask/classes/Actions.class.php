@@ -737,7 +737,7 @@
 						$this->game->resolve($this->game->getUserOpponent()->getId());
 					}
 					$this->game->save();
-					$this->game->resetUserCards();
+					$this->game->resetCards();
 				}
 			}
 

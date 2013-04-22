@@ -77,10 +77,10 @@
 			$this->doUpdate($crit);
 		}
 
-		public function resetAICards()
+		public function resetAICards($game_id)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere('potion_item_cards.game_id', 0);
+			$crit->addWhere('potion_item_cards.game_id', $game_id);
 			$ctn = $crit->returnCriterion('potion_item_cards.user_id', 21);
 			$ctn->addOr('potion_item_cards.user_id', 22);
 			$ctn->addOr('potion_item_cards.user_id', 23);

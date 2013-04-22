@@ -318,21 +318,10 @@
 			$this->_turn_number = $turn_number;
 		}
 		
-		public function resetUserCards()
+		public function resetCards()
 		{
-			\application\entities\tables\EventCards::getTable()->resetUserCards($this->getId());
-			\application\entities\tables\CreatureCards::getTable()->resetUserCards($this->getId());
-			\application\entities\tables\PotionItemCards::getTable()->resetUserCards($this->getId());
-			\application\entities\tables\EquippableItemCards::getTable()->resetUserCards($this->getId());
+			\application\entities\tables\GameCards::getTable()->removeCards($this->getId());
 			\application\entities\tables\ModifierEffects::getTable()->removeEffects($this->getId());
-		}
-
-		public function resetAICards()
-		{
-			\application\entities\tables\EventCards::getTable()->resetAICards($this->getId());
-			\application\entities\tables\CreatureCards::getTable()->resetAICards($this->getId());
-			\application\entities\tables\PotionItemCards::getTable()->resetAICards($this->getId());
-			\application\entities\tables\EquippableItemCards::getTable()->resetAICards($this->getId());
 		}
 
 		protected function _calculateWinningConditions()
@@ -352,8 +341,7 @@
 			$this->_current_phase = self::PHASE_RESOLUTION;
 			$this->_state = self::STATE_COMPLETED;
 			$this->_ended_at = time();
-			$this->resetUserCards();
-			if ($this->getOpponent()->isAI()) $this->resetAICards();
+			$this->resetCards();
 			
 			$this->_winning_player_id = $winning_player_id;
 			$this->_losing_player_id = ($this->getPlayer()->getId() == $winning_player_id) ? $this->getOpponentId() : $this->getPlayer()->getId();
@@ -1269,7 +1257,7 @@
 		public function cancel()
 		{
 			tables\GameInvites::getTable()->deleteInvitesByGameId($this->getId());
-			$this->resetUserCards();
+			$this->resetCards();
 		}
 
 		public function initiateQuickmatch()

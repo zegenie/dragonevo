@@ -95,10 +95,10 @@
 			$this->doUpdate($crit);
 		}
 
-		public function resetAICards()
+		public function resetAICards($game_id)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere('event_cards.game_id', 0);
+			$crit->addWhere('event_cards.game_id', $game_id);
 			$ctn = $crit->returnCriterion('event_cards.user_id', 21);
 			$ctn->addOr('event_cards.user_id', 22);
 			$ctn->addOr('event_cards.user_id', 23);

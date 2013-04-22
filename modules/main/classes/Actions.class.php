@@ -321,6 +321,7 @@ class Actions extends \application\lib\Actions
 						$user->setEmail($request['email']);
 						$user->setIsAdmin(false);
 						$user->save();
+						\application\entities\tables\Users::getTable()->updateRanking();
 						$mailer = $this->_getMailer();
 						$message = \Swift_Message::newInstance('Dragon Evo: The Card Game account created');
 						$message->setFrom('support@dragonevo.com', 'The Dragon Evo team');

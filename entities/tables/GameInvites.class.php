@@ -29,6 +29,11 @@
 			return $this->select($crit);
 		}
 
+		public function getAll()
+		{
+			return $this->selectAll($crit);
+		}
+
 		public function deleteInvitesByGameId($game_id)
 		{
 			$crit = $this->getCriteria();
