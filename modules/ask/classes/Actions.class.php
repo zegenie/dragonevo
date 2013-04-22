@@ -481,6 +481,7 @@
 						return $this->renderJSON(array('error' => 'An error occured while trying to end the movement phase.', 'desync' => true));
 					}
 					foreach ($slots as $slot_no => $slot) {
+						$has_slot_card = false;
 						$slot_card = $this->game->getUserPlayerCardSlot($slot_no);
 						if (!$slot_card || ($slot_card instanceof Card && $slot_card->getUniqueId() != $slot['card_id'])) {
 							if ($slot_card instanceof Card) {
@@ -492,6 +493,7 @@
 								if ($card !== null) {
 									$this->game->setUserPlayerCardSlot($slot_no, $card);
 									$cards_to_save[$card->getUniqueId()] = $card;
+									$has_slot_card = true;
 								}
 							}
 						}
@@ -501,7 +503,7 @@
 								$this->game->setUserPlayerCardSlotPowerupCard1(0, $p1_slot_card);
 								$cards_to_save[$p1_slot_card->getUniqueId()] = $p1_slot_card;
 							}
-							if ($slot['powerupcard1_id']) {
+							if ($slot['powerupcard1_id'] && $has_slot_card) {
 								$card = $this->game->getCard($slot['powerupcard1_id']);
 								if ($card !== null) {
 									$this->game->setUserPlayerCardSlotPowerupCard1($slot_no, $card);
@@ -515,7 +517,7 @@
 								$this->game->setUserPlayerCardSlotPowerupCard2(0, $p2_slot_card);
 								$cards_to_save[$p2_slot_card->getUniqueId()] = $p2_slot_card;
 							}
-							if ($slot['powerupcard2_id']) {
+							if ($slot['powerupcard2_id'] && $has_slot_card) {
 								$card = $this->game->getCard($slot['powerupcard2_id']);
 								if ($card !== null) {
 									$this->game->setUserPlayerCardSlotPowerupCard2($slot_no, $card);
@@ -588,9 +590,11 @@
 				if ($request['attack_id'] == $a->getId()) $attack = $a;
 			}
 			$requires_card = true;
-			if (!$attack->isForageAttack() && !$attack->isStealAttack()) {
+			if ($request['attacked_card_id']) {
 				$card = $this->game->getCard($request['attacked_card_id']);
-			} else {
+			}
+			
+			if (!(!$attack->isForageAttack() && !$attack->isStealAttack())) {
 				$requires_card = false;
 			}
 

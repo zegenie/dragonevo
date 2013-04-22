@@ -1208,7 +1208,7 @@
 							$c2_val += $attack_2->getAttackPointsMax();
 							$c2_val += $attack_2->getRepeatAttackPointsMax() * $attack_2->getRepeatRoundsMax();
 							if ($c1_val == $c2_val) return 0;
-							return ($c1_val < $c2_val) ? -1 : 1;
+							return ($c1_val < $c2_val) ? 1 : -1;
 						};
 						usort($attacks, $sortable_function);
 					}

@@ -114,7 +114,7 @@
 			} else {
 				$crit->addWhere('users.username', $userinfo);
 			}
-			$crit->addWhere('users.email', '', Criteria::DB_NOT_EQUALS);
+			$crit->addWhere('users.email', '', \b2db\Criteria::DB_NOT_EQUALS);
 			return $this->select($crit);
 		}
 		

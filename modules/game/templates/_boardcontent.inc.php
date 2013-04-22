@@ -81,13 +81,16 @@
 									data-slot-no="<?php echo $cc; ?>"
 									data-card-id="<?php echo $game->getUserOpponentCardSlotPowerupCard1Id($cc); ?>">
 										<?php include_template('game/card', array('card' => $game->getUserOpponentCardSlotPowerupCard1($cc), 'mode' => 'medium', 'ingame' => true)); ?>
+										<div class="card_loading cssloader"><img src="/images/spinner.png"></div>
 								</div>
 								<div id="opponent-slot-<?php echo $cc; ?>-item-slot-2"
 									class="card-slot item-slot opponent slot-<?php echo $cc; ?>"
 									data-slot-no="<?php echo $cc; ?>"
 									data-card-id="<?php echo $game->getUserOpponentCardSlotPowerupCard2Id($cc); ?>">
 										<?php include_template('game/card', array('card' => $game->getUserOpponentCardSlotPowerupCard2($cc), 'mode' => 'medium', 'ingame' => true)); ?>
+										<div class="card_loading cssloader"><img src="/images/spinner.png"></div>
 								</div>
+								<div class="card_loading cssloader"><img src="/images/spinner.png"></div>
 							</li>
 						<?php endfor; ?>
 					</ul>

@@ -3296,9 +3296,9 @@ li.card {
 	top: 25px;
 }
 *:hover > .tooltip.bubble, *:active > .tooltip.bubble, .tooltip.bubble.active {
-	bottom: 160px;
+	bottom: 130px;
 	width: 350px;
-	right: 50px;
+	right: 20px;
 	left: auto;
 	top: auto;
 }
@@ -3838,6 +3838,9 @@ li.card-slot {
 	-o-transition: border-color 0.4s ease-in-out, background-color 0.4s ease-in-out,-o-transform 0.4s ease;
 	transition: border-color 0.4s ease-in-out, background-color 0.4s ease-in-out, transform 0.4s ease;
 }
+.card-slot .card_loading { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 10; background-color: transparent; display: none; }
+.card-slot.loading .card_loading { display: block; }
+.card-slot .card_loading img { width: 100px; margin: 50px 0 0 25px; }
 .card-slot.targetted:hover .item-slot {
 	display: none;
 }
