@@ -32,7 +32,7 @@
 							<?php if ($game->isPvP()): ?>
 								<?php echo $game->getPlayer()->getUsername(); ?> vs <?php echo $game->getOpponent()->getUsername(); ?>
 							<?php elseif ($game->isScenario()): ?>
-								Single player: <?php echo $game->getPlayer()->getUsername(); ?> - <?php echo $game->getScenario()->getName(); ?>
+								Single player: <?php echo $game->getPlayer()->getUsername(); ?> - <?php echo $game->getPart()->getName(); ?>
 							<?php else: ?>
 								Training game: <?php echo $game->getPlayer()->getUsername(); ?> (<?php
 
