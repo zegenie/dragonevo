@@ -1,10 +1,10 @@
 
-@import url('http://fonts.googleapis.com/css?family=Metamorphous');
+/*@import url('http://fonts.googleapis.com/css?family=Metamorphous');
 @import url('http://fonts.googleapis.com/css?family=Fredericka+the+Great');
 @import url('http://fonts.googleapis.com/css?family=Amaranth:400,700,400italic,700italic');
 @import url('http://fonts.googleapis.com/css?family=Open+Sans:400,700,400italic,700italic');
 @import url('http://fonts.googleapis.com/css?family=Gentium+Basic:400,700italic,700,400italic');
-@import url('http://fonts.googleapis.com/css?family=Calligraffitti');
+@import url('http://fonts.googleapis.com/css?family=Calligraffitti');*/
 
 /*
 html5doctor.com Reset Stylesheet
@@ -5503,6 +5503,32 @@ li.card-slot {
 	font-size: 0.8em;
 }
 
+@-webkit-keyframes waiting {
+	0% { opacity: 0.5; -webkit-transform: scale(1); }
+	50% { opacity: 1; -webkit-transform: scale(1.2); }
+	100% { opacity: 0.5; -webkit-transform: scale(1); }
+}
+@-moz-keyframes waiting {
+	0% { opacity: 0.5; -moz-transform: scale(1); }
+	50% { opacity: 1; -moz-transform: scale(1.2); }
+	100% { opacity: 0.5; -moz-transform: scale(1); }
+}
+@-ms-keyframes waiting {
+	0% { opacity: 0.5; -ms-transform: scale(1); }
+	50% { opacity: 1; -ms-transform: scale(1.2); }
+	100% { opacity: 0.5; -ms-transform: scale(1); }
+}
+@-o-keyframes waiting {
+	0% { opacity: 0.5; -o-transform: scale(1); }
+	50% { opacity: 1; -o-transform: scale(1.2); }
+	100% { opacity: 0.5; -o-transform: scale(1); }
+}
+@keyframes waiting {
+	0% { opacity: 0.5; transform: scale(1); }
+	50% { opacity: 1; transform: scale(1.2); }
+	100% { opacity: 0.5; transform: scale(1); }
+}
+
 @-webkit-keyframes loading {
 	from { -webkit-transform:rotate(0deg); }
 	to { -webkit-transform:rotate(360deg); }
@@ -5909,6 +5935,29 @@ li.card-slot {
 	border: none;
 	border-radius: 10px;
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+#slow_indicator {
+	-webkit-animation-name: waiting;
+	-webkit-animation-duration: 2s;
+	-webkit-animation-iteration-count: infinite;
+	-webkit-animation-timing-function: linear;
+	-moz-animation-name: waiting;
+	-moz-animation-duration: 2s;
+	-moz-animation-iteration-count: infinite;
+	-moz-animation-timing-function: linear;
+	-ms-animation-name: waiting;
+	-ms-animation-duration: 2s;
+	-ms-animation-iteration-count: infinite;
+	-ms-animation-timing-function: linear;
+	-o-animation-name: waiting;
+	-o-animation-duration: 2s;
+	-o-animation-iteration-count: infinite;
+	-o-animation-timing-function: linear;
+	animation-name: waiting;
+	animation-duration: 2s;
+	animation-iteration-count: infinite;
+	animation-timing-function: linear;
 }
 
 #quickmatch_overlay.loading .fullpage_backdrop_content img, .cssloader img {

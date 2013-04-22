@@ -3,6 +3,15 @@ function is_string(element) {
     return (typeof element == 'string');
 }
 
+function uuid() {
+	var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+		var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+		return v.toString(16);
+	});
+	
+	return uuid;
+}
+
 function ucfirst(string)
 {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -46,7 +55,8 @@ var Devo = {
         Helpers: {
             Backdrop: {},
             Dialog: {},
-            Message: {}
+            Message: {},
+			ajax_ids: []
         },
 		Login: {},
 		Profile: {
@@ -293,6 +303,8 @@ Devo.Main.Helpers.ajax = function(url, options) {
 	if (options.form && options.form != undefined) params = Form.serialize(options.form);
 	if (options.additional_params) params += options.additional_params;
 	var url_method = (options.url_method) ? options.url_method : 'post';
+	var uniqid = uuid();
+	var slow_indicator = $('slow_indicator');
 
 	new Ajax.Request(url, {
 		asynchronous: true,
@@ -300,6 +312,10 @@ Devo.Main.Helpers.ajax = function(url, options) {
 		parameters: params,
 		evalScripts: true,
 		onLoading: function () {
+			Devo.Main.Helpers.ajax_ids['ajax_'+uniqid] = window.setTimeout(function() {
+				slow_indicator.show();
+			}, 6000);
+			slow_indicator.dataset.cc++;
 			if (options.loading) {
 				if ($(options.loading.indicator)) {
 					$(options.loading.indicator).show();
@@ -387,7 +403,8 @@ Devo.Main.Helpers.ajax = function(url, options) {
 			}
 		},
 		onComplete: function (response) {
-			if (Devo.debug) {
+			slow_indicator.dataset.cc--;
+			if (Devo.debug && $('csp-dbg-content')) {
 				$('csp-dbg-content').insert({bottom: response.responseJSON['csp-debugger']});
 			}
 			if (options.loading && options.loading.indicator && $(options.loading.indicator)) $(options.loading.indicator).hide();
@@ -398,6 +415,11 @@ Devo.Main.Helpers.ajax = function(url, options) {
 					options.complete.callback(json);
 				}
 			}
+			window.clearTimeout(Devo.Main.Helpers.ajax_ids['ajax_'+uniqid]);
+			if (slow_indicator.dataset.cc == 0) {
+				slow_indicator.hide();
+			}
+			
 		}
 	});
 };

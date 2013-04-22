@@ -1,3 +1,4 @@
+<?php $version = str_replace('.', '_', $csp_response->getVersion()); ?>
 <!DOCTYPE html>
 <html lang="<?php echo \caspar\core\Caspar::getI18n()->getHTMLLanguage(); ?>">
 	<head>
@@ -16,6 +17,8 @@
 			<link rel="stylesheet" href="<?php echo $css; ?>">
 		<?php endforeach; ?>
 
+		<link rel="stylesheet" href="/css/styles.css?v=<?php echo $version; ?>">
+		<script type="text/javascript" src="/js/main.js?v=<?php echo $version; ?>"></script>
 		<?php foreach ($csp_response->getJavascripts() as $js): ?>
 			<script type="text/javascript" src="<?php echo $js; ?>"></script>
 		<?php endforeach; ?>

@@ -17,6 +17,7 @@
 		</div>
 	</div>
 </div>
+<div id="slow_indicator" data-cc="0" class="animated" style="display: none; position: absolute; top: 10px; right: 10px; z-index: 999999; width: 32px; height: 32px; padding: 0; margin: 0;"><img src="/images/slow.png"></div>
 <div id="settings-overlay" class="fullpage_backdrop dark" style="display: none;">
 	<div id="settings_backdrop_content" class="fullpage_backdrop_content">
 		<div class="swirl-dialog summary">
