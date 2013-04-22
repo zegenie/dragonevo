@@ -557,8 +557,6 @@
 							$event[$card->getId()] = $card;
 							break;
 					}
-				} else {
-					$game_card->delete();
 				}
 			}
 

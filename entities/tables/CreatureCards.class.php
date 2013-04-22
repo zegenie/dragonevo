@@ -54,6 +54,7 @@
 			$crit = $this->getCriteria();
 			$crit->addWhere('creature_cards.faction', $faction);
 			$crit->addWhere('creature_cards.card_state', \application\entities\Card::STATE_TEMPLATE);
+			$crit->addOrderBy('creature_cards.name', Criteria::SORT_ASC);
 			return $this->select($crit);
 		}
 

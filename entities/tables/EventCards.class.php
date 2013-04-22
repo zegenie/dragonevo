@@ -22,6 +22,7 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere('event_cards.card_state', \application\entities\Card::STATE_TEMPLATE);
+			$crit->addOrderBy('event_cards.name', Criteria::SORT_ASC);
 			return $this->select($crit);
 		}
 		
