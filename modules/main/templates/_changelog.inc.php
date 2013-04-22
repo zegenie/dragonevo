@@ -1,5 +1,13 @@
 <h1>Changelog</h1>
 <h3>Latest version: <?php echo $csp_response->getVersion(); ?> (public beta)</h3>
+<h6>0.5.7 (weekend patch #2)</h6>
+<ul>
+	<li>Fixed a bug where both players got winner player's payout (oops!)</li>
+	<li>Add loading animation when fetching cards</li>
+	<li>Change the order of attacks the AI will consider when playing on normal or easy mode</li>
+	<li>Improve error handling</li>
+	<li>plus the usual couple of bugfixes</li>
+</ul>
 <h6>0.5.5 (weekend patch #1)</h6>
 <ul>
 	<li>Added more information to the profile summary page</li>
