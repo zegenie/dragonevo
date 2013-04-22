@@ -546,7 +546,7 @@
 			return false;
 		}
 
-		public function levelUp($mode)
+		public function levelUp($mode, $recalculate = false)
 		{
 			$upgrade_card = false;
 			$upgrade_attacks = false;
@@ -560,6 +560,7 @@
 			}
 			if ($upgrade_card) $this->_user_card_level++;
 			$this->_calculateCardProperties($upgrade_card, $upgrade_attacks);
+			if ($recalculate) $this->_calculateLevelUpFactor();
 		}
 
 		protected function _calculateLevelUpFactor()

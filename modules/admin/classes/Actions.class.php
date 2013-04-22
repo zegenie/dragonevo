@@ -193,6 +193,30 @@
 						$this->card->save();
 						foreach (\application\entities\tables\CreatureCards::getTable()->getDescendantCards($this->card->getId()) as $card) {
 							$card->mergeFormData($request);
+							$c_level = $card->getUserCardLevel();
+							foreach ($card->getAttacks() as $attack) {
+								$a_level = $attack->getLevel();
+								break;
+							}
+							foreach ($card->getAttacks() as $attack) {
+								$attack->setLevel(1);
+							}
+							$card->setUserCardLevel(1);
+							while ($c_level + $a_level > 2) {
+								switch (true) {
+									case ($c_level > 1 && $a_level > 1):
+										$mode = 'both';
+									case ($c_level > 1):
+										$mode = 'card';
+										break;
+									case ($a_level > 1):
+										$mode = 'attacks';
+										break;
+								}
+								$card->levelUp($mode, true);
+								if ($a_level > 1) $a_level--;
+								if ($c_level > 1) $c_level--;
+							}
 							$card->save();
 						}
 						$this->forward($this->getRouting()->generate('edit_card', array('card_id' => $this->card->getB2DBID(), 'card_type' => 'creature')));
