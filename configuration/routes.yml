@@ -161,13 +161,13 @@ admin_users_list:
   action: listusers
 
 admin_games_finished:
-  url: /admin/games/finished
+  url: /admin/games/finished/:type
   module: admin
   action: games
   parameters: {mode: 2}
 
 admin_games_ongoing:
-  url: /admin/games/ongoing
+  url: /admin/games/ongoing/:type
   module: admin
   action: games
   parameters: {mode: 1}

@@ -9,8 +9,23 @@
 </div>
 <div class="content right cotw-admin">
 	<h1>
-		Manage <?php echo ($mode == \application\entities\Game::STATE_ONGOING) ? 'ongoing' : 'finished'; ?> games (<?php echo count($games); ?>)
+		Manage <?php echo ($mode == \application\entities\Game::STATE_ONGOING) ? 'ongoing' : 'finished'; ?> <?php
+		
+			switch ($type) {
+				case 'multiplayer':
+					echo 'multiplayer';
+					break;
+				case 'scenario':
+					echo 'scenario';
+					break;
+				case 'training':
+					echo 'training';
+					break;
+			}
+			
+		?> games (<?php echo count($games); ?>)
 	</h1>
+	<a href="/admin">&laquo;&nbsp;Back to admin frontpage</a><br>
 	<form action="<?php echo make_url('admin_say'); ?>" id="games_form">
 		<ul class="admin_list">
 			<?php foreach ($games as $game): ?>

@@ -33,7 +33,11 @@
 	</ul>
 	<h1 style="margin-top: 25px;">Manage games</h1>
 	<ul>
-		<li><a href="<?php echo make_url('admin_games_ongoing'); ?>">Show active games</a></li>
-		<li><a href="<?php echo make_url('admin_games_finished'); ?>">Show finished games</a></li>
+		<li><a href="<?php echo make_url('admin_games_ongoing', array('type' => 'multiplayer')); ?>">Show active multiplayer games</a></li>
+		<li><a href="<?php echo make_url('admin_games_ongoing', array('type' => 'scenario')); ?>">Show active scenario games</a></li>
+		<li><a href="<?php echo make_url('admin_games_ongoing', array('type' => 'training')); ?>">Show active training games</a></li>
+		<li><a href="<?php echo make_url('admin_games_finished', array('type' => 'multiplayer')); ?>">Show finished multiplayer games</a></li>
+		<li><a href="<?php echo make_url('admin_games_finished', array('type' => 'scenario')); ?>">Show finished scenario games</a></li>
+		<li><a href="<?php echo make_url('admin_games_finished', array('type' => 'training')); ?>">Show finished training games</a></li>
 	</ul>
 </div>

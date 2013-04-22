@@ -496,8 +496,9 @@
 
 		public function runGames(Request $request)
 		{
-			$this->games = \application\entities\tables\Games::getTable()->getAllByState($request['mode']);
+			$this->games = \application\entities\tables\Games::getTable()->getAllByState($request['mode'], $request['type']);
 			$this->mode = $request['mode'];
+			$this->type = $request['type'];
 		}
 
 		public function runUsers(Request $request)

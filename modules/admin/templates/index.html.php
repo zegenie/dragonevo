@@ -33,9 +33,17 @@
 	<div class="feature">
 		<h5>Game statistics</h5>
 		<p>
-			<strong>Ongoing games:</strong> <?php echo application\entities\tables\Games::getTable()->getNumberOfCurrentGames(); ?><br>
-			<strong>Games played last 24 hours:</strong> <?php echo application\entities\tables\Games::getTable()->getNumberOfGamesLast24Hours(); ?><br>
-			<strong>Games played last 7 days:</strong> <?php echo application\entities\tables\Games::getTable()->getNumberOfGamesLastWeek(); ?>
+			<strong>Ongoing multiplayer games:</strong> <?php echo application\entities\tables\Games::getTable()->getNumberOfCurrentMultiplayerGames(); ?><br>
+			<strong>Multiplayer games played last 24 hours:</strong> <?php echo application\entities\tables\Games::getTable()->getNumberOfMultiplayerGamesLast24Hours(); ?><br>
+			<strong>Multiplayer games played last 7 days:</strong> <?php echo application\entities\tables\Games::getTable()->getNumberOfMultiplayerGamesLastWeek(); ?><br>
+			<br>
+			<strong>Ongoing scenario games:</strong> <?php echo application\entities\tables\Games::getTable()->getNumberOfCurrentScenarioGames(); ?><br>
+			<strong>Scenario games played last 24 hours:</strong> <?php echo application\entities\tables\Games::getTable()->getNumberOfScenarioGamesLast24Hours(); ?><br>
+			<strong>Scenario games played last 7 days:</strong> <?php echo application\entities\tables\Games::getTable()->getNumberOfScenarioGamesLastWeek(); ?><br>
+			<br>
+			<strong>Ongoing training games:</strong> <?php echo application\entities\tables\Games::getTable()->getNumberOfCurrentTrainingGames(); ?><br>
+			<strong>Training games played last 24 hours:</strong> <?php echo application\entities\tables\Games::getTable()->getNumberOfTrainingGamesLast24Hours(); ?><br>
+			<strong>Training games played last 7 days:</strong> <?php echo application\entities\tables\Games::getTable()->getNumberOfTrainingGamesLastWeek(); ?><br>
 		</p>
 	</div>
 	<div class="feature">

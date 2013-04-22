@@ -148,10 +148,104 @@
 			return $game;
 		}
 
-		public function getNumberOfCurrentGames()
+		protected function _getAiIds()
+		{
+			$ai_easy = \application\entities\tables\Users::getTable()->getByUsername('ai_easy');
+			$ai_normal = \application\entities\tables\Users::getTable()->getByUsername('ai_normal');
+			$ai_hard = \application\entities\tables\Users::getTable()->getByUsername('ai_hard');
+			
+			return array($ai_easy->getId(), $ai_normal->getId(), $ai_hard->getId());
+		}
+		
+		public function getNumberOfCurrentMultiplayerGames()
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere('games.state', \application\entities\Game::STATE_ONGOING);
+			$crit->addWhere('games.opponent_id', $this->_getAiIds(), Criteria::DB_NOT_IN);
+			$crit->addWhere('games.part_id', 0);
+
+			return $this->count($crit);
+		}
+
+		public function getNumberOfCurrentTrainingGames()
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('games.state', \application\entities\Game::STATE_ONGOING);
+			$crit->addWhere('games.opponent_id', $this->_getAiIds(), Criteria::DB_IN);
+			$crit->addWhere('games.part_id', 0);
+
+			return $this->count($crit);
+		}
+
+		public function getNumberOfCurrentScenarioGames()
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('games.state', \application\entities\Game::STATE_ONGOING);
+			$crit->addWhere('games.part_id', 0, Criteria::DB_NOT_EQUALS);
+
+			return $this->count($crit);
+		}
+
+		public function getNumberOfMultiplayerGamesLast24Hours()
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('games.opponent_id', $this->_getAiIds(), Criteria::DB_NOT_IN);
+			$crit->addWhere('games.part_id', 0);
+			$crit->addWhere('games.state', \application\entities\Game::STATE_COMPLETED);
+			$crit->addWhere('games.ended_at', time() - 86400, \b2db\Criteria::DB_GREATER_THAN_EQUAL);
+
+			return $this->count($crit);
+		}
+
+		public function getNumberOfMultiplayerGamesLastWeek()
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('games.opponent_id', $this->_getAiIds(), Criteria::DB_NOT_IN);
+			$crit->addWhere('games.part_id', 0);
+			$crit->addWhere('games.state', \application\entities\Game::STATE_COMPLETED);
+			$crit->addWhere('games.ended_at', time() - 604800, \b2db\Criteria::DB_GREATER_THAN_EQUAL);
+
+			return $this->count($crit);
+		}
+
+		public function getNumberOfScenarioGamesLast24Hours()
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('games.part_id', 0, Criteria::DB_NOT_EQUALS);
+			$crit->addWhere('games.state', \application\entities\Game::STATE_COMPLETED);
+			$crit->addWhere('games.ended_at', time() - 86400, \b2db\Criteria::DB_GREATER_THAN_EQUAL);
+
+			return $this->count($crit);
+		}
+
+		public function getNumberOfScenarioGamesLastWeek()
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('games.part_id', 0, Criteria::DB_NOT_EQUALS);
+			$crit->addWhere('games.state', \application\entities\Game::STATE_COMPLETED);
+			$crit->addWhere('games.ended_at', time() - 604800, \b2db\Criteria::DB_GREATER_THAN_EQUAL);
+
+			return $this->count($crit);
+		}
+
+		public function getNumberOfTrainingGamesLast24Hours()
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('games.opponent_id', $this->_getAiIds(), Criteria::DB_IN);
+			$crit->addWhere('games.part_id', 0);
+			$crit->addWhere('games.state', \application\entities\Game::STATE_COMPLETED);
+			$crit->addWhere('games.ended_at', time() - 86400, \b2db\Criteria::DB_GREATER_THAN_EQUAL);
+
+			return $this->count($crit);
+		}
+
+		public function getNumberOfTrainingGamesLastWeek()
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('games.opponent_id', $this->_getAiIds(), Criteria::DB_IN);
+			$crit->addWhere('games.part_id', 0);
+			$crit->addWhere('games.state', \application\entities\Game::STATE_COMPLETED);
+			$crit->addWhere('games.ended_at', time() - 604800, \b2db\Criteria::DB_GREATER_THAN_EQUAL);
 
 			return $this->count($crit);
 		}
@@ -174,10 +268,23 @@
 			return $this->count($crit);
 		}
 
-		public function getAllByState($state)
+		public function getAllByState($state, $type)
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere('games.state', $state);
+			switch ($type) {
+				case 'multiplayer';
+					$crit->addWhere('games.opponent_id', $this->_getAiIds(), Criteria::DB_NOT_IN);
+					$crit->addWhere('games.part_id', 0);
+					break;
+				case 'scenario';
+					$crit->addWhere('games.part_id', 0, Criteria::DB_NOT_EQUALS);
+					break;
+				case 'training';
+					$crit->addWhere('games.opponent_id', $this->_getAiIds(), Criteria::DB_IN);
+					$crit->addWhere('games.part_id', 0);
+					break;
+			}
 			$crit->addOrderBy('games.created_at', \b2db\Criteria::SORT_DESC);
 			return $this->select($crit);
 		}
