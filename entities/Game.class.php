@@ -665,11 +665,7 @@
 
 		public function getStatistics($player_id)
 		{
-			static $statistics;
-
-			if ($statistics === null) {
-				$statistics = tables\GameEvents::getTable()->getStatisticsByGameId($this->getId(), $player_id);
-			}
+			$statistics = tables\GameEvents::getTable()->getStatisticsByGameId($this->getId(), $player_id);
 
 			if ($this->isScenario()) {
 				$winning = (bool) ($this->getWinningPlayerId() == $this->getPlayer()->getId());
@@ -689,7 +685,6 @@
 					if ($statistics['gold'] > 50) $statistics['gold'] = 50;
 				}
 			}
-
 
 			return $statistics;
 		}
