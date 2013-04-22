@@ -24,7 +24,7 @@
 									<li><a href="#" onclick="Devo.Main.Helpers.Message.error('Not implemented', 'Not implemented yet');">Show/monitor events</a></li>
 									<li><a href="#" onclick="Devo.Main.Helpers.Message.error('Not implemented', 'Not implemented yet');">Show/monitor chat</a></li>
 									<li><a href="#" onclick="Devo.Main.Helpers.Message.error('Not implemented', 'Not implemented yet');">Show game details</a></li>
-									<li><a href="/play/#game/<?php echo $game->getId(); ?>">Watch game</a></li>
+									<li><a href="/play#!game/<?php echo $game->getId(); ?>">Watch game</a></li>
 								</ul>
 							</div>
 						</div>
