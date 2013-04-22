@@ -724,8 +724,8 @@ Devo.Main.Profile.getLevel = function() {
 
 Devo.Main.Profile.setLevel = function(level) {
 	Devo._user_level = parseInt(level);
-	$('user-level-amount').update(parseInt(level));
-	$('user-level').dataset.level = parseInt(level);
+	if ($('user-level-amount')) $('user-level-amount').update(parseInt(level));
+	if ($('user-level')) $('user-level').dataset.level = parseInt(level);
 }
 
 Devo.Main.Profile.toggleSkillTraining = function(skill_id) {
