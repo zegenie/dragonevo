@@ -37,6 +37,22 @@
 			return $this->select($crit);
 		}
 
+		public function getLatestEndPhaseEventByGame(Game $game)
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('game_events.game_id', $game->getId());
+			$crit->addSelectionColumn('game_events.created_at', 'created_at');
+			$crit->addOrderBy('game_events.created_at', Criteria::SORT_DESC);
+			$crit->addWhere('game_events.event_type', GameEvent::TYPE_PHASE_CHANGE);
+
+			$row = $this->doSelectOne($crit);
+			if ($row) {
+				return $row['created_at'];
+			} else {
+				return 0;
+			}
+		}
+
 		public function getOpponentCardEventsByGame(Game $game)
 		{
 			$crit = $this->getCriteria();

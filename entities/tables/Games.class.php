@@ -157,6 +157,16 @@
 			return array($ai_easy->getId(), $ai_normal->getId(), $ai_hard->getId());
 		}
 		
+		public function getCurrentMultiplayerGames()
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere('games.state', \application\entities\Game::STATE_ONGOING);
+			$crit->addWhere('games.opponent_id', $this->_getAiIds(), Criteria::DB_NOT_IN);
+			$crit->addWhere('games.part_id', 0);
+
+			return $this->select($crit);
+		}
+
 		public function getNumberOfCurrentMultiplayerGames()
 		{
 			$crit = $this->getCriteria();

@@ -6,7 +6,8 @@
 <?php if ($event instanceof GameEvent): ?>
 	<div id="event_<?php echo $event->getId(); ?>_container">
 		<?php if (!in_array($event->getEventType(), array(GameEvent::TYPE_END_ATTACK))): ?>
-			<time pubdate="">[<?php echo date('H:i:s', $event->getCreatedAt()); ?>]</time>&nbsp;
+			<?php $today = (date('dmy', $event->getCreatedAt()) == date('dmy')); ?>
+			<time pubdate="">[<?php if ($today) echo 'Today, '; ?><?php echo date($today ? 'd.m - H:i:s' : 'H:i:s', $event->getCreatedAt()); ?>]</time>&nbsp;
 			<?php
 
 			$data = json_decode($event->getEventData(), true);
