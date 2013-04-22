@@ -1,7 +1,8 @@
 <h1>Changelog</h1>
 <h3>Latest version: <?php echo $csp_response->getVersion(); ?> (public beta)</h3>
-<h6>0.5.7 (weekend patch #2)</h6>
+<h6>0.5.7.1 (weekend patch #2)</h6>
 <ul>
+	<li>Fixed a bug where all AI cards were removed after an AI game ended</li>
 	<li>Fixed a bug where both players got winner player's payout (oops!)</li>
 	<li>Add loading animation when fetching cards</li>
 	<li>Change the order of attacks the AI will consider when playing on normal or easy mode</li>
