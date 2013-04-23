@@ -314,6 +314,10 @@ Devo.Main.Helpers.ajax = function(url, options) {
 		onLoading: function () {
 			Devo.Main.Helpers.ajax_ids['ajax_'+uniqid] = window.setTimeout(function() {
 				slow_indicator.show();
+				Devo.Main.Helpers.ajax_ids['ajax_'+uniqid+'_extra'] = window.setTimeout(function() {
+					$('tooslow-overlay').show();
+					Devo.Core._stop();
+				}, 10000);
 			}, 6000);
 			slow_indicator.dataset.cc++;
 			if (options.loading) {
@@ -416,6 +420,7 @@ Devo.Main.Helpers.ajax = function(url, options) {
 				}
 			}
 			window.clearTimeout(Devo.Main.Helpers.ajax_ids['ajax_'+uniqid]);
+			window.clearTimeout(Devo.Main.Helpers.ajax_ids['ajax_'+uniqid+'_extra']);
 			if (slow_indicator.dataset.cc == 0) {
 				slow_indicator.hide();
 			}

@@ -149,6 +149,19 @@
 					Please report the following error:
 				</div>
 			</div>
+			<div id="tooslow-overlay" style="display: none;">
+				<div id="tooslow-message">
+					The game is taking longer than usual to respond.<br>
+					<br>
+					This can happen for several reasons, but is normally because of a slow Internet connection.
+					<br>
+					<br>
+					Please check your Internet connection and reload this page.<br>
+					<br>
+					<a href="/play" class="button button-silver" style="font-size: 1.1em; font-weight: normal; padding: 5px 10px !important; float: right;">Reload</a>
+					<br style="clear: both;">
+				</div>
+			</div>
 			<div id="notifications-container">
 				<?php /* <div class="notification">
 					<div class="title">Hey there</div>

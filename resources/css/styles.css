@@ -4082,7 +4082,7 @@ li.card-slot {
 	-o-transition: opacity 0.4s ease-in-out;
 	transition: opacity 0.4s ease-in-out;
 }
-#desync-overlay, #upgrade-overlay, #changelog-overlay {
+#desync-overlay, #upgrade-overlay, #changelog-overlay, #tooslow-overlay {
 	position: fixed;
 	left: 0;
 	top: 0;
@@ -4093,10 +4093,10 @@ li.card-slot {
 	background-color: rgba(255, 255, 255, 0.7);
 	z-index: 999999999;
 }
-#desync-message:first-line, #upgrade-message:first-line {
+#desync-message:first-line, #upgrade-message:first-line, #tooslow-message:first-line {
 	font-weight: bold;
 }
-#desync-message, #upgrade-message, #changelog-message, .tutorial-message {
+#desync-message, #upgrade-message, #changelog-message, .tutorial-message, #tooslow-message {
 	box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
 	color: #333;
 	background-color: #FFF;
