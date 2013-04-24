@@ -47,8 +47,12 @@
 			$invites = \application\entities\tables\GameInvites::getTable()->getAll();
 
 			foreach ($invites as $invite) {
-				if ($invite->getGame()->getCreatedAt() < time() - 21600) {
-					$this->_sendGameInviteReminder($invite, $invite->getToPlayer(), $invite->getFromPlayer());
+				if ($invite->getGame() instanceof \application\entities\Game) {
+					if ($invite->getGame()->getCreatedAt() < time() - 21600) {
+						$this->_sendGameInviteReminder($invite, $invite->getToPlayer(), $invite->getFromPlayer());
+					}
+				} else {
+					$invite->delete();
 				}
 			}
 

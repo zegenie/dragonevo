@@ -130,8 +130,10 @@
 		
 		public function reject()
 		{
-			$this->getGame()->setInvitationRejected();
-			$this->getGame()->save();
+			if ($this->getGame() instanceof Game) {
+				$this->getGame()->setInvitationRejected();
+				$this->getGame()->save();
+			}
 		}
 		
 		public function cancel()
