@@ -303,6 +303,7 @@
 			if ($is_new) {
 				$event = new GameEvent();
 				$event->setEventType(GameEvent::TYPE_GAME_CREATED);
+                $event->setPlayer($this->getPlayer());
 				$this->addEvent($event);
 			}
             $this->sendAdmUpdate();
@@ -1280,14 +1281,13 @@
 		 * 
 		 * @return \application\entities\GameInvite
 		 */
-		public function invite(User $user)
+		public function invite()
 		{
 			$invitation = new GameInvite();
 			$invitation->setFromPlayer($this->getPlayer());
-			$invitation->setToPlayer($user);
+			$invitation->setToPlayer($this->getOpponent());
 			$invitation->setGame($this);
 			$invitation->save();
-			$this->setOpponent($user);
 			$this->setInvitationSent();
 
 			return $invitation;

@@ -262,8 +262,9 @@
 		{
 			$game = new \application\entities\Game();
 			$game->setPlayer($this->getUser());
+			$game->setOpponent($opponent);
 			$game->save();
-			$invite = $game->invite($opponent);
+			$invite = $game->invite();
 			$game->save();
 			$invited = false;
 //			if (true || $opponent->getLastSeen() < time() - 180) {
