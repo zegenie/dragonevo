@@ -126,7 +126,7 @@
                 'event' => array(
                    'id' => $this->getId(),
                    'game_id' => $this->getGameId(),
-                   'player_name' => $this->getPlayer()->getCharactername(),
+                   'player_name' => $this->getGame()->getUserPlayer()->getCharactername(),
                    'opponent_id' => $this->getGame()->getUserOpponent()->getID(),
                    'type' => $this->getEventType(),
                    'data' => json_decode($this->getEventData()),
