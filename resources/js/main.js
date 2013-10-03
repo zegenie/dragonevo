@@ -1589,12 +1589,14 @@ Devo.Core.processGamedata = function(gamedata) {
         case 'game_invite_accepted':
             Devo.Notifications.add(gamedata.data.player_name + ' accepted your invitation');
             var game_id = gamedata.data.game_id;
-            $('game_'+game_id+'_invitation_unconfirmed').hide();
-            var button_play = $('game_'+game_id+'_list').down('.button-play');
-            button_play.removeClassName('disabled');
-            button_play.enable();
-            var button_cancel = $('game_'+game_id+'_list').down('.button-cancel');
-            button_cancel.hide();
+            if ($('game_'+game_id+'_invitation_unconfirmed')) {
+                $('game_'+game_id+'_invitation_unconfirmed').hide();
+                var button_play = $('game_'+game_id+'_list').down('.button-play');
+                button_play.removeClassName('disabled');
+                button_play.enable();
+                var button_cancel = $('game_'+game_id+'_list').down('.button-cancel');
+                button_cancel.hide();
+            }
             break;
         case 'game_invite_rejected':
             Devo.Core.removeGameInvite(gamedata.data.game_id);
@@ -3880,8 +3882,12 @@ Devo.Game._movecard = function(card, target) {
 			}
 		}
 	}
-	var card = card.remove();
-	target.insert({top: card});
+    var card = card.remove();
+    if (target.down('.cssloader')) {
+        target.down('.cssloader').insert({after: card});
+    } else {
+        target.insert({top: card});
+    }
 	card.dataset.slotNo = target.dataset.slotNo;
 	if (target.id != 'player_hand') {
 		if (!card.hasClassName('medium')) card.addClassName('medium');
@@ -4675,7 +4681,7 @@ Devo.Play.training = function(level) {
 }
 
 Devo.Main.filterCards = function(card_class) {
-	$('card-category-button').dataset.selectedFilter = card_class;
+    if ($('card-category-button')) $('card-category-button').dataset.selectedFilter = card_class;
 	$$('.shelf').each(function(shelf) {
 		shelf.select('.card').each(function(card) {
 			if (card.hasClassName(card_class)) {

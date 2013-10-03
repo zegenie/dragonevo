@@ -74,7 +74,7 @@
 								class="card-slot creature-slot opponent slot-<?php echo $cc; ?>"
 								data-slot-no="<?php echo $cc; ?>"
 								data-card-id="<?php echo $game->getUserOpponentCardSlotId($cc); ?>">
-                                <div class="card_loading cssloader"><img src="/images/spinner.png"></div>
+                                <div id="opponent-slot-<?php echo $cc; ?>-loader" class="card_loading cssloader"><img src="/images/spinner.png"></div>
                                 <?php include_template('game/card', array('card' => $game->getUserOpponentCardSlot($cc), 'mode' => 'medium', 'ingame' => true)); ?>
 								<div id="opponent-slot-<?php echo $cc; ?>-item-slot-1"
 									class="card-slot item-slot opponent slot-<?php echo $cc; ?>"
@@ -117,7 +117,7 @@
 								class="card-slot creature-slot player slot-<?php echo $cc; ?>"
 								data-slot-no="<?php echo $cc; ?>"
 								data-card-id="<?php echo $game->getUserPlayerCardSlotId($cc); ?>">
-                                <div class="card_loading cssloader"><img src="/images/spinner.png"></div>
+                                <div id="player-slot-<?php echo $cc; ?>-loader" class="card_loading cssloader"><img src="/images/spinner.png"></div>
 								<?php include_template('game/card', array('card' => $game->getUserPlayerCardSlot($cc), 'mode' => 'medium', 'ingame' => true)); ?>
 								<div id="player-slot-<?php echo $cc; ?>-item-slot-1"
 									class="card-slot item-slot item-slot-1 player slot-<?php echo $cc; ?>"
