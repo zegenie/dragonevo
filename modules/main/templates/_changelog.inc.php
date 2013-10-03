@@ -1,5 +1,14 @@
 <h1>Changelog</h1>
-<h3>Latest version: <?php echo $csp_response->getVersion(); ?> (public beta)</h3>
+<h3>Latest version: <?php echo $csp_response->getVersion(); ?></h3>
+<h6>0.6.0</h6>
+<ul>
+	<li>Rewrote backend code to depend on standalone game server</li>
+	<li>Game clients now communicate in real-time with eachother</li>
+	<li>Cards now only have one attack per card</li>
+	<li>Cards appearance now revamped to be clearer and more readable</li>
+	<li>Much improved interactions</li>
+	<li>Exactly one ton of bugfixes</li>
+</ul>
 <h6>0.5.7.2 (weekend patch #2)</h6>
 <ul>
 	<li>Fixed a bug where AI cards would "randomly" disappear</li>
