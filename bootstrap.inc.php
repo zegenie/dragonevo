@@ -40,7 +40,7 @@
 
 		$mailer = devo_get_error_mailer();
 		$message = \Swift_Message::newInstance('Dragonevo exception');
-		$message->setFrom('support@dragonevo.com', 'Dragon Evo devs');
+		$message->setFrom('support@playdragonevo.com', 'Dragon Evo devs');
 		$message->setTo('zegenie@gmail.com');
 		$message->setBody($reportBody, 'text/plain');
 
@@ -62,13 +62,13 @@
 
 	function devo_exception_handler($exception)
 	{
-		devo_mail_error($exception->getMessage(), $exception->getFile(), $exception->getLine(), $exception->getTraceAsString());
+//		devo_mail_error($exception->getMessage(), $exception->getFile(), $exception->getLine(), $exception->getTraceAsString());
 		\caspar\core\Caspar::exceptionHandler($exception);
 	}
 	
 	function devo_error_handler($code, $error, $file, $line)
 	{
-		devo_mail_error($error, $file, $line);
+//		devo_mail_error($error, $file, $line);
 		\caspar\core\Caspar::errorHandler($code, $error, $file, $line);
 	}
 	
@@ -76,12 +76,11 @@
 	{
 		$error = error_get_last();
 		if (isset($error['type']) && $error['type'] == 1) {
-			devo_mail_error($error['message'], $error['file'], $error['line']);
+//			devo_mail_error($error['message'], $error['file'], $error['line']);
 		}
 	}
 	
-	register_shutdown_function('devo_shutdown_handler');
-	set_error_handler('devo_error_handler', E_ALL);
-	set_exception_handler('devo_exception_handler');
+//	register_shutdown_function('devo_shutdown_handler');
+//	set_error_handler('devo_error_handler', E_ALL);
+//	set_exception_handler('devo_exception_handler');
 	error_reporting(E_ALL | E_STRICT);
-	

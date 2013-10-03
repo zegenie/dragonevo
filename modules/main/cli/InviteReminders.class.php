@@ -34,7 +34,7 @@
 			$mailer = $this->_getMailer();
 			$player_name = $player->getCharactername().' ('.$player->getUsername().')';
 			$message = \Swift_Message::newInstance('Unanswered game invitation from '.$player_name);
-			$message->setFrom('support@dragonevo.com', 'The Dragon Evo team');
+			$message->setFrom('support@playdragonevo.com', 'The Dragon Evo team');
 			$message->setTo($user->getEmail());
 			$plain_content = str_replace(array('%username%', '%playername%', '%invite_id%'), array($user->getUsername(), $player_name, $invite->getId()), file_get_contents(CASPAR_MODULES_PATH . 'main' . DS . 'templates' . DS . 'game_invite_reminder.txt'));
 			$message->setBody($plain_content, 'text/plain');

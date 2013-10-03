@@ -2,7 +2,9 @@
 
 	namespace application\modules\ask;
 
-	use caspar\core\Request,
+	use application\entities\CreatureCard;
+    use caspar\core\Caspar;
+    use caspar\core\Request,
 		application\entities\Game,
 		application\entities\tables\Games,
 		application\entities\tables\Attacks,
@@ -71,16 +73,21 @@
 			$chat_lines = array();
 			if ($this->getUser()->isAuthenticated()) {
 				$since = $request['since'];
-				foreach ($request->getParameter('rooms', array()) as $room_id) {
-					$room = new \application\entities\ChatRoom($room_id);
-					$chat_lines[$room_id] = array(
-						'users' => array(
-							'count' => $room->getNumberOfUsers(),
-							'ingame_count' => \application\entities\tables\ChatPings::getTable()->getNumberOfUsersInGames()
-						),
-						'lines' => \application\entities\tables\ChatLines::getTable()->getLinesByRoomId($room_id, $since[$room_id], 200)
-					);
-				}
+                $room_id = $request['room_id'];
+                $room = new \application\entities\ChatRoom($room_id);
+                $room->ping($this->getUser());
+                $users = array();
+                foreach ($room->getUsers() as $user) {
+                    $users[$user->getId()] = array('username' => $user->getUsername(), 'mp_ranking' => $user->getRankingMP(), 'sp_ranking' => $user->getRankingSP(), 'avatar' => $user->getAvatar(), 'charactername' => $user->getCharactername(), 'race' => $user->getRaceName(), 'user_id' => $user->getId(), 'is_admin' => $user->isAdmin(), 'level' => $user->getLevel(), 'friends' => $this->getUser()->isFriends($user));
+                }
+                $chat_lines = array(
+                    'users' => array(
+                        'users' => $users,
+                        'count' => $room->getNumberOfUsers(),
+                        'ingame_count' => \application\entities\tables\ChatPings::getTable()->getNumberOfUsersInGames()
+                    ),
+                    'lines' => \application\entities\tables\ChatLines::getTable()->getLinesByRoomId($room_id, $since[$room_id], 200)
+                );
 			}
 			return $this->renderJSON(compact('chat_lines'));
 		}
@@ -259,10 +266,26 @@
 			$invite = $game->invite($opponent);
 			$game->save();
 			$invited = false;
-			if (true || $opponent->getLastSeen() < time() - 180) {
-				$this->_sendGameInvite($invite, $opponent, $this->getUser());
-				$invited = true;
-			}
+//			if (true || $opponent->getLastSeen() < time() - 180) {
+//				$this->_sendGameInvite($invite, $opponent, $this->getUser());
+//				$invited = true;
+//			}
+
+            $event = array(
+                'category' => 'userdata-'.$opponent->getId(),
+                'event' => array(
+                    'topic' => 'new_game_invite',
+                    'data' => array(
+                        'invite_user_id' => $opponent->getId(),
+                        'invite_user_name' => $opponent->getCharactername(),
+                        'player_name' => $this->getUser()->getCharactername(),
+                        'game_id' => $game->getId(),
+                        'invite_id' => $invite->getId()
+                    )
+                )
+            );
+            $this->getResponse()->zmqSendEvent($event);
+
 			return array($invited, $game);
 		}
 
@@ -278,7 +301,7 @@
 		{
 			$games = array();
 			foreach ($this->getUser()->getGames() as $game) {
-				$games[$game->getId()] = array('invitation_confirmed' => $game->isInvitationConfirmed(), 'invitation_rejected' => $game->isInvitationRejected(), 'turn' => array('opponent' => $game->isOpponentTurn(), 'player' => $game->isPlayerTurn(), 'number' => $game->getTurnNumber(), 'phase' => $game->getCurrentPhase()));
+				$games[$game->getId()] = array('invitation_confirmed' => $game->isInvitationConfirmed(), 'character_name' => $game->getUserOpponent()->getCharacterName(), 'invitation_rejected' => $game->isInvitationRejected(), 'turn' => array('opponent' => $game->isOpponentTurn(), 'player' => $game->isPlayerTurn(), 'number' => $game->getTurnNumber(), 'phase' => $game->getCurrentPhase()));
 			}
 			return $this->renderJSON(compact('games'));
 		}
@@ -286,30 +309,63 @@
 		protected function _processAcceptGameInvite(Request $request)
 		{
 			try {
-				$invite = new \application\entities\GameInvite($request['invite_id']);
+				$game = new \application\entities\Game($request['game_id']);
 			} catch (\Exception $e) {
-				return $this->renderJSON(array('accepted' => 'removed', 'invite_id' => $request['invite_id'], 'message' => 'This invite is no longer available'));
+				return $this->renderJSON(array('accepted' => 'removed', 'game_id' => $request['game_id'], 'message' => 'This invite is no longer available'));
 			}
-			$invite->accept();
-			$game = $invite->getGame();
-			$invite->delete();
+			$game->accept();
+            $game->save();
+            $event = array(
+                'category' => 'userdata-'.$game->getPlayer()->getId(),
+                'event' => array(
+                    'topic' => 'game_invite_accepted',
+                    'data' => array(
+                        'player_name' => $this->getUser()->getCharactername(),
+                        'game_id' => $game->getId()
+                    )
+                )
+            );
+            $this->getResponse()->zmqSendEvent($event);
 			return $this->renderJSON(array('options' => $game->getOptions($this->getUser())));
 		}
 
 		protected function _processRejectGameInvite(Request $request)
 		{
 			try {
-				$invite = new \application\entities\GameInvite($request['invite_id']);
-				$invite->reject();
-				$invite->delete();
+				$game = new \application\entities\Game($request['game_id']);
+                $this->game->cancel();
+				$game->delete();
+                $event = array(
+                    'category' => 'userdata-'.$this->game->getPlayer()->getId(),
+                    'event' => array(
+                        'topic' => 'game_invite_rejected',
+                        'data' => array(
+                            'player_name' => $this->getUser()->getCharactername(),
+                            'game_id' => $this->game->getId()
+                        )
+                    )
+                );
+                $this->getResponse()->zmqSendEvent($event);
 			} catch (\Exception $e) {}
-			return $this->renderJSON(array('rejected' => 'ok', 'invite_id' => $request['invite_id']));
+			return $this->renderJSON(array('rejected' => 'ok', 'game_id' => $request['game_id']));
 		}
 
 		protected function _processCancelGame(Request $request)
 		{
 			$this->game->cancel();
-			$this->game->delete();
+            $event = array(
+                'category' => 'userdata-'.$this->game->getOpponent()->getId(),
+                'event' => array(
+                    'topic' => 'game_invite_cancelled',
+                    'data' => array(
+                        'player_name' => $this->getUser()->getCharactername(),
+                        'game_id' => $this->game->getId()
+                    )
+                )
+            );
+            $this->getResponse()->zmqSendEvent($event);
+
+            $this->game->delete();
 			return $this->renderJSON(array('cancelled' => 'ok', 'game_id' => $this->game->getId()));
 		}
 
@@ -374,9 +430,8 @@
 					$this->getResponse()->setHttpStatus(400);
 					return $this->renderJSON(array('error' => 'The game is requesting a card not in play.', 'desync' => true));
 				}
-				$class = ($card->getUserId() == $this->getUser()->getId()) ? '' : 'flipped';
 
-				return $this->renderJSON(array('card' => $this->getTemplateHTML('game/card', array('card' => $card, 'ingame' => true, 'mode' => $class))));
+				return $this->renderJSON(array('card' => $this->getTemplateHTML('game/card', array('card' => $card, 'ingame' => true))));
 			} catch (\Exception $e) {
 				$this->getResponse()->setHttpStatus(400);
 				return $this->renderJSON(array('error' => 'An error occured while trying to retrieve a card. Try reloading the page.'));
@@ -469,118 +524,203 @@
 			}
 		}
 
-		protected function _processEndPhase(Request $request)
+		protected function _processMoveCards(Request $request)
 		{
-			if ($this->game->getCurrentPlayerId() == $this->getUser()->getId() || $this->game->canUserMove($this->getUser()->getId())) {
-				$returns = array('end_phase' => 'ok');
-				if ($this->game->getCurrentPhase() == \application\entities\Game::PHASE_MOVE || $this->game->getTurnNumber() <= 2) {
-					$cards_to_save = array();
-					$slots = $request['slots'];
-					if (!is_array($slots) || !$slots) {
-						$this->getResponse()->setHttpStatus(400);
-						return $this->renderJSON(array('error' => 'An error occured while trying to end the movement phase.', 'desync' => true));
-					}
-					foreach ($slots as $slot_no => $slot) {
-						$has_slot_card = false;
-						$slot_card = $this->game->getUserPlayerCardSlot($slot_no);
-						if (!$slot_card || ($slot_card instanceof Card && $slot_card->getUniqueId() != $slot['card_id'])) {
-							if ($slot_card instanceof Card) {
-								$this->game->setUserPlayerCardSlot(0, $slot_card);
-								$cards_to_save[$slot_card->getUniqueId()] = $slot_card;
-							}
-							if ($slot['card_id']) {
-								$card = $this->game->getCard($slot['card_id']);
-								if ($card !== null) {
-									$this->game->setUserPlayerCardSlot($slot_no, $card);
-									$cards_to_save[$card->getUniqueId()] = $card;
-									$has_slot_card = true;
-								}
-							}
-						}
-						$p1_slot_card = $this->game->getUserPlayerCardSlotPowerupCard1($slot_no);
-						if (!$p1_slot_card || ($p1_slot_card instanceof Card && $p1_slot_card->getUniqueId() != $slot['powerupcard1_id'])) {
-							if ($p1_slot_card instanceof Card) {
-								$this->game->setUserPlayerCardSlotPowerupCard1(0, $p1_slot_card);
-								$cards_to_save[$p1_slot_card->getUniqueId()] = $p1_slot_card;
-							}
-							if ($slot['powerupcard1_id'] && $has_slot_card) {
-								$card = $this->game->getCard($slot['powerupcard1_id']);
-								if ($card !== null) {
-									$this->game->setUserPlayerCardSlotPowerupCard1($slot_no, $card);
-									$cards_to_save[$card->getUniqueId()] = $card;
-								}
-							}
-						}
-						$p2_slot_card = $this->game->getUserPlayerCardSlotPowerupCard2($slot_no);
-						if (!$p2_slot_card || ($p2_slot_card instanceof Card && $p2_slot_card->getUniqueId() != $slot['powerupcard2_id'])) {
-							if ($p2_slot_card instanceof Card) {
-								$this->game->setUserPlayerCardSlotPowerupCard2(0, $p2_slot_card);
-								$cards_to_save[$p2_slot_card->getUniqueId()] = $p2_slot_card;
-							}
-							if ($slot['powerupcard2_id'] && $has_slot_card) {
-								$card = $this->game->getCard($slot['powerupcard2_id']);
-								if ($card !== null) {
-									$this->game->setUserPlayerCardSlotPowerupCard2($slot_no, $card);
-									$cards_to_save[$card->getUniqueId()] = $card;
-								}
-							}
-						}
-					}
-					$returns['cards'] = array();
-					foreach ($cards_to_save as $card_id => $card) {
-						if ($card->getSlot()) {
-							if ($card instanceof \application\entities\CreatureCard) {
-								if ($card->isInPlay()) {
-									$card->setIsInPlay(false);
-								} else {
-									$card->setInGameHP($card->getBaseHP());
-									$card->setInGameEP($card->getBaseEP());
-								}
-							}
-						} else {
-							$card->setIsInPlay(false);
-						}
-						$this->game->addAffectedCard($card);
-						$returns['cards'][$card->getUniqueId()] = array('slot' => $card->getSlot(), 'in_play' => $card->isInPlay());
-					}
-				}
-				if ($this->game->getCurrentPlayerId() == $this->getUser()->getId() || ($this->game->getUserOpponent()->isAI() && $this->game->getTurnNumber() <= 2)) {
-					$this->game->endPhase();
-					if ($this->game->getTurnNumber() <= 2) {
-						if ($this->game->hasUserOpponentPlacedCards()) {
-							$returns['advancing_past_2'] = true;
-							while ($this->game->getTurnNumber() <= 2) {
-								$this->game->endPhase();
-							}
-						} else {
-							$returns['advancing_past_2'] = false;
-							while (in_array($this->game->getCurrentPhase(), array(Game::PHASE_REPLENISH, Game::PHASE_RESOLUTION, Game::PHASE_ACTION))) {
-								$this->game->endPhase();
-							}
-						}
-					}
-				}
-				if ($this->game->getUserOpponent()->isAI() && $this->game->isInProgress() && $this->game->getCurrentPlayerId() == $this->game->getUserOpponent()->getId() && ($this->game->getCurrentPhase() == Game::PHASE_REPLENISH || $this->game->getTurnNumber() <= 2)) {
-					$opponent = $this->game->getUserOpponent();
-					$me = $this->getUser();
-					\caspar\core\Caspar::setUser($opponent);
-					$opponent->aiPerformTurn($this->game);
-					\caspar\core\Caspar::setUser($me);
-				}
-				if ($this->game->getCurrentPhase() == Game::PHASE_REPLENISH) {
-					$this->game->endPhase();
-					if (!$this->game->getUserOpponent()->isAI() && $this->game->getUserOpponent()->getLastSeen() < time() - 180) {
-						$this->_sendGameTurnEmail($this->game, $this->game->getUserOpponent(), $this->getUser());
-					}
-				}
-				$this->game->save();
-				$this->game->saveAffectedCards();
-				return $this->renderJSON($returns);
-			} else {
-				$this->getResponse()->setHttpStatus(400);
-				return $this->renderJSON(array('error' => "It's not your turn"));
-			}
+            if ($this->game->getCurrentPlayerId() == $this->getUser()->getId() || $this->game->canUserMove($this->getUser()->getId())) {
+                $cards_to_save = array();
+                $slot_no = $request['slot_no'];
+                $card_id = $request['card_id'];
+                $powerupcard1_id = $request['powerupcard1_id'];
+                $powerupcard2_id = $request['powerupcard2_id'];
+                $has_slot_card = false;
+                $slot_card = $this->game->getUserPlayerCardSlot($slot_no);
+                $card = ($card_id) ? $this->game->getCard($card_id) : null;
+                if (!$slot_card || ($slot_card instanceof Card && $slot_card->getUniqueId() != $card_id)) {
+                    if ($slot_card instanceof Card) {
+                        $this->game->setUserPlayerCardSlot(0, $slot_card);
+                        $cards_to_save[$slot_card->getUniqueId()] = $slot_card;
+                    }
+                    if ($card_id) {
+                        if ($card !== null) {
+                            $this->game->setUserPlayerCardSlot($slot_no, $card);
+                            $cards_to_save[$card->getUniqueId()] = $card;
+                            $has_slot_card = true;
+                        }
+                    }
+                }
+                if ($card instanceof CreatureCard) {
+                    $has_slot_card = true;
+                }
+                $returns['has_slot_card'] = $has_slot_card;
+                $p1_slot_card = $this->game->getUserPlayerCardSlotPowerupCard1($slot_no);
+                if (!$p1_slot_card || ($p1_slot_card instanceof Card && $p1_slot_card->getUniqueId() != $powerupcard1_id)) {
+                    if ($p1_slot_card instanceof Card) {
+                        $this->game->setUserPlayerCardSlotPowerupCard1(0, $p1_slot_card);
+                        $cards_to_save[$p1_slot_card->getUniqueId()] = $p1_slot_card;
+                    }
+                    if ($powerupcard1_id && $has_slot_card) {
+                        $card = $this->game->getCard($powerupcard1_id);
+                        if ($card !== null) {
+                            $this->game->setUserPlayerCardSlotPowerupCard1($slot_no, $card);
+                            $cards_to_save[$card->getUniqueId()] = $card;
+                        }
+                    }
+                }
+                $p2_slot_card = $this->game->getUserPlayerCardSlotPowerupCard2($slot_no);
+                if (!$p2_slot_card || ($p2_slot_card instanceof Card && $p2_slot_card->getUniqueId() != $powerupcard2_id)) {
+                    if ($p2_slot_card instanceof Card) {
+                        $this->game->setUserPlayerCardSlotPowerupCard2(0, $p2_slot_card);
+                        $cards_to_save[$p2_slot_card->getUniqueId()] = $p2_slot_card;
+                    }
+                    if ($powerupcard2_id && $has_slot_card) {
+                        $card = $this->game->getCard($powerupcard2_id);
+                        if ($card !== null) {
+                            $this->game->setUserPlayerCardSlotPowerupCard2($slot_no, $card);
+                            $cards_to_save[$card->getUniqueId()] = $card;
+                        }
+                    }
+                }
+                $returns['cards'] = array();
+                foreach ($cards_to_save as $card) {
+                    if ($card->getSlot()) {
+                        if ($card instanceof \application\entities\CreatureCard) {
+                            if ($card->isInPlay() && $this->game->getCurrentPhase() != Game::PHASE_PLACE_CARDS) {
+                                $card->setIsInPlay(false);
+                            } else {
+                                $card->setInGameHP($card->getBaseHP());
+                                $card->setInGameEP($card->getBaseEP());
+                            }
+                        }
+                    } else {
+                        $card->setIsInPlay(false);
+                    }
+                    $this->game->addAffectedCard($card);
+                    $returns['cards'][$card->getUniqueId()] = array('slot' => $card->getSlot(), 'in_play' => $card->isInPlay());
+                }
+
+                $this->game->save();
+                $this->game->saveAffectedCards();
+
+                return $this->renderJSON($returns);
+            }
 		}
+
+		protected function _processEndPhaseMove(Request $request)
+		{
+            $returns = array('end_phase_move' => 'ok');
+            if ($this->game->getCurrentPlayerId() == $this->getUser()->getId() && $this->game->getCurrentPhase() == Game::PHASE_MOVE) {
+                $this->game->endPhase();
+                $this->game->save();
+                $this->game->saveAffectedCards();
+                return $this->renderJSON($returns);
+            } else {
+                $this->getResponse()->setHttpStatus(400);
+                return $this->renderJSON(array('error' => "It's not your turn"));
+            }
+		}
+
+		protected function _processEndPhaseAction(Request $request)
+		{
+            $returns = array('end_phase_action' => 'ok');
+            if ($this->game->getCurrentPlayerId() == $this->getUser()->getId() && $this->game->getCurrentPhase() == Game::PHASE_ACTION) {
+                $this->game->endPhase();
+                $this->game->save();
+                $this->game->saveAffectedCards();
+                return $this->renderJSON($returns);
+            } else {
+                $this->getResponse()->setHttpStatus(400);
+                return $this->renderJSON(array('error' => "It's not your turn"));
+            }
+		}
+
+		protected function _processEndPhaseResolution(Request $request)
+		{
+            $returns = array('end_phase_resolution' => 'ok');
+            if ($this->game->getCurrentPlayerId() == $this->getUser()->getId() && $this->game->getCurrentPhase() == Game::PHASE_RESOLUTION) {
+                $this->game->endPhase();
+                $this->game->save();
+                $this->game->saveAffectedCards();
+
+                $this->game->endPhase();
+                $this->game->save();
+                $this->game->saveAffectedCards();
+
+                if ($this->game->getUserOpponent()->isAI() && $this->game->isInProgress()) {
+                    $opponent = $this->game->getUserOpponent();
+                    $me = $this->getUser();
+                    Caspar::setUser($opponent);
+                    $opponent->aiPerformTurn($this->game);
+                    $this->game->save();
+                    $this->game->saveAffectedCards();
+                    Caspar::setUser($me);
+                }
+                return $this->renderJSON($returns);
+            } else {
+                $this->getResponse()->setHttpStatus(400);
+                return $this->renderJSON(array('error' => "It's not your turn"));
+            }
+		}
+
+		protected function _processCardsPlaced(Request $request)
+		{
+            if ($this->game->getCurrentPhase() == Game::PHASE_PLACE_CARDS) {
+                $both_users_were_ready = $this->game->areUsersReady();
+                $this->game->setUserReady($this->getUser()->getId());
+                $this->game->save();
+                if ($this->game->getUserOpponent()->isAI()) {
+                    $this->game->getUserOpponent()->aiPerformInitialPlacement($this->game);
+                    $this->game->save();
+                }
+                if (!$both_users_were_ready && $this->game->areUsersReady()) {
+                    $this->game->initialize();
+                    $this->game->save();
+                }
+                $this->game->saveAffectedCards();
+            }
+            return $this->renderJSON(array('cards_placed' => 'ok'));
+		}
+
+//		protected function _processEndPhase(Request $request)
+//		{
+//			if ($this->game->getCurrentPlayerId() == $this->getUser()->getId() || $this->game->canUserMove($this->getUser()->getId())) {
+//				$returns = array('end_phase' => 'ok');
+//				if ($this->game->getCurrentPlayerId() == $this->getUser()->getId() || ($this->game->getUserOpponent()->isAI() && $this->game->getTurnNumber() <= 2)) {
+//					$this->game->endPhase();
+//					if ($this->game->areUsersReady()) {
+//						if ($this->game->hasUserOpponentPlacedCards()) {
+//							$returns['advancing_past_2'] = true;
+//							while ($this->game->getTurnNumber() <= 2) {
+//								$this->game->endPhase();
+//							}
+//						} else {
+//							$returns['advancing_past_2'] = false;
+//							while (in_array($this->game->getCurrentPhase(), array(Game::PHASE_REPLENISH, Game::PHASE_RESOLUTION, Game::PHASE_ACTION))) {
+//								$this->game->endPhase();
+//							}
+//						}
+//					}
+//				}
+//				if ($this->game->getUserOpponent()->isAI() && $this->game->isInProgress() && $this->game->getCurrentPlayerId() == $this->game->getUserOpponent()->getId() && ($this->game->getCurrentPhase() == Game::PHASE_REPLENISH || $this->game->getTurnNumber() <= 2)) {
+//					$opponent = $this->game->getUserOpponent();
+//					$me = $this->getUser();
+//					\caspar\core\Caspar::setUser($opponent);
+//					$opponent->aiPerformTurn($this->game);
+//					\caspar\core\Caspar::setUser($me);
+//				}
+//				if ($this->game->getCurrentPhase() == Game::PHASE_REPLENISH) {
+//					$this->game->endPhase();
+//					if (!$this->game->getUserOpponent()->isAI() && $this->game->getUserOpponent()->getLastSeen() < time() - 180) {
+//						$this->_sendGameTurnEmail($this->game, $this->game->getUserOpponent(), $this->getUser());
+//					}
+//				}
+//				$this->game->save();
+//				$this->game->saveAffectedCards();
+//				return $this->renderJSON($returns);
+//			} else {
+//				$this->getResponse()->setHttpStatus(400);
+//				return $this->renderJSON(array('error' => "It's not your turn"));
+//			}
+//		}
 
 		protected function _processAttack(Request $request)
 		{
@@ -637,7 +777,7 @@
 			}
 			$this->game->save();
 			$this->game->saveAffectedCards();
-			return $this->renderJSON(array('attack' => 'ok', 'actions_remaining' => $actions_remaining));
+			return $this->renderJSON(array('attack' => 'ok', 'actions_remaining' => $this->game->getCurrentPlayerActions()));
 		}
 
 		protected function _processPotion(Request $request)
@@ -730,18 +870,20 @@
 		protected function _processLeaveGame(Request $request)
 		{
 			if ($this->game instanceof Game) {
-				if ($this->game->isInProgress() && in_array($this->getUser()->getId(), array($this->game->getPlayer()->getId(), $this->game->getOpponentId()))) {
+                $status = 'not in progress';
+				if ($this->game->isInProgress() && $this->game->isUserInGame()) {
+                    $status = 'ok';
 					if (!$this->game->getOpponentId()) {
 						$this->game->resolve($this->game->getOpponentId());
 					} else {
 						$this->game->resolve($this->game->getUserOpponent()->getId());
 					}
 					$this->game->save();
-					$this->game->resetCards();
 				}
-			}
+                return $this->renderJSON(array('leave_game' => $status, 'is_adventure' => $this->game->isScenario(), 'part_id' => $this->game->getPartId()));
+            }
 
-			return $this->renderJSON(array('leave_game' => 'ok', 'is_adventure' => $this->game->isScenario(), 'part_id' => $this->game->getPartId()));
+            return $this->renderJSON(array('leave_game' => 'not a game'));
 		}
 
 		protected function _setupTraining(Game $game, $level)
@@ -1024,6 +1166,7 @@
 					if ($this->game->isGameOver() || $this->game->hasCards()) {
 						return $this->renderJSON(array('is_started' => 1));
 					} else {
+                        $this->game->sendAdmUpdate();
 						$interface_content = $this->getComponentHTML('game/pickcardscontent', array('game' => $this->game));
 					}
 					break;
@@ -1031,6 +1174,7 @@
 					if (!$this->game instanceof Game) {
 						return $this->renderJSON(array('game' => 'none'));
 					}
+                    $this->game->sendAdmUpdate();
 					if (in_array($this->getUser()->getId(), array($this->game->getPlayer()->getId(), $this->game->getOpponent()->getId()))) {
 						if (!$this->game->isGameOver() && !$this->game->hasCards()) {
 							return $this->renderJSON(array('state' => 'no_cards', 'options' => $this->game->getOptions($this->getUser())));
@@ -1154,8 +1298,20 @@
 					case 'accept_invite':
 						return $this->_processAcceptGameInvite($request);
 						break;
-					case 'end_phase':
-						return $this->_processEndPhase($request);
+					case 'cards_placed':
+						return $this->_processCardsPlaced($request);
+						break;
+					case 'end_phase_move':
+						return $this->_processEndPhaseMove($request);
+						break;
+					case 'end_phase_action':
+						return $this->_processEndPhaseAction($request);
+						break;
+					case 'end_phase_resolution':
+						return $this->_processEndPhaseResolution($request);
+						break;
+					case 'move_cards':
+						return $this->_processMoveCards($request);
 						break;
 					case 'attack':
 						return $this->_processAttack($request);

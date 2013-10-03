@@ -38,7 +38,6 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere('game_invites.game_id', $game_id);
-
 			return $this->doDelete($crit);
 		}
 

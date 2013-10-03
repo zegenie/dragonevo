@@ -592,6 +592,10 @@
 			}
 		}
 		
+		public function runWatch(Request $request)
+		{
+		}
+
 		protected function _processUserNewPotionPack(Request $request)
 		{
 			if ($request['user_id'] && (int) $request['user_id'] > 0) {

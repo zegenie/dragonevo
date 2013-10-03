@@ -2,7 +2,8 @@
 
 	namespace application\entities;
 
-	use \caspar\core\Caspar;
+    use caspar\core\Actions;
+    use \caspar\core\Caspar;
 
 	/**
 	 * Dragon Evo game invite class
@@ -16,6 +17,7 @@
 	{
 
 		const TYPE_GAME_CREATED = 'game_created';
+		const TYPE_GAME_INITIALIZED = 'game_initialized';
 		const TYPE_PLAYER_CHANGE = 'player_change';
 		const TYPE_PLAYER_ONLINE = 'player_online';
 		const TYPE_PLAYER_OFFLINE = 'player_offline';
@@ -116,6 +118,23 @@
 				}
 			}
 		}
+
+        protected function _postSave($is_new)
+        {
+            $event = array(
+                'category' => 'GameEvent-'.$this->getGameId(),
+                'event' => array(
+                   'id' => $this->getId(),
+                   'game_id' => $this->getGameId(),
+                   'player_name' => $this->getPlayer()->getCharactername(),
+                   'opponent_id' => $this->getGame()->getUserOpponent()->getID(),
+                   'type' => $this->getEventType(),
+                   'data' => json_decode($this->getEventData()),
+                   'event_content' => Actions::returnTemplateHTML('game/event', array('event' => $this))
+                )
+            );
+            Caspar::getResponse()->zmqSendEvent($event);
+        }
 
 		public function getId()
 		{

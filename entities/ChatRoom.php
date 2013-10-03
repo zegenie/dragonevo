@@ -105,7 +105,7 @@
 //			if (substr($text, 0, 7) == "/taunt ") {
 //				$text = $this->_generateTaunt(substr($text, 7));
 //			}
-			\application\entities\tables\ChatLines::getTable()->say($text, $user_id, $this->getId(), $time);
+			return \application\entities\tables\ChatLines::getTable()->say($text, $user_id, $this->getId(), $time);
 		}
 
 		public function ping(User $user)

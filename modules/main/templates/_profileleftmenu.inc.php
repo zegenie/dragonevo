@@ -65,6 +65,9 @@
 			<ul id="offline-friends">
 				<?php include_template('main/userfriends', compact('userfriends')); ?>
 			</ul>
+            <script>
+                Devo.Core.sortFriends();
+            </script>
 			<ul id="friend-requests">
 				<?php include_template('main/friendrequests', compact('userfriends')); ?>
 			</ul>

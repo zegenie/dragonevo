@@ -203,6 +203,11 @@ admin_say:
   module: admin
   action: say
 
+admin_watch:
+  url: /admin/watch
+  module: admin
+  action: watch
+
 new_card:
   url: /admin/:card_type/card
   module: admin

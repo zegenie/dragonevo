@@ -41,7 +41,7 @@
 	</div>
 	<h6>How can I join the early access testers?</h6>
 	<p>
-		If you want to be part of the early access group, drop us an email at <a href="mailto:testers@dragonevo.com">testers@dragonevo.com</a>. We will let you know when the early access period begins.
+		If you want to be part of the early access group, drop us an email at <a href="mailto:testers@playdragonevo.com">testers@playdragonevo.com</a>. We will let you know when the early access period begins.
 	</p>
 	<h6>Will the game be free?</h6>
 	<p>

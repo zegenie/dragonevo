@@ -4,7 +4,8 @@
 
 	use b2db\Core,
 		b2db\Criteria,
-		b2db\Criterion;
+		b2db\Criterion,
+        caspar\core\Caspar;
 
 	/**
 	 * Chat lines table
@@ -37,6 +38,24 @@
 			$this->doDelete($crit);
 		}
 
+        public function getLineData($row)
+        {
+            $posted = $row->get('chat_lines.posted');
+            $user_id = $row->get('chat_lines.user_id');
+            $line = array(
+                'room_id' => $row->get('chat_lines.room_id'),
+                'line_id' => $row->get('chat_lines.id'),
+                'user_id' => $user_id,
+                'user' => Users::getTable()->getUserData($user_id, $row),
+                'text' => htmlspecialchars($row->get('chat_lines.text'), ENT_NOQUOTES, 'utf-8'),
+                'posted' => $posted,
+                'posted_formatted_hours' => date('H:i', $posted),
+                'posted_formatted_date' => date('d/m/Y', $posted)
+            );
+
+            return $line;
+        }
+
 		public function getLinesByRoomId($room_id, $since = null, $limit = null)
 		{
 			$crit = $this->getCriteria();
@@ -51,9 +70,7 @@
 			$lines = array();
 			if ($res = $this->doSelect($crit)) {
 				while ($row = $res->getNextRow()) {
-					$posted = $row->get('chat_lines.posted');
-					$user_id = $row->get('chat_lines.user_id');
-					array_unshift($lines, array('line_id' => $row->get('chat_lines.id'), 'user_id' => $user_id, 'user' => array('username' => ($user_id) ? $row->get('users.username') : 'System', 'mp_ranking' => ($user_id) ? $row->get('users.ranking_mp') : 0, 'sp_ranking' => ($user_id) ? $row->get('users.ranking_sp') : 0, 'charactername' => ($user_id) ? $row->get('users.charactername') : 'System', 'race' => ($user_id && $row->get('users.race')) ? \application\entities\User::getRaceNameByRace($row->get('users.race')) : '', 'level' => ($user_id) ? $row->get('users.level') : 0, 'friends' => ($user_id) ? \caspar\core\Caspar::getUser()->isFriends($user_id) : false), 'text' => htmlspecialchars($row->get('chat_lines.text'), ENT_NOQUOTES, 'utf-8'), 'posted' => $posted, 'posted_formatted_hours' => date('H:i', $posted), 'posted_formatted_date' => date('d/m/Y', $posted)));
+					array_unshift($lines, $this->getLineData($row));
 				}
 			}
 
@@ -69,6 +86,17 @@
 			$crit->addInsert('chat_lines.text', $text);
 			$crit->addInsert('chat_lines.posted', $time);
 			$res = $this->doInsert($crit);
+
+            $line_id = $res->getInsertID();
+            $crit = $this->getCriteria();
+            $crit->addJoin(Users::getTable(), 'users.id', 'chat_lines.user_id');
+            $row = $this->doSelectById($line_id, $crit);
+
+            $event = array('category' => 'Chat-'.$room_id,
+                           'event' => $this->getLineData($row));
+            Caspar::getResponse()->zmqSendEvent($event);
+
+            return $row;
 		}
 		
 	}

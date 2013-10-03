@@ -19,6 +19,7 @@
 		const STATE_ONGOING = 1;
 		const STATE_COMPLETED = 2;
 
+		const PHASE_PLACE_CARDS = 0;
 		const PHASE_REPLENISH = 1;
 		const PHASE_MOVE = 2;
 		const PHASE_ACTION = 3;
@@ -67,6 +68,14 @@
 		 */
 		protected $_player_online = false;
 
+		/**
+		 * Whether the player is online or not
+		 *
+		 * @Column(type="boolean", default=false)
+		 * @var boolean
+		 */
+		protected $_player_ready = false;
+
 		protected $_player_cards;
 
 		/**
@@ -95,6 +104,14 @@
 		 * @var boolean
 		 */
 		protected $_opponent_online = false;
+
+		/**
+		 * Whether the opponent player is online or not
+		 *
+		 * @Column(type="boolean", default=false)
+		 * @var boolean
+		 */
+		protected $_opponent_ready = false;
 
 		protected $_opponent_cards;
 
@@ -155,7 +172,7 @@
 		 * @Column(type="integer", length=10)
 		 * @var integer
 		 */
-		protected $_current_phase;
+		protected $_current_phase = self::PHASE_PLACE_CARDS;
 		
 		/**
 		 * The current game turn
@@ -249,7 +266,7 @@
 		{
 			if ($is_new) {
 				$this->_created_at = time();
-				$this->_current_phase = self::PHASE_MOVE;
+				$this->_current_phase = self::PHASE_PLACE_CARDS;
 
 				$chatroom = new ChatRoom();
 				$chatroom->setUser($this->getUserPlayer());
@@ -259,6 +276,28 @@
 			}
 		}
 
+        public function sendAdmUpdate()
+        {
+            $event = array(
+                'category' => 'SysAdmin',
+                'event' => array(
+                    'id' => $this->getId(),
+                    'type' => 'game_save',
+                    'data' => array(
+                        'state' => $this->_state,
+                        'current_phase' => $this->_current_phase,
+                        'current_player_id' => $this->_current_player_id,
+                        'current_player_actions' => $this->_current_player_actions,
+                        'player_id' => $this->getPlayer()->getID(),
+                        'opponent_id' => ($this->getOpponent()) ? $this->getOpponent()->getID() : null,
+                        'player_ready' => $this->_player_ready,
+                        'opponent_ready' => $this->_opponent_ready
+                    )
+                )
+            );
+            Caspar::getResponse()->zmqSendEvent($event);
+        }
+
 		protected function _postSave($is_new)
 		{
 			if ($is_new) {
@@ -266,6 +305,7 @@
 				$event->setEventType(GameEvent::TYPE_GAME_CREATED);
 				$this->addEvent($event);
 			}
+            $this->sendAdmUpdate();
 		}
 
 		public function getId()
@@ -329,7 +369,7 @@
 			$player_cards = $this->hasPlayerCardsInPlay();
 			$opponent_cards = $this->hasOpponentCardsInPlay();
 
-			if ($this->_turn_number > 2 && (!$player_cards || !$opponent_cards)) {
+			if ($this->areUsersReady() && (!$player_cards || !$opponent_cards)) {
 				return true;
 			}
 
@@ -338,43 +378,45 @@
 
 		public function resolve($winning_player_id)
 		{
-			$this->_current_phase = self::PHASE_RESOLUTION;
-			$this->_state = self::STATE_COMPLETED;
-			$this->_ended_at = time();
-			$this->resetCards();
-			
-			$this->_winning_player_id = $winning_player_id;
-			$this->_losing_player_id = ($this->getPlayer()->getId() == $winning_player_id) ? $this->getOpponentId() : $this->getPlayer()->getId();
+            if (!$this->_ended_at) {
+                $this->_current_phase = self::PHASE_RESOLUTION;
+                $this->_state = self::STATE_COMPLETED;
+                $this->_ended_at = time();
+                $this->resetCards();
 
-			$event = new GameEvent();
-			$event->setEventType(GameEvent::TYPE_GAME_OVER);
-			$event->setEventData(array('player_id' => $this->getUserPlayer()->getId(), 'player_name' => $this->getUserPlayer()->getUsername(), 'winning_player_id' => $winning_player_id));
-			$this->addEvent($event);
+                $this->_winning_player_id = $winning_player_id;
+                $this->_losing_player_id = ($this->getPlayer()->getId() == $winning_player_id) ? $this->getOpponentId() : $this->getPlayer()->getId();
 
-			$this->_current_player_id = 0;
+                $event = new GameEvent();
+                $event->setEventType(GameEvent::TYPE_GAME_OVER);
+                $event->setEventData(array('game_id' => $this->getId(), 'player_id' => $this->getUserPlayer()->getId(), 'player_name' => $this->getUserPlayer()->getUsername(), 'winning_player_id' => $winning_player_id));
+                $this->addEvent($event);
 
-			if ($this->isScenario()) {
-				$winning = (bool) ($winning_player_id == $this->getPlayer()->getId());
-				$this->getPart()->resolve($this->getPlayer(), $this, $winning);
-			} else {
-				$winner_statistics = $this->getStatistics($this->getWinningPlayerId());
-				$this->getWinningPlayer()->addXp($winner_statistics['xp']);
-				$this->getWinningPlayer()->addGold($winner_statistics['gold']);
+                $this->_current_player_id = 0;
 
-				$loser_statistics = $this->getStatistics($this->getLosingPlayerId());
-				$this->getLosingPlayer()->addXp($loser_statistics['xp']);
-				$this->getLosingPlayer()->addGold($loser_statistics['gold']);
-			}
-			
-			if ($this->getOpponent()->isAI() || $this->getTurnNumber() <= 2) return;
-			
-			$this->_addRankingPoints($winner_statistics, $loser_statistics);
-			
-			$this->getWinningPlayer()->save();
-			$this->getLosingPlayer()->save();
+                if ($this->isScenario()) {
+                    $winning = (bool) ($winning_player_id == $this->getPlayer()->getId());
+                    $this->getPart()->resolve($this->getPlayer(), $this, $winning);
+                } else {
+                    $winner_statistics = $this->getStatistics($this->getWinningPlayerId());
+                    $this->getWinningPlayer()->addXp($winner_statistics['xp']);
+                    $this->getWinningPlayer()->addGold($winner_statistics['gold']);
 
-			$lobby = tables\ChatRooms::getTable()->selectById(1);
-			$lobby->say("{$this->getWinningPlayer()->getUsername()} ({$winner_statistics['hp']} HP damage, {$winner_statistics['cards']} kills) won the match against {$this->getLosingPlayer()->getUsername()} ({$loser_statistics['hp']} HP damage, {$loser_statistics['cards']} kills). ", 0);
+                    $loser_statistics = $this->getStatistics($this->getLosingPlayerId());
+                    $this->getLosingPlayer()->addXp($loser_statistics['xp']);
+                    $this->getLosingPlayer()->addGold($loser_statistics['gold']);
+                }
+
+                if ($this->getOpponent()->isAI() || !$this->areUsersReady()) return;
+
+                $this->_addRankingPoints($winner_statistics, $loser_statistics);
+
+                $this->getWinningPlayer()->save();
+                $this->getLosingPlayer()->save();
+
+                $lobby = tables\ChatRooms::getTable()->selectById(1);
+                $lobby->say("{$this->getWinningPlayer()->getUsername()} ({$winner_statistics['hp']} HP damage, {$winner_statistics['cards']} kills) won the match against {$this->getLosingPlayer()->getUsername()} ({$loser_statistics['hp']} HP damage, {$loser_statistics['cards']} kills). ", 0);
+            }
 		}
 
 		protected function _addRankingPoints($winner_statistics, $loser_statistics)
@@ -893,10 +935,10 @@
 			$event = new GameEvent();
 			if ($slot == 0) {
 				$event->setEventType(GameEvent::TYPE_CARD_MOVED_OFF_SLOT);
-				$event->setEventData(array('player_id' => $this->getUserId(), 'slot' => $slot, 'player_name' => $this->getCurrentPlayer()->getCharactername(), 'card_id' => $card->getUniqueId(), 'card_name' => $card->getName()));
+				$event->setEventData(array('player_id' => $this->getUserId(), 'slot' => $slot, 'player_name' => $card->getUser()->getCharactername(), 'card_id' => $card->getUniqueId(), 'card_name' => $card->getName()));
 			} else {
 				$event->setEventType(GameEvent::TYPE_CARD_MOVED_ONTO_SLOT);
-				$event->setEventData(array('player_id' => $card->getUserId(), 'in_play' => $card->isInPlay(), 'turn_number' => $this->getTurnNumber(), 'player_name' => $this->getCurrentPlayer()->getCharactername(), 'card_id' => $card->getUniqueId(), 'card_name' => $card->getName(), 'slot' => $slot, 'is-item-1' => false, 'is-item-2' => false));
+				$event->setEventData(array('player_id' => $card->getUserId(), 'in_play' => $card->isInPlay(), 'turn_number' => $this->getTurnNumber(), 'player_name' => $card->getUser()->getCharactername(), 'card_id' => $card->getUniqueId(), 'card_name' => $card->getName(), 'slot' => $slot, 'is-item-1' => false, 'is-item-2' => false));
 			}
 			$this->addEvent($event);
 		}
@@ -1077,7 +1119,6 @@
 		 */
 		public function getUserOpponentCardSlot($slot)
 		{
-			if ($this->getTurnNumber() == 1 || ($this->getCurrentPhase() < self::PHASE_RESOLUTION && $this->getTurnNumber() == 2)) return 0;
 			return ($this->getUserPlayer()->getId() == $this->getPlayer()->getId()) ? $this->getOpponentCardSlot($slot) : $this->getPlayerCardSlot($slot);
 		}
 
@@ -1090,7 +1131,6 @@
 		 */
 		public function getUserOpponentCardSlotPowerupCard1($slot)
 		{
-			if ($this->getTurnNumber() == 1 || ($this->getCurrentPhase() < self::PHASE_RESOLUTION && $this->getTurnNumber() == 2)) return 0;
 			return ($this->getUserPlayer()->getId() == $this->getPlayer()->getId()) ? $this->getOpponentCardSlotPowerup1($slot) : $this->getPlayerCardSlotPowerup1($slot);
 		}
 
@@ -1103,7 +1143,6 @@
 		 */
 		public function getUserOpponentCardSlotPowerupCard2($slot)
 		{
-			if ($this->getTurnNumber() == 1 || ($this->getCurrentPhase() < self::PHASE_RESOLUTION && $this->getTurnNumber() == 2)) return 0;
 			return ($this->getUserPlayer()->getId() == $this->getPlayer()->getId()) ? $this->getOpponentCardSlotPowerup2($slot) : $this->getPlayerCardSlotPowerup2($slot);
 		}
 
@@ -1260,10 +1299,68 @@
 			$this->resetCards();
 		}
 
+		public function accept()
+		{
+			tables\GameInvites::getTable()->deleteInvitesByGameId($this->getId());
+            $this->setInvitationConfirmed();
+		}
+
 		public function initiateQuickmatch()
 		{
 			$this->_quickmatch_state = 1;
 		}
+
+        public function initialize()
+        {
+            $this->_current_player_id = (rand(1, 100) > 50) ? $this->getPlayer() : $this->getOpponent();
+            foreach ($this->getPlayerCards() as $cards) {
+                foreach ($cards as $card) {
+                    if ($card->getSlot()) {
+                        $card->setIsInPlay();
+                        $this->addAffectedCard($card);
+                    }
+                }
+            }
+            foreach ($this->getOpponentCards() as $cards) {
+                foreach ($cards as $card) {
+                    if ($card->getSlot()) {
+                        $card->setIsInPlay();
+                        $this->addAffectedCard($card);
+                    }
+                }
+            }
+            $this->_replenish();
+            $this->_current_phase = self::PHASE_ACTION;
+            $this->_current_player_actions = 2;
+            $p_cards = array('c', 'p1', 'p2');
+            $o_cards = array('c', 'p1', 'p2');
+            foreach (range(1,5) as $slot) {
+                $card = $this->getPlayerCardSlot($slot);
+                $p1_card = $this->getPlayerCardSlotPowerup1($slot);
+                $p2_card = $this->getPlayerCardSlotPowerup2($slot);
+                $p_cards['c'][$slot] = ($card instanceof Card) ? $card->getUniqueId() : null;
+                $p_cards['p1'][$slot] = ($p1_card instanceof Card) ? $p1_card->getUniqueId() : null;
+                $p_cards['p2'][$slot] = ($p2_card instanceof Card) ? $p2_card->getUniqueId() : null;
+                $card = $this->getOpponentCardSlot($slot);
+                $p1_card = $this->getOpponentCardSlotPowerup1($slot);
+                $p2_card = $this->getOpponentCardSlotPowerup2($slot);
+                $o_cards['c'][$slot] = ($card instanceof Card) ? $card->getUniqueId() : null;
+                $o_cards['p1'][$slot] = ($p1_card instanceof Card) ? $p1_card->getUniqueId() : null;
+                $o_cards['p2'][$slot] = ($p2_card instanceof Card) ? $p2_card->getUniqueId() : null;
+            }
+
+            $event = new GameEvent();
+            $event->setEventType(GameEvent::TYPE_GAME_INITIALIZED);
+            $event->setEventData(array(
+                'player_id' => $this->getCurrentPlayerId(),
+                'player_name' => $this->getCurrentPlayer()->getCharactername(),
+                'cards' => array(
+                    $this->getPlayer()->getId() => $p_cards,
+                    $this->getOpponent()->getId() => $o_cards
+                )
+            ));
+            $this->addEvent($event);
+        }
 
 		public function completeQuickmatch()
 		{
@@ -1523,7 +1620,7 @@
 
 		public function canUserMove($user_id)
 		{
-			return (bool) (($this->getCurrentPlayerId() == $user_id && $this->getCurrentPhase() == Game::PHASE_MOVE && $this->getTurnNumber() > 2) || ($this->getTurnNumber() <= 2 && !$this->hasUserPlayerCardsInPlay()));
+			return (bool) (($this->getCurrentPlayerId() == $user_id && $this->getCurrentPhase() == Game::PHASE_MOVE && $this->areUsersReady()) || !$this->isUserPlayerReady());
 		}
 		
 		public function isUserOnline($user_id)
@@ -1535,7 +1632,32 @@
 		{
 			return ($this->getPlayer()->getId() == $user_id) ? !$this->_player_online : !$this->_opponent_online;
 		}
+
+        public function setUserReady($user_id)
+        {
+            ($this->getPlayer()->getId() == $user_id) ? $this->_player_ready = true : $this->_opponent_ready = true;
+        }
+
+        public function isUserReady($user_id)
+        {
+            return ($this->getPlayer()->getId() == $user_id) ? $this->_player_ready : $this->_opponent_ready;
+        }
+
+        public function areUsersReady()
+        {
+            return ($this->_opponent_ready && $this->_player_ready);
+        }
+
+        public function isUserPlayerReady()
+        {
+            return ($this->getUserPlayer()->getId() == $this->getPlayer()->getId()) ? $this->_player_ready : $this->_opponent_ready;
+        }
 		
+        public function isUserOpponentReady()
+        {
+            return ($this->getUserPlayer()->getId() == $this->getOpponent()->getId()) ? $this->_opponent_ready : $this->_player_ready;
+        }
+
 		public function setUserOffline($user_id)
 		{
 			if ($this->isUserOffline($user_id)) return;
@@ -1562,6 +1684,7 @@
 				'game_id' => $this->getId(),
 				'user_level' => $user->getLevel(),
 				'user_level_opponent' => ($this->getUserOpponent()->isAi()) ? 1000 : $this->getUserOpponent()->getLevel(),
+                'user_opponent_id' => $this->getUserOpponent()->getId(),
 				'room_id' => ($this->getUserOpponent()->isAi()) ? 0 : $this->getChatroom()->getId(),
 				'latest_event_id' => max(array_keys($this->getEvents())),
 				'current_turn' => $this->getTurnNumber(),

@@ -4,14 +4,14 @@
 		<meta charset="utf-8">
 		<meta name="description" content="Dragon Evo - online action card game">
 		<meta name="keywords" content="dragonevo dragonevotcg ccg cardgame card game action">
-		<meta name="author" content="dragonevo.com">
+		<meta name="author" content="playdragonevo.com">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 		<link rel="shortcut icon" href="/images/favicon.png">
 		<title><?php echo strip_tags($tbg_response->getTitle()); ?></title>
-		<link rel="stylesheet" href="http://www.dragonevo.com/css/styles.css">
-		<script type="text/javascript" src="http://www.dragonevo.com/js/main.js"></script>
-		<script type="text/javascript" src="http://www.dragonevo.com/js/prototype.js"></script>
-		<script type="text/javascript" src="http://www.dragonevo.com/js/scriptaculous.js"></script>
+		<link rel="stylesheet" href="http://www.playdragonevo.com/css/styles.css">
+		<script type="text/javascript" src="http://www.playdragonevo.com/js/main.js"></script>
+		<script type="text/javascript" src="http://www.playdragonevo.com/js/prototype.js"></script>
+		<script type="text/javascript" src="http://www.playdragonevo.com/js/scriptaculous.js"></script>
 		<script type="text/javascript" src="/js/jquery-1.6.2.min.js"></script>
 		<script type="text/javascript" src="/js/jquery.markitup.js"></script>
 		<script type="text/javascript" src="/js/thebuggenie.js"></script>
@@ -51,21 +51,21 @@
 		</div>
 		<div class="main-content">
 			<div class="banner-container">
-				<img src="http://www.dragonevo.com/images/banner_shorter.jpg">
-				<a class="devo-box" href="http://www.dragonevo.com">
+				<img src="http://www.playdragonevo.com/images/banner_shorter.jpg">
+				<a class="devo-box" href="http://www.playdragonevo.com">
 					DRAGON EVO<br>
 					<span class="slogan">the online action card game</span>
 				</a>
-				<a class="button button-standard play-now" style="font-family: 'Gentium Basic'; border-radius: 10px; font-size: 2em; font-weight: normal; padding: 20px 10px !important;" href="http://www.dragonevo.com/play">Play now!</a>
+				<a class="button button-standard play-now" style="font-family: 'Gentium Basic'; border-radius: 10px; font-size: 2em; font-weight: normal; padding: 20px 10px !important;" href="http://www.playdragonevo.com/play">Play now!</a>
 			</div>
 			<ul class="main-menu">
-				<li><a href="http://www.dragonevo.com" class="<?php if ($tbg_response->getPage() == 'home') echo ' selected'; ?>">Home</a></li>
-				<li><a href="http://www.dragonevo.com/media" class="<?php if ($tbg_response->getPage() == 'media') echo ' selected'; ?>">Media</a></li>
-					<li><a href="http://guide.dragonevo.com/wiki/GameGuide" class="selected">Game guide</a></li>
-					<li><a href="http://forum.dragonevo.com">Forum</a></li>
+				<li><a href="http://www.playdragonevo.com" class="<?php if ($tbg_response->getPage() == 'home') echo ' selected'; ?>">Home</a></li>
+				<li><a href="http://www.playdragonevo.com/media" class="<?php if ($tbg_response->getPage() == 'media') echo ' selected'; ?>">Media</a></li>
+					<li><a href="http://guide.playdragonevo.com/wiki/GameGuide" class="selected">Game guide</a></li>
+					<li><a href="http://forum.playdragonevo.com">Forum</a></li>
 					<li><a href="http://dragonevotcg.wordpress.com">Blog</a></li>
 				<?php /* if ($csp_user->isAuthenticated()): ?>
 					<li><a href="<?php echo make_url('profile'); ?>" class="<?php if ($tbg_response->getPage() == 'profile') echo ' selected'; ?>">Profile</a></li>
 				<?php endif; */ ?>
-				<li><a href="http://www.dragonevo.com/faq" class="<?php if ($tbg_response->getPage() == 'faq') echo ' selected'; ?>">FAQ</a></li>
+				<li><a href="http://www.playdragonevo.com/faq" class="<?php if ($tbg_response->getPage() == 'faq') echo ' selected'; ?>">FAQ</a></li>
 			</ul>

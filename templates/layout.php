@@ -6,26 +6,38 @@
 		<?php \caspar\core\Event::createNew('core', 'header_begins')->trigger(); ?>
 		<meta name="description" content="Dragon Evo - online action card game">
 		<meta name="keywords" content="dragonevo dragonevotcg ccg cardgame card game action">
-		<meta name="author" content="dragonevo.com">
+		<meta name="author" content="playdragonevo.com">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 		<link rel="shortcut icon" href="/images/favicon.png">
 		<title><?php echo strip_tags($csp_response->getTitle()); ?></title>
 		<?php foreach ($csp_response->getFeeds() as $feed_url => $feed_title): ?>
 			<link rel="alternate" type="application/rss+xml" title="<?php echo str_replace('"', '\'', $feed_title); ?>" href="<?php echo $feed_url; ?>">
 		<?php endforeach; ?>
+        <link rel="stylesheet" href="/css/styles.css?v=<?php echo $version; ?>">
 		<?php foreach ($csp_response->getStylesheets() as $css): ?>
 			<link rel="stylesheet" href="<?php echo $css; ?>">
 		<?php endforeach; ?>
 
-		<link rel="stylesheet" href="/css/styles.css?v=<?php echo $version; ?>">
-		<script type="text/javascript" src="/js/main.js?v=<?php echo $version; ?>"></script>
+        <?php if ($csp_response->isFullscreen()): ?>
+            <script>
+                window.define = function(factory) {
+                    try{ delete window.define; } catch(e){ window.define = void 0; } // IE
+                    window.when = factory();
+                };
+                window.define.amd = {};
+            </script>
+            <script src="/js/when/when.js"></script>
+            <script src="/js/autobahn.js"></script>
+        <?php endif; ?>
+
+        <script type="text/javascript" src="/js/main.js?v=<?php echo $version; ?>"></script>
 		<?php foreach ($csp_response->getJavascripts() as $js): ?>
 			<script type="text/javascript" src="<?php echo $js; ?>"></script>
 		<?php endforeach; ?>
 		  <!--[if lt IE 9]>
 			  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 		  <![endif]-->
-		<?php \caspar\core\Event::createNew('core', 'header_ends')->trigger(); ?>
+        <?php \caspar\core\Event::createNew('core', 'header_ends')->trigger(); ?>
 	</head>
 	<body>
 		<div class="almost_not_transparent shadowed popup_message failure" onclick="Devo.Main.Helpers.Message.clear();" style="display: none;" id="dragonevo_failuremessage">
@@ -83,8 +95,8 @@
 				<ul class="main-menu">
 					<li><a href="<?php echo make_url('home'); ?>" class="<?php if ($csp_response->getPage() == 'home') echo ' selected'; ?>">Home</a></li>
 					<li><a href="<?php echo make_url('media'); ?>" class="<?php if ($csp_response->getPage() == 'media') echo ' selected'; ?>">Media</a></li>
-					<li><a href="http://guide.dragonevo.com/wiki/GameGuide">Game guide</a></li>
-					<li><a href="http://forum.dragonevo.com">Forum</a></li>
+					<li><a href="http://guide.playdragonevo.com/wiki/GameGuide">Game guide</a></li>
+					<li><a href="http://forum.playdragonevo.com">Forum</a></li>
 					<li><a href="http://dragonevotcg.wordpress.com">Blog</a></li>
 					<li><a href="<?php echo make_url('faq'); ?>" class="<?php if ($csp_response->getPage() == 'faq') echo ' selected'; ?>">FAQ</a></li>
 				</ul>
@@ -95,7 +107,7 @@
 						<div class="border-overlay"></div>
 					</div>
 					<div class="footer-info">
-						<a href="<?php echo make_url('changelog'); ?>">Version <?php echo $csp_response->getVersion(); ?> (alpha)</a> - All text and artwork &copy; 2011-<?php echo date('Y'); ?> <a href="mailto:support@dragonevo.com">Magical Pictures / zegenie studios</a>
+						<a href="<?php echo make_url('changelog'); ?>">Version <?php echo $csp_response->getVersion(); ?> (alpha)</a> - All text and artwork &copy; 2011-<?php echo date('Y'); ?> <a href="mailto:support@playdragonevo.com">Magical Pictures / zegenie studios</a>
 						<?php if ($csp_user->isAuthenticated()): ?>
 							<br>
 							<?php if ($csp_user->isAdmin()): ?>
@@ -140,9 +152,20 @@
 				<br style="clear: both;">
 				<div class="tutorial-status"><span id="tutorial-current-step"></span> of <span id="tutorial-total-steps"></span></div>
 			</div>
+			<div id="offline-overlay" style="display: none;">
+				<div id="offline-message">
+                    Could not connect to the game server<br>
+                    The game server seems to be offline.
+                    <br>
+                    <br>
+                    Please try again later. If the problem persists, there may be a connection issue.<br>
+                    <br>
+                    <div style="color: rgba(0, 0, 0, 0.4); text-align: right; font-size: 0.8em;">Error code 4810</div>
+				</div>
+			</div>
 			<div id="desync-overlay" style="display: none;">
 				<div id="desync-message">
-					The game is indicating that it is no longer in sync.<br>
+					A fatal error occured in the game engine.<br>
 					You should reload this window, or you will experience errors.
 					<br>
 					<br>
@@ -180,10 +203,10 @@
 			<script type="text/javascript">
 //				console.log(document.getElementsByTagName('body')[0]);
 				document.observe('dom:loaded', function() {
-					Devo.Core.initialize({location: '<?php echo $csp_routing->getCurrentRouteName(); ?>', title: '<?php echo $csp_response->getTitle(); ?>', ask_url: '<?php echo make_url('ask'); ?>?version=<?php echo str_replace('.', '_', $csp_response->getVersion()); ?>', say_url: '<?php echo make_url('say'); ?>?version=<?php echo str_replace('.', '_', $csp_response->getVersion()); ?>', user_id: <?php echo $csp_user->getId(); ?>, candrag: <?php echo ($csp_user->isDragDropEnabled()) ? 'true' : 'false'; ?>, username: '<?php echo $csp_user->getUsername(); ?>', charactername: "<?php echo addslashes($csp_user->getCharacterName()); ?>"});
+					Devo.Core.initialize({location: '<?php echo $csp_routing->getCurrentRouteName(); ?>', title: '<?php echo $csp_response->getTitle(); ?>', ask_url: '<?php echo make_url('ask'); ?>?version=<?php echo str_replace('.', '_', $csp_response->getVersion()); ?>', say_url: '<?php echo make_url('say'); ?>?version=<?php echo str_replace('.', '_', $csp_response->getVersion()); ?>', user_id: <?php echo $csp_user->getId(); ?>, secret: '<?php echo $csp_user->getKey(); ?>', candrag: <?php echo ($csp_user->isDragDropEnabled()) ? 'true' : 'false'; ?>, username: '<?php echo $csp_user->getUsername(); ?>', charactername: "<?php echo addslashes($csp_user->getCharacterName()); ?>"});
 				});
 			</script>
 		<?php endif; ?>
-		<?php \caspar\core\Debugger::display(); ?>
+		<?php // \caspar\core\Debugger::display(); ?>
 	</body>
 </html>

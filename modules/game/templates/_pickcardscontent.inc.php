@@ -84,7 +84,7 @@
 		<div class="shelf">
 			<div class="no_cards" style="position: absolute; font-size: 2em; font-weight: normal; color: rgba(200, 200, 200, 0.8); top: 100px; width: 500px; text-align: center; left: 50%; margin-left: -250px; z-index: 200;">
 				You don't have any cards yet<br>
-				<a class="button button-standard" href="<?php echo make_url('profile'); ?>" style="font-size: 0.7em !important; display: inline-block; margin-top: 5px; padding: 10px 25px !important;">Get starter pack</a>
+				<a class="button button-standard" href="#!profile" style="font-size: 0.7em !important; display: inline-block; margin-top: 5px; padding: 10px 25px !important;">Get starter pack</a>
 			</div>
 			<ul>
 				<?php for ($cc = 0; $cc < 5; $cc++): ?>

@@ -1,8 +1,9 @@
 <?php
 
 	namespace application\entities\tables;
+    use b2db\Row;
 
-	/**
+    /**
 	 * @Table(name="users")
 	 * @Entity(class="\application\entities\User")
 	 */
@@ -166,5 +167,21 @@
 
 			return $return_array;
 		}
+
+        public function getUserData($user_id, Row $row)
+        {
+            return array(
+                'user_id' => $user_id,
+                'is_admin' => ($user_id) ? $row->get('users.isadmin') : false,
+                'username' => ($user_id) ? $row->get('users.username') : 'System',
+                'avatar' => ($user_id) ? $row->get('users.avatar') : '',
+                'mp_ranking' => ($user_id) ? (int) $row->get('users.ranking_mp') : 0,
+                'sp_ranking' => ($user_id) ? (int) $row->get('users.ranking_sp') : 0,
+                'charactername' => ($user_id) ? $row->get('users.charactername') : 'System',
+                'race' => ($user_id && $row->get('users.race')) ? \application\entities\User::getRaceNameByRace($row->get('users.race')) : '',
+                'level' => ($user_id) ? (int) $row->get('users.level') : 0,
+                'friends' => ($user_id) ? \caspar\core\Caspar::getUser()->isFriends($user_id) : false
+            );
+        }
 
 	}

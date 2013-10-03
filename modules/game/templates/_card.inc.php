@@ -19,7 +19,7 @@
 					break;
 			}
 
-		?> <?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE) echo $card->getFaction() . ' class-' . $card->getCreatureClassKey(); ?><?php if (isset($mode)) echo " $mode"; ?><?php if ($card->isOwned() && $card->getUserId() == $csp_user->getId()) echo ' player'; ?><?php if ($card->isOwned() && $card->getUserId() != $csp_user->getId()) echo ' opponent'; ?><?php if (isset($selected) && $selected && $ingame) echo " selected"; ?><?php if ($card->getSlot() != 0 && $card->isInPlay() && $ingame) echo ' placed'; ?><?php if ($card->getSlot() != 0 && !$card->isInPlay() && $card->isOwned() && $ingame && $card->getUserId() != $csp_user->getId() && ((!isset($mode) || $mode != 'flipped'))) echo ' flipped'; ?><?php
+		?> <?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE) echo $card->getFaction() . ' class-' . $card->getCreatureClassKey(); ?><?php if (isset($mode)) echo " $mode"; ?><?php if ($card->isOwned() && $card->getUserId() == $csp_user->getId()) echo ' player'; ?><?php if ($card->isOwned() && $card->getUserId() != $csp_user->getId()) echo ' opponent'; ?><?php if (isset($selected) && $selected && $ingame) echo " selected"; ?><?php if ($card->getSlot() != 0 && $card->isInPlay() && $ingame) echo ' placed'; ?><?php if ($card->getSlot() != 0 && !$card->isInPlay() && $card->isOwned() && $ingame && $card->getUserId() != $csp_user->getId() && (isset($mode) && $mode == 'flipped')) echo ' flipped'; ?><?php
 		
 			if ($card->getCardType() == application\entities\Card::TYPE_CREATURE && $ingame) {
 				foreach ($card->getValidEffects() as $effect) { echo ' effect-'.$effect; }
@@ -63,13 +63,13 @@
 		<?php endif; ?>
 		<?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE && $card->getGPTPlayerModifier()): ?>
 			<div class="gold_increase">
-				<div class="tooltip from-above">Effect on your gold</div>
+				<div class="tooltip from-above"><?php echo ($card->getUserId() == $csp_user->getId()) ? 'Effect on your gold' : 'Effect on opponents gold'; ?></div>
 				<span><?php echo ($card->getGPTDecreasePlayer()) ? '-' : '+'; ?></span><?php echo $card->getGPTPlayerModifier(); ?>
 			</div>
 		<?php endif; ?>
 		<?php if ($card->getCardType() == application\entities\Card::TYPE_CREATURE && $card->getGPTOpponentModifier()): ?>
 			<div class="gold_increase opponent">
-				<div class="tooltip from-above">Effect on opponents gold</div>
+				<div class="tooltip from-above"><?php echo ($card->getUserId() == $csp_user->getId()) ? 'Effect on opponents gold' : 'Effect on your gold'; ?></div>
 				<span><?php echo ($card->getGPTDecreaseOpponent()) ? '-' : '+'; ?></span><?php echo $card->getGPTOpponentModifier(); ?>
 			</div>
 		<?php endif; ?>

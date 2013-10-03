@@ -5,6 +5,7 @@
 @import url('http://fonts.googleapis.com/css?family=Open+Sans:400,700,400italic,700italic');
 @import url('http://fonts.googleapis.com/css?family=Gentium+Basic:400,700italic,700,400italic');
 @import url('http://fonts.googleapis.com/css?family=Calligraffitti');
+@import url(http://fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700&subset=latin,latin-ext);
 
 /*
 html5doctor.com Reset Stylesheet
@@ -1456,6 +1457,7 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 	width: 985px;
 	margin: 10px auto;
 	color: #FFF;
+    font-family: 'Amaranth';
 }
 #pickcards-filter-container {
 	display: block;
@@ -1553,7 +1555,7 @@ input[type=submit], input[type=submit]:hover, button, .button, .button:hover {
 	background-color: transparent;
 	border: none;
 }
-.shelf-filter .button span.dropdown-triangle {
+.shelf-filter .button span.dropdown-triangle, .dropdown-triangle {
 	font-size: 0.7em;
 	display: inline-block;
 	margin-left: 10px;
@@ -2866,6 +2868,8 @@ li.card {
 	top: 215px;
 	left: 23px;
 	width: 220px;
+    font-family: 'PT Sans Narrow';
+    font-size: 1.1em;
 }
 #player_potions .card.potion_item {
 	display: inline-block;
@@ -2976,12 +2980,16 @@ li.card {
 	position: absolute;
 	left: 0;
 	top: 0;
-	cursor: pointer;,.
+	cursor: pointer;
 }
 .card .attacks .attack_bonus {
 	background-color: rgba(0, 125, 0, 0.4);
 	border: 1px solid rgba(0, 125, 0, 0.6);
 	display: block;
+    margin-left: -20px;
+}
+.card.medium .attacks .attack_bonus {
+    margin-left: -13px;
 }
 .card .attacks .attack_bonus.negative {
 	background-color: rgba(200, 0, 0, 0.4);
@@ -3000,17 +3008,20 @@ li.card {
 }
 .card .attacks .attack_level, .card .attacks .attack_bonus {
 	color: rgba(255, 255, 255, 0.7);
-	padding: 0 1px;
+	padding: 0 2px;
 	font-weight: normal;
 	border-radius: 3px;
 	float: left;
-	margin-right: 2px;
-	font-size: 1.3em;
-	line-height: 15px;
+	margin: 3px 2px;
+	font-size: 1.4em;
+	line-height: 16px;
 }
 .card.medium .attacks .attack_level, .card.medium .attacks .attack_bonus {
-	font-size: 1.15em;
-	line-height: 9px;
+	font-size: 1.5em;
+	line-height: 13px;
+}
+.card.medium .attacks .attack_level {
+    margin: 0 2px;
 }
 .card.potion_item .attacks .attack {
 	padding-left: 0;
@@ -3112,19 +3123,24 @@ li.card {
 	background-image: url('/images/attack_ranged.png');
 }
 .card .attacks .attack .attack_name {
-	/*float: left;*/
+	padding: 4px 0 2px 2px;
 	font-size: 1.5em;
 	overflow: hidden;
 	z-index: 10;
 }
 .card.medium .attacks .attack .attack_name {
-	font-size: 1.3em;
+	font-size: 1.5em;
+    font-weight: bold;
+    padding: 1px;
+}
+.card .attacks .attack .attack_impact:first-line {
+    font-size: 1.1em;
 }
 .card .attacks .attack .attack_impact {
-	position: absolute;
-	bottom: 2px;
-	left: 20px;
 	color: darkred;
+    margin: 2px 0 0 -20px;
+    clear: both;
+    font-size: 1.2em;
 	-webkit-transition: opacity 0.3s ease-in-out;
 	-moz-transition: opacity 0.3s ease-in-out;
 	-ms-transition: opacity 0.3s ease-in-out;
@@ -3148,8 +3164,18 @@ li.card {
 .card .attacks .attack .attack_impact.bonus_gold {
 	color: #BF7F00;
 }
+.card.medium .attacks .attack .attack_impact:first-line {
+	font-size: 1.2em;
+}
 .card.medium .attacks .attack .attack_impact {
-	bottom: 0;
+    margin-left: -13px;
+	font-size: 1.2em;
+}
+.card .attacks .attack .attack_impact .requires {
+    white-space: normal;
+}
+.card.medium .attacks .attack .attack_impact .requires {
+    display: none;
 }
 .card .attacks .attack .attack_cost {
 	position: absolute;
@@ -3158,7 +3184,7 @@ li.card {
 	font-size: 1.3em;
 	font-weight: normal;
 	color: #000;
-	background-color: rgba(255, 255, 255, 0.9);
+	background-color: rgba(255, 255, 255, 0.8);
 	border-radius: 7px;
 	padding: 4px 7px;
 	-webkit-transition: opacity 0.3s ease-in-out;
@@ -3169,27 +3195,30 @@ li.card {
 }
 .card.medium .attacks .attack .attack_cost {
 	right: 5px;
-	top: 2px;
+	top: 0;
 	border-radius: 3px;
-	padding: 1px 4px;
-	font-size: 1.2em;
+	padding: 1px 3px;
+	font-size: 1.5em;
 }
 .card.medium .attacks .attack .tooltip {
 	font-size: 1.1em;
 	width: 190px;
-	bottom: 30px;
+	bottom: -100px;
+    display: none;
 }
 .card.medium .description .tooltip {
 	font-size: 1em;
 	line-height: 1.2;
 	width: 133px;
 	bottom: 70px;
+    display: none;
 }
 /*.card:hover { z-index: 20; }*/
-.card.medium .attacks .attack:hover .tooltip {
+.card.medium .attacks .attack_hover.selected .tooltip {
 	left: -30px;
 	bottom: 35px;
 	z-index: 100001;
+    display: block;
 }
 .card.medium .description:hover .tooltip {
 	left: -11px;
@@ -3510,25 +3539,25 @@ li.card {
 	background-position: 0 0;
 	background-repeat: no-repeat;
 }
-.card.equippable-item-class-1 .item_class .img {
+.equippable-item-class-1 .item_class .img {
 	background-image: url('/images/equippable_item_sword.png');
 }
-.card.equippable-item-class-2 .item_class .img {
+.equippable-item-class-2 .item_class .img {
 	background-image: url('/images/equippable_item_bow.png');
 }
-.card.equippable-item-class-3 .item_class .img {
+.equippable-item-class-3 .item_class .img {
 	background-image: url('/images/equippable_item_shield.png');
 }
-.card.equippable-item-class-4 .item_class .img {
+.equippable-item-class-4 .item_class .img {
 	background-image: url('/images/equippable_item_spear.png');
 }
-.card.equippable-item-class-5 .item_class .img {
-	background-image: url('/images/equippable_item_armor.png');
+.equippable-item-class-5 .item_class .img {
+    background-image: url('/images/equippable_item_armor.png');
 }
-.card.equippable-item-class-6 .item_class .img {
+.equippable-item-class-6 .item_class .img {
 	background-image: url('/images/equippable_item_arrow.png');
 }
-.card.equippable-item-class-7 .item_class .img {
+.equippable-item-class-7 .item_class .img {
 	background-image: url('/images/equippable_item_staff.png');
 }
 
@@ -4082,7 +4111,7 @@ li.card-slot {
 	-o-transition: opacity 0.4s ease-in-out;
 	transition: opacity 0.4s ease-in-out;
 }
-#desync-overlay, #upgrade-overlay, #changelog-overlay, #tooslow-overlay {
+#desync-overlay, #upgrade-overlay, #changelog-overlay, #tooslow-overlay, #offline-overlay {
 	position: fixed;
 	left: 0;
 	top: 0;
@@ -4093,10 +4122,12 @@ li.card-slot {
 	background-color: rgba(255, 255, 255, 0.7);
 	z-index: 999999999;
 }
-#desync-message:first-line, #upgrade-message:first-line, #tooslow-message:first-line {
+#desync-message:first-line, #upgrade-message:first-line, #tooslow-message:first-line, #offline-message:first-line {
 	font-weight: bold;
+    font-size: 1.2em;
+    line-height: 2;
 }
-#desync-message, #upgrade-message, #changelog-message, .tutorial-message, #tooslow-message {
+#desync-message, #upgrade-message, #changelog-message, .tutorial-message, #tooslow-message, #offline-message {
 	box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
 	color: #333;
 	background-color: #FFF;
@@ -4684,6 +4715,13 @@ li.card-slot {
 }
 .profile_menu.in-game .toggle-events-button {
 	display: inline-block !important;
+}
+#ongoing-games-popup li {
+    font-size: 1em;
+}
+#ongoing-games-popup li .opponent_character_name {
+    font-size: 1.1em;
+    font-weight: bold;
 }
 .menu_glow {
 	border: 2px solid rgba(255, 255, 255, 0.9);
@@ -6448,14 +6486,22 @@ li.card-slot {
 ul#online-friends { margin-bottom: 0; }
 ul#offline-friends { margin-top: 0; }
 #online-friends li a { color: #FFF; }
+#online-friends img.offline-icon { display: none; }
+#offline-friends img.online-icon { display: none; }
 #friend-requests li { height: 50px; }
 
 .userfriend-list-item { position: relative; }
 
+#notifications-container {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 1000001;
+}
+
 .notification {
-	position: fixed;
-	top: 15px;
-	right: 15px;
+    display: block;
+    margin-bottom: 15px;
 	color: #FFF;
 	background-color: rgba(0, 0, 0, 0.8);
 	border: 1px solid rgba(0, 0, 0, 0.9);
@@ -6464,7 +6510,6 @@ ul#offline-friends { margin-top: 0; }
 	padding: 15px;
 	text-align: right;
 	font-family: 'Open Sans';
-	z-index: 1000001;
 	border-radius: 10px;
 	font-size: 0.8em;
 	line-height: 1.3em;

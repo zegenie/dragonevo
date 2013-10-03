@@ -3,14 +3,14 @@ Hey %username%!
 It is your turn in your game against %playername%, and you still haven't finished your turn!
 
 Don't wait too long, or you might lose out! Click here to show who's boss:
-http://www.dragonevo.com/play#!game/%game_id%
+http://www.playdragonevo.com/play#!game/%game_id%
 
 * What is Dragon Evo: The Card Game? *
 Dragon Evo:TCG is an epic fantasy-themed trading card game, played in your browser. 
 Play against friends or defeat online opponents in epic battles, where only the best combination of cards and skill will make you the winner.
 
 Dragon Evo:TCG has almost 200 different cards to collect - from 3 different and unique factions - all set to the Dragon Evo universe.
-Learn more about the Dragon Evo universe by visiting http://www.dragonevo.com
+Learn more about the Dragon Evo universe by visiting http://www.playdragonevo.com
 
 See you online!
 

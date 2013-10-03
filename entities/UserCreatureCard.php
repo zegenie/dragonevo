@@ -61,18 +61,12 @@
 		{
 			$this->_generateRandomDefenceMultiplier();
 			$this->_generateRandomBaseHealth();
-			$attacks = 0;
-			foreach ($this->getOriginalCard()->getAttacks() as $attack) {
-				if (!$attack->isMandatory()) {
-					if (rand(0, 10) > rand(0, 10)) continue;
-				}
-				$cattack = clone $attack;
-				$cattack->setCard($this);
-				$cattack->setOriginalAttack($attack);
-				$cattack->save();
-				$attacks++;
-				if ($attacks == 3) break;
-			}
+			$attacks = $this->getOriginalCard()->getAttacks();
+            $attack = $attacks[array_rand($attacks)];
+            $cattack = clone $attack;
+            $cattack->setCard($this);
+            $cattack->setOriginalAttack($attack);
+            $cattack->save();
 		}
 		
 	}

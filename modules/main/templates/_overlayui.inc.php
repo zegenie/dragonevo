@@ -14,8 +14,16 @@
 			<ul id="profile_menu_strip">
 				<li id="show-menu-button" onclick="Devo.Main.showMenu();" class="ui_button menu-button">Menu</li>
 				<li id="play-quickmatch-button" onclick="Devo.Main.Helpers.popup(this);" class="ui_button quickmatch-button">Play a game</li>
-				<div class="popup-menu" style="bottom: 25px; left: 85px; right: auto;">
+				<div class="popup-menu" style="bottom: 25px; left: 85px; width: 220px; right: auto;">
 					<ul>
+                        <li style="position: relative;">
+                            <a href="javascript:void(0)" onclick="$(this).toggleClassName('button-pressed');Devo.Play.loadOngoingGamesPopup();return false;">Continue an existing game <span style="font-size: 0.9em; position: absolute; right: 10px;">&#9658;</span></a>
+                            <div class="popup-menu" style="bottom: 0; left: 215px; width: 100%;">
+                                <ul id="ongoing-games-popup" style="z-index: 1;">
+                                    <li class="disabled">Please wait</li>
+                                </ul>
+                            </div>
+                        </li>
 						<li><a href="javascript:void(0);" onclick="Devo.Main.Helpers.Backdrop.show('<?php echo make_url('get_backdrop_partial', array('key' => 'invitefriend')); ?>');Devo.Main.Helpers.popup($('play-quickmatch-button'));return false;">Invite a friend</a></li>
 						<li><a href="javascript:void(0);" onclick="Devo.Play.quickmatch();Devo.Main.Helpers.popup($('play-quickmatch-button'));return false;">Play a random opponent</a></li>
 						<li><a href="javascript:void(0);" onclick="Devo.Main.loadAdventureUI();Devo.Main.Helpers.popup($('play-quickmatch-button'));return false;">Singleplayer adventure</a></li>

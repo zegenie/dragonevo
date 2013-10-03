@@ -4,7 +4,7 @@
 					<div class="border-overlay"></div>
 				</div>
 				<div class="footer-info">
-					<a href="/changelog">All text and artwork &copy; 2011-<?php echo date('Y'); ?> <a href="mailto:support@dragonevo.com">Magical Pictures / zegenie studios</a>
+					<a href="/changelog">All text and artwork &copy; 2011-<?php echo date('Y'); ?> <a href="mailto:support@playdragonevo.com">Magical Pictures / zegenie studios</a>
 				</div>
 			</footer>
 		</div>

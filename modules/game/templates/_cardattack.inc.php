@@ -24,7 +24,7 @@
 		<?php if ($attack->doesAttackAll()): ?> data-does-attack-all <?php endif; ?>
 		<?php if ($attack->doesRequireBothItems()): ?> data-requires-equippable-both <?php endif; ?>
 		>
-		<div class="attack_hover">
+		<div class="attack_hover" onclick="$(this).toggleClassName('selected');">
 			<div class="<?php if (isset($ingame) && $ingame) echo 'attack_tooltip'; ?> tooltip attack_details <?php echo strtolower($attack_types[$attack->getAttackType()]); ?>">
 				<div class="attack_name"><?php echo $attack->getName(); ?></div>
 				<div class="attack_description">
@@ -58,7 +58,6 @@
 			</div>
 		</div>
 		<?php if ($attack->getRequiresLevel()): ?><div class="attack_level"><?php echo $attack->getRequiresLevel(); ?></div><?php endif; ?>
-		<div class="attack_bonus"></div>
 		<div class="attack_name"><?php echo $attack->getName(); ?></div>
 		<?php if ($attack->hasCostMagic() || $attack->hasCostGold()): ?>
 			<div class="attack_cost">
@@ -76,37 +75,56 @@
 		<div class="attack_impact<?php if ($attack->isBonusAttack() && $attack->doesRegenerateHP()) echo ' bonus_health'; ?><?php if ($attack->isBonusAttack() && $attack->doesRegenerateEP()) echo ' bonus_ep'; ?><?php if ($attack->isStealAttack() || $attack->isForageAttack()) echo ' bonus_gold'; ?>"><?php
 		
 			if ($attack->hasAttackPointsRange()) {
-				echo $attack->getAttackPointsMin() . '-' . $attack->getAttackPointsMax() . 'HP';
+				echo "Deals " . $attack->getAttackPointsMin() . '-' . $attack->getAttackPointsMax() . 'HP damage';
 			} elseif ($attack->getAttackPointsMin()) {
-				echo $attack->getAttackPointsMin() . 'HP';
+				echo "Deals " . $attack->getAttackPointsMin() . 'HP damage';
 			} elseif ($attack->isBonusAttack()) {
 				if ($attack->doesRegenerateHP()) {
-					echo '+'.$attack->getGenerateHpAmount().'% HP';
+					echo 'Regenerates '.$attack->getGenerateHpAmount().'% HP';
 				} elseif ($attack->doesRegenerateEP()) {
-					echo '+'.$attack->getGenerateMagicAmount().' EP';
+					echo 'Generates '.$attack->getGenerateMagicAmount().' EP';
 				}
 			} elseif ($attack->isStealAttack()) {
-				echo 'Steal 0-'.$attack->getStealGoldAmount().'% ('.$attack->getStealGoldChance().'% chance)';
+				echo 'Steals 0-'.$attack->getStealGoldAmount().'% gold ('.$attack->getStealGoldChance().'% chance)';
 			} elseif ($attack->isForageAttack()) {
-				echo '+'.$attack->getGenerateGoldAmount().' gold';
+				echo 'Generates '.$attack->getGenerateGoldAmount().' gold';
 			}
 			
 			if ($attack->isRepeatable()) {
-				echo ' (+';
+				echo '<br>+';
 				if ($attack->hasRepeatAttackPointsRange()) {
 					echo $attack->getRepeatAttackPointsMin() . '-' . $attack->getRepeatAttackPointsMax();
 				} else {
 					echo $attack->getRepeatAttackPointsMin();
 				}
-				echo 'HP x ';
+				echo 'HP damage x ';
 				if ($attack->hasRepeatRoundsRange()) {
 					echo $attack->getRepeatRoundsMin() . '-' . $attack->getRepeatRoundsMax();
 				} else {
 					echo $attack->getRepeatRoundsMin();
 				}
-				echo ')';
 			}
-			
+
+            if ($eq_1 = $attack->getRequiresItemCardType1()) {
+                $item_classes = \application\entities\ItemCard::getItemClasses();
+                echo '<br><span class="requires">';
+                echo 'Requires ';
+                if ($attack->getRequiresItemCardType2() == $eq_1) {
+                    echo (!$attack->doesRequireBothItems()) ? 'one or two' : 'two';
+                    echo ' equipped '.strtolower($item_classes[$eq_1]).' item card(s)';
+                } else {
+                    echo 'equipped ';
+                    echo strtolower($item_classes[$eq_1]);
+                    if ($eq_2 = $attack->getRequiresItemCardType2()) {
+                        echo ($attack->doesRequireBothItems()) ? ' and ' : ' or ';
+                        echo 'equipped '.strtolower($item_classes[$eq_1]);
+                    }
+                    echo ' card(s)';
+                }
+                echo '</span>';
+            }
+
 		?></div>
+        <div class="attack_bonus"></div>
 	</div>
 <?php endif; ?>

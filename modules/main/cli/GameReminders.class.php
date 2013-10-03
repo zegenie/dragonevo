@@ -35,7 +35,7 @@
 			$player_name = $player->getCharactername().' ('.$player->getUsername().')';
 			$user_name = $user->getCharactername().' ('.$user->getUsername().')';
 			$message = \Swift_Message::newInstance($player_name.' is waiting for you');
-			$message->setFrom('support@dragonevo.com', 'The Dragon Evo team');
+			$message->setFrom('support@playdragonevo.com', 'The Dragon Evo team');
 			$message->setTo($user->getEmail());
 			$plain_content = str_replace(array('%username%', '%playername%', '%game_id%'), array($user_name, $player_name, $game->getId()), file_get_contents(CASPAR_MODULES_PATH . 'main' . DS . 'templates' . DS . 'game_reminder.txt'));
 			$message->setBody($plain_content, 'text/plain');

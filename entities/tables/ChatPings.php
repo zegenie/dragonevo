@@ -2,11 +2,14 @@
 
 	namespace application\entities\tables;
 
-	use b2db\Core,
+	use application\entities\ChatRoom;
+    use application\entities\Game;
+    use b2db\Core,
 		b2db\Criteria,
-		b2db\Criterion;
+		b2db\Criterion,
+        caspar\core\Caspar;
 
-	/**
+    /**
 	 * Chat pings table
 	 *
 	 * @author Daniel Andre Eikeland <zegenie@zegeniestudios.net>
@@ -42,7 +45,17 @@
 				$crit->addInsert('chat_pings.user_id', $user->getId());
 				$crit->addInsert('chat_pings.pinged', time());
 				$this->doInsert($crit);
-				$room->say("{$user->getCharactername()} joined.", 0);
+				$row = $room->say("{$user->getCharactername()} joined.", 0);
+
+                $row = Users::getTable()->doSelectById($user->getId());
+                $line = array(
+                    'room_id' => $room->getId(),
+                    'user_id' => $user->getId(),
+                    'user' => Users::getTable()->getUserData($user->getId(), $row),
+                );
+                $event = array('category' => 'Chat-'.$room->getId(),
+                                'event' => $line);
+                Caspar::getResponse()->zmqSendEvent($event);
 			}
 		}
 
@@ -59,17 +72,19 @@
 					$user_id = $row['chat_pings.user_id'];
 					$user = Users::getTable()->selectById($user_id);
 					$room = ChatRooms::getTable()->selectById($room_id);
-					if ($room_id > 0) {
-						$game = Games::getTable()->getGameByRoomId($room_id);
-						if ($game instanceof \application\entities\Game && $game->isUserOnline($user_id)) {
-							$game->setUserOffline($user_id);
-							$game->save();
-						}
-					}
-					if ($room_id > 1 || $row['chat_pings.pinged'] <= (time() - 18000)) {
-						$room->say("{$user->getCharactername()} left the chat", 0, $row['chat_pings.pinged'] + 2);
-						$this->doDeleteById($id);
-					}
+                    if ($room instanceof ChatRoom) {
+                        if ($room_id > 0) {
+                            $game = Games::getTable()->getGameByRoomId($room_id);
+                            if ($game instanceof Game && $game->isUserOnline($user_id)) {
+                                $game->setUserOffline($user_id);
+                                $game->save();
+                            }
+                        }
+                        if ($room_id > 1 || $row['chat_pings.pinged'] <= (time() - 18000)) {
+                            $room->say("{$user->getCharactername()} left the chat", 0, $row['chat_pings.pinged'] + 2);
+                            $this->doDeleteById($id);
+                        }
+                    }
 				}
 			}
 		}

@@ -5,7 +5,6 @@
 ?>
 <?php if ($game instanceof Game && ($csp_user->isAdmin() || in_array($csp_user->getId(), array($game->getPlayer()->getId(), $game->getOpponentId())))): ?>
 	<div id="board-container" class="<?php if (!$csp_user->isLowGraphicsEnabled()) echo 'effect-3d'; ?>">
-		<div id="phase-1-overlay" class="fullpage_backdrop dark" style="display: none;"><a href="javascript:void(0);" id="end-phase-1-button" class="turn-button button button-green<?php if ($game->getCurrentPlayerId() != $csp_user->getId()) echo ' disabled'; ?>" onclick="Devo.Game.endPhase(this);"><img src="/images/spinning_16.gif" style="display: none;">End replenishment phase</a></div>
 		<div id="gameover-overlay" class="fullpage_backdrop dark" style="<?php if (!$game->isGameOver()): ?>display: none;<?php endif; ?>">
 			<div class="fullpage_backdrop_content">
 				<div class="backdrop_box medium">
@@ -40,12 +39,12 @@
 			<div id="game-opponent">
 				<div class="game-name">
 					<?php if (!$game->isScenario()): ?>
-						<span id="player-<?php echo $game->getPlayer()->getId(); ?>-name" class="<?php if ($game->isUserOffline($game->getPlayer()->getId())) echo ' offline'; ?>">
+						<span id="player-<?php echo $game->getPlayer()->getId(); ?>-name" data-character-name="<?php echo $game->getPlayer()->getCharactername(); ?>">
 							<?php echo $game->getPlayer()->getCharactername(); ?>
 							<span class="tooltip from-above">The player is currently offline</span>
 						</span>
 						<span class="versus_versus">versus</span>
-						<span id="player-<?php echo $game->getOpponentId(); ?>-name" class="<?php if (!$game->getOpponent()->isAI() && $game->isUserOffline($game->getOpponentId())) echo ' offline'; ?>">
+						<span id="player-<?php echo $game->getOpponentId(); ?>-name" data-character-name="<?php echo $game->getOpponent()->getCharactername(); ?>">
 							<?php echo $game->getOpponent()->getCharactername(); ?>
 							<?php if (!$game->getOpponent()->isAI()): ?>
 								<span class="tooltip from-above">The player is currently offline</span>
@@ -60,9 +59,9 @@
 				<?php endif; ?>
 			</div>
 			<div id="turn-info">
-				<div id="place_cards" class="animated" style="<?php if ($game->getTurnNumber() > 2 || !$game->isUserInGame()) echo 'display: none;'; ?>">Place your cards</div>
-				<div id="player-<?php echo $game->getPlayer()->getId(); ?>-turn" class="turn-info animated" style="<?php if ($game->getCurrentPlayerId() != $game->getPlayer()->getId() || $game->getTurnNumber() <= 2) echo 'display: none;'; ?>"><?php echo ($csp_user->getId() == $game->getPlayer()->getId()) ? "It is your turn" : "It is {$game->getPlayer()->getCharactername()}'s turn"; ?></div>
-				<div id="player-<?php echo $game->getOpponentId(); ?>-turn" class="turn-info animated<?php if ($game->isUserOffline($game->getOpponentId())) echo ' faded'; ?>" style="<?php if ($game->getCurrentPlayerId() != $game->getOpponentId() || $game->getTurnNumber() <= 2) echo 'display: none;'; ?>"><?php echo ($csp_user->getId() == $game->getOpponentId()) ? "It is your turn" : "It is {$game->getOpponent()->getCharactername()}'s turn"; ?></div>
+				<div id="place_cards" class="animated" style="<?php if ($game->isUserPlayerReady() || !$game->isUserInGame()) echo 'display: none;'; ?>">Place your cards</div>
+				<div id="player-<?php echo $game->getPlayer()->getId(); ?>-turn" class="turn-info animated" style="<?php if ($game->getCurrentPlayerId() != $game->getPlayer()->getId() || !$game->isUserPlayerReady()) echo 'display: none;'; ?>"><?php echo ($csp_user->getId() == $game->getPlayer()->getId()) ? "It is your turn" : "It is {$game->getPlayer()->getCharactername()}'s turn"; ?></div>
+				<div id="player-<?php echo $game->getOpponentId(); ?>-turn" class="turn-info animated<?php if ($game->isUserOffline($game->getOpponentId())) echo ' faded'; ?>" style="<?php if ($game->getCurrentPlayerId() != $game->getOpponentId() || !$game->isUserPlayerReady()) echo 'display: none;'; ?>"><?php echo ($csp_user->getId() == $game->getOpponentId()) ? "It is your turn" : "It is {$game->getOpponent()->getCharactername()}'s turn"; ?></div>
 			</div>
 			<div id="last-event" class="animated"></div>
 		</div>
@@ -75,7 +74,8 @@
 								class="card-slot creature-slot opponent slot-<?php echo $cc; ?>"
 								data-slot-no="<?php echo $cc; ?>"
 								data-card-id="<?php echo $game->getUserOpponentCardSlotId($cc); ?>">
-								<?php include_template('game/card', array('card' => $game->getUserOpponentCardSlot($cc), 'mode' => 'medium', 'ingame' => true)); ?>
+                                <div class="card_loading cssloader"><img src="/images/spinner.png"></div>
+                                <?php include_template('game/card', array('card' => $game->getUserOpponentCardSlot($cc), 'mode' => 'medium', 'ingame' => true)); ?>
 								<div id="opponent-slot-<?php echo $cc; ?>-item-slot-1"
 									class="card-slot item-slot opponent slot-<?php echo $cc; ?>"
 									data-slot-no="<?php echo $cc; ?>"
@@ -90,7 +90,6 @@
 										<?php include_template('game/card', array('card' => $game->getUserOpponentCardSlotPowerupCard2($cc), 'mode' => 'medium', 'ingame' => true)); ?>
 										<div class="card_loading cssloader"><img src="/images/spinner.png"></div>
 								</div>
-								<div class="card_loading cssloader"><img src="/images/spinner.png"></div>
 							</li>
 						<?php endfor; ?>
 					</ul>
@@ -118,20 +117,23 @@
 								class="card-slot creature-slot player slot-<?php echo $cc; ?>"
 								data-slot-no="<?php echo $cc; ?>"
 								data-card-id="<?php echo $game->getUserPlayerCardSlotId($cc); ?>">
+                                <div class="card_loading cssloader"><img src="/images/spinner.png"></div>
 								<?php include_template('game/card', array('card' => $game->getUserPlayerCardSlot($cc), 'mode' => 'medium', 'ingame' => true)); ?>
 								<div id="player-slot-<?php echo $cc; ?>-item-slot-1"
-									class="card-slot item-slot player slot-<?php echo $cc; ?>"
+									class="card-slot item-slot item-slot-1 player slot-<?php echo $cc; ?>"
 									data-slot-no="<?php echo $cc; ?>"
 									data-item-slot-no="1"
 									data-card-id="<?php echo $game->getUserPlayerCardSlotPowerupCard1Id($cc); ?>">
 										<?php include_template('game/card', array('card' => $game->getUserPlayerCardSlotPowerupCard1($cc), 'mode' => 'medium', 'ingame' => true)); ?>
+                                        <div class="card_loading cssloader"><img src="/images/spinner.png"></div>
 								</div>
 								<div id="player-slot-<?php echo $cc; ?>-item-slot-2"
-									class="card-slot item-slot player slot-<?php echo $cc; ?>"
+									class="card-slot item-slot item-slot-2 player slot-<?php echo $cc; ?>"
 									data-slot-no="<?php echo $cc; ?>"
 									data-item-slot-no="2"
 									data-card-id="<?php echo $game->getUserPlayerCardSlotPowerupCard2Id($cc); ?>">
 										<?php include_template('game/card', array('card' => $game->getUserPlayerCardSlotPowerupCard2($cc), 'mode' => 'medium', 'ingame' => true)); ?>
+                                        <div class="card_loading cssloader"><img src="/images/spinner.png"></div>
 								</div>
 							</li>
 						<?php endfor; ?>
@@ -139,7 +141,7 @@
 				</div>
 			</div>
 		</div>
-		<div id="player_stuff" <?php if (!$game->isUserInGame()): ?> style="display: none;"<?php endif; ?> class="<?php if (!$game->hasUserPlayerPlacedCards() && !$csp_user->isBoardTutorialEnabled()) echo 'visible'; ?>">
+		<div id="player_stuff" <?php if (!$game->isUserInGame()): ?> style="display: none;"<?php endif; ?> class="<?php if (!$game->isUserPlayerReady() && !$csp_user->isBoardTutorialEnabled()) echo 'visible'; ?>">
 			<?php if ($game->isUserInGame()) include_component('game/playerhand', compact('game')); ?>
 		</div>
 		<div id="player_potions"<?php if (!$game->isUserInGame()): ?> style="display: none;"<?php endif; ?>>

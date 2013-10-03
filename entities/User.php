@@ -1268,17 +1268,19 @@
 			}
 		}
 
+		public function aiPerformInitialPlacement(Game $game)
+		{
+            $this->_aiPlaceCards($game);
+		}
+
 		public function aiPerformTurn(Game $game)
 		{
-			// End replenishment
-			$game->endPhase();
-
 			// Move
 			$this->_aiPlaceCards($game);
 			$game->endPhase();
 			
 			// Actions
-			if ($game->getTurnNumber() > 2) {
+			if ($game->areUsersReady()) {
 				$this->_aiAttack($game);
 			}
 			$game->endPhase();
@@ -1581,5 +1583,10 @@
 			$this->_location = $form_data['location'];
 			$this->_location_show_only_friends = $form_data['location_show_only_friends'];
 		}
+
+        public function getKey()
+        {
+            return substr($this->_password, -20);
+        }
 
 	}

@@ -3,8 +3,8 @@
 	<ul class="my_games" id="game_invites">
 		<?php foreach ($game_invites as $invite): ?>
 			<li id="game_invite_<?php echo $invite->getId(); ?>">
-				<button class="ui_button button-accept" onclick="Devo.Play.acceptInvite(<?php echo $invite->getId(); ?>, $(this));"><img src="/images/spinning_16.gif" style="display: none;">Accept</button>
-				<button class="ui_button button-reject" onclick="Devo.Play.rejectInvite(<?php echo $invite->getId(); ?>, $(this));"><img src="/images/spinning_16.gif" style="display: none;">Reject</button>
+				<button class="ui_button button-accept" onclick="Devo.Play.acceptInvite(<?php echo $invite->getGame()->getId(); ?>, $(this));"><img src="/images/spinning_16.gif" style="display: none;">Accept</button>
+				<button class="ui_button button-reject" onclick="Devo.Play.rejectInvite(<?php echo $invite->getGame()->getId(); ?>, $(this));"><img src="/images/spinning_16.gif" style="display: none;">Reject</button>
 				<div class="versus_player">
 					versus<br>
 					<span class="player_name"><?php echo $invite->getFromPlayer()->getCharactername(); ?></span>

@@ -1,0 +1,29 @@
+# Caspar configuration
+
+core:
+  base_url: "dragonevo.l"
+  base_path: "/"
+  cookie_domain: "dragonevo.l"
+  cookie_path: "/"
+  libraries: ['main', 'b2db']
+  debug: true
+  language: 'en_US'
+  site_name: 'Dragon Evo CCG'
+  stylesheets: ['/css/animate.css']
+  javascripts: ['/js/prototype.js', '/js/scriptaculous.js', '/js/imagesobserver.js']
+  user_classname: \application\entities\User
+  salt: 7oNIFOwSrM1ilxvUnhdZpC
+  response_classname: \application\lib\Response
+
+services:
+  b2db:
+    auto_initialize: true
+    callback: [\b2db\Core, 'initialize']
+    arguments:
+      driver: mysql         # pdo driver to use
+      hostname: 'localhost'
+      username: 'root'
+      password: 'pooWZLX1'
+      database: 'dragonevo'
+#     dsn: ''                 # alternatively use a DSN instead of parameters above
+#     tableprefix: ''         # the table prefix (if used) for all tables (for shared databases)

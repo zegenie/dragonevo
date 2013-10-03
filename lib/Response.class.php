@@ -9,7 +9,10 @@
 
 		protected $_fullscreen = false;
 
-		public function setFullscreen($fullscreen = true)
+        protected $_socket = null;
+        protected $_zmq_context = null;
+
+        public function setFullscreen($fullscreen = true)
 		{
 			$this->_fullscreen = $fullscreen;
 		}
@@ -24,4 +27,21 @@
 			return $this->_version;
 		}
 
-	}
+        protected function _getZmqSocket()
+        {
+            if ($this->_zmq_context === null) {
+                $context = new \ZMQContext();
+                $socket = $context->getSocket(\ZMQ::SOCKET_PUSH, 'my pusher');
+                $socket->connect("tcp://localhost:5555");
+                $this->_socket = $socket;
+            }
+
+            return $this->_socket;
+        }
+
+        public function zmqSendEvent($event)
+        {
+            $this->_getZmqSocket()->send(json_encode($event));
+        }
+
+    }

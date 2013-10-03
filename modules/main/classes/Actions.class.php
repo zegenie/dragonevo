@@ -253,7 +253,7 @@ class Actions extends \application\lib\Actions
 				$user->save();
 				$mailer = $this->_getMailer();
 				$message = \Swift_Message::newInstance('Dragon Evo: The Card Game account restoration');
-				$message->setFrom('support@dragonevo.com', 'The Dragon Evo team');
+				$message->setFrom('support@playdragonevo.com', 'The Dragon Evo team');
 				$message->setTo($user->getEmail());
 				$plain_content = str_replace(array('%username%', '%code%'), array($user->getUsername(), $code), file_get_contents(CASPAR_MODULES_PATH . 'main' . DS . 'templates' . DS . 'account_restore.txt'));
 				$message->setBody($plain_content, 'text/plain');
@@ -289,7 +289,7 @@ class Actions extends \application\lib\Actions
 						$user->save();
 						$mailer = $this->_getMailer();
 						$message = \Swift_Message::newInstance('Dragon Evo: The Card Game new password saved');
-						$message->setFrom('support@dragonevo.com', 'The Dragon Evo team');
+						$message->setFrom('support@playdragonevo.com', 'The Dragon Evo team');
 						$message->setTo($user->getEmail());
 						$plain_content = str_replace('%username%', $user->getUsername(), file_get_contents(CASPAR_MODULES_PATH . 'main' . DS . 'templates' . DS . 'account_restored.txt'));
 						$message->setBody($plain_content, 'text/plain');
@@ -324,7 +324,7 @@ class Actions extends \application\lib\Actions
 						\application\entities\tables\Users::getTable()->updateRanking();
 						$mailer = $this->_getMailer();
 						$message = \Swift_Message::newInstance('Dragon Evo: The Card Game account created');
-						$message->setFrom('support@dragonevo.com', 'The Dragon Evo team');
+						$message->setFrom('support@playdragonevo.com', 'The Dragon Evo team');
 						$message->setTo($request->getParameter('email'));
 						$plain_content = str_replace(array('%username%', '%password%'), array($user->getUsername(), $request['desired_password_1']), file_get_contents(CASPAR_MODULES_PATH . 'main' . DS . 'templates' . DS . 'account_created.txt'));
 						$message->setBody($plain_content, 'text/plain');
