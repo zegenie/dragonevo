@@ -2784,17 +2784,19 @@ Devo.Game.cardslot_clickend = function() {
 	var card = $$('.card.moving')[0];
 	if (card) $(card).removeClassName('moving');
 	var pa = $('play-area');
-	pa.removeEventListener('click', Devo.Game.cardslot_clickend);
-	pa.removeClassName('cancelmove');
-	$('player_stuff').removeEventListener('click', Devo.Game.cardslot_clickmove);
-	$('player-slots').removeClassName('droptargets');
-	$('player_stuff').removeClassName('droptarget');
-	$('player_stuff').removeClassName('dragging');
-	$('player-slots').select('.card-slot').each(function(slot) {
-		slot.removeClassName('drop-hover');
-		slot.removeClassName('drop-denied');
-		slot.removeEventListener('click', Devo.Game.cardslot_clickmove);
-	});
+    if (pa) {
+        pa.removeEventListener('click', Devo.Game.cardslot_clickend);
+        pa.removeClassName('cancelmove');
+        $('player_stuff').removeEventListener('click', Devo.Game.cardslot_clickmove);
+        $('player-slots').removeClassName('droptargets');
+        $('player_stuff').removeClassName('droptarget');
+        $('player_stuff').removeClassName('dragging');
+        $('player-slots').select('.card-slot').each(function(slot) {
+            slot.removeClassName('drop-hover');
+            slot.removeClassName('drop-denied');
+            slot.removeEventListener('click', Devo.Game.cardslot_clickmove);
+        });
+    }
 };
 
 Devo.Game.postCardMove = function(c_slot, slots) {
